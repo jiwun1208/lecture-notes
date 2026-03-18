@@ -138,6 +138,8 @@ body {
   max-width: 960px;
   margin: 0 auto;
   padding: 32px 24px 80px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 /* Course Section */
@@ -266,6 +268,8 @@ body {
 }
 .card-link:hover .card-arrow { transform: translateX(3px); }
 
+img { max-width: 100%; height: auto; }
+
 
 /* Edit Mode */
 .edit-toggle {
@@ -343,10 +347,25 @@ body.edit-mode .card-file {
   border-top: 1px solid var(--border);
 }
 
-@media (max-width: 600px) {
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .hero { padding: 40px 16px 36px; }
   .hero h1 { font-size: 24px; }
-  .cards { grid-template-columns: 1fr; }
   .hero .stats { gap: 20px; }
+  .container { padding: 24px 16px 60px; }
+  .cards { grid-template-columns: 1fr; }
+  .course-header h2 { font-size: 17px; }
+  .edit-toggle, .reset-btn, .theme-btn { font-size: 11px; padding: 4px 10px; }
+}
+
+@media (max-width: 480px) {
+  .hero h1 { font-size: 20px; }
+  .hero p { font-size: 13px; }
+  .hero .stat .num { font-size: 22px; }
+  .container { padding: 16px 12px 48px; }
+  .card-title { font-size: 14px; }
+  .card-link { padding: 16px 14px; }
+  body { font-size: 14px; }
 }
 </style>
 </head>

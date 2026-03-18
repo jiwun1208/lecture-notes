@@ -96,6 +96,7 @@ MathJax = {
     padding: 12px 32px;
     display: flex; justify-content: space-between; align-items: center;
     backdrop-filter: blur(12px);
+    gap: 8px;
   }
   .topbar h1 {
     font-family: 'Noto Serif KR', serif;
@@ -119,6 +120,8 @@ MathJax = {
     transition: all 0.2s;
   }
   .theme-toggle:hover { color: var(--accent); }
+
+  img { max-width: 100%; height: auto; }
 
   .layout {
     display: grid;
@@ -174,6 +177,9 @@ MathJax = {
   .content {
     padding: 40px 52px 100px;
     max-width: 900px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    min-width: 0;
   }
 
   .page-section {
@@ -440,12 +446,38 @@ MathJax = {
   p { margin-bottom: 10px; }
   strong { font-weight: 700; }
 
+
+  /* --- Responsive --- */
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 200px 1fr; }
+    .content { padding: 32px 32px 60px; }
+    .sidebar { padding: 20px 12px; }
+  }
+
   @media (max-width: 900px) {
     .layout { grid-template-columns: 1fr; }
     .sidebar { display: none; }
-    .content { padding: 24px 20px 60px; }
+    .content { padding: 28px 24px 60px; }
     .two-col { grid-template-columns: 1fr; }
   }
+
+  @media (max-width: 768px) {
+    .topbar { padding: 10px 16px; }
+    .topbar h1 { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60vw; }
+    .topbar .meta { font-size: 10px; }
+    .content { padding: 20px 16px 48px; }
+    .page-section h2 { font-size: 18px; }
+    .page-section h3 { font-size: 16px; }
+    .card { padding: 18px 16px; }
+    .summary-box { padding: 14px 16px; }
+  }
+
+  @media (max-width: 480px) {
+    .content { padding: 16px 12px 40px; }
+    .topbar h1 { font-size: 13px; max-width: 50vw; }
+    body { font-size: 14px; }
+  }
+
 
   @media print {
     .topbar, .sidebar, .theme-toggle { display: none; }

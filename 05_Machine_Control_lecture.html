@@ -3,47 +3,564 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Machine-level Programming II: Control 강의</title>
+<title>Machine-Level Programming: Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
 window.MathJax = {
-  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']], processEscapes: false },
-  startup: { ready: function() { MathJax.startup.defaultReady(); window.mathJaxReady = true; } }
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    processEscapes: false
+  },
+  startup: {
+    ready: function() {
+      MathJax.startup.defaultReady();
+      window.mathJaxReady = true;
+    }
+  }
 };
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
-:root{--bg:#0f1117;--card:#1a1d27;--card-border:#2a2d3a;--accent:#6c8cff;--accent2:#fbbf24;--accent3:#34d399;--text:#e0e4ef;--text-dim:#8b92a8;--text-bright:#f4f5f9;--danger:#f87171;--purple:#a78bfa;--pink:#f472b6}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.85;overflow-x:hidden}.app{max-width:860px;margin:0 auto;padding:20px}.header{text-align:center;padding:50px 20px 35px;position:relative}.header::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}.header h1{font-size:2.4em;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--purple),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;letter-spacing:-0.02em}.header .subtitle{font-size:1em;color:var(--text-dim);font-weight:300}.nav{display:flex;align-items:center;justify-content:center;gap:12px;margin:24px 0;padding:12px 16px;background:rgba(26,29,39,0.9);border-radius:14px;border:1px solid var(--card-border);position:sticky;top:10px;z-index:100;backdrop-filter:blur(20px);flex-wrap:wrap}.nav button{background:none;border:1.5px solid var(--card-border);color:var(--text);padding:7px 18px;border-radius:8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:0.88em;font-weight:500;transition:all 0.2s}.nav button:hover{border-color:var(--accent);color:var(--accent);background:rgba(108,140,255,0.08)}.nav button:disabled{opacity:0.3;cursor:not-allowed}.nav .slide-num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:0.9em;min-width:80px;text-align:center}.progress-bar{width:100%;height:2px;background:var(--card-border);border-radius:1px;margin-top:8px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:1px;transition:width 0.4s ease}.slide{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:36px 32px;margin:16px 0;animation:fadeIn 0.4s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}.slide-title{font-size:1.4em;font-weight:700;color:var(--accent);margin-bottom:20px;padding-bottom:10px;border-bottom:1.5px solid var(--card-border);display:flex;align-items:center;gap:10px}.slide-title .num{background:var(--accent);color:white;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75em;flex-shrink:0}.explanation{font-size:0.98em;line-height:1.9;color:var(--text)}.explanation p{margin-bottom:14px}.math-block{background:rgba(108,140,255,0.06);border-left:3px solid var(--accent);padding:18px 22px;margin:18px 0;border-radius:0 10px 10px 0;overflow-x:auto;font-size:1.05em}.highlight-box{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);padding:14px 18px;border-radius:10px;margin:14px 0;font-size:0.95em}.key-point{background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.25);padding:14px 18px;border-radius:10px;margin:14px 0;font-size:0.95em}.warning-box{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);padding:14px 18px;border-radius:10px;margin:14px 0;font-size:0.95em}.code-block{background:#12141c;border:1px solid var(--card-border);border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'JetBrains Mono',monospace;font-size:0.85em;overflow-x:auto;line-height:1.7;color:#c9d1d9;white-space:pre}.info-table{width:100%;border-collapse:separate;border-spacing:0;margin:18px 0;border-radius:10px;overflow:hidden;border:1px solid var(--card-border);font-size:0.93em}.info-table th{background:rgba(108,140,255,0.12);padding:10px 14px;text-align:left;font-weight:600;color:var(--accent)}.info-table td{padding:9px 14px;border-top:1px solid var(--card-border)}.info-table tr:hover td{background:rgba(108,140,255,0.04)}.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin:18px 0}.toc-item{background:rgba(108,140,255,0.04);border:1px solid var(--card-border);padding:10px 14px;border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.88em}.toc-item:hover{border-color:var(--accent);background:rgba(108,140,255,0.08);transform:translateY(-1px)}.toc-item .toc-num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:0.78em;margin-right:6px}strong{color:var(--accent2)}em{color:var(--accent3);font-style:normal}.section-divider{text-align:center;padding:10px;color:var(--purple);font-weight:700;font-size:0.85em;letter-spacing:2px;text-transform:uppercase;margin:10px 0}@media(max-width:700px){.slide{padding:22px 16px}.header h1{font-size:1.8em}.app{padding:12px}}
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-top: 16px;
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .math-block {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    overflow-x: auto;
+    font-size: 1.05em;
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  .highlight-box {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 14px 0;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table tr:hover td {
+    background: var(--accent-light);
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+    line-height: 1.7;
+    white-space: pre;
+  }
+
+  strong { color: var(--accent); font-weight: 500; }
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 8px 0 12px 20px; }
+  li { margin-bottom: 4px; }
+
+  .section-divider {
+    text-align: center;
+    padding: 10px;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 10px 0 20px;
+  }
+
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 200px 1fr; }
+    .content { padding: 32px 32px 60px; }
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 28px 24px 60px; }
+  }
+  @media (max-width: 768px) {
+    .topbar { padding: 10px 16px; }
+    .topbar h1 { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60vw; }
+    .content { padding: 20px 16px 48px; }
+    .page-section h2 { font-size: 18px; }
+    .card { padding: 18px 16px; }
+  }
+  @media (max-width: 480px) {
+    .content { padding: 16px 12px 40px; }
+    body { font-size: 14px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
 </style>
 </head>
 <body>
-<div class="app" id="app">
-<div class="header"><h1>Machine-level Programming II</h1><div class="subtitle">System Programming CSE306 — DGIST</div></div>
-<div id="content"></div>
-</div>
-<script>
-const slides=[
-// 0: 목차
-{title:"강의 개요",render:function(c){c.innerHTML=`<div class="explanation"><p>이 강의는 x86-64 어셈블리에서 <strong>제어 흐름(Control Flow)</strong>을 구현하는 방법을 다룹니다. C의 if, while, for, switch가 어셈블리로 어떻게 변환되는지를 배웁니다.</p><div class="toc"><div class="toc-item" onclick="goSlide(1)"><span class="toc-num">01</span> 강의 소개</div><div class="toc-item" onclick="goSlide(3)"><span class="toc-num">03</span> Condition Codes</div><div class="toc-item" onclick="goSlide(7)"><span class="toc-num">07</span> SetX 명령어</div><div class="toc-item" onclick="goSlide(11)"><span class="toc-num">11</span> Conditional Branch</div><div class="toc-item" onclick="goSlide(16)"><span class="toc-num">16</span> Conditional Move</div><div class="toc-item" onclick="goSlide(21)"><span class="toc-num">21</span> 루프 (Loops)</div><div class="toc-item" onclick="goSlide(31)"><span class="toc-num">31</span> Switch 문</div><div class="toc-item" onclick="goSlide(40)"><span class="toc-num">40</span> 요약</div></div></div>`}},
-// 1: 표지 (p1)
-{title:"강의 소개",render:function(c){c.innerHTML=`<div class="explanation"><div class="highlight-box"><strong>과목:</strong> System Programming (CSE306) · DGIST<br><strong>주제:</strong> Chapter 5 — Machine-level Programming II: Control<br><strong>담당:</strong> Prof. Yongwoo Lee</div><p>이전 강의에서 레지스터, 데이터 이동(mov), 산술 연산을 배웠습니다. 이번에는 <strong>프로그램의 실행 흐름을 제어</strong>하는 방법 — 조건 분기, 루프, switch 문이 어셈블리 수준에서 어떻게 구현되는지를 다룹니다.</p></div>`}},
-// 2: 로드맵 (p2)
-{title:"로드맵",render:function(c){c.innerHTML=`<div class="explanation"><table class="info-table"><tr><th>파트</th><th>내용</th></tr><tr><td><strong>1. Condition Codes</strong></td><td>CF, ZF, SF, OF — 산술 결과의 상태 플래그</td></tr><tr><td><strong>2. Conditional Branches</strong></td><td>if-else의 어셈블리 구현, goto 변환</td></tr><tr><td><strong>3. Conditional Moves</strong></td><td>분기 없이 조건부 연산 (파이프라인 최적화)</td></tr><tr><td><strong>4. Loops</strong></td><td>do-while, while, for → 어셈블리 변환 패턴</td></tr><tr><td><strong>5. Switch Statements</strong></td><td>Jump Table을 이용한 효율적 다중 분기</td></tr></table></div>`}},
-// 3: Processor State (p3)
-{title:"프로세서 상태 — Condition Codes",render:function(c){c.innerHTML=`<div class="explanation"><p>x86-64 프로세서의 상태 정보에는 16개의 레지스터 외에 <strong>Condition Codes</strong>(조건 코드)라는 1비트 플래그들이 있습니다:</p><table class="info-table"><tr><th>상태</th><th>저장 위치</th><th>용도</th></tr><tr><td>임시 데이터</td><td>%rax 등 범용 레지스터</td><td>연산 중간 결과</td></tr><tr><td>런타임 스택 위치</td><td>%rsp</td><td>스택의 현재 최상단</td></tr><tr><td>현재 명령어 위치</td><td>%rip (Program Counter)</td><td>다음 실행할 명령어 주소</td></tr><tr><td><strong>최근 연산 결과 상태</strong></td><td><strong>CF, ZF, SF, OF</strong></td><td><strong>조건 분기의 기준</strong></td></tr></table><div class="key-point">Condition Codes는 <strong>별도의 레지스터가 아닌 1비트 플래그</strong>입니다. 산술/논리 연산이 실행될 때마다 자동으로 갱신되며, 이 값을 읽어서 조건 분기를 결정합니다.</div></div>`}},
-// 4: Condition Codes - Arithmetic (p4)
-{title:"Condition Codes — 산술 연산에 의한 설정",render:function(c){c.innerHTML=`<div class="explanation"><p>4개의 <strong>단일 비트 레지스터</strong>:</p><table class="info-table"><tr><th>플래그</th><th>이름</th><th>의미</th></tr><tr><td><strong>CF</strong></td><td>Carry Flag</td><td>unsigned 연산에서 올림/빌림 발생</td></tr><tr><td><strong>ZF</strong></td><td>Zero Flag</td><td>결과가 0</td></tr><tr><td><strong>SF</strong></td><td>Sign Flag</td><td>결과가 음수 (최상위 비트가 1)</td></tr><tr><td><strong>OF</strong></td><td>Overflow Flag</td><td>signed 연산에서 오버플로우 발생</td></tr></table><p>예시: <span style="color:var(--purple)">addq Src, Dest</span> (t = a + b)를 실행하면:</p><div class="highlight-box">• <strong>CF</strong>: 최상위 비트에서 carry out 발생 시 (unsigned overflow)<br>• <strong>ZF</strong>: t == 0이면 set<br>• <strong>SF</strong>: t &lt; 0이면 set (signed로 해석 시)<br>• <strong>OF</strong>: signed overflow — (a&gt;0 && b&gt;0 && t&lt;0) || (a&lt;0 && b&lt;0 && t&gt;=0)</div><div class="warning-box"><strong>leaq는 Condition Codes를 설정하지 않습니다!</strong> leaq는 주소 계산용이지 산술 연산이 아니기 때문입니다.</div></div>`}},
-// 5: Condition Codes - Compare (p5)
-{title:"cmpq — 비교 명령어",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>cmpq Src2, Src1</strong> — a - b를 계산하지만 <em>결과를 저장하지 않고</em> Condition Codes만 설정합니다.</p><div class="code-block">cmpq b, a    # a - b를 계산, 결과는 버림, 플래그만 설정</div><table class="info-table"><tr><th>플래그</th><th>설정 조건</th><th>의미</th></tr><tr><td><strong>CF</strong></td><td>MSB에서 carry out</td><td>unsigned 비교에 사용</td></tr><tr><td><strong>ZF</strong></td><td>a == b</td><td>같은 값</td></tr><tr><td><strong>SF</strong></td><td>(a - b) &lt; 0</td><td>signed로 a가 작음</td></tr><tr><td><strong>OF</strong></td><td>signed overflow</td><td>(a&gt;0 && b&lt;0 && (a-b)&lt;0) || (a&lt;0 && b&gt;0 && (a-b)&gt;0)</td></tr></table><div class="key-point">cmpq는 subq와 동일한 연산을 하지만 <strong>결과를 어디에도 저장하지 않습니다</strong>. 오직 플래그 설정만이 목적입니다. if (a > b)를 구현할 때 핵심적으로 사용됩니다.</div></div>`}},
-// 6: Condition Codes - Test (p6)
-{title:"testq — 테스트 명령어",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>testq Src2, Src1</strong> — a & b를 계산하지만 <em>결과를 저장하지 않고</em> Condition Codes만 설정합니다.</p><div class="code-block">testq b, a    # a & b를 계산, 결과는 버림, 플래그만 설정</div><table class="info-table"><tr><th>플래그</th><th>설정 조건</th></tr><tr><td><strong>ZF</strong></td><td>a & b == 0일 때</td></tr><tr><td><strong>SF</strong></td><td>a & b &lt; 0일 때</td></tr></table><p>testq의 대표적 사용법:</p><div class="code-block">testq %rax, %rax    # rax & rax = rax의 값 자체를 테스트
+  <div class="topbar">
+    <div>
+      <h1>Machine-Level Programming: Control</h1>
+      <div class="meta">System Programming CSE306 &mdash; DGIST</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">페이지 목록</div>
+
+      <div class="section-label">Overview</div>
+      <a href="#p1">01 &mdash; 강의 개요</a>
+      <a href="#p2">02 &mdash; 강의 소개</a>
+      <a href="#p3">03 &mdash; 로드맵</a>
+
+      <div class="section-label">Condition Codes</div>
+      <a href="#p4">04 &mdash; 프로세서 상태</a>
+      <a href="#p5">05 &mdash; 산술 연산 설정</a>
+      <a href="#p6">06 &mdash; cmpq 비교 명령어</a>
+      <a href="#p7">07 &mdash; testq 테스트 명령어</a>
+
+      <div class="section-label">SetX 명령어</div>
+      <a href="#p8">08 &mdash; SetX 명령어</a>
+      <a href="#p9">09 &mdash; 하위 바이트 레지스터</a>
+      <a href="#p10">10 &mdash; SetX 사용 예제</a>
+
+      <div class="section-label">Conditional Branch</div>
+      <a href="#p11">11 &mdash; 로드맵 (분기)</a>
+      <a href="#p12">12 &mdash; jX 조건부 점프</a>
+      <a href="#p13">13 &mdash; 조건 분기 예제</a>
+      <a href="#p14">14 &mdash; Goto 코드 표현</a>
+      <a href="#p15">15 &mdash; 조건문 변환 패턴</a>
+
+      <div class="section-label">Conditional Move</div>
+      <a href="#p16">16 &mdash; Conditional Move</a>
+      <a href="#p17">17 &mdash; cmov 예제</a>
+      <a href="#p18">18 &mdash; cmov 주의사항</a>
+
+      <div class="section-label">Loops</div>
+      <a href="#p19">19 &mdash; 로드맵 (루프)</a>
+      <a href="#p20">20 &mdash; Do-While 예제</a>
+      <a href="#p21">21 &mdash; Do-While 컴파일</a>
+      <a href="#p22">22 &mdash; Do-While 변환 패턴</a>
+      <a href="#p23">23 &mdash; While #1 JTM</a>
+      <a href="#p24">24 &mdash; While 예제 (JTM)</a>
+      <a href="#p25">25 &mdash; While #2 DW변환</a>
+      <a href="#p26">26 &mdash; While 예제 (DW)</a>
+      <a href="#p27">27 &mdash; For 루프 구조</a>
+      <a href="#p28">28 &mdash; For → While</a>
+      <a href="#p29">29 &mdash; For-While 예제</a>
+      <a href="#p30">30 &mdash; For Do-While 변환</a>
+
+      <div class="section-label">Switch</div>
+      <a href="#p31">31 &mdash; 로드맵 (Switch)</a>
+      <a href="#p32">32 &mdash; Switch 예제</a>
+      <a href="#p33">33 &mdash; Jump Table 구조</a>
+      <a href="#p34">34 &mdash; Switch Setup</a>
+      <a href="#p35">35 &mdash; Jump Table 내용</a>
+      <a href="#p36">36 &mdash; Jump Table 동작</a>
+      <a href="#p37">37 &mdash; case 1</a>
+      <a href="#p38">38 &mdash; Fall-Through</a>
+      <a href="#p39">39 &mdash; case 2, 3 어셈블리</a>
+      <a href="#p40">40 &mdash; case 5/6, default</a>
+
+      <div class="section-label">Summary</div>
+      <a href="#p41">41 &mdash; 정리</a>
+      <a href="#p42">42 &mdash; 요약</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== Page 1 ==================== -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>강의 개요</h2>
+        <div class="summary-box">
+          이 강의는 x86-64 어셈블리에서 <strong>제어 흐름(Control Flow)</strong>을 구현하는 방법을 다룹니다. C의 if, while, for, switch가 어셈블리로 어떻게 변환되는지를 배웁니다.
+        </div>
+        <div class="card">
+          <div class="card-label">목차</div>
+          <table class="terms-table">
+            <tr><th>번호</th><th>주제</th></tr>
+            <tr><td>01</td><td>강의 소개</td></tr>
+            <tr><td>03</td><td>Condition Codes</td></tr>
+            <tr><td>07</td><td>SetX 명령어</td></tr>
+            <tr><td>11</td><td>Conditional Branch</td></tr>
+            <tr><td>16</td><td>Conditional Move</td></tr>
+            <tr><td>21</td><td>루프 (Loops)</td></tr>
+            <tr><td>31</td><td>Switch 문</td></tr>
+            <tr><td>40</td><td>요약</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 2 ==================== -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>강의 소개</h2>
+        <div class="card">
+          <div class="highlight-box">
+            <strong>과목:</strong> System Programming (CSE306) · DGIST<br>
+            <strong>주제:</strong> Chapter 5 — Machine-level Programming II: Control<br>
+            <strong>담당:</strong> Prof. Yongwoo Lee
+          </div>
+          <p>이전 강의에서 레지스터, 데이터 이동(mov), 산술 연산을 배웠습니다. 이번에는 <strong>프로그램의 실행 흐름을 제어</strong>하는 방법 — 조건 분기, 루프, switch 문이 어셈블리 수준에서 어떻게 구현되는지를 다룹니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 3 ==================== -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>로드맵</h2>
+        <div class="card">
+          <table class="terms-table">
+            <tr><th>파트</th><th>내용</th></tr>
+            <tr><td><strong>1. Condition Codes</strong></td><td>CF, ZF, SF, OF — 산술 결과의 상태 플래그</td></tr>
+            <tr><td><strong>2. Conditional Branches</strong></td><td>if-else의 어셈블리 구현, goto 변환</td></tr>
+            <tr><td><strong>3. Conditional Moves</strong></td><td>분기 없이 조건부 연산 (파이프라인 최적화)</td></tr>
+            <tr><td><strong>4. Loops</strong></td><td>do-while, while, for → 어셈블리 변환 패턴</td></tr>
+            <tr><td><strong>5. Switch Statements</strong></td><td>Jump Table을 이용한 효율적 다중 분기</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 4 ==================== -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>프로세서 상태 — Condition Codes</h2>
+        <div class="card">
+          <p>x86-64 프로세서의 상태 정보에는 16개의 레지스터 외에 <strong>Condition Codes</strong>(조건 코드)라는 1비트 플래그들이 있습니다:</p>
+          <table class="terms-table">
+            <tr><th>상태</th><th>저장 위치</th><th>용도</th></tr>
+            <tr><td>임시 데이터</td><td>%rax 등 범용 레지스터</td><td>연산 중간 결과</td></tr>
+            <tr><td>런타임 스택 위치</td><td>%rsp</td><td>스택의 현재 최상단</td></tr>
+            <tr><td>현재 명령어 위치</td><td>%rip (Program Counter)</td><td>다음 실행할 명령어 주소</td></tr>
+            <tr><td><strong>최근 연산 결과 상태</strong></td><td><strong>CF, ZF, SF, OF</strong></td><td><strong>조건 분기의 기준</strong></td></tr>
+          </table>
+          <div class="key-point">Condition Codes는 <strong>별도의 레지스터가 아닌 1비트 플래그</strong>입니다. 산술/논리 연산이 실행될 때마다 자동으로 갱신되며, 이 값을 읽어서 조건 분기를 결정합니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 5 ==================== -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>Condition Codes — 산술 연산에 의한 설정</h2>
+        <div class="card">
+          <p>4개의 <strong>단일 비트 레지스터</strong>:</p>
+          <table class="terms-table">
+            <tr><th>플래그</th><th>이름</th><th>의미</th></tr>
+            <tr><td><strong>CF</strong></td><td>Carry Flag</td><td>unsigned 연산에서 올림/빌림 발생</td></tr>
+            <tr><td><strong>ZF</strong></td><td>Zero Flag</td><td>결과가 0</td></tr>
+            <tr><td><strong>SF</strong></td><td>Sign Flag</td><td>결과가 음수 (최상위 비트가 1)</td></tr>
+            <tr><td><strong>OF</strong></td><td>Overflow Flag</td><td>signed 연산에서 오버플로우 발생</td></tr>
+          </table>
+          <p>예시: <strong>addq Src, Dest</strong> (t = a + b)를 실행하면:</p>
+          <div class="highlight-box">
+            <strong>CF:</strong> 최상위 비트에서 carry out 발생 시 (unsigned overflow)<br>
+            <strong>ZF:</strong> t == 0이면 set<br>
+            <strong>SF:</strong> t &lt; 0이면 set (signed로 해석 시)<br>
+            <strong>OF:</strong> signed overflow — (a&gt;0 &amp;&amp; b&gt;0 &amp;&amp; t&lt;0) || (a&lt;0 &amp;&amp; b&lt;0 &amp;&amp; t&gt;=0)
+          </div>
+          <div class="warning-box"><strong>leaq는 Condition Codes를 설정하지 않습니다!</strong> leaq는 주소 계산용이지 산술 연산이 아니기 때문입니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 6 ==================== -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>cmpq — 비교 명령어</h2>
+        <div class="card">
+          <p><strong>cmpq Src2, Src1</strong> — a - b를 계산하지만 결과를 저장하지 않고 Condition Codes만 설정합니다.</p>
+          <pre>cmpq b, a    # a - b를 계산, 결과는 버림, 플래그만 설정</pre>
+          <table class="terms-table">
+            <tr><th>플래그</th><th>설정 조건</th><th>의미</th></tr>
+            <tr><td><strong>CF</strong></td><td>MSB에서 carry out</td><td>unsigned 비교에 사용</td></tr>
+            <tr><td><strong>ZF</strong></td><td>a == b</td><td>같은 값</td></tr>
+            <tr><td><strong>SF</strong></td><td>(a - b) &lt; 0</td><td>signed로 a가 작음</td></tr>
+            <tr><td><strong>OF</strong></td><td>signed overflow</td><td>(a&gt;0 &amp;&amp; b&lt;0 &amp;&amp; (a-b)&lt;0) || (a&lt;0 &amp;&amp; b&gt;0 &amp;&amp; (a-b)&gt;0)</td></tr>
+          </table>
+          <div class="key-point">cmpq는 subq와 동일한 연산을 하지만 <strong>결과를 어디에도 저장하지 않습니다</strong>. 오직 플래그 설정만이 목적입니다. if (a > b)를 구현할 때 핵심적으로 사용됩니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 7 ==================== -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>testq — 테스트 명령어</h2>
+        <div class="card">
+          <p><strong>testq Src2, Src1</strong> — a &amp; b를 계산하지만 결과를 저장하지 않고 Condition Codes만 설정합니다.</p>
+          <pre>testq b, a    # a &amp; b를 계산, 결과는 버림, 플래그만 설정</pre>
+          <table class="terms-table">
+            <tr><th>플래그</th><th>설정 조건</th></tr>
+            <tr><td><strong>ZF</strong></td><td>a &amp; b == 0일 때</td></tr>
+            <tr><td><strong>SF</strong></td><td>a &amp; b &lt; 0일 때</td></tr>
+          </table>
+          <p>testq의 대표적 사용법:</p>
+<pre>testq %rax, %rax    # rax &amp; rax = rax의 값 자체를 테스트
                      # ZF: rax == 0이면 set
-                     # SF: rax < 0이면 set</div><div class="highlight-box"><strong>testq %rax, %rax</strong>는 가장 흔한 패턴입니다. 같은 레지스터를 두 번 넣으면 AND 결과가 자기 자신이므로, 해당 값이 0인지/음수인지를 간편하게 검사할 수 있습니다.</div></div>`}},
-// 7: Reading Condition Codes - SetX (p7)
-{title:"SetX 명령어 — Condition Codes 읽기",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>SetX</strong> 명령어는 Condition Codes의 조합에 따라 목적지의 <em>하위 1바이트</em>를 0 또는 1로 설정합니다.</p><table class="info-table"><tr><th>명령어</th><th>조건</th><th>의미</th></tr><tr><td><strong>sete</strong></td><td>ZF</td><td>Equal / Zero</td></tr><tr><td><strong>setne</strong></td><td>~ZF</td><td>Not Equal / Not Zero</td></tr><tr><td><strong>sets</strong></td><td>SF</td><td>Negative</td></tr><tr><td><strong>setns</strong></td><td>~SF</td><td>Nonnegative</td></tr><tr><td><strong>setg</strong></td><td>~(SF^OF) & ~ZF</td><td>Greater (Signed)</td></tr><tr><td><strong>setge</strong></td><td>~(SF^OF)</td><td>Greater or Equal (Signed)</td></tr><tr><td><strong>setl</strong></td><td>SF^OF</td><td>Less (Signed)</td></tr><tr><td><strong>setle</strong></td><td>(SF^OF) | ZF</td><td>Less or Equal (Signed)</td></tr><tr><td><strong>seta</strong></td><td>~CF & ~ZF</td><td>Above (Unsigned)</td></tr><tr><td><strong>setb</strong></td><td>CF</td><td>Below (Unsigned)</td></tr></table><div class="warning-box"><strong>주의:</strong> SetX는 1바이트만 설정하고 나머지 7바이트는 건드리지 않습니다!</div></div>`}},
-// 8: x86-64 Byte Registers (p8)
-{title:"x86-64 하위 바이트 레지스터",render:function(c){c.innerHTML=`<div class="explanation"><p>SetX 명령어의 대상은 레지스터의 <strong>하위 1바이트</strong>입니다:</p><div class="code-block">64비트     하위 1바이트     64비트     하위 1바이트
+                     # SF: rax &lt; 0이면 set</pre>
+          <div class="highlight-box"><strong>testq %rax, %rax</strong>는 가장 흔한 패턴입니다. 같은 레지스터를 두 번 넣으면 AND 결과가 자기 자신이므로, 해당 값이 0인지/음수인지를 간편하게 검사할 수 있습니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 8 ==================== -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>SetX 명령어 — Condition Codes 읽기</h2>
+        <div class="card">
+          <p><strong>SetX</strong> 명령어는 Condition Codes의 조합에 따라 목적지의 하위 1바이트를 0 또는 1로 설정합니다.</p>
+          <table class="terms-table">
+            <tr><th>명령어</th><th>조건</th><th>의미</th></tr>
+            <tr><td><strong>sete</strong></td><td>ZF</td><td>Equal / Zero</td></tr>
+            <tr><td><strong>setne</strong></td><td>~ZF</td><td>Not Equal / Not Zero</td></tr>
+            <tr><td><strong>sets</strong></td><td>SF</td><td>Negative</td></tr>
+            <tr><td><strong>setns</strong></td><td>~SF</td><td>Nonnegative</td></tr>
+            <tr><td><strong>setg</strong></td><td>~(SF^OF) &amp; ~ZF</td><td>Greater (Signed)</td></tr>
+            <tr><td><strong>setge</strong></td><td>~(SF^OF)</td><td>Greater or Equal (Signed)</td></tr>
+            <tr><td><strong>setl</strong></td><td>SF^OF</td><td>Less (Signed)</td></tr>
+            <tr><td><strong>setle</strong></td><td>(SF^OF) | ZF</td><td>Less or Equal (Signed)</td></tr>
+            <tr><td><strong>seta</strong></td><td>~CF &amp; ~ZF</td><td>Above (Unsigned)</td></tr>
+            <tr><td><strong>setb</strong></td><td>CF</td><td>Below (Unsigned)</td></tr>
+          </table>
+          <div class="warning-box"><strong>주의:</strong> SetX는 1바이트만 설정하고 나머지 7바이트는 건드리지 않습니다!</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 9 ==================== -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>x86-64 하위 바이트 레지스터</h2>
+        <div class="card">
+          <p>SetX 명령어의 대상은 레지스터의 <strong>하위 1바이트</strong>입니다:</p>
+<pre>64비트     하위 1바이트     64비트     하위 1바이트
 %rax       %al             %r8        %r8b
 %rbx       %bl             %r9        %r9b
 %rcx       %cl             %r10       %r10b
@@ -51,43 +568,108 @@ const slides=[
 %rsi       %sil            %r12       %r12b
 %rdi       %dil            %r13       %r13b
 %rsp       %spl            %r14       %r14b
-%rbp       %bpl            %r15       %r15b</div><div class="key-point">x86-64에서는 하위 1바이트(%al), 2바이트(%ax), 4바이트(%eax), 8바이트(%rax)를 모두 개별적으로 접근할 수 있습니다. SetX는 이 중 1바이트 레지스터를 사용합니다.</div></div>`}},
-// 9: Reading Condition Codes - Example (p9)
-{title:"SetX 사용 예제 — gt 함수",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">int gt(long x, long y) {
+%rbp       %bpl            %r15       %r15b</pre>
+          <div class="key-point">x86-64에서는 하위 1바이트(%al), 2바이트(%ax), 4바이트(%eax), 8바이트(%rax)를 모두 개별적으로 접근할 수 있습니다. SetX는 이 중 1바이트 레지스터를 사용합니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 10 ==================== -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>SetX 사용 예제 — gt 함수</h2>
+        <div class="card">
+<pre>int gt(long x, long y) {
     return x > y;
-}</div><p>컴파일 결과 (gcc -Og):</p><div class="code-block">gt:
+}</pre>
+          <p>컴파일 결과 (gcc -Og):</p>
+<pre>gt:
     cmpq   %rsi, %rdi    # x - y 비교 (x:y)
     setg   %al            # x > y이면 %al = 1, 아니면 0
     movzbl %al, %eax      # %al을 %eax로 zero-extend
-    ret                   # %eax(= %rax 하위 4바이트)를 반환</div><table class="info-table"><tr><th>레지스터</th><th>용도</th></tr><tr><td>%rdi</td><td>첫 번째 인자 x</td></tr><tr><td>%rsi</td><td>두 번째 인자 y</td></tr><tr><td>%rax</td><td>반환값 (0 또는 1)</td></tr></table><div class="highlight-box"><strong>movzbl %al, %eax</strong>: "Move Zero-extending Byte to Long". %al(1바이트)을 %eax(4바이트)로 확장하면서 상위 비트를 0으로 채웁니다. 32비트 연산이 자동으로 상위 32비트도 0으로 만들기 때문에 결과적으로 %rax 전체가 깨끗해집니다.</div></div>`}},
-// 10: 섹션 구분 - Conditional Branches (p10)
-{title:"로드맵 — 조건부 분기",render:function(c){c.innerHTML=`<div class="explanation"><div class="section-divider">— Conditional Branches —</div><p>Condition Codes를 설정하는 법을 배웠으니, 이제 이를 이용해 <strong>프로그램의 실행 흐름을 바꾸는</strong> 방법을 배웁니다. if-else 문이 어셈블리에서 어떻게 구현되는지 살펴봅니다.</p></div>`}},
-// 11: Jumping - jX Instructions (p11)
-{title:"jX 명령어 — 조건부 점프",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>jX</strong> 명령어는 Condition Codes에 따라 다른 코드 위치로 점프합니다:</p><table class="info-table"><tr><th>명령어</th><th>조건</th><th>의미</th></tr><tr><td><strong>jmp</strong></td><td>1 (항상)</td><td>Unconditional jump</td></tr><tr><td><strong>je</strong></td><td>ZF</td><td>Equal / Zero</td></tr><tr><td><strong>jne</strong></td><td>~ZF</td><td>Not Equal / Not Zero</td></tr><tr><td><strong>js</strong></td><td>SF</td><td>Negative</td></tr><tr><td><strong>jns</strong></td><td>~SF</td><td>Nonnegative</td></tr><tr><td><strong>jg</strong></td><td>~(SF^OF) & ~ZF</td><td>Greater (Signed)</td></tr><tr><td><strong>jge</strong></td><td>~(SF^OF)</td><td>Greater or Equal (Signed)</td></tr><tr><td><strong>jl</strong></td><td>SF^OF</td><td>Less (Signed)</td></tr><tr><td><strong>jle</strong></td><td>(SF^OF) | ZF</td><td>Less or Equal (Signed)</td></tr><tr><td><strong>ja</strong></td><td>~CF & ~ZF</td><td>Above (Unsigned)</td></tr><tr><td><strong>jb</strong></td><td>CF</td><td>Below (Unsigned)</td></tr></table><div class="key-point">SetX와 jX의 조건이 <strong>완전히 동일</strong>합니다! SetX는 결과를 바이트에 저장하고, jX는 점프 여부를 결정하는 차이만 있습니다.</div></div>`}},
-// 12: Conditional Branch Example (p12)
-{title:"조건 분기 예제 — absdiff",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">long absdiff(long x, long y) {
+    ret                   # %eax(= %rax 하위 4바이트)를 반환</pre>
+          <table class="terms-table">
+            <tr><th>레지스터</th><th>용도</th></tr>
+            <tr><td>%rdi</td><td>첫 번째 인자 x</td></tr>
+            <tr><td>%rsi</td><td>두 번째 인자 y</td></tr>
+            <tr><td>%rax</td><td>반환값 (0 또는 1)</td></tr>
+          </table>
+          <div class="highlight-box"><strong>movzbl %al, %eax</strong>: "Move Zero-extending Byte to Long". %al(1바이트)을 %eax(4바이트)로 확장하면서 상위 비트를 0으로 채웁니다. 32비트 연산이 자동으로 상위 32비트도 0으로 만들기 때문에 결과적으로 %rax 전체가 깨끗해집니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 11 ==================== -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>로드맵 — 조건부 분기</h2>
+        <div class="card">
+          <div class="section-divider">— Conditional Branches —</div>
+          <p>Condition Codes를 설정하는 법을 배웠으니, 이제 이를 이용해 <strong>프로그램의 실행 흐름을 바꾸는</strong> 방법을 배웁니다. if-else 문이 어셈블리에서 어떻게 구현되는지 살펴봅니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 12 ==================== -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>jX 명령어 — 조건부 점프</h2>
+        <div class="card">
+          <p><strong>jX</strong> 명령어는 Condition Codes에 따라 다른 코드 위치로 점프합니다:</p>
+          <table class="terms-table">
+            <tr><th>명령어</th><th>조건</th><th>의미</th></tr>
+            <tr><td><strong>jmp</strong></td><td>1 (항상)</td><td>Unconditional jump</td></tr>
+            <tr><td><strong>je</strong></td><td>ZF</td><td>Equal / Zero</td></tr>
+            <tr><td><strong>jne</strong></td><td>~ZF</td><td>Not Equal / Not Zero</td></tr>
+            <tr><td><strong>js</strong></td><td>SF</td><td>Negative</td></tr>
+            <tr><td><strong>jns</strong></td><td>~SF</td><td>Nonnegative</td></tr>
+            <tr><td><strong>jg</strong></td><td>~(SF^OF) &amp; ~ZF</td><td>Greater (Signed)</td></tr>
+            <tr><td><strong>jge</strong></td><td>~(SF^OF)</td><td>Greater or Equal (Signed)</td></tr>
+            <tr><td><strong>jl</strong></td><td>SF^OF</td><td>Less (Signed)</td></tr>
+            <tr><td><strong>jle</strong></td><td>(SF^OF) | ZF</td><td>Less or Equal (Signed)</td></tr>
+            <tr><td><strong>ja</strong></td><td>~CF &amp; ~ZF</td><td>Above (Unsigned)</td></tr>
+            <tr><td><strong>jb</strong></td><td>CF</td><td>Below (Unsigned)</td></tr>
+          </table>
+          <div class="key-point">SetX와 jX의 조건이 <strong>완전히 동일</strong>합니다! SetX는 결과를 바이트에 저장하고, jX는 점프 여부를 결정하는 차이만 있습니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 13 ==================== -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>조건 분기 예제 — absdiff</h2>
+        <div class="card">
+<pre>long absdiff(long x, long y) {
     long result;
     if (x > y)
         result = x - y;
     else
         result = y - x;
     return result;
-}</div><p>컴파일 결과 (<span style="color:var(--purple)">gcc -Og -S -fno-if-conversion</span>):</p><div class="code-block">absdiff:
+}</pre>
+          <p>컴파일 결과 (<strong>gcc -Og -S -fno-if-conversion</strong>):</p>
+<pre>absdiff:
     cmpq    %rsi, %rdi    # x:y 비교
-    jle     .L4           # x <= y이면 .L4로 점프
+    jle     .L4           # x &lt;= y이면 .L4로 점프
     movq    %rdi, %rax    # result = x
     subq    %rsi, %rax    # result = x - y
     ret
-.L4:                      # x <= y인 경우
+.L4:                      # x &lt;= y인 경우
     movq    %rsi, %rax    # result = y
     subq    %rdi, %rax    # result = y - x
-    ret</div><div class="highlight-box">if의 조건(x > y)의 <strong>반대 조건</strong>(x &le; y)으로 점프합니다. 조건이 거짓일 때 else 블록으로 뛰는 것이 일반적인 패턴입니다.</div></div>`}},
-// 13: Goto Code (p13)
-{title:"Goto 코드로 표현하기",render:function(c){c.innerHTML=`<div class="explanation"><p>C의 <strong>goto 문</strong>을 사용하면 어셈블리의 동작을 정확히 흉내낼 수 있습니다:</p><div class="code-block">// 원본 C 코드                    // Goto 버전
+    ret</pre>
+          <div class="highlight-box">if의 조건(x > y)의 <strong>반대 조건</strong>(x &le; y)으로 점프합니다. 조건이 거짓일 때 else 블록으로 뛰는 것이 일반적인 패턴입니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 14 ==================== -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>Goto 코드로 표현하기</h2>
+        <div class="card">
+          <p>C의 <strong>goto 문</strong>을 사용하면 어셈블리의 동작을 정확히 흉내낼 수 있습니다:</p>
+<pre>// 원본 C 코드                    // Goto 버전
 long absdiff(long x, long y)     long absdiff_j(long x, long y)
 {                                 {
     long result;                      long result;
-    if (x > y)                        int ntest = x <= y;
+    if (x > y)                        int ntest = x &lt;= y;
         result = x-y;                 if (ntest) goto Else;
     else                              result = x-y;
         result = y-x;                 goto Done;
@@ -95,9 +677,24 @@ long absdiff(long x, long y)     long absdiff_j(long x, long y)
 }                                     result = y-x;
                                   Done:
                                       return result;
-                                  }</div><div class="key-point"><strong>Goto 변환의 핵심 패턴:</strong><br>1. 조건의 <em>부정</em>(ntest)을 계산<br>2. ntest가 참이면 Else 블록으로 goto<br>3. Then 블록 실행 후 Done으로 goto<br>4. Else 블록 실행<br>5. Done에서 합류</div></div>`}},
-// 14: General Conditional Translation (p14)
-{title:"일반적인 조건문 변환 패턴",render:function(c){c.innerHTML=`<div class="explanation"><p>C의 삼항 연산자 또는 if-else는 다음과 같은 <strong>일반적 패턴</strong>으로 어셈블리에 변환됩니다:</p><div class="code-block">// C 코드                         // Goto 버전
+                                  }</pre>
+          <div class="key-point"><strong>Goto 변환의 핵심 패턴:</strong><br>
+            1. 조건의 부정(ntest)을 계산<br>
+            2. ntest가 참이면 Else 블록으로 goto<br>
+            3. Then 블록 실행 후 Done으로 goto<br>
+            4. Else 블록 실행<br>
+            5. Done에서 합류
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 15 ==================== -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>일반적인 조건문 변환 패턴</h2>
+        <div class="card">
+          <p>C의 삼항 연산자 또는 if-else는 다음과 같은 <strong>일반적 패턴</strong>으로 어셈블리에 변환됩니다:</p>
+<pre>// C 코드                         // Goto 버전
 val = Test ? Then_Expr              ntest = !Test;
            : Else_Expr;             if (ntest) goto Else;
                                     val = Then_Expr;
@@ -105,159 +702,366 @@ val = Test ? Then_Expr              ntest = !Test;
                                   Else:
                                     val = Else_Expr;
                                   Done:
-                                    ...</div><p>이 패턴을 <strong>분기(Branch) 기반 변환</strong>이라 합니다:</p><div class="highlight-box">• Then 블록과 Else 블록을 <strong>별도 코드 영역</strong>으로 생성<br>• 조건에 따라 <strong>하나만 실행</strong><br>• 두 블록 모두 Done에서 합류</div></div>`}},
-// 15: Using Conditional Moves (p15)
-{title:"Conditional Move — 분기 없는 조건부 연산",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>Conditional Move (cmovX)</strong>: 분기(jmp) 없이 조건부로 데이터를 이동하는 명령어입니다.</p><div class="code-block">// C 코드                          // Goto 버전 (Conditional Move)
+                                    ...</pre>
+          <p>이 패턴을 <strong>분기(Branch) 기반 변환</strong>이라 합니다:</p>
+          <div class="highlight-box">
+            Then 블록과 Else 블록을 <strong>별도 코드 영역</strong>으로 생성<br>
+            조건에 따라 <strong>하나만 실행</strong><br>
+            두 블록 모두 Done에서 합류
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 16 ==================== -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>Conditional Move — 분기 없는 조건부 연산</h2>
+        <div class="card">
+          <p><strong>Conditional Move (cmovX)</strong>: 분기(jmp) 없이 조건부로 데이터를 이동하는 명령어입니다.</p>
+<pre>// C 코드                          // Goto 버전 (Conditional Move)
 val = Test ? Then_Expr              result = Then_Expr;
            : Else_Expr;             eval = Else_Expr;
                                     nt = !Test;
                                     if (nt) result = eval;
-                                    return result;</div><p><strong>핵심 차이점:</strong></p><div class="highlight-box">• 분기 기반: Then 또는 Else 중 <strong>하나만</strong> 실행<br>• Conditional Move: <strong>둘 다</strong> 계산한 후, 조건에 따라 결과를 선택</div><p><strong>왜 Conditional Move가 좋은가?</strong></p><div class="key-point">현대 CPU는 <strong>파이프라인(Pipeline)</strong>으로 명령어를 처리합니다. 분기(Branch)가 발생하면 파이프라인을 비우고 다시 채워야 하므로 큰 성능 손실이 생깁니다. Conditional Move는 제어 흐름을 바꾸지 않으므로 파이프라인을 방해하지 않습니다.</div></div>`}},
-// 16: Conditional Move Example (p16)
-{title:"Conditional Move 예제 — absdiff",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">long absdiff(long x, long y) {
+                                    return result;</pre>
+          <p><strong>핵심 차이점:</strong></p>
+          <div class="highlight-box">
+            <strong>분기 기반:</strong> Then 또는 Else 중 <strong>하나만</strong> 실행<br>
+            <strong>Conditional Move:</strong> <strong>둘 다</strong> 계산한 후, 조건에 따라 결과를 선택
+          </div>
+          <p><strong>왜 Conditional Move가 좋은가?</strong></p>
+          <div class="key-point">현대 CPU는 <strong>파이프라인(Pipeline)</strong>으로 명령어를 처리합니다. 분기(Branch)가 발생하면 파이프라인을 비우고 다시 채워야 하므로 큰 성능 손실이 생깁니다. Conditional Move는 제어 흐름을 바꾸지 않으므로 파이프라인을 방해하지 않습니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 17 ==================== -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>Conditional Move 예제 — absdiff</h2>
+        <div class="card">
+<pre>long absdiff(long x, long y) {
     long result;
     if (x > y)
         result = x-y;
     else
         result = y-x;
     return result;
-}</div><p>Conditional Move를 사용한 어셈블리:</p><div class="code-block">absdiff:
+}</pre>
+          <p>Conditional Move를 사용한 어셈블리:</p>
+<pre>absdiff:
     movq    %rdi, %rax    # rax = x
     subq    %rsi, %rax    # rax = x - y  (result 후보 1)
     movq    %rsi, %rdx
     subq    %rdi, %rdx    # rdx = y - x  (result 후보 2)
     cmpq    %rsi, %rdi    # x:y 비교
-    cmovle  %rdx, %rax    # x <= y이면 rax = rdx (y-x 선택)
-    ret</div><div class="highlight-box">x-y와 y-x를 <strong>모두 계산</strong>한 후, cmpq로 비교하고 <strong>cmovle</strong>로 올바른 결과를 선택합니다. 점프가 전혀 없습니다!</div></div>`}},
-// 17: Bad Cases for Conditional Move (p17)
-{title:"Conditional Move를 쓰면 안 되는 경우",render:function(c){c.innerHTML=`<div class="explanation"><p>Conditional Move는 <strong>양쪽을 모두 계산</strong>하므로, 다음 경우에는 사용할 수 없습니다:</p><table class="info-table"><tr><th>경우</th><th>예시</th><th>이유</th></tr><tr><td><strong>비용이 큰 계산</strong></td><td>val = Test(x) ? Hard1(x) : Hard2(x);</td><td>양쪽 모두 계산하면 낭비가 큼</td></tr><tr><td><strong>위험한 계산</strong></td><td>val = p ? *p : 0;</td><td>p가 NULL이면 *p에서 <em>segfault</em> 발생!</td></tr><tr><td><strong>부작용이 있는 계산</strong></td><td>val = x > 0 ? x*=7 : x+=3;</td><td>양쪽 모두 실행하면 x가 두 번 수정됨</td></tr></table><div class="warning-box"><strong>GCC의 판단:</strong> 컴파일러가 <em>안전하다고 판단한 경우에만</em> Conditional Move를 사용합니다. -fno-if-conversion 옵션으로 강제로 끌 수 있습니다.</div></div>`}},
-// 18: 섹션 구분 - Loops (p18)
-{title:"로드맵 — 루프",render:function(c){c.innerHTML=`<div class="explanation"><div class="section-divider">— Loops —</div><p>C의 do-while, while, for 루프가 어셈블리에서 어떤 패턴으로 변환되는지를 배웁니다. 모든 루프는 궁극적으로 <strong>조건부 점프(conditional jump)</strong>로 구현됩니다.</p></div>`}},
-// 19: Do-While Example (p19)
-{title:"Do-While 루프 예제 — popcount",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>popcount</strong>: 인자 x에서 1인 비트의 개수를 세는 함수입니다.</p><div class="code-block">// C 코드                               // Goto 버전
+    cmovle  %rdx, %rax    # x &lt;= y이면 rax = rdx (y-x 선택)
+    ret</pre>
+          <div class="highlight-box">x-y와 y-x를 <strong>모두 계산</strong>한 후, cmpq로 비교하고 <strong>cmovle</strong>로 올바른 결과를 선택합니다. 점프가 전혀 없습니다!</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 18 ==================== -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>Conditional Move를 쓰면 안 되는 경우</h2>
+        <div class="card">
+          <p>Conditional Move는 <strong>양쪽을 모두 계산</strong>하므로, 다음 경우에는 사용할 수 없습니다:</p>
+          <table class="terms-table">
+            <tr><th>경우</th><th>예시</th><th>이유</th></tr>
+            <tr><td><strong>비용이 큰 계산</strong></td><td>val = Test(x) ? Hard1(x) : Hard2(x);</td><td>양쪽 모두 계산하면 낭비가 큼</td></tr>
+            <tr><td><strong>위험한 계산</strong></td><td>val = p ? *p : 0;</td><td>p가 NULL이면 *p에서 segfault 발생!</td></tr>
+            <tr><td><strong>부작용이 있는 계산</strong></td><td>val = x > 0 ? x*=7 : x+=3;</td><td>양쪽 모두 실행하면 x가 두 번 수정됨</td></tr>
+          </table>
+          <div class="warning-box"><strong>GCC의 판단:</strong> 컴파일러가 안전하다고 판단한 경우에만 Conditional Move를 사용합니다. -fno-if-conversion 옵션으로 강제로 끌 수 있습니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 19 ==================== -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 19</span>
+        <h2>로드맵 — 루프</h2>
+        <div class="card">
+          <div class="section-divider">— Loops —</div>
+          <p>C의 do-while, while, for 루프가 어셈블리에서 어떤 패턴으로 변환되는지를 배웁니다. 모든 루프는 궁극적으로 <strong>조건부 점프(conditional jump)</strong>로 구현됩니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 20 ==================== -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 20</span>
+        <h2>Do-While 루프 예제 — popcount</h2>
+        <div class="card">
+          <p><strong>popcount</strong>: 인자 x에서 1인 비트의 개수를 세는 함수입니다.</p>
+<pre>// C 코드                               // Goto 버전
 long pcount_do(unsigned long x) {       long pcount_goto(unsigned long x) {
     long result = 0;                        long result = 0;
     do {                                  loop:
-        result += x & 0x1;                  result += x & 0x1;
+        result += x &amp; 0x1;                  result += x &amp; 0x1;
         x >>= 1;                            x >>= 1;
     } while (x);                            if (x) goto loop;
     return result;                          return result;
-}                                        }</div><div class="key-point"><strong>Do-While의 핵심:</strong> 루프 본문을 <em>최소 1번</em> 실행한 후 조건을 검사합니다. goto 버전에서는 loop 레이블 뒤에 본문이 먼저, 그 다음 조건 검사(if → goto)가 옵니다.</div></div>`}},
-// 20: Do-While Compilation (p20)
-{title:"Do-While 루프 컴파일 결과",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">// Goto 버전                           // 어셈블리
+}                                        }</pre>
+          <div class="key-point"><strong>Do-While의 핵심:</strong> 루프 본문을 최소 1번 실행한 후 조건을 검사합니다. goto 버전에서는 loop 레이블 뒤에 본문이 먼저, 그 다음 조건 검사(if → goto)가 옵니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 21 ==================== -->
+      <section class="page-section" id="p21">
+        <span class="page-num">Page 21</span>
+        <h2>Do-While 루프 컴파일 결과</h2>
+        <div class="card">
+<pre>// Goto 버전                           // 어셈블리
 long pcount_goto(unsigned long x) {
     long result = 0;                    movl   $0, %eax     # result = 0
   loop:                                .L2:                  # loop:
-    result += x & 0x1;                  movq   %rdi, %rdx
-                                        andl   $1, %edx     #   t = x & 0x1
+    result += x &amp; 0x1;                  movq   %rdi, %rdx
+                                        andl   $1, %edx     #   t = x &amp; 0x1
                                         addq   %rdx, %rax   #   result += t
     x >>= 1;                            shrq   %rdi         #   x >>= 1
     if (x) goto loop;                   jne    .L2          #   if (x) goto loop
     return result;                      ret
-}</div><table class="info-table"><tr><th>레지스터</th><th>용도</th></tr><tr><td>%rdi</td><td>인자 x (루프마다 오른쪽 시프트)</td></tr><tr><td>%rax</td><td>result (누적 카운터)</td></tr></table><div class="highlight-box"><strong>shrq %rdi</strong> 후 <strong>jne</strong>: shrq가 ZF를 설정하므로, x가 0이 아니면 루프 계속. 별도의 cmpq/testq 없이 직접 플래그를 활용합니다!</div></div>`}},
-// 21: General Do-While Translation (p21)
-{title:"Do-While 일반 변환 패턴",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">// C 코드               // Goto 버전
+}</pre>
+          <table class="terms-table">
+            <tr><th>레지스터</th><th>용도</th></tr>
+            <tr><td>%rdi</td><td>인자 x (루프마다 오른쪽 시프트)</td></tr>
+            <tr><td>%rax</td><td>result (누적 카운터)</td></tr>
+          </table>
+          <div class="highlight-box"><strong>shrq %rdi</strong> 후 <strong>jne</strong>: shrq가 ZF를 설정하므로, x가 0이 아니면 루프 계속. 별도의 cmpq/testq 없이 직접 플래그를 활용합니다!</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 22 ==================== -->
+      <section class="page-section" id="p22">
+        <span class="page-num">Page 22</span>
+        <h2>Do-While 일반 변환 패턴</h2>
+        <div class="card">
+<pre>// C 코드               // Goto 버전
 do                      loop:
     Body                    Body
 while (Test);               if (Test)
-                               goto loop</div><p>가장 단순한 루프 변환 패턴입니다:</p><div class="key-point">1. loop 레이블 설정<br>2. Body 실행<br>3. Test 검사 → 참이면 loop로 goto<br>4. 거짓이면 루프를 빠져나옴</div><p>while과 for 루프도 궁극적으로 이 <strong>do-while 패턴으로 환원</strong>됩니다.</p></div>`}},
-// 22: While Translation #1 - Jump to Middle (p22)
-{title:"While 루프 변환 #1 — Jump-to-Middle",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>Jump-to-Middle</strong> 방식 (<span style="color:var(--purple)">-Og</span> 최적화에서 사용):</p><div class="code-block">// While 버전              // Goto 버전
+                               goto loop</pre>
+          <p>가장 단순한 루프 변환 패턴입니다:</p>
+          <div class="key-point">
+            1. loop 레이블 설정<br>
+            2. Body 실행<br>
+            3. Test 검사 → 참이면 loop로 goto<br>
+            4. 거짓이면 루프를 빠져나옴
+          </div>
+          <p>while과 for 루프도 궁극적으로 이 <strong>do-while 패턴으로 환원</strong>됩니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 23 ==================== -->
+      <section class="page-section" id="p23">
+        <span class="page-num">Page 23</span>
+        <h2>While 루프 변환 #1 — Jump-to-Middle</h2>
+        <div class="card">
+          <p><strong>Jump-to-Middle</strong> 방식 (<strong>-Og</strong> 최적화에서 사용):</p>
+<pre>// While 버전              // Goto 버전
 while (Test)                  goto test;
     Body                   loop:
                                Body
                            test:
                                if (Test)
                                   goto loop;
-                           done:</div><div class="highlight-box"><strong>핵심 아이디어:</strong> 루프 시작 시 <strong>먼저 test로 점프</strong>합니다. 그래서 "Jump-to-Middle"이라는 이름입니다.</div><p>do-while과의 차이:</p><div class="key-point">• do-while: 무조건 본문 1번 실행 → 조건 검사<br>• while (Jump-to-Middle): <strong>먼저 조건 검사 위치로 점프</strong> → 조건이 참이면 본문 실행 → 반복</div></div>`}},
-// 23: While Example #1 (p23)
-{title:"While 루프 예제 — Jump-to-Middle",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">// C 코드                                // Jump-to-Middle 버전
+                           done:</pre>
+          <div class="highlight-box"><strong>핵심 아이디어:</strong> 루프 시작 시 <strong>먼저 test로 점프</strong>합니다. 그래서 "Jump-to-Middle"이라는 이름입니다.</div>
+          <p>do-while과의 차이:</p>
+          <div class="key-point">
+            <strong>do-while:</strong> 무조건 본문 1번 실행 → 조건 검사<br>
+            <strong>while (Jump-to-Middle):</strong> <strong>먼저 조건 검사 위치로 점프</strong> → 조건이 참이면 본문 실행 → 반복
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 24 ==================== -->
+      <section class="page-section" id="p24">
+        <span class="page-num">Page 24</span>
+        <h2>While 루프 예제 — Jump-to-Middle</h2>
+        <div class="card">
+<pre>// C 코드                                // Jump-to-Middle 버전
 long pcount_while(unsigned long x) {     long pcount_goto_jtm(unsigned long x) {
     long result = 0;                         long result = 0;
     while (x) {                              goto test;
-        result += x & 0x1;               loop:
-        x >>= 1;                             result += x & 0x1;
+        result += x &amp; 0x1;               loop:
+        x >>= 1;                             result += x &amp; 0x1;
     }                                        x >>= 1;
     return result;                        test:
 }                                            if (x) goto loop;
                                              return result;
-                                         }</div><div class="highlight-box"><strong>do-while 버전과 비교:</strong> do-while은 바로 loop에서 시작하지만, 이 버전은 <strong>goto test</strong>로 먼저 x가 0인지 확인합니다. x가 처음부터 0이면 루프를 한 번도 실행하지 않습니다.</div></div>`}},
-// 24: While Translation #2 - Do-While Conversion (p24)
-{title:"While 루프 변환 #2 — Do-While 변환",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>Do-While 변환</strong> 방식 (<span style="color:var(--purple)">-O1</span> 이상에서 사용):</p><div class="code-block">// While 버전              // Do-While 변환              // Goto 버전
+                                         }</pre>
+          <div class="highlight-box"><strong>do-while 버전과 비교:</strong> do-while은 바로 loop에서 시작하지만, 이 버전은 <strong>goto test</strong>로 먼저 x가 0인지 확인합니다. x가 처음부터 0이면 루프를 한 번도 실행하지 않습니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 25 ==================== -->
+      <section class="page-section" id="p25">
+        <span class="page-num">Page 25</span>
+        <h2>While 루프 변환 #2 — Do-While 변환</h2>
+        <div class="card">
+          <p><strong>Do-While 변환</strong> 방식 (<strong>-O1</strong> 이상에서 사용):</p>
+<pre>// While 버전              // Do-While 변환              // Goto 버전
 while (Test)               if (!Test)                     if (!Test)
     Body                       goto done;                     goto done;
                             do                            loop:
                                 Body                          Body
                             while (Test);                     if (Test)
                             done:                                goto loop;
-                                                          done:</div><div class="key-point"><strong>핵심 아이디어:</strong><br>1. 루프 진입 전 <strong>조건을 먼저 검사</strong> (Guard Test)<br>2. 거짓이면 바로 done으로 점프<br>3. 참이면 do-while 루프 실행</div><p>Jump-to-Middle보다 <strong>약간 더 효율적</strong>입니다. goto가 루프 내부에 없기 때문에 분기 예측이 더 쉽습니다.</p></div>`}},
-// 25: While Example #2 (p25)
-{title:"While 루프 예제 — Do-While 변환",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">// C 코드                                // Do-While 변환 버전
+                                                          done:</pre>
+          <div class="key-point"><strong>핵심 아이디어:</strong><br>
+            1. 루프 진입 전 <strong>조건을 먼저 검사</strong> (Guard Test)<br>
+            2. 거짓이면 바로 done으로 점프<br>
+            3. 참이면 do-while 루프 실행
+          </div>
+          <p>Jump-to-Middle보다 <strong>약간 더 효율적</strong>입니다. goto가 루프 내부에 없기 때문에 분기 예측이 더 쉽습니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 26 ==================== -->
+      <section class="page-section" id="p26">
+        <span class="page-num">Page 26</span>
+        <h2>While 루프 예제 — Do-While 변환</h2>
+        <div class="card">
+<pre>// C 코드                                // Do-While 변환 버전
 long pcount_while(unsigned long x) {     long pcount_goto_dw(unsigned long x) {
     long result = 0;                         long result = 0;
     while (x) {                              if (!x) goto done;
-        result += x & 0x1;               loop:
-        x >>= 1;                             result += x & 0x1;
+        result += x &amp; 0x1;               loop:
+        x >>= 1;                             result += x &amp; 0x1;
     }                                        x >>= 1;
     return result;                           if (x) goto loop;
 }                                         done:
                                              return result;
-                                         }</div><div class="highlight-box"><strong>비교:</strong><br>• <strong>Jump-to-Middle</strong>: goto test → loop: Body → test: if(x) goto loop<br>• <strong>Do-While 변환</strong>: if(!x) goto done → loop: Body → if(x) goto loop → done:<br><br>Do-While 변환이 <em>한 번 더 점프하지 않아도 되는</em> 경우가 많아 약간 더 빠릅니다.</div></div>`}},
-// 26: For Loop Form (p26)
-{title:"For 루프의 구조",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>for 루프</strong>의 4가지 구성 요소:</p><div class="code-block">for (Init; Test; Update)
-    Body</div><table class="info-table"><tr><th>구성 요소</th><th>역할</th><th>예시</th></tr><tr><td><strong>Init</strong></td><td>루프 변수 초기화</td><td>i = 0</td></tr><tr><td><strong>Test</strong></td><td>반복 조건 검사</td><td>i &lt; WSIZE</td></tr><tr><td><strong>Update</strong></td><td>루프 변수 갱신</td><td>i++</td></tr><tr><td><strong>Body</strong></td><td>반복할 코드</td><td>result += (x >> i) & 0x1</td></tr></table><p>예제 — 비트 세기(popcount):</p><div class="code-block">#define WSIZE 8*sizeof(int)
+                                         }</pre>
+          <div class="highlight-box"><strong>비교:</strong><br>
+            <strong>Jump-to-Middle</strong>: goto test → loop: Body → test: if(x) goto loop<br>
+            <strong>Do-While 변환</strong>: if(!x) goto done → loop: Body → if(x) goto loop → done:<br><br>
+            Do-While 변환이 한 번 더 점프하지 않아도 되는 경우가 많아 약간 더 빠릅니다.
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 27 ==================== -->
+      <section class="page-section" id="p27">
+        <span class="page-num">Page 27</span>
+        <h2>For 루프의 구조</h2>
+        <div class="card">
+          <p><strong>for 루프</strong>의 4가지 구성 요소:</p>
+<pre>for (Init; Test; Update)
+    Body</pre>
+          <table class="terms-table">
+            <tr><th>구성 요소</th><th>역할</th><th>예시</th></tr>
+            <tr><td><strong>Init</strong></td><td>루프 변수 초기화</td><td>i = 0</td></tr>
+            <tr><td><strong>Test</strong></td><td>반복 조건 검사</td><td>i &lt; WSIZE</td></tr>
+            <tr><td><strong>Update</strong></td><td>루프 변수 갱신</td><td>i++</td></tr>
+            <tr><td><strong>Body</strong></td><td>반복할 코드</td><td>result += (x >> i) &amp; 0x1</td></tr>
+          </table>
+          <p>예제 — 비트 세기(popcount):</p>
+<pre>#define WSIZE 8*sizeof(int)
 long pcount_for(unsigned long x) {
     size_t i;
     long result = 0;
-    for (i = 0; i < WSIZE; i++) {
-        unsigned bit = (x >> i) & 0x1;
+    for (i = 0; i &lt; WSIZE; i++) {
+        unsigned bit = (x >> i) &amp; 0x1;
         result += bit;
     }
     return result;
-}</div></div>`}},
-// 27: For → While (p27)
-{title:"For 루프 → While 루프 변환",render:function(c){c.innerHTML=`<div class="explanation"><p>컴파일러는 for 루프를 먼저 <strong>while 루프로 변환</strong>한 뒤, 이전에 배운 while 변환 기법을 적용합니다:</p><div class="code-block">// For 버전                    // While 버전
+}</pre>
+        </div>
+      </section>
+
+      <!-- ==================== Page 28 ==================== -->
+      <section class="page-section" id="p28">
+        <span class="page-num">Page 28</span>
+        <h2>For 루프 → While 루프 변환</h2>
+        <div class="card">
+          <p>컴파일러는 for 루프를 먼저 <strong>while 루프로 변환</strong>한 뒤, 이전에 배운 while 변환 기법을 적용합니다:</p>
+<pre>// For 버전                    // While 버전
 for (Init; Test; Update)       Init;
     Body                       while (Test) {
                                    Body
                                    Update;
-                               }</div><div class="key-point"><strong>변환 규칙:</strong><br>1. Init을 while 앞에 배치<br>2. Test를 while 조건으로<br>3. Body 뒤에 Update를 추가<br><br>이후 while → Jump-to-Middle 또는 Do-While 변환이 적용됩니다.</div></div>`}},
-// 28: For-While Conversion Example (p28)
-{title:"For → While 변환 예제",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">long pcount_for_while(unsigned long x) {
+                               }</pre>
+          <div class="key-point"><strong>변환 규칙:</strong><br>
+            1. Init을 while 앞에 배치<br>
+            2. Test를 while 조건으로<br>
+            3. Body 뒤에 Update를 추가<br><br>
+            이후 while → Jump-to-Middle 또는 Do-While 변환이 적용됩니다.
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 29 ==================== -->
+      <section class="page-section" id="p29">
+        <span class="page-num">Page 29</span>
+        <h2>For → While 변환 예제</h2>
+        <div class="card">
+<pre>long pcount_for_while(unsigned long x) {
     size_t i;
     long result = 0;
     i = 0;                       // Init
-    while (i < WSIZE) {          // Test
+    while (i &lt; WSIZE) {          // Test
         unsigned bit =
-            (x >> i) & 0x1;     // Body
+            (x >> i) &amp; 0x1;     // Body
         result += bit;           // Body
         i++;                     // Update
     }
     return result;
-}</div><table class="info-table"><tr><th>For 구성 요소</th><th>While에서의 위치</th><th>값</th></tr><tr><td>Init</td><td>while 앞</td><td>i = 0</td></tr><tr><td>Test</td><td>while 조건</td><td>i &lt; WSIZE</td></tr><tr><td>Update</td><td>Body 뒤</td><td>i++</td></tr><tr><td>Body</td><td>while 본문</td><td>bit 계산, result 누적</td></tr></table></div>`}},
-// 29: For Loop Do-While Conversion (p29)
-{title:"For 루프의 Do-While 변환",render:function(c){c.innerHTML=`<div class="explanation"><p>최종적으로 for 루프는 <strong>Do-While + Guard</strong> 형태의 goto 코드로 변환됩니다:</p><div class="code-block">long pcount_for_goto_dw(unsigned long x) {
+}</pre>
+          <table class="terms-table">
+            <tr><th>For 구성 요소</th><th>While에서의 위치</th><th>값</th></tr>
+            <tr><td>Init</td><td>while 앞</td><td>i = 0</td></tr>
+            <tr><td>Test</td><td>while 조건</td><td>i &lt; WSIZE</td></tr>
+            <tr><td>Update</td><td>Body 뒤</td><td>i++</td></tr>
+            <tr><td>Body</td><td>while 본문</td><td>bit 계산, result 누적</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 30 ==================== -->
+      <section class="page-section" id="p30">
+        <span class="page-num">Page 30</span>
+        <h2>For 루프의 Do-While 변환</h2>
+        <div class="card">
+          <p>최종적으로 for 루프는 <strong>Do-While + Guard</strong> 형태의 goto 코드로 변환됩니다:</p>
+<pre>long pcount_for_goto_dw(unsigned long x) {
     size_t i;
     long result = 0;
     i = 0;                          // Init
-    if (!(i < WSIZE))               // Guard: !Test → done
+    if (!(i &lt; WSIZE))               // Guard: !Test → done
         goto done;
   loop:
     {
         unsigned bit =
-            (x >> i) & 0x1;        // Body
+            (x >> i) &amp; 0x1;        // Body
         result += bit;
     }
     i++;                            // Update
-    if (i < WSIZE)                  // Test → loop
+    if (i &lt; WSIZE)                  // Test → loop
         goto loop;
   done:
     return result;
-}</div><div class="highlight-box"><strong>초기 테스트 최적화:</strong> 여기서 Init이 i = 0이고 Test가 i &lt; WSIZE(= 32)이므로, 초기 Guard 테스트는 항상 참입니다. 따라서 컴파일러가 이 검사를 <em>완전히 제거</em>할 수 있습니다!</div></div>`}},
-// 30: 섹션 구분 - Switch (p30)
-{title:"로드맵 — Switch 문",render:function(c){c.innerHTML=`<div class="explanation"><div class="section-divider">— Switch Statements —</div><p>여러 값에 따라 분기하는 switch 문은 if-else 체인보다 <strong>훨씬 효율적인 구현</strong>이 가능합니다. 그 비결은 <strong>Jump Table</strong>입니다.</p></div>`}},
-// 31: Switch Statement Example (p31)
-{title:"Switch 문 예제",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">long switch_eg(long x, long y, long z) {
+}</pre>
+          <div class="highlight-box"><strong>초기 테스트 최적화:</strong> 여기서 Init이 i = 0이고 Test가 i &lt; WSIZE(= 32)이므로, 초기 Guard 테스트는 항상 참입니다. 따라서 컴파일러가 이 검사를 완전히 제거할 수 있습니다!</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 31 ==================== -->
+      <section class="page-section" id="p31">
+        <span class="page-num">Page 31</span>
+        <h2>로드맵 — Switch 문</h2>
+        <div class="card">
+          <div class="section-divider">— Switch Statements —</div>
+          <p>여러 값에 따라 분기하는 switch 문은 if-else 체인보다 <strong>훨씬 효율적인 구현</strong>이 가능합니다. 그 비결은 <strong>Jump Table</strong>입니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 32 ==================== -->
+      <section class="page-section" id="p32">
+        <span class="page-num">Page 32</span>
+        <h2>Switch 문 예제</h2>
+        <div class="card">
+<pre>long switch_eg(long x, long y, long z) {
     long w = 1;
     switch(x) {
         case 1:
@@ -277,9 +1081,23 @@ for (Init; Test; Update)       Init;
             w = 2;
     }
     return w;
-}</div><p>이 예제의 특징들:</p><div class="highlight-box">• <strong>Multiple labels:</strong> case 5와 6이 같은 코드를 공유<br>• <strong>Fall through:</strong> case 2에서 break 없이 case 3으로 흘러감<br>• <strong>Missing case:</strong> case 4가 없음 → default로 처리</div></div>`}},
-// 32: Jump Table Structure (p32)
-{title:"Jump Table 구조",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>Jump Table</strong>은 각 case에 대한 코드 주소를 배열처럼 저장한 테이블입니다:</p><div class="code-block">Switch Form                 Jump Table          Jump Targets
+}</pre>
+          <p>이 예제의 특징들:</p>
+          <div class="highlight-box">
+            <strong>Multiple labels:</strong> case 5와 6이 같은 코드를 공유<br>
+            <strong>Fall through:</strong> case 2에서 break 없이 case 3으로 흘러감<br>
+            <strong>Missing case:</strong> case 4가 없음 → default로 처리
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 33 ==================== -->
+      <section class="page-section" id="p33">
+        <span class="page-num">Page 33</span>
+        <h2>Jump Table 구조</h2>
+        <div class="card">
+          <p><strong>Jump Table</strong>은 각 case에 대한 코드 주소를 배열처럼 저장한 테이블입니다:</p>
+<pre>Switch Form                 Jump Table          Jump Targets
 switch(x) {                jtab:               Targ0: Code Block 0
   case val_0:                  Targ0
     Block 0                    Targ1            Targ1: Code Block 1
@@ -288,15 +1106,42 @@ switch(x) {                jtab:               Targ0: Code Block 0
   ...                          Targn-1                 ...
   case val_n-1:                                 Targn-1: Code Block n-1
     Block n-1
-}</div><p>실행 방식 (Extended C로 표현):</p><div class="code-block">goto *JTab[x];    // x를 인덱스로 Jump Table에서 주소를 꺼내 점프</div><div class="key-point"><strong>시간 복잡도:</strong> if-else 체인은 \\(O(n)\\)이지만, Jump Table은 <strong>\\(O(1)\\)</strong>입니다! case가 아무리 많아도 테이블 인덱싱 한 번으로 바로 해당 코드로 점프합니다.</div></div>`}},
-// 33: Switch Setup (p33)
-{title:"Switch 문 — 어셈블리 Setup",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">switch_eg:
+}</pre>
+          <p>실행 방식 (Extended C로 표현):</p>
+          <pre>goto *JTab[x];    // x를 인덱스로 Jump Table에서 주소를 꺼내 점프</pre>
+          <div class="key-point"><strong>시간 복잡도:</strong> if-else 체인은 \(O(n)\)이지만, Jump Table은 <strong>\(O(1)\)</strong>입니다! case가 아무리 많아도 테이블 인덱싱 한 번으로 바로 해당 코드로 점프합니다.</div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 34 ==================== -->
+      <section class="page-section" id="p34">
+        <span class="page-num">Page 34</span>
+        <h2>Switch 문 — 어셈블리 Setup</h2>
+        <div class="card">
+<pre>switch_eg:
     movq    %rdx, %rcx        # rcx = z (rdx를 다른 용도로 쓰기 위해 이동)
     cmpq    $6, %rdi           # x:6 비교
     ja      .L8                # x > 6이면 default (.L8)로 점프
-    jmp     *.L4(,%rdi,8)      # Jump Table에서 주소를 꺼내 간접 점프</div><table class="info-table"><tr><th>레지스터</th><th>용도</th></tr><tr><td>%rdi</td><td>인자 x (switch 대상)</td></tr><tr><td>%rsi</td><td>인자 y</td></tr><tr><td>%rdx → %rcx</td><td>인자 z</td></tr><tr><td>%rax</td><td>반환값</td></tr></table><div class="highlight-box"><strong>ja .L8</strong>: x가 6보다 크면 default. unsigned 비교이므로 <strong>음수도 함께 걸러냅니다</strong> (음수는 unsigned로 보면 매우 큰 값).<br><br><strong>jmp *.L4(,%rdi,8)</strong>: .L4 + x×8 주소에서 8바이트(주소)를 읽어 그곳으로 점프합니다.</div></div>`}},
-// 34: Switch Jump Table (p34)
-{title:"Switch 문 — Jump Table 내용",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">.section .rodata
+    jmp     *.L4(,%rdi,8)      # Jump Table에서 주소를 꺼내 간접 점프</pre>
+          <table class="terms-table">
+            <tr><th>레지스터</th><th>용도</th></tr>
+            <tr><td>%rdi</td><td>인자 x (switch 대상)</td></tr>
+            <tr><td>%rsi</td><td>인자 y</td></tr>
+            <tr><td>%rdx → %rcx</td><td>인자 z</td></tr>
+            <tr><td>%rax</td><td>반환값</td></tr>
+          </table>
+          <div class="highlight-box"><strong>ja .L8</strong>: x가 6보다 크면 default. unsigned 비교이므로 <strong>음수도 함께 걸러냅니다</strong> (음수는 unsigned로 보면 매우 큰 값).<br><br>
+            <strong>jmp *.L4(,%rdi,8)</strong>: .L4 + x×8 주소에서 8바이트(주소)를 읽어 그곳으로 점프합니다.
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 35 ==================== -->
+      <section class="page-section" id="p35">
+        <span class="page-num">Page 35</span>
+        <h2>Switch 문 — Jump Table 내용</h2>
+        <div class="card">
+<pre>.section .rodata
   .align 8
 .L4:                          # Jump Table 시작
   .quad   .L8                 # x = 0: default
@@ -305,20 +1150,75 @@ switch(x) {                jtab:               Targ0: Code Block 0
   .quad   .L9                 # x = 3: case 3
   .quad   .L8                 # x = 4: default (missing case!)
   .quad   .L7                 # x = 5: case 5
-  .quad   .L7                 # x = 6: case 6</div><table class="info-table"><tr><th>인덱스 (x)</th><th>점프 대상</th><th>설명</th></tr><tr><td>0</td><td>.L8</td><td>case 없음 → default</td></tr><tr><td>1</td><td>.L3</td><td>case 1</td></tr><tr><td>2</td><td>.L5</td><td>case 2</td></tr><tr><td>3</td><td>.L9</td><td>case 3</td></tr><tr><td>4</td><td>.L8</td><td>case 없음 → default</td></tr><tr><td>5</td><td>.L7</td><td>case 5</td></tr><tr><td>6</td><td>.L7</td><td>case 6</td></tr></table><div class="key-point">• 빠진 case(0, 4)는 <strong>default 주소</strong>를 넣어 처리<br>• 여러 case가 같은 코드를 공유(5, 6 → .L7)하면 <strong>같은 주소</strong>를 넣음<br>• 테이블 크기 = (max_case - min_case + 1) × 8바이트</div></div>`}},
-// 35: Assembly Setup Explanation (p35)
-{title:"Jump Table 동작 원리",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>테이블 구조:</strong></p><div class="highlight-box">• 각 엔트리는 <strong>8바이트</strong> (.quad = 64비트 주소)<br>• 베이스 주소는 .L4<br>• 총 7개 엔트리 (x = 0 ~ 6)</div><p><strong>점프 방식:</strong></p><table class="info-table"><tr><th>종류</th><th>어셈블리</th><th>설명</th></tr><tr><td><strong>Direct Jump</strong></td><td>jmp .L8</td><td>레이블 .L8로 직접 점프</td></tr><tr><td><strong>Indirect Jump</strong></td><td>jmp *.L4(,%rdi,8)</td><td>.L4 + x×8 주소의 <em>내용</em>으로 점프</td></tr></table><div class="key-point"><strong>간접 점프의 주소 계산:</strong><br>Effective Address = .L4 + %rdi × 8<br>이 주소에서 8바이트를 읽음 → 그 값이 점프할 코드의 주소<br><br>예: x = 2이면 .L4 + 16 → .L5의 주소를 읽음 → .L5로 점프</div></div>`}},
-// 36: Code Blocks - case 1 (p36)
-{title:"Switch Code Block — case 1",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">// C 코드
+  .quad   .L7                 # x = 6: case 6</pre>
+          <table class="terms-table">
+            <tr><th>인덱스 (x)</th><th>점프 대상</th><th>설명</th></tr>
+            <tr><td>0</td><td>.L8</td><td>case 없음 → default</td></tr>
+            <tr><td>1</td><td>.L3</td><td>case 1</td></tr>
+            <tr><td>2</td><td>.L5</td><td>case 2</td></tr>
+            <tr><td>3</td><td>.L9</td><td>case 3</td></tr>
+            <tr><td>4</td><td>.L8</td><td>case 없음 → default</td></tr>
+            <tr><td>5</td><td>.L7</td><td>case 5</td></tr>
+            <tr><td>6</td><td>.L7</td><td>case 6</td></tr>
+          </table>
+          <div class="key-point">
+            빠진 case(0, 4)는 <strong>default 주소</strong>를 넣어 처리<br>
+            여러 case가 같은 코드를 공유(5, 6 → .L7)하면 <strong>같은 주소</strong>를 넣음<br>
+            테이블 크기 = (max_case - min_case + 1) × 8바이트
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 36 ==================== -->
+      <section class="page-section" id="p36">
+        <span class="page-num">Page 36</span>
+        <h2>Jump Table 동작 원리</h2>
+        <div class="card">
+          <p><strong>테이블 구조:</strong></p>
+          <div class="highlight-box">
+            각 엔트리는 <strong>8바이트</strong> (.quad = 64비트 주소)<br>
+            베이스 주소는 .L4<br>
+            총 7개 엔트리 (x = 0 ~ 6)
+          </div>
+          <p><strong>점프 방식:</strong></p>
+          <table class="terms-table">
+            <tr><th>종류</th><th>어셈블리</th><th>설명</th></tr>
+            <tr><td><strong>Direct Jump</strong></td><td>jmp .L8</td><td>레이블 .L8로 직접 점프</td></tr>
+            <tr><td><strong>Indirect Jump</strong></td><td>jmp *.L4(,%rdi,8)</td><td>.L4 + x×8 주소의 내용으로 점프</td></tr>
+          </table>
+          <div class="key-point"><strong>간접 점프의 주소 계산:</strong><br>
+            Effective Address = .L4 + %rdi × 8<br>
+            이 주소에서 8바이트를 읽음 → 그 값이 점프할 코드의 주소<br><br>
+            예: x = 2이면 .L4 + 16 → .L5의 주소를 읽음 → .L5로 점프
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 37 ==================== -->
+      <section class="page-section" id="p37">
+        <span class="page-num">Page 37</span>
+        <h2>Switch Code Block — case 1</h2>
+        <div class="card">
+<pre>// C 코드
 case 1:                      // .L3
     w = y * z;
-    break;</div><div class="code-block">// 어셈블리
+    break;</pre>
+<pre>// 어셈블리
 .L3:
     movq    %rsi, %rax       # rax = y
     imulq   %rdx, %rax       # rax = y * z
-    ret</div><p>단순합니다: y와 z를 곱해서 반환합니다. break가 있으므로 ret로 바로 함수를 종료합니다.</p></div>`}},
-// 37: Handling Fall-Through (p37)
-{title:"Fall-Through 처리 — case 2 → case 3",render:function(c){c.innerHTML=`<div class="explanation"><p>case 2에는 <strong>break가 없어서</strong> case 3으로 "떨어집니다" (fall through):</p><div class="code-block">// C 코드                         // Goto 버전
+    ret</pre>
+          <p>단순합니다: y와 z를 곱해서 반환합니다. break가 있으므로 ret로 바로 함수를 종료합니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 38 ==================== -->
+      <section class="page-section" id="p38">
+        <span class="page-num">Page 38</span>
+        <h2>Fall-Through 처리 — case 2 → case 3</h2>
+        <div class="card">
+          <p>case 2에는 <strong>break가 없어서</strong> case 3으로 "떨어집니다" (fall through):</p>
+<pre>// C 코드                         // Goto 버전
 case 2:                           case 2:
     w = y / z;                        w = y / z;
     /* Fall Through */                goto merge;
@@ -327,9 +1227,21 @@ case 3:
     break;                            w = 1;     // 초기값
 
                                   merge:
-                                      w += z;</div><div class="key-point"><strong>Fall-Through의 의미:</strong><br>• case 2 진입: w = y/z 계산 → w += z 실행 (merge에서 합류)<br>• case 3 직접 진입: w = 1 (초기값) → w += z 실행<br><br>두 경로가 <strong>merge 지점</strong>에서 합류하여 w += z를 공유합니다.</div></div>`}},
-// 38: Code Blocks - case 2, 3 (p38)
-{title:"Switch Code Block — case 2, 3 어셈블리",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">.L5:                            # Case 2
+                                      w += z;</pre>
+          <div class="key-point"><strong>Fall-Through의 의미:</strong><br>
+            case 2 진입: w = y/z 계산 → w += z 실행 (merge에서 합류)<br>
+            case 3 직접 진입: w = 1 (초기값) → w += z 실행<br><br>
+            두 경로가 <strong>merge 지점</strong>에서 합류하여 w += z를 공유합니다.
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 39 ==================== -->
+      <section class="page-section" id="p39">
+        <span class="page-num">Page 39</span>
+        <h2>Switch Code Block — case 2, 3 어셈블리</h2>
+        <div class="card">
+<pre>.L5:                            # Case 2
     movq    %rsi, %rax          # rax = y
     cqto                        # rax를 128비트로 부호 확장 (idivq 준비)
     idivq   %rcx                # rax = y / z (나눗셈)
@@ -340,23 +1252,121 @@ case 3:
 
 .L6:                            # merge:
     addq    %rcx, %rax          # w += z
-    ret</div><div class="highlight-box"><strong>핵심 포인트:</strong><br>• <strong>cqto</strong> (Convert Quad to Oct): %rax를 %rdx:%rax 128비트로 부호 확장. idivq가 128비트 나눗셈을 수행하기 때문에 필요<br>• case 2: y/z 계산 후 <strong>jmp .L6</strong>으로 fall through 구현<br>• case 3: w = 1 설정 후 자연스럽게 .L6으로 진행 (점프 불필요)<br>• .L6에서 둘 다 w += z 실행</div></div>`}},
-// 39: Code Blocks - case 5,6, default (p39)
-{title:"Switch Code Block — case 5/6, default",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">.L7:                            # Case 5, 6
+    ret</pre>
+          <div class="highlight-box"><strong>핵심 포인트:</strong><br>
+            <strong>cqto</strong> (Convert Quad to Oct): %rax를 %rdx:%rax 128비트로 부호 확장. idivq가 128비트 나눗셈을 수행하기 때문에 필요<br>
+            case 2: y/z 계산 후 <strong>jmp .L6</strong>으로 fall through 구현<br>
+            case 3: w = 1 설정 후 자연스럽게 .L6으로 진행 (점프 불필요)<br>
+            .L6에서 둘 다 w += z 실행
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 40 ==================== -->
+      <section class="page-section" id="p40">
+        <span class="page-num">Page 40</span>
+        <h2>Switch Code Block — case 5/6, default</h2>
+        <div class="card">
+<pre>.L7:                            # Case 5, 6
     movl    $1, %eax            # w = 1
     subq    %rdx, %rax          # w -= z  (w = 1 - z)
     ret
 
 .L8:                            # Default
     movl    $2, %eax            # w = 2
-    ret</div><table class="info-table"><tr><th>Case</th><th>동작</th><th>어셈블리</th></tr><tr><td>case 5, 6</td><td>w = 1 - z</td><td>.L7: movl $1 → subq</td></tr><tr><td>default</td><td>w = 2</td><td>.L8: movl $2 → ret</td></tr></table><div class="highlight-box"><strong>case 5와 6이 같은 코드를 공유:</strong> Jump Table에서 둘 다 .L7을 가리키므로, 코드가 하나만 있으면 됩니다.<br><br><strong>w = 1 초기화 이유:</strong> C 코드에서 <span style="color:var(--purple)">long w = 1;</span>이지만 w -= z는 실제로 1 - z입니다. 컴파일러가 이를 movl $1 + subq로 직접 구현합니다.</div></div>`}},
-// 40: Summarizing (p41)
-{title:"정리 — C 제어 구조와 어셈블리",render:function(c){c.innerHTML=`<div class="explanation"><table class="info-table"><tr><th>C 제어 구조</th><th>어셈블리 구현</th></tr><tr><td><strong>if-then-else</strong></td><td>Conditional jump (jX)</td></tr><tr><td><strong>if-then-else (단순)</strong></td><td>Conditional move (cmovX)</td></tr><tr><td><strong>do-while</strong></td><td>loop: Body → if (Test) goto loop</td></tr><tr><td><strong>while</strong></td><td>Jump-to-Middle 또는 Do-While 변환</td></tr><tr><td><strong>for</strong></td><td>while로 변환 후 위 기법 적용</td></tr><tr><td><strong>switch</strong></td><td>Jump Table + indirect jump</td></tr></table><div class="key-point"><strong>컴파일러의 표준 기법:</strong><br>• 루프 → do-while 또는 jump-to-middle 형태로 변환<br>• 큰 switch → Jump Table 사용 (\\(O(1)\\) 분기)<br>• 희소한 switch → Decision Tree (if-elseif-else 체인)</div></div>`}},
-// 41: Summary (p42)
-{title:"요약 — Machine Programming II: Control",render:function(c){c.innerHTML=`<div class="explanation"><div class="key-point"><strong>이번 강의 핵심 정리:</strong><br><br>• <strong>Condition Codes (CF, ZF, SF, OF):</strong> 산술 연산이 자동으로 설정하는 1비트 플래그. cmpq와 testq로 명시적 설정 가능<br><br>• <strong>Conditional Branch:</strong> cmpq + jX로 if-else 구현. goto 패턴으로 이해하면 쉬움<br><br>• <strong>Conditional Move:</strong> 양쪽을 모두 계산 후 선택. 파이프라인 친화적이지만 부작용/위험한 계산에는 사용 불가<br><br>• <strong>Loops:</strong> 모든 루프는 조건부 점프로 구현. do-while이 가장 기본 패턴. while과 for는 이를 기반으로 변환<br><br>• <strong>Switch:</strong> Jump Table로 \\(O(1)\\) 다중 분기. 빠진 case는 default 주소, 공유 case는 같은 주소로 처리</div></div>`}}
-];
-let cur=0;function renderSlide(){const app=document.getElementById('content');app.innerHTML='';const nav=document.createElement('div');nav.className='nav';nav.innerHTML='<button onclick="goSlide(0)">목차</button><button onclick="prev()"'+(cur===0?' disabled':'')+'>◀ 이전</button><span class="slide-num">'+(cur+1)+' / '+slides.length+'</span><button onclick="next()"'+(cur===slides.length-1?' disabled':'')+'>다음 ▶</button><div class="progress-bar"><div class="progress-fill" style="width:'+((cur+1)/slides.length*100)+'%"></div></div>';app.appendChild(nav);const slide=document.createElement('div');slide.className='slide';const t=document.createElement('div');t.className='slide-title';t.innerHTML='<span class="num">'+(cur+1)+'</span>'+slides[cur].title;slide.appendChild(t);const body=document.createElement('div');slides[cur].render(body);slide.appendChild(body);app.appendChild(slide);window.scrollTo({top:0,behavior:'smooth'});if(window.MathJax&&MathJax.typesetPromise){MathJax.typesetPromise([slide]).catch(function(e){})}}
-function next(){if(cur<slides.length-1){cur++;renderSlide()}}function prev(){if(cur>0){cur--;renderSlide()}}function goSlide(n){cur=n;renderSlide()}document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowDown')next();if(e.key==='ArrowLeft'||e.key==='ArrowUp')prev()});renderSlide();
+    ret</pre>
+          <table class="terms-table">
+            <tr><th>Case</th><th>동작</th><th>어셈블리</th></tr>
+            <tr><td>case 5, 6</td><td>w = 1 - z</td><td>.L7: movl $1 → subq</td></tr>
+            <tr><td>default</td><td>w = 2</td><td>.L8: movl $2 → ret</td></tr>
+          </table>
+          <div class="highlight-box"><strong>case 5와 6이 같은 코드를 공유:</strong> Jump Table에서 둘 다 .L7을 가리키므로, 코드가 하나만 있으면 됩니다.<br><br>
+            <strong>w = 1 초기화 이유:</strong> C 코드에서 <strong>long w = 1;</strong>이지만 w -= z는 실제로 1 - z입니다. 컴파일러가 이를 movl $1 + subq로 직접 구현합니다.
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 41 ==================== -->
+      <section class="page-section" id="p41">
+        <span class="page-num">Page 41</span>
+        <h2>정리 — C 제어 구조와 어셈블리</h2>
+        <div class="card">
+          <table class="terms-table">
+            <tr><th>C 제어 구조</th><th>어셈블리 구현</th></tr>
+            <tr><td><strong>if-then-else</strong></td><td>Conditional jump (jX)</td></tr>
+            <tr><td><strong>if-then-else (단순)</strong></td><td>Conditional move (cmovX)</td></tr>
+            <tr><td><strong>do-while</strong></td><td>loop: Body → if (Test) goto loop</td></tr>
+            <tr><td><strong>while</strong></td><td>Jump-to-Middle 또는 Do-While 변환</td></tr>
+            <tr><td><strong>for</strong></td><td>while로 변환 후 위 기법 적용</td></tr>
+            <tr><td><strong>switch</strong></td><td>Jump Table + indirect jump</td></tr>
+          </table>
+          <div class="key-point"><strong>컴파일러의 표준 기법:</strong><br>
+            루프 → do-while 또는 jump-to-middle 형태로 변환<br>
+            큰 switch → Jump Table 사용 (\(O(1)\) 분기)<br>
+            희소한 switch → Decision Tree (if-elseif-else 체인)
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 42 ==================== -->
+      <section class="page-section" id="p42">
+        <span class="page-num">Page 42</span>
+        <h2>요약 — Machine Programming II: Control</h2>
+        <div class="card">
+          <div class="summary-box">
+            <strong>이번 강의 핵심 정리:</strong><br><br>
+            <strong>Condition Codes (CF, ZF, SF, OF):</strong> 산술 연산이 자동으로 설정하는 1비트 플래그. cmpq와 testq로 명시적 설정 가능<br><br>
+            <strong>Conditional Branch:</strong> cmpq + jX로 if-else 구현. goto 패턴으로 이해하면 쉬움<br><br>
+            <strong>Conditional Move:</strong> 양쪽을 모두 계산 후 선택. 파이프라인 친화적이지만 부작용/위험한 계산에는 사용 불가<br><br>
+            <strong>Loops:</strong> 모든 루프는 조건부 점프로 구현. do-while이 가장 기본 패턴. while과 for는 이를 기반으로 변환<br><br>
+            <strong>Switch:</strong> Jump Table로 \(O(1)\) 다중 분기. 빠진 case는 default 주소, 공유 case는 같은 주소로 처리
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+<script>
+function toggleTheme() {
+  var body = document.body;
+  var current = body.getAttribute('data-theme');
+  if (current === 'dark') {
+    body.removeAttribute('data-theme');
+    localStorage.setItem('theme', 'light');
+  } else {
+    body.setAttribute('data-theme', 'dark');
+    localStorage.setItem('theme', 'dark');
+  }
+}
+
+(function() {
+  var saved = localStorage.getItem('theme');
+  if (saved === 'dark') {
+    document.body.setAttribute('data-theme', 'dark');
+  }
+})();
+
+var sections = document.querySelectorAll('.page-section');
+var navLinks = document.querySelectorAll('.sidebar a');
+
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      var id = entry.target.getAttribute('id');
+      navLinks.forEach(function(link) {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + id) {
+          link.classList.add('active');
+        }
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -60% 0px' });
+
+sections.forEach(function(section) {
+  observer.observe(section);
+});
 </script>
 </body>
 </html>

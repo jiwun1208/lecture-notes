@@ -3,71 +3,602 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Machine-level Programming I: Basics 강의</title>
+<title>Machine-Level Programming: Basics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
 window.MathJax = {
-  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']], processEscapes: false },
-  startup: { ready: function() { MathJax.startup.defaultReady(); window.mathJaxReady = true; } }
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    processEscapes: false
+  },
+  startup: {
+    ready: function() {
+      MathJax.startup.defaultReady();
+      window.mathJaxReady = true;
+    }
+  }
 };
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
-:root{--bg:#0f1117;--card:#1a1d27;--card-border:#2a2d3a;--accent:#6c8cff;--accent2:#fbbf24;--accent3:#34d399;--text:#e0e4ef;--text-dim:#8b92a8;--text-bright:#f4f5f9;--danger:#f87171;--purple:#a78bfa;--pink:#f472b6}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.85;overflow-x:hidden}.app{max-width:860px;margin:0 auto;padding:20px}.header{text-align:center;padding:50px 20px 35px;position:relative}.header::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}.header h1{font-size:2.4em;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--purple),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;letter-spacing:-0.02em}.header .subtitle{font-size:1em;color:var(--text-dim);font-weight:300}.nav{display:flex;align-items:center;justify-content:center;gap:12px;margin:24px 0;padding:12px 16px;background:rgba(26,29,39,0.9);border-radius:14px;border:1px solid var(--card-border);position:sticky;top:10px;z-index:100;backdrop-filter:blur(20px);flex-wrap:wrap}.nav button{background:none;border:1.5px solid var(--card-border);color:var(--text);padding:7px 18px;border-radius:8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:0.88em;font-weight:500;transition:all 0.2s}.nav button:hover{border-color:var(--accent);color:var(--accent);background:rgba(108,140,255,0.08)}.nav button:disabled{opacity:0.3;cursor:not-allowed}.nav .slide-num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:0.9em;min-width:80px;text-align:center}.progress-bar{width:100%;height:2px;background:var(--card-border);border-radius:1px;margin-top:8px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:1px;transition:width 0.4s ease}.slide{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:36px 32px;margin:16px 0;animation:fadeIn 0.4s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}.slide-title{font-size:1.4em;font-weight:700;color:var(--accent);margin-bottom:20px;padding-bottom:10px;border-bottom:1.5px solid var(--card-border);display:flex;align-items:center;gap:10px}.slide-title .num{background:var(--accent);color:white;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75em;flex-shrink:0}.explanation{font-size:0.98em;line-height:1.9;color:var(--text)}.explanation p{margin-bottom:14px}.math-block{background:rgba(108,140,255,0.06);border-left:3px solid var(--accent);padding:18px 22px;margin:18px 0;border-radius:0 10px 10px 0;overflow-x:auto;font-size:1.05em}.highlight-box{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);padding:14px 18px;border-radius:10px;margin:14px 0;font-size:0.95em}.key-point{background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.25);padding:14px 18px;border-radius:10px;margin:14px 0;font-size:0.95em}.warning-box{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);padding:14px 18px;border-radius:10px;margin:14px 0;font-size:0.95em}.code-block{background:#12141c;border:1px solid var(--card-border);border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'JetBrains Mono',monospace;font-size:0.85em;overflow-x:auto;line-height:1.7;color:#c9d1d9;white-space:pre}.info-table{width:100%;border-collapse:separate;border-spacing:0;margin:18px 0;border-radius:10px;overflow:hidden;border:1px solid var(--card-border);font-size:0.93em}.info-table th{background:rgba(108,140,255,0.12);padding:10px 14px;text-align:left;font-weight:600;color:var(--accent)}.info-table td{padding:9px 14px;border-top:1px solid var(--card-border)}.info-table tr:hover td{background:rgba(108,140,255,0.04)}.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin:18px 0}.toc-item{background:rgba(108,140,255,0.04);border:1px solid var(--card-border);padding:10px 14px;border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.88em}.toc-item:hover{border-color:var(--accent);background:rgba(108,140,255,0.08);transform:translateY(-1px)}.toc-item .toc-num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:0.78em;margin-right:6px}strong{color:var(--accent2)}em{color:var(--accent3);font-style:normal}.section-divider{text-align:center;padding:10px;color:var(--purple);font-weight:700;font-size:0.85em;letter-spacing:2px;text-transform:uppercase;margin:10px 0}@media(max-width:700px){.slide{padding:22px 16px}.header h1{font-size:1.8em}.app{padding:12px}}
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-top: 16px;
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .math-block {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    overflow-x: auto;
+    font-size: 1.05em;
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .highlight-box {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+    line-height: 1.7;
+  }
+
+  strong { color: var(--accent); font-weight: 500; }
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 8px 0 12px 20px; }
+  li { margin-bottom: 4px; }
+
+  .section-divider {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 200px 1fr; }
+    .content { padding: 32px 32px 60px; }
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 28px 24px 60px; }
+  }
+  @media (max-width: 768px) {
+    .topbar { padding: 10px 16px; }
+    .topbar h1 { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60vw; }
+    .content { padding: 20px 16px 48px; }
+    .page-section h2 { font-size: 18px; }
+    .card { padding: 18px 16px; }
+  }
+  @media (max-width: 480px) {
+    .content { padding: 16px 12px 40px; }
+    body { font-size: 14px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+  }
 </style>
 </head>
 <body>
-<div class="app" id="app">
-<div class="header"><h1>Machine-level Programming I</h1><div class="subtitle">System Programming CSE306 — DGIST</div></div>
-<div id="content"></div>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <div>
+    <h1>Machine-Level Programming: Basics</h1>
+    <div class="meta">System Programming CSE306 — DGIST</div>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">Dark Mode</button>
 </div>
-<script>
-const slides=[
-{title:"강의 개요",render:function(c){c.innerHTML=`<div class="explanation"><p>이 강의는 C 코드가 <strong>기계어(Machine Code)</strong>로 변환되는 과정과, x86-64 어셈블리의 기초를 다룹니다.</p><div class="toc"><div class="toc-item" onclick="goSlide(1)"><span class="toc-num">01</span> 강의 소개</div><div class="toc-item" onclick="goSlide(3)"><span class="toc-num">03</span> Intel x86 프로세서 역사</div><div class="toc-item" onclick="goSlide(7)"><span class="toc-num">08</span> C → 어셈블리 → 기계어</div><div class="toc-item" onclick="goSlide(16)"><span class="toc-num">17</span> 디스어셈블리</div><div class="toc-item" onclick="goSlide(19)"><span class="toc-num">20</span> 레지스터</div><div class="toc-item" onclick="goSlide(21)"><span class="toc-num">22</span> 데이터 이동 (mov)</div><div class="toc-item" onclick="goSlide(25)"><span class="toc-num">26</span> swap 예제</div><div class="toc-item" onclick="goSlide(31)"><span class="toc-num">32</span> 주소 계산 & 산술 연산</div><div class="toc-item" onclick="goSlide(37)"><span class="toc-num">38</span> 산술 표현식 예제</div></div></div>`}},
-// 1: 표지
-{title:"강의 소개",render:function(c){c.innerHTML=`<div class="explanation"><div class="highlight-box"><strong>과목:</strong> System Programming (CSE306) · DGIST<br><strong>주제:</strong> Chapter 4 — Machine-level Programming I: Basics<br><strong>담당:</strong> Prof. Yongwoo Lee</div><p>C 언어 뒤에서 실제로 어떤 일이 일어나는지를 배웁니다. 컴파일러가 C 코드를 어떻게 어셈블리 명령어로 변환하는지, CPU의 레지스터와 메모리를 어떻게 사용하는지를 이해합니다.</p></div>`}},
-// 2: 로드맵
-{title:"로드맵",render:function(c){c.innerHTML=`<div class="explanation"><table class="info-table"><tr><th>파트</th><th>내용</th></tr><tr><td><strong>1. Intel 역사</strong></td><td>x86 프로세서의 진화, CISC vs RISC</td></tr><tr><td><strong>2. C → 기계어</strong></td><td>컴파일 → 어셈블 → 링크 과정, 어셈블리 특성</td></tr><tr><td><strong>3. 어셈블리 기초</strong></td><td>레지스터, 오퍼랜드, mov 명령어, 주소 지정 모드</td></tr><tr><td><strong>4. 산술/논리 연산</strong></td><td>leaq, add, sub, imul, shift, and, or, xor</td></tr></table></div>`}},
-// 3: Intel x86 (p3)
-{title:"Intel x86 프로세서",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>Intel x86</strong>은 랩탑/데스크탑/서버 시장을 지배하는 프로세서 아키텍처입니다.</p><div class="highlight-box"><strong>핵심 특징:</strong><br>• <strong>진화적 설계(Evolutionary Design):</strong> 1978년 8086부터 <em>하위 호환</em>을 유지하며 발전<br>• <strong>CISC</strong> (Complex Instruction Set Computer): 다양한 명령어와 형식. 하지만 Linux에서는 일부만 사용</div><p><strong>CISC vs RISC:</strong></p><table class="info-table"><tr><th></th><th>CISC (x86)</th><th>RISC (ARM, RISC-V)</th></tr><tr><td>명령어 수</td><td>매우 많음</td><td>적음</td></tr><tr><td>명령어 형식</td><td>다양</td><td>균일</td></tr><tr><td>장점</td><td>속도 (Intel 최적화)</td><td>저전력, 단순 설계</td></tr></table><div class="key-point">현재 <strong>RISC 르네상스</strong>: ARM(모바일), RISC-V(오픈소스)가 저전력 시장에서 부상 중입니다.</div></div>`}},
-// 4: Intel Milestones (p4)
-{title:"Intel x86 진화 — 마일스톤",render:function(c){c.innerHTML=`<div class="explanation"><table class="info-table"><tr><th>프로세서</th><th>연도</th><th>트랜지스터</th><th>특징</th></tr><tr><td><strong>8086</strong></td><td>1978</td><td>29K</td><td>최초 16비트 Intel CPU. IBM PC의 기반. 1MB 주소 공간</td></tr><tr><td><strong>386</strong></td><td>1985</td><td>275K</td><td>최초 32비트 (IA32). Flat addressing, Unix 구동 가능</td></tr><tr><td><strong>Pentium 4E</strong></td><td>2004</td><td>125M</td><td>최초 64비트 x86 (x86-64)</td></tr><tr><td><strong>Core 2</strong></td><td>2006</td><td>291M</td><td>최초 멀티코어</td></tr><tr><td><strong>Core i7</strong></td><td>2008</td><td>731M</td><td>4코어</td></tr></table><div class="highlight-box">추가된 기능들: 멀티미디어 명령어, 효율적인 조건부 연산, 32비트 → 64비트 전환</div></div>`}},
-// 5: Intel cont. (p5)
-{title:"최신 프로세서와 AMD",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>최신 프로세서:</strong> 더 많은 코어와 트랜지스터로 병렬 처리 강화. GPU, 이미지 처리, 메모리 컨트롤러, NPU 등 <em>특수 목적 유닛</em> 내장.</p><p><strong>AMD:</strong></p><div class="highlight-box">• 역사적으로 Intel 약간 뒤에서 따라가며 더 저렴한 제품 제공<br>• DEC 등에서 최고급 회로 설계자를 영입<br>• <strong>x86-64</strong>를 AMD가 독자 개발! (Intel은 나중에 채택)</div></div>`}},
-// 6: 로드맵 - C/Assembly (p7)
-{title:"로드맵 — C, 어셈블리, 기계어",render:function(c){c.innerHTML=`<div class="explanation"><div class="section-divider">— C, Assembly, Machine Code —</div><p>프로그래머가 작성하는 C 코드가 CPU가 실행하는 기계어까지 어떤 과정을 거치는지 배웁니다.</p></div>`}},
-// 7: Definitions (p8)
-{title:"핵심 용어 정의",render:function(c){c.innerHTML=`<div class="explanation"><table class="info-table"><tr><th>용어</th><th>의미</th><th>예시</th></tr><tr><td><strong>Architecture (ISA)</strong></td><td>어셈블리/기계어를 작성하기 위해 알아야 하는 프로세서 설계의 부분</td><td>명령어 집합, 레지스터</td></tr><tr><td><strong>Microarchitecture</strong></td><td>아키텍처의 <em>구현</em> 방식</td><td>캐시 크기, 클럭 주파수</td></tr><tr><td><strong>Machine Code</strong></td><td>프로세서가 실행하는 바이트 수준 프로그램</td><td>0x48 0x89 0xd3</td></tr><tr><td><strong>Assembly Code</strong></td><td>기계어의 텍스트 표현</td><td>movq %rdx, %rbx</td></tr></table><div class="key-point"><strong>ISA 예시:</strong> Intel x86/x86-64, ARM (거의 모든 스마트폰에 사용)</div></div>`}},
-// 8: Assembly/Machine Code View (p9)
-{title:"어셈블리/기계어 관점 — CPU 상태",render:function(c){c.innerHTML=`<div class="explanation"><p>어셈블리 프로그래머가 볼 수 있는 <strong>프로세서 상태(Programmer-Visible State)</strong>:</p><table class="info-table"><tr><th>구성 요소</th><th>설명</th></tr><tr><td><strong>PC (Program Counter)</strong></td><td>다음 실행할 명령어의 주소. x86-64에서는 <span style="color:var(--purple)">%rip</span>이라 부름</td></tr><tr><td><strong>Register File</strong></td><td>16개의 범용 레지스터. 자주 사용되는 프로그램 데이터 저장</td></tr><tr><td><strong>Condition Codes</strong></td><td>가장 최근 산술/논리 연산의 상태 정보. 조건 분기에 사용</td></tr><tr><td><strong>Memory</strong></td><td>바이트 단위로 주소 지정. 코드, 데이터, 스택 저장</td></tr></table></div>`}},
-// 9: Turning C into Object Code (p10)
-{title:"C → 실행 파일 변환 과정",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">gcc -Og p1.c p2.c -o p</div><p>변환은 4단계로 이루어집니다:</p><div class="code-block">C program (p1.c, p2.c)        [텍스트]
+
+<!-- Layout -->
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="label">Contents</div>
+
+    <div class="section-label">Overview</div>
+    <a href="#intro">강의 소개</a>
+    <a href="#roadmap">로드맵</a>
+
+    <div class="section-label">Intel x86 프로세서</div>
+    <a href="#x86">Intel x86 프로세서</a>
+    <a href="#milestones">x86 진화 마일스톤</a>
+    <a href="#modern">최신 프로세서와 AMD</a>
+
+    <div class="section-label">C, Assembly, Machine Code</div>
+    <a href="#roadmap-asm">C → 어셈블리 → 기계어</a>
+    <a href="#definitions">핵심 용어 정의</a>
+    <a href="#cpu-state">CPU 상태</a>
+    <a href="#compile-process">C → 실행 파일 변환</a>
+    <a href="#compile-asm">C에서 어셈블리로</a>
+    <a href="#asm-datatypes">어셈블리 데이터 타입</a>
+    <a href="#asm-operations">어셈블리 연산 종류</a>
+    <a href="#object-code">Object Code</a>
+    <a href="#linking">링킹</a>
+    <a href="#machine-example">기계어 명령어 예제</a>
+
+    <div class="section-label">디스어셈블리</div>
+    <a href="#disassemble">objdump 디스어셈블리</a>
+    <a href="#gdb">GDB 디스어셈블리</a>
+    <a href="#disassemble-any">모든 것을 디스어셈블</a>
+
+    <div class="section-label">레지스터 & mov</div>
+    <a href="#roadmap-reg">레지스터, 오퍼랜드, mov</a>
+    <a href="#registers">x86-64 레지스터</a>
+    <a href="#reg-history">레지스터 역사 (IA32)</a>
+    <a href="#movq">데이터 이동 — movq</a>
+    <a href="#movq-combo">movq 오퍼랜드 조합</a>
+    <a href="#addressing">메모리 주소 지정 모드</a>
+
+    <div class="section-label">swap 예제</div>
+    <a href="#swap">swap — C와 어셈블리</a>
+    <a href="#swap-trace">swap 실행 추적</a>
+
+    <div class="section-label">주소 계산 & 산술 연산</div>
+    <a href="#full-addressing">완전한 주소 지정 모드</a>
+    <a href="#addr-examples">주소 계산 예제</a>
+    <a href="#roadmap-arith">산술/논리 연산</a>
+    <a href="#leaq">leaq 명령어</a>
+    <a href="#two-operand">2-오퍼랜드 명령어</a>
+    <a href="#one-operand">1-오퍼랜드 명령어</a>
+
+    <div class="section-label">산술 예제 & 요약</div>
+    <a href="#arith-example">산술 표현식 예제</a>
+    <a href="#summary">요약</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="content">
+
+    <!-- 1. 강의 소개 -->
+    <section class="page-section" id="intro">
+      <div class="page-num">Page 01</div>
+      <h2>강의 소개</h2>
+      <div class="card">
+        <div class="card-label">과목 정보</div>
+        <p><strong>과목:</strong> System Programming (CSE306) · DGIST</p>
+        <p><strong>주제:</strong> Chapter 4 — Machine-level Programming I: Basics</p>
+        <p><strong>담당:</strong> Prof. Yongwoo Lee</p>
+      </div>
+      <p>이 강의는 C 코드가 <strong>기계어(Machine Code)</strong>로 변환되는 과정과, x86-64 어셈블리의 기초를 다룹니다.</p>
+      <p>C 언어 뒤에서 실제로 어떤 일이 일어나는지를 배웁니다. 컴파일러가 C 코드를 어떻게 어셈블리 명령어로 변환하는지, CPU의 레지스터와 메모리를 어떻게 사용하는지를 이해합니다.</p>
+    </section>
+
+    <!-- 2. 로드맵 -->
+    <section class="page-section" id="roadmap">
+      <div class="page-num">Page 02</div>
+      <h2>로드맵</h2>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>파트</th><th>내용</th></tr>
+          <tr><td><strong>1. Intel 역사</strong></td><td>x86 프로세서의 진화, CISC vs RISC</td></tr>
+          <tr><td><strong>2. C → 기계어</strong></td><td>컴파일 → 어셈블 → 링크 과정, 어셈블리 특성</td></tr>
+          <tr><td><strong>3. 어셈블리 기초</strong></td><td>레지스터, 오퍼랜드, mov 명령어, 주소 지정 모드</td></tr>
+          <tr><td><strong>4. 산술/논리 연산</strong></td><td>leaq, add, sub, imul, shift, and, or, xor</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. Intel x86 프로세서 -->
+    <section class="page-section" id="x86">
+      <div class="page-num">Page 03</div>
+      <h2>Intel x86 프로세서</h2>
+      <p><strong>Intel x86</strong>은 랩탑/데스크탑/서버 시장을 지배하는 프로세서 아키텍처입니다.</p>
+      <div class="summary-box">
+        <strong>핵심 특징:</strong><br>
+        <strong>진화적 설계(Evolutionary Design):</strong> 1978년 8086부터 하위 호환을 유지하며 발전<br>
+        <strong>CISC</strong> (Complex Instruction Set Computer): 다양한 명령어와 형식. 하지만 Linux에서는 일부만 사용
+      </div>
+      <div class="card">
+        <div class="card-label">CISC vs RISC</div>
+        <table class="terms-table">
+          <tr><th></th><th>CISC (x86)</th><th>RISC (ARM, RISC-V)</th></tr>
+          <tr><td>명령어 수</td><td>매우 많음</td><td>적음</td></tr>
+          <tr><td>명령어 형식</td><td>다양</td><td>균일</td></tr>
+          <tr><td>장점</td><td>속도 (Intel 최적화)</td><td>저전력, 단순 설계</td></tr>
+        </table>
+      </div>
+      <div class="key-point">현재 <strong>RISC 르네상스</strong>: ARM(모바일), RISC-V(오픈소스)가 저전력 시장에서 부상 중입니다.</div>
+    </section>
+
+    <!-- 4. Intel 마일스톤 -->
+    <section class="page-section" id="milestones">
+      <div class="page-num">Page 04</div>
+      <h2>Intel x86 진화 — 마일스톤</h2>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>프로세서</th><th>연도</th><th>트랜지스터</th><th>특징</th></tr>
+          <tr><td><strong>8086</strong></td><td>1978</td><td>29K</td><td>최초 16비트 Intel CPU. IBM PC의 기반. 1MB 주소 공간</td></tr>
+          <tr><td><strong>386</strong></td><td>1985</td><td>275K</td><td>최초 32비트 (IA32). Flat addressing, Unix 구동 가능</td></tr>
+          <tr><td><strong>Pentium 4E</strong></td><td>2004</td><td>125M</td><td>최초 64비트 x86 (x86-64)</td></tr>
+          <tr><td><strong>Core 2</strong></td><td>2006</td><td>291M</td><td>최초 멀티코어</td></tr>
+          <tr><td><strong>Core i7</strong></td><td>2008</td><td>731M</td><td>4코어</td></tr>
+        </table>
+      </div>
+      <div class="highlight-box">추가된 기능들: 멀티미디어 명령어, 효율적인 조건부 연산, 32비트 → 64비트 전환</div>
+    </section>
+
+    <!-- 5. 최신 프로세서와 AMD -->
+    <section class="page-section" id="modern">
+      <div class="page-num">Page 05</div>
+      <h2>최신 프로세서와 AMD</h2>
+      <p><strong>최신 프로세서:</strong> 더 많은 코어와 트랜지스터로 병렬 처리 강화. GPU, 이미지 처리, 메모리 컨트롤러, NPU 등 특수 목적 유닛 내장.</p>
+      <div class="card">
+        <div class="card-label">AMD</div>
+        <ul>
+          <li>역사적으로 Intel 약간 뒤에서 따라가며 더 저렴한 제품 제공</li>
+          <li>DEC 등에서 최고급 회로 설계자를 영입</li>
+          <li><strong>x86-64</strong>를 AMD가 독자 개발! (Intel은 나중에 채택)</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6. 로드맵 - C/Assembly -->
+    <section class="page-section" id="roadmap-asm">
+      <div class="page-num">Page 06</div>
+      <h2>C, Assembly, Machine Code</h2>
+      <div class="section-divider">— C, Assembly, Machine Code —</div>
+      <p>프로그래머가 작성하는 C 코드가 CPU가 실행하는 기계어까지 어떤 과정을 거치는지 배웁니다.</p>
+    </section>
+
+    <!-- 7. 핵심 용어 정의 -->
+    <section class="page-section" id="definitions">
+      <div class="page-num">Page 07</div>
+      <h2>핵심 용어 정의</h2>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>용어</th><th>의미</th><th>예시</th></tr>
+          <tr><td class="en">Architecture (ISA)</td><td>어셈블리/기계어를 작성하기 위해 알아야 하는 프로세서 설계의 부분</td><td>명령어 집합, 레지스터</td></tr>
+          <tr><td class="en">Microarchitecture</td><td>아키텍처의 구현 방식</td><td>캐시 크기, 클럭 주파수</td></tr>
+          <tr><td class="en">Machine Code</td><td>프로세서가 실행하는 바이트 수준 프로그램</td><td>0x48 0x89 0xd3</td></tr>
+          <tr><td class="en">Assembly Code</td><td>기계어의 텍스트 표현</td><td>movq %rdx, %rbx</td></tr>
+        </table>
+      </div>
+      <div class="key-point"><strong>ISA 예시:</strong> Intel x86/x86-64, ARM (거의 모든 스마트폰에 사용)</div>
+    </section>
+
+    <!-- 8. CPU 상태 -->
+    <section class="page-section" id="cpu-state">
+      <div class="page-num">Page 08</div>
+      <h2>어셈블리/기계어 관점 — CPU 상태</h2>
+      <p>어셈블리 프로그래머가 볼 수 있는 <strong>프로세서 상태(Programmer-Visible State)</strong>:</p>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>구성 요소</th><th>설명</th></tr>
+          <tr><td class="en">PC (Program Counter)</td><td>다음 실행할 명령어의 주소. x86-64에서는 <strong>%rip</strong>이라 부름</td></tr>
+          <tr><td class="en">Register File</td><td>16개의 범용 레지스터. 자주 사용되는 프로그램 데이터 저장</td></tr>
+          <tr><td class="en">Condition Codes</td><td>가장 최근 산술/논리 연산의 상태 정보. 조건 분기에 사용</td></tr>
+          <tr><td class="en">Memory</td><td>바이트 단위로 주소 지정. 코드, 데이터, 스택 저장</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 9. C → 실행 파일 변환 과정 -->
+    <section class="page-section" id="compile-process">
+      <div class="page-num">Page 09</div>
+      <h2>C → 실행 파일 변환 과정</h2>
+      <pre>gcc -Og p1.c p2.c -o p</pre>
+      <p>변환은 4단계로 이루어집니다:</p>
+      <pre>C program (p1.c, p2.c)        [텍스트]
         ↓  Compiler (gcc -Og -S)
 Asm program (p1.s, p2.s)       [텍스트]
         ↓  Assembler (as)
 Object program (p1.o, p2.o)    [바이너리]
         ↓  Linker (ld)         + Static libraries (.a)
-Executable program (p)         [바이너리]</div><div class="highlight-box"><strong>-Og</strong>: 디버깅에 적합한 기본 최적화. 어셈블리를 읽기 쉽게 만듦. -O2나 -O3는 적극적 최적화로 읽기 어려운 코드 생성.</div></div>`}},
-// 10: Compiling Into Assembly (p11)
-{title:"C에서 어셈블리로 — 컴파일 결과",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">// C Code (sum.c)
-long plus(long x, long y);
+Executable program (p)         [바이너리]</pre>
+      <div class="highlight-box"><strong>-Og</strong>: 디버깅에 적합한 기본 최적화. 어셈블리를 읽기 쉽게 만듦. -O2나 -O3는 적극적 최적화로 읽기 어려운 코드 생성.</div>
+    </section>
+
+    <!-- 10. C에서 어셈블리로 -->
+    <section class="page-section" id="compile-asm">
+      <div class="page-num">Page 10</div>
+      <h2>C에서 어셈블리로 — 컴파일 결과</h2>
+      <div class="card">
+        <div class="card-label">C Code (sum.c)</div>
+        <pre>long plus(long x, long y);
 void sumstore(long x, long y, long *dest) {
     long t = plus(x, y);
     *dest = t;
-}</div><p><span style="color:var(--purple)">gcc -Og -S sum.c</span> → sum.s 생성:</p><div class="code-block">sumstore:
+}</pre>
+      </div>
+      <p><strong>gcc -Og -S sum.c</strong> → sum.s 생성:</p>
+      <div class="card">
+        <div class="card-label">Assembly (sum.s)</div>
+        <pre>sumstore:
     pushq   %rbx          # rbx를 스택에 저장 (callee-save)
     movq    %rdx, %rbx    # dest를 rbx에 복사
     call    plus           # plus(x, y) 호출 → 결과는 %rax에
     movq    %rax, (%rbx)   # *dest = t (rax의 값을 rbx가 가리키는 메모리에)
     popq    %rbx           # rbx 복원
-    ret                    # 반환</div><div class="key-point">C의 6줄 함수가 어셈블리 6줄 명령어로 변환되었습니다. 각 줄이 CPU가 실행하는 하나의 동작에 대응합니다.</div></div>`}},
-// 11: Assembly Data Types (p12)
-{title:"어셈블리의 데이터 타입",render:function(c){c.innerHTML=`<div class="explanation"><p>어셈블리는 <strong>타입이 없는(untyped) 언어</strong>입니다.</p><div class="highlight-box"><strong>데이터:</strong><br>• "정수" 데이터: 1, 2, 4, 8 바이트 — 값 또는 주소(포인터)<br>• 부동소수점 데이터: 4, 8, 10 바이트<br>• 배열이나 구조체 같은 집합 타입은 없음 — 메모리에 연속 배치된 바이트일 뿐</div><p><strong>코드:</strong> 명령어를 인코딩한 바이트 시퀀스</p><div class="warning-box">컴파일러가 타입 정보를 모두 없앤다는 뜻입니다. 어셈블리 수준에서는 int와 포인터가 구분되지 않습니다.</div></div>`}},
-// 12: Assembly Operations (p13)
-{title:"어셈블리의 연산 종류",render:function(c){c.innerHTML=`<div class="explanation"><p>어셈블리 명령어는 크게 3가지로 분류됩니다:</p><table class="info-table"><tr><th>분류</th><th>설명</th><th>예시</th></tr><tr><td><strong>산술/논리 연산</strong></td><td>레지스터나 메모리 데이터에 대한 계산</td><td>addq, subq, andq</td></tr><tr><td><strong>데이터 전송</strong></td><td>메모리 ↔ 레지스터 간 데이터 이동</td><td>movq (load/store)</td></tr><tr><td><strong>제어 전환</strong></td><td>무조건 점프, 조건 분기, 함수 호출/반환</td><td>jmp, je, call, ret</td></tr></table></div>`}},
-// 13: Object Code (p14)
-{title:"Object Code — 기계어",render:function(c){c.innerHTML=`<div class="explanation"><p>어셈블러(Assembler)가 .s 파일을 .o 파일(바이너리)로 변환합니다:</p><div class="code-block">sumstore 시작 주소: 0x0400595
+    ret                    # 반환</pre>
+      </div>
+      <div class="key-point">C의 6줄 함수가 어셈블리 6줄 명령어로 변환되었습니다. 각 줄이 CPU가 실행하는 하나의 동작에 대응합니다.</div>
+    </section>
+
+    <!-- 11. 어셈블리 데이터 타입 -->
+    <section class="page-section" id="asm-datatypes">
+      <div class="page-num">Page 11</div>
+      <h2>어셈블리의 데이터 타입</h2>
+      <p>어셈블리는 <strong>타입이 없는(untyped) 언어</strong>입니다.</p>
+      <div class="summary-box">
+        <strong>데이터:</strong><br>
+        "정수" 데이터: 1, 2, 4, 8 바이트 — 값 또는 주소(포인터)<br>
+        부동소수점 데이터: 4, 8, 10 바이트<br>
+        배열이나 구조체 같은 집합 타입은 없음 — 메모리에 연속 배치된 바이트일 뿐
+      </div>
+      <p><strong>코드:</strong> 명령어를 인코딩한 바이트 시퀀스</p>
+      <div class="warning-box">컴파일러가 타입 정보를 모두 없앤다는 뜻입니다. 어셈블리 수준에서는 int와 포인터가 구분되지 않습니다.</div>
+    </section>
+
+    <!-- 12. 어셈블리 연산 종류 -->
+    <section class="page-section" id="asm-operations">
+      <div class="page-num">Page 12</div>
+      <h2>어셈블리의 연산 종류</h2>
+      <p>어셈블리 명령어는 크게 3가지로 분류됩니다:</p>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>분류</th><th>설명</th><th>예시</th></tr>
+          <tr><td><strong>산술/논리 연산</strong></td><td>레지스터나 메모리 데이터에 대한 계산</td><td>addq, subq, andq</td></tr>
+          <tr><td><strong>데이터 전송</strong></td><td>메모리 ↔ 레지스터 간 데이터 이동</td><td>movq (load/store)</td></tr>
+          <tr><td><strong>제어 전환</strong></td><td>무조건 점프, 조건 분기, 함수 호출/반환</td><td>jmp, je, call, ret</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 13. Object Code -->
+    <section class="page-section" id="object-code">
+      <div class="page-num">Page 13</div>
+      <h2>Object Code — 기계어</h2>
+      <p>어셈블러(Assembler)가 .s 파일을 .o 파일(바이너리)로 변환합니다:</p>
+      <div class="card">
+        <div class="card-label">sumstore 기계어 인코딩</div>
+        <pre>sumstore 시작 주소: 0x0400595
 
 pushq  %rbx         →  0x53             (1 바이트)
 movq   %rdx, %rbx   →  0x48 0x89 0xd3   (3 바이트)
@@ -75,13 +606,49 @@ call   plus          →  0xe8 0xf2 0xff 0xff 0xff  (5 바이트)
 movq   %rax, (%rbx)  →  0x48 0x89 0x03   (3 바이트)
 popq   %rbx          →  0x5b             (1 바이트)
 ret                  →  0xc3             (1 바이트)
-                                 총 14 바이트</div><div class="key-point">각 명령어는 <strong>1, 3, 또는 5 바이트</strong>로 인코딩됩니다. CISC의 특징 — 명령어마다 길이가 다릅니다. (RISC는 보통 고정 4바이트)</div></div>`}},
-// 14: Linking (p15)
-{title:"링킹 — Linker",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>링커(Linker)</strong>의 역할:</p><div class="highlight-box">• 여러 .o 파일 간의 <strong>참조를 해결</strong> (예: sumstore에서 plus 호출)<br>• <strong>정적 라이브러리</strong>(.a)와 결합 (malloc, printf 등의 코드)<br>• 일부 라이브러리는 <strong>동적 링킹</strong> — 프로그램 실행 시점에 연결</div></div>`}},
-// 15: Machine Instruction Example (p16)
-{title:"기계어 명령어 예제",render:function(c){c.innerHTML=`<div class="explanation"><p>C의 <span style="color:var(--purple)">*dest = t;</span>가 기계어까지 변환되는 과정:</p><table class="info-table"><tr><th>수준</th><th>표현</th><th>설명</th></tr><tr><td><strong>C</strong></td><td>*dest = t;</td><td>dest가 가리키는 곳에 t 저장</td></tr><tr><td><strong>Assembly</strong></td><td>movq %rax, (%rbx)</td><td>rax의 8바이트 값을 rbx가 가리키는 메모리에 이동</td></tr><tr><td><strong>Machine</strong></td><td>48 89 03</td><td>3바이트 명령어, 주소 0x40059e에 저장</td></tr></table><div class="highlight-box"><strong>movq</strong>의 q는 <em>quad word</em>(8바이트). x86-64에서 크기 접미사: <strong>b</strong>(1), <strong>w</strong>(2), <strong>l</strong>(4), <strong>q</strong>(8)</div></div>`}},
-// 16: Disassembling (p17)
-{title:"디스어셈블리 — objdump",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>디스어셈블러</strong>: 기계어 바이트를 어셈블리 코드로 역변환합니다.</p><div class="code-block">$ objdump -d sum
+                                 총 14 바이트</pre>
+      </div>
+      <div class="key-point">각 명령어는 <strong>1, 3, 또는 5 바이트</strong>로 인코딩됩니다. CISC의 특징 — 명령어마다 길이가 다릅니다. (RISC는 보통 고정 4바이트)</div>
+    </section>
+
+    <!-- 14. 링킹 -->
+    <section class="page-section" id="linking">
+      <div class="page-num">Page 14</div>
+      <h2>링킹 — Linker</h2>
+      <p><strong>링커(Linker)</strong>의 역할:</p>
+      <div class="summary-box">
+        <ul>
+          <li>여러 .o 파일 간의 <strong>참조를 해결</strong> (예: sumstore에서 plus 호출)</li>
+          <li><strong>정적 라이브러리</strong>(.a)와 결합 (malloc, printf 등의 코드)</li>
+          <li>일부 라이브러리는 <strong>동적 링킹</strong> — 프로그램 실행 시점에 연결</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 15. 기계어 명령어 예제 -->
+    <section class="page-section" id="machine-example">
+      <div class="page-num">Page 15</div>
+      <h2>기계어 명령어 예제</h2>
+      <p>C의 <strong>*dest = t;</strong>가 기계어까지 변환되는 과정:</p>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>수준</th><th>표현</th><th>설명</th></tr>
+          <tr><td><strong>C</strong></td><td>*dest = t;</td><td>dest가 가리키는 곳에 t 저장</td></tr>
+          <tr><td><strong>Assembly</strong></td><td class="en">movq %rax, (%rbx)</td><td>rax의 8바이트 값을 rbx가 가리키는 메모리에 이동</td></tr>
+          <tr><td><strong>Machine</strong></td><td class="en">48 89 03</td><td>3바이트 명령어, 주소 0x40059e에 저장</td></tr>
+        </table>
+      </div>
+      <div class="highlight-box"><strong>movq</strong>의 q는 quad word(8바이트). x86-64에서 크기 접미사: <strong>b</strong>(1), <strong>w</strong>(2), <strong>l</strong>(4), <strong>q</strong>(8)</div>
+    </section>
+
+    <!-- 16. 디스어셈블리 — objdump -->
+    <section class="page-section" id="disassemble">
+      <div class="page-num">Page 16</div>
+      <h2>디스어셈블리 — objdump</h2>
+      <p><strong>디스어셈블러</strong>: 기계어 바이트를 어셈블리 코드로 역변환합니다.</p>
+      <div class="card">
+        <div class="card-label">objdump -d 출력</div>
+        <pre>$ objdump -d sum
 
 0000000000400595 &lt;sumstore&gt;:
   400595: 53                push   %rbx
@@ -89,20 +656,50 @@ ret                  →  0xc3             (1 바이트)
   400599: e8 f2 ff ff ff    callq  400590 &lt;plus&gt;
   40059e: 48 89 03          mov    %rax,(%rbx)
   4005a1: 5b                pop    %rbx
-  4005a2: c3                retq</div><p>실행 파일(.out)이나 오브젝트 파일(.o) 모두에 사용 가능합니다.</p></div>`}},
-// 17: GDB Disassembly (p18)
-{title:"GDB에서 디스어셈블리",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>gdb</strong> 디버거에서도 디스어셈블리할 수 있습니다:</p><div class="code-block">$ gdb sum
+  4005a2: c3                retq</pre>
+      </div>
+      <p>실행 파일(.out)이나 오브젝트 파일(.o) 모두에 사용 가능합니다.</p>
+    </section>
+
+    <!-- 17. GDB 디스어셈블리 -->
+    <section class="page-section" id="gdb">
+      <div class="page-num">Page 17</div>
+      <h2>GDB에서 디스어셈블리</h2>
+      <p><strong>gdb</strong> 디버거에서도 디스어셈블리할 수 있습니다:</p>
+      <pre>$ gdb sum
 (gdb) disassemble sumstore        # 함수 디스어셈블
-(gdb) x/14xb sumstore              # 14바이트를 16진수로 출력</div><p>gdb는 objdump와 거의 동일한 결과를 보여주지만, 디버깅 중 실시간으로 확인할 수 있다는 장점이 있습니다.</p></div>`}},
-// 18: What can be disassembled (p19)
-{title:"무엇이든 디스어셈블 가능",render:function(c){c.innerHTML=`<div class="explanation"><p>실행 가능한 코드로 해석할 수 있는 <strong>모든 바이트</strong>를 디스어셈블할 수 있습니다. 심지어 Windows의 WINWORD.EXE도!</p><div class="code-block">$ objdump -d WINWORD.EXE
+(gdb) x/14xb sumstore              # 14바이트를 16진수로 출력</pre>
+      <p>gdb는 objdump와 거의 동일한 결과를 보여주지만, 디버깅 중 실시간으로 확인할 수 있다는 장점이 있습니다.</p>
+    </section>
+
+    <!-- 18. 무엇이든 디스어셈블 가능 -->
+    <section class="page-section" id="disassemble-any">
+      <div class="page-num">Page 18</div>
+      <h2>무엇이든 디스어셈블 가능</h2>
+      <p>실행 가능한 코드로 해석할 수 있는 <strong>모든 바이트</strong>를 디스어셈블할 수 있습니다. 심지어 Windows의 WINWORD.EXE도!</p>
+      <pre>$ objdump -d WINWORD.EXE
 30001000: 55              push   %ebp
 30001001: 8b ec           mov    %esp,%ebp
-30001003: 6a ff           push   $0xffffffff</div><div class="warning-box"><strong>주의:</strong> Microsoft EULA는 역공학(reverse engineering)을 금지합니다. 하지만 기술적으로는 가능합니다.</div></div>`}},
-// 19: 로드맵 - Registers (p20)
-{title:"로드맵 — 레지스터, 오퍼랜드, mov",render:function(c){c.innerHTML=`<div class="explanation"><div class="section-divider">— Assembly Basics: Registers, Operands, Move —</div><p>CPU 내부의 레지스터와 데이터를 이동하는 mov 명령어를 배웁니다.</p></div>`}},
-// 20: x86-64 Registers (p21)
-{title:"x86-64 정수 레지스터 — 16개",render:function(c){c.innerHTML=`<div class="explanation"><p>x86-64에는 <strong>16개의 범용 정수 레지스터</strong>가 있습니다 (각 8바이트):</p><div class="code-block">64비트    32비트      64비트    32비트
+30001003: 6a ff           push   $0xffffffff</pre>
+      <div class="warning-box"><strong>주의:</strong> Microsoft EULA는 역공학(reverse engineering)을 금지합니다. 하지만 기술적으로는 가능합니다.</div>
+    </section>
+
+    <!-- 19. 로드맵 - 레지스터 -->
+    <section class="page-section" id="roadmap-reg">
+      <div class="page-num">Page 19</div>
+      <h2>Assembly Basics: Registers, Operands, Move</h2>
+      <div class="section-divider">— Assembly Basics: Registers, Operands, Move —</div>
+      <p>CPU 내부의 레지스터와 데이터를 이동하는 mov 명령어를 배웁니다.</p>
+    </section>
+
+    <!-- 20. x86-64 레지스터 -->
+    <section class="page-section" id="registers">
+      <div class="page-num">Page 20</div>
+      <h2>x86-64 정수 레지스터 — 16개</h2>
+      <p>x86-64에는 <strong>16개의 범용 정수 레지스터</strong>가 있습니다 (각 8바이트):</p>
+      <div class="card">
+        <div class="card-label">Register Map</div>
+        <pre>64비트    32비트      64비트    32비트
 %rax      %eax       %r8       %r8d
 %rbx      %ebx       %r9       %r9d
 %rcx      %ecx       %r10      %r10d
@@ -110,47 +707,233 @@ ret                  →  0xc3             (1 바이트)
 %rsi      %esi       %r12      %r12d
 %rdi      %edi       %r13      %r13d
 %rsp      %esp       %r14      %r14d
-%rbp      %ebp       %r15      %r15d</div><p>하위 4바이트(%eax), 2바이트(%ax), 1바이트(%al)도 개별 접근 가능합니다.</p><div class="key-point"><strong>%rsp</strong>는 스택 포인터로 특수 용도. 나머지도 함수 호출 규약에 따라 역할이 있지만 (rdi=1번째 인자, rsi=2번째 등), 기본적으로 범용입니다.</div></div>`}},
-// 21: IA32 History (p22)
-{title:"레지스터의 역사 — IA32",render:function(c){c.innerHTML=`<div class="explanation"><p>32비트 시절(IA32)에는 8개의 레지스터만 있었습니다. 각각 원래 이름이 있었습니다:</p><table class="info-table"><tr><th>레지스터</th><th>원래 용도</th></tr><tr><td>%eax</td><td><em>Accumulate</em> — 산술 결과 저장</td></tr><tr><td>%ecx</td><td><em>Counter</em> — 루프 카운터</td></tr><tr><td>%edx</td><td><em>Data</em> — 데이터</td></tr><tr><td>%ebx</td><td><em>Base</em> — 기준 주소</td></tr><tr><td>%esi / %edi</td><td><em>Source/Destination Index</em></td></tr><tr><td>%esp</td><td><em>Stack Pointer</em></td></tr><tr><td>%ebp</td><td><em>Base Pointer</em></td></tr></table><p>x86-64에서 %r8~%r15가 추가되어 총 16개가 되었습니다.</p></div>`}},
-// 22: Moving Data (p23)
-{title:"데이터 이동 — movq",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>movq Source, Dest</strong> — 8바이트 데이터를 Source에서 Dest로 이동</p><p>오퍼랜드의 3가지 종류:</p><table class="info-table"><tr><th>종류</th><th>표기법</th><th>의미</th><th>예시</th></tr><tr><td><strong>Immediate</strong></td><td>$값</td><td>상수 정수</td><td>$0x400, $-533</td></tr><tr><td><strong>Register</strong></td><td>%레지스터</td><td>16개 레지스터 중 하나</td><td>%rax, %r13</td></tr><tr><td><strong>Memory</strong></td><td>(레지스터)</td><td>레지스터가 가리키는 주소의 메모리 8바이트</td><td>(%rax)</td></tr></table></div>`}},
-// 23: movq Combinations (p24)
-{title:"movq 오퍼랜드 조합",render:function(c){c.innerHTML=`<div class="explanation"><table class="info-table"><tr><th>Source</th><th>Dest</th><th>어셈블리</th><th>C 비유</th></tr><tr><td>Imm</td><td>Reg</td><td>movq $0x4, %rax</td><td>temp = 0x4;</td></tr><tr><td>Imm</td><td>Mem</td><td>movq $-147, (%rax)</td><td>*p = -147;</td></tr><tr><td>Reg</td><td>Reg</td><td>movq %rax, %rdx</td><td>temp2 = temp1;</td></tr><tr><td>Reg</td><td>Mem</td><td>movq %rax, (%rdx)</td><td>*p = temp;</td></tr><tr><td>Mem</td><td>Reg</td><td>movq (%rax), %rdx</td><td>temp = *p;</td></tr></table><div class="warning-box"><strong>Memory → Memory 직접 전송은 불가!</strong> 반드시 레지스터를 거쳐야 합니다. 이것이 CISC인 x86에서도 지키는 제약입니다.</div></div>`}},
-// 24: Simple Addressing Modes (p25)
-{title:"메모리 주소 지정 모드",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>Normal: (R)</strong> → Mem[Reg[R]]</p><div class="code-block">movq (%rcx), %rax    # rcx가 가리키는 주소에서 읽기 = *rcx</div><p><strong>Displacement: D(R)</strong> → Mem[Reg[R] + D]</p><div class="code-block">movq 8(%rbp), %rdx   # rbp + 8 위치에서 읽기 = *(rbp+8)</div><p>(R)은 C의 <span style="color:var(--purple)">*ptr</span>, D(R)은 <span style="color:var(--purple)">*(ptr + offset)</span>에 해당합니다. 구조체 멤버 접근이나 스택 변수 접근에 사용됩니다.</p></div>`}},
-// 25-30: swap 예제 (p26-31)
-{title:"swap 예제 — C와 어셈블리",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">void swap(long *xp, long *yp) {
+%rbp      %ebp       %r15      %r15d</pre>
+      </div>
+      <p>하위 4바이트(%eax), 2바이트(%ax), 1바이트(%al)도 개별 접근 가능합니다.</p>
+      <div class="key-point"><strong>%rsp</strong>는 스택 포인터로 특수 용도. 나머지도 함수 호출 규약에 따라 역할이 있지만 (rdi=1번째 인자, rsi=2번째 등), 기본적으로 범용입니다.</div>
+    </section>
+
+    <!-- 21. 레지스터 역사 -->
+    <section class="page-section" id="reg-history">
+      <div class="page-num">Page 21</div>
+      <h2>레지스터의 역사 — IA32</h2>
+      <p>32비트 시절(IA32)에는 8개의 레지스터만 있었습니다. 각각 원래 이름이 있었습니다:</p>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>레지스터</th><th>원래 용도</th></tr>
+          <tr><td class="en">%eax</td><td>Accumulate — 산술 결과 저장</td></tr>
+          <tr><td class="en">%ecx</td><td>Counter — 루프 카운터</td></tr>
+          <tr><td class="en">%edx</td><td>Data — 데이터</td></tr>
+          <tr><td class="en">%ebx</td><td>Base — 기준 주소</td></tr>
+          <tr><td class="en">%esi / %edi</td><td>Source/Destination Index</td></tr>
+          <tr><td class="en">%esp</td><td>Stack Pointer</td></tr>
+          <tr><td class="en">%ebp</td><td>Base Pointer</td></tr>
+        </table>
+      </div>
+      <p>x86-64에서 %r8~%r15가 추가되어 총 16개가 되었습니다.</p>
+    </section>
+
+    <!-- 22. movq -->
+    <section class="page-section" id="movq">
+      <div class="page-num">Page 22</div>
+      <h2>데이터 이동 — movq</h2>
+      <p><strong>movq Source, Dest</strong> — 8바이트 데이터를 Source에서 Dest로 이동</p>
+      <p>오퍼랜드의 3가지 종류:</p>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>종류</th><th>표기법</th><th>의미</th><th>예시</th></tr>
+          <tr><td><strong>Immediate</strong></td><td class="en">$값</td><td>상수 정수</td><td class="en">$0x400, $-533</td></tr>
+          <tr><td><strong>Register</strong></td><td class="en">%레지스터</td><td>16개 레지스터 중 하나</td><td class="en">%rax, %r13</td></tr>
+          <tr><td><strong>Memory</strong></td><td class="en">(레지스터)</td><td>레지스터가 가리키는 주소의 메모리 8바이트</td><td class="en">(%rax)</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 23. movq 오퍼랜드 조합 -->
+    <section class="page-section" id="movq-combo">
+      <div class="page-num">Page 23</div>
+      <h2>movq 오퍼랜드 조합</h2>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>Source</th><th>Dest</th><th>어셈블리</th><th>C 비유</th></tr>
+          <tr><td>Imm</td><td>Reg</td><td class="en">movq $0x4, %rax</td><td>temp = 0x4;</td></tr>
+          <tr><td>Imm</td><td>Mem</td><td class="en">movq $-147, (%rax)</td><td>*p = -147;</td></tr>
+          <tr><td>Reg</td><td>Reg</td><td class="en">movq %rax, %rdx</td><td>temp2 = temp1;</td></tr>
+          <tr><td>Reg</td><td>Mem</td><td class="en">movq %rax, (%rdx)</td><td>*p = temp;</td></tr>
+          <tr><td>Mem</td><td>Reg</td><td class="en">movq (%rax), %rdx</td><td>temp = *p;</td></tr>
+        </table>
+      </div>
+      <div class="warning-box"><strong>Memory → Memory 직접 전송은 불가!</strong> 반드시 레지스터를 거쳐야 합니다. 이것이 CISC인 x86에서도 지키는 제약입니다.</div>
+    </section>
+
+    <!-- 24. 메모리 주소 지정 모드 -->
+    <section class="page-section" id="addressing">
+      <div class="page-num">Page 24</div>
+      <h2>메모리 주소 지정 모드</h2>
+      <p><strong>Normal: (R)</strong> → Mem[Reg[R]]</p>
+      <pre>movq (%rcx), %rax    # rcx가 가리키는 주소에서 읽기 = *rcx</pre>
+      <p><strong>Displacement: D(R)</strong> → Mem[Reg[R] + D]</p>
+      <pre>movq 8(%rbp), %rdx   # rbp + 8 위치에서 읽기 = *(rbp+8)</pre>
+      <p>(R)은 C의 <strong>*ptr</strong>, D(R)은 <strong>*(ptr + offset)</strong>에 해당합니다. 구조체 멤버 접근이나 스택 변수 접근에 사용됩니다.</p>
+    </section>
+
+    <!-- 25. swap 예제 -->
+    <section class="page-section" id="swap">
+      <div class="page-num">Page 25</div>
+      <h2>swap 예제 — C와 어셈블리</h2>
+      <div class="card">
+        <div class="card-label">C Code</div>
+        <pre>void swap(long *xp, long *yp) {
     long t0 = *xp;
     long t1 = *yp;
     *xp = t1;
     *yp = t0;
-}</div><div class="code-block">swap:
+}</pre>
+      </div>
+      <div class="card">
+        <div class="card-label">Assembly</div>
+        <pre>swap:
     movq  (%rdi), %rax    # t0 = *xp     (rdi = xp)
     movq  (%rsi), %rdx    # t1 = *yp     (rsi = yp)
     movq  %rdx, (%rdi)    # *xp = t1
     movq  %rax, (%rsi)    # *yp = t0
-    ret</div><table class="info-table"><tr><th>레지스터</th><th>용도</th></tr><tr><td>%rdi</td><td>첫 번째 인자 xp</td></tr><tr><td>%rsi</td><td>두 번째 인자 yp</td></tr><tr><td>%rax</td><td>임시 변수 t0</td></tr><tr><td>%rdx</td><td>임시 변수 t1</td></tr></table></div>`}},
-{title:"swap 실행 추적",render:function(c){c.innerHTML=`<div class="explanation"><p>xp = 0x120 (값 123), yp = 0x100 (값 456)일 때 단계별 실행:</p><table class="info-table"><tr><th>단계</th><th>명령어</th><th>%rax</th><th>%rdx</th><th>M[0x120]</th><th>M[0x100]</th></tr><tr><td>초기</td><td>—</td><td>—</td><td>—</td><td>123</td><td>456</td></tr><tr><td>1</td><td>movq (%rdi), %rax</td><td><strong>123</strong></td><td>—</td><td>123</td><td>456</td></tr><tr><td>2</td><td>movq (%rsi), %rdx</td><td>123</td><td><strong>456</strong></td><td>123</td><td>456</td></tr><tr><td>3</td><td>movq %rdx, (%rdi)</td><td>123</td><td>456</td><td><strong>456</strong></td><td>456</td></tr><tr><td>4</td><td>movq %rax, (%rsi)</td><td>123</td><td>456</td><td>456</td><td><strong>123</strong></td></tr></table><div class="key-point">레지스터를 임시 저장소로 사용하여 두 메모리 값을 교환합니다. C에서 temp 변수를 쓰는 것과 같은 원리입니다.</div></div>`}},
-// 27: Complete Addressing Modes (p32)
-{title:"완전한 메모리 주소 지정 모드",render:function(c){c.innerHTML=`<div class="explanation"><p>가장 일반적인 형태:</p><div class="math-block">\\(D(Rb, Ri, S) = Mem[Reg[Rb] + S \\times Reg[Ri] + D]\\)</div><table class="info-table"><tr><th>구성 요소</th><th>의미</th><th>제약</th></tr><tr><td><strong>D</strong></td><td>상수 변위(displacement)</td><td>1, 2, 4 바이트</td></tr><tr><td><strong>Rb</strong></td><td>Base 레지스터</td><td>16개 중 아무거나</td></tr><tr><td><strong>Ri</strong></td><td>Index 레지스터</td><td>%rsp 제외</td></tr><tr><td><strong>S</strong></td><td>Scale (배율)</td><td>1, 2, 4, 8만 가능</td></tr></table><p>Scale이 1, 2, 4, 8인 이유: 각각 char, short, int, long 배열의 원소 크기!</p><div class="highlight-box"><strong>배열 접근 패턴:</strong> <span style="color:var(--purple)">A[i]</span> → M[&A + S*i] → 어셈블리에서 (%rbx,%rcx,S) 형태로 표현</div></div>`}},
-// 28: Address Examples (p33)
-{title:"주소 계산 예제",render:function(c){c.innerHTML=`<div class="explanation"><p>%rdx = 0xf000, %rcx = 0x0100일 때:</p><table class="info-table"><tr><th>표현식</th><th>계산</th><th>결과 주소</th></tr><tr><td>0x8(%rdx)</td><td>0xf000 + 0x8</td><td><strong>0xf008</strong></td></tr><tr><td>(%rdx,%rcx)</td><td>0xf000 + 0x100</td><td><strong>0xf100</strong></td></tr><tr><td>(%rdx,%rcx,4)</td><td>0xf000 + 4×0x100</td><td><strong>0xf400</strong></td></tr><tr><td>0x80(,%rdx,2)</td><td>2×0xf000 + 0x80</td><td><strong>0x1e080</strong></td></tr></table></div>`}},
-// 29: 로드맵 - Arithmetic (p34)
-{title:"로드맵 — 산술/논리 연산",render:function(c){c.innerHTML=`<div class="explanation"><div class="section-divider">— Arithmetic & Logical Operations —</div><p>leaq와 주요 산술/논리 명령어를 배웁니다.</p></div>`}},
-// 30: leaq (p35)
-{title:"leaq — 주소 계산 명령어",render:function(c){c.innerHTML=`<div class="explanation"><p><strong>leaq Src, Dst</strong> — "Load Effective Address". 메모리 접근 <em>없이</em> 주소 계산 결과만 레지스터에 저장합니다.</p><p><strong>용도 1:</strong> 포인터 산술 — <span style="color:var(--purple)">p = &x[i];</span></p><p><strong>용도 2:</strong> \\(x + k \\times y\\) 형태의 산술 계산 (k = 1, 2, 4, 8)</p><div class="code-block">// C Code
+    ret</pre>
+      </div>
+      <div class="card">
+        <div class="card-label">레지스터 매핑</div>
+        <table class="terms-table">
+          <tr><th>레지스터</th><th>용도</th></tr>
+          <tr><td class="en">%rdi</td><td>첫 번째 인자 xp</td></tr>
+          <tr><td class="en">%rsi</td><td>두 번째 인자 yp</td></tr>
+          <tr><td class="en">%rax</td><td>임시 변수 t0</td></tr>
+          <tr><td class="en">%rdx</td><td>임시 변수 t1</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 26. swap 실행 추적 -->
+    <section class="page-section" id="swap-trace">
+      <div class="page-num">Page 26</div>
+      <h2>swap 실행 추적</h2>
+      <p>xp = 0x120 (값 123), yp = 0x100 (값 456)일 때 단계별 실행:</p>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>단계</th><th>명령어</th><th>%rax</th><th>%rdx</th><th>M[0x120]</th><th>M[0x100]</th></tr>
+          <tr><td>초기</td><td>—</td><td>—</td><td>—</td><td>123</td><td>456</td></tr>
+          <tr><td>1</td><td class="en">movq (%rdi), %rax</td><td><strong>123</strong></td><td>—</td><td>123</td><td>456</td></tr>
+          <tr><td>2</td><td class="en">movq (%rsi), %rdx</td><td>123</td><td><strong>456</strong></td><td>123</td><td>456</td></tr>
+          <tr><td>3</td><td class="en">movq %rdx, (%rdi)</td><td>123</td><td>456</td><td><strong>456</strong></td><td>456</td></tr>
+          <tr><td>4</td><td class="en">movq %rax, (%rsi)</td><td>123</td><td>456</td><td>456</td><td><strong>123</strong></td></tr>
+        </table>
+      </div>
+      <div class="key-point">레지스터를 임시 저장소로 사용하여 두 메모리 값을 교환합니다. C에서 temp 변수를 쓰는 것과 같은 원리입니다.</div>
+    </section>
+
+    <!-- 27. 완전한 주소 지정 모드 -->
+    <section class="page-section" id="full-addressing">
+      <div class="page-num">Page 27</div>
+      <h2>완전한 메모리 주소 지정 모드</h2>
+      <p>가장 일반적인 형태:</p>
+      <div class="math-block">\(D(Rb, Ri, S) = Mem[Reg[Rb] + S \times Reg[Ri] + D]\)</div>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>구성 요소</th><th>의미</th><th>제약</th></tr>
+          <tr><td class="en">D</td><td>상수 변위(displacement)</td><td>1, 2, 4 바이트</td></tr>
+          <tr><td class="en">Rb</td><td>Base 레지스터</td><td>16개 중 아무거나</td></tr>
+          <tr><td class="en">Ri</td><td>Index 레지스터</td><td>%rsp 제외</td></tr>
+          <tr><td class="en">S</td><td>Scale (배율)</td><td>1, 2, 4, 8만 가능</td></tr>
+        </table>
+      </div>
+      <p>Scale이 1, 2, 4, 8인 이유: 각각 char, short, int, long 배열의 원소 크기!</p>
+      <div class="highlight-box"><strong>배열 접근 패턴:</strong> <strong>A[i]</strong> → M[&amp;A + S*i] → 어셈블리에서 (%rbx,%rcx,S) 형태로 표현</div>
+    </section>
+
+    <!-- 28. 주소 계산 예제 -->
+    <section class="page-section" id="addr-examples">
+      <div class="page-num">Page 28</div>
+      <h2>주소 계산 예제</h2>
+      <p>%rdx = 0xf000, %rcx = 0x0100일 때:</p>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>표현식</th><th>계산</th><th>결과 주소</th></tr>
+          <tr><td class="en">0x8(%rdx)</td><td>0xf000 + 0x8</td><td><strong>0xf008</strong></td></tr>
+          <tr><td class="en">(%rdx,%rcx)</td><td>0xf000 + 0x100</td><td><strong>0xf100</strong></td></tr>
+          <tr><td class="en">(%rdx,%rcx,4)</td><td>0xf000 + 4×0x100</td><td><strong>0xf400</strong></td></tr>
+          <tr><td class="en">0x80(,%rdx,2)</td><td>2×0xf000 + 0x80</td><td><strong>0x1e080</strong></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 29. 로드맵 - 산술 연산 -->
+    <section class="page-section" id="roadmap-arith">
+      <div class="page-num">Page 29</div>
+      <h2>Arithmetic &amp; Logical Operations</h2>
+      <div class="section-divider">— Arithmetic &amp; Logical Operations —</div>
+      <p>leaq와 주요 산술/논리 명령어를 배웁니다.</p>
+    </section>
+
+    <!-- 30. leaq -->
+    <section class="page-section" id="leaq">
+      <div class="page-num">Page 30</div>
+      <h2>leaq — 주소 계산 명령어</h2>
+      <p><strong>leaq Src, Dst</strong> — "Load Effective Address". 메모리 접근 없이 주소 계산 결과만 레지스터에 저장합니다.</p>
+      <p><strong>용도 1:</strong> 포인터 산술 — <strong>p = &amp;x[i];</strong></p>
+      <p><strong>용도 2:</strong> \(x + k \times y\) 형태의 산술 계산 (k = 1, 2, 4, 8)</p>
+      <div class="card">
+        <div class="card-label">예시: x * 12</div>
+        <pre>// C Code
 long m12(long x) { return x*12; }
 
 // Assembly
 leaq (%rdi,%rdi,2), %rax    # rax = x + x*2 = 3x
-salq $2, %rax                # rax = 3x << 2 = 3x * 4 = 12x</div><div class="key-point">leaq는 메모리를 읽지 않습니다! 주소 계산 회로를 "빌려서" 빠른 곱셈(×3, ×5, ×9 등)에 활용하는 것입니다.</div></div>`}},
-// 31: Two Operand Instructions (p36)
-{title:"2-오퍼랜드 산술 명령어",render:function(c){c.innerHTML=`<div class="explanation"><table class="info-table"><tr><th>명령어</th><th>동작</th><th>비고</th></tr><tr><td><strong>addq</strong> Src, Dest</td><td>Dest = Dest + Src</td><td>덧셈</td></tr><tr><td><strong>subq</strong> Src, Dest</td><td>Dest = Dest - Src</td><td>뺄셈</td></tr><tr><td><strong>imulq</strong> Src, Dest</td><td>Dest = Dest × Src</td><td>곱셈</td></tr><tr><td><strong>salq</strong> Src, Dest</td><td>Dest = Dest &lt;&lt; Src</td><td>왼쪽 시프트 (= shlq)</td></tr><tr><td><strong>sarq</strong> Src, Dest</td><td>Dest = Dest &gt;&gt; Src</td><td>Arithmetic 오른쪽 시프트</td></tr><tr><td><strong>shrq</strong> Src, Dest</td><td>Dest = Dest &gt;&gt; Src</td><td>Logical 오른쪽 시프트</td></tr><tr><td><strong>xorq</strong> Src, Dest</td><td>Dest = Dest ^ Src</td><td></td></tr><tr><td><strong>andq</strong> Src, Dest</td><td>Dest = Dest & Src</td><td></td></tr><tr><td><strong>orq</strong> Src, Dest</td><td>Dest = Dest | Src</td><td></td></tr></table><div class="warning-box"><strong>인자 순서 주의!</strong> AT&T 문법에서 결과는 <em>두 번째</em> 오퍼랜드에 저장됩니다. Intel 문법과 반대!<br>signed/unsigned 구분 없음 — Two's Complement 덕분에 비트 연산이 동일합니다.</div></div>`}},
-// 32: One Operand Instructions (p37)
-{title:"1-오퍼랜드 산술 명령어",render:function(c){c.innerHTML=`<div class="explanation"><table class="info-table"><tr><th>명령어</th><th>동작</th></tr><tr><td><strong>incq</strong> Dest</td><td>Dest = Dest + 1</td></tr><tr><td><strong>decq</strong> Dest</td><td>Dest = Dest - 1</td></tr><tr><td><strong>negq</strong> Dest</td><td>Dest = -Dest (부호 반전)</td></tr><tr><td><strong>notq</strong> Dest</td><td>Dest = ~Dest (비트 반전)</td></tr></table></div>`}},
-// 33-36: Arithmetic Expression Example (p38-41)
-{title:"산술 표현식 예제 — C와 어셈블리 대응",render:function(c){c.innerHTML=`<div class="explanation"><div class="code-block">long arith(long x, long y, long z) {
+salq $2, %rax                # rax = 3x &lt;&lt; 2 = 3x * 4 = 12x</pre>
+      </div>
+      <div class="key-point">leaq는 메모리를 읽지 않습니다! 주소 계산 회로를 "빌려서" 빠른 곱셈(×3, ×5, ×9 등)에 활용하는 것입니다.</div>
+    </section>
+
+    <!-- 31. 2-오퍼랜드 명령어 -->
+    <section class="page-section" id="two-operand">
+      <div class="page-num">Page 31</div>
+      <h2>2-오퍼랜드 산술 명령어</h2>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>명령어</th><th>동작</th><th>비고</th></tr>
+          <tr><td class="en">addq Src, Dest</td><td>Dest = Dest + Src</td><td>덧셈</td></tr>
+          <tr><td class="en">subq Src, Dest</td><td>Dest = Dest - Src</td><td>뺄셈</td></tr>
+          <tr><td class="en">imulq Src, Dest</td><td>Dest = Dest × Src</td><td>곱셈</td></tr>
+          <tr><td class="en">salq Src, Dest</td><td>Dest = Dest &lt;&lt; Src</td><td>왼쪽 시프트 (= shlq)</td></tr>
+          <tr><td class="en">sarq Src, Dest</td><td>Dest = Dest &gt;&gt; Src</td><td>Arithmetic 오른쪽 시프트</td></tr>
+          <tr><td class="en">shrq Src, Dest</td><td>Dest = Dest &gt;&gt; Src</td><td>Logical 오른쪽 시프트</td></tr>
+          <tr><td class="en">xorq Src, Dest</td><td>Dest = Dest ^ Src</td><td></td></tr>
+          <tr><td class="en">andq Src, Dest</td><td>Dest = Dest &amp; Src</td><td></td></tr>
+          <tr><td class="en">orq Src, Dest</td><td>Dest = Dest | Src</td><td></td></tr>
+        </table>
+      </div>
+      <div class="warning-box"><strong>인자 순서 주의!</strong> AT&amp;T 문법에서 결과는 두 번째 오퍼랜드에 저장됩니다. Intel 문법과 반대!<br>signed/unsigned 구분 없음 — Two's Complement 덕분에 비트 연산이 동일합니다.</div>
+    </section>
+
+    <!-- 32. 1-오퍼랜드 명령어 -->
+    <section class="page-section" id="one-operand">
+      <div class="page-num">Page 32</div>
+      <h2>1-오퍼랜드 산술 명령어</h2>
+      <div class="card">
+        <table class="terms-table">
+          <tr><th>명령어</th><th>동작</th></tr>
+          <tr><td class="en">incq Dest</td><td>Dest = Dest + 1</td></tr>
+          <tr><td class="en">decq Dest</td><td>Dest = Dest - 1</td></tr>
+          <tr><td class="en">negq Dest</td><td>Dest = -Dest (부호 반전)</td></tr>
+          <tr><td class="en">notq Dest</td><td>Dest = ~Dest (비트 반전)</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 33. 산술 표현식 예제 -->
+    <section class="page-section" id="arith-example">
+      <div class="page-num">Page 33</div>
+      <h2>산술 표현식 예제 — C와 어셈블리 대응</h2>
+      <div class="card">
+        <div class="card-label">C Code</div>
+        <pre>long arith(long x, long y, long z) {
     long t1 = x + y;
     long t2 = z + t1;
     long t3 = x + 4;
@@ -158,19 +941,81 @@ salq $2, %rax                # rax = 3x << 2 = 3x * 4 = 12x</div><div class="key
     long t5 = t3 + t4;
     long rval = t2 * t5;
     return rval;
-}</div><div class="code-block">arith:
+}</pre>
+      </div>
+      <div class="card">
+        <div class="card-label">Assembly</div>
+        <pre>arith:
   leaq  (%rdi,%rsi), %rax       # rax = x+y       (t1)
   addq  %rdx, %rax              # rax = z+t1       (t2)
   leaq  (%rsi,%rsi,2), %rdx     # rdx = y+y*2 = 3y
   salq  $4, %rdx                # rdx = 3y*16 = 48y (t4)
   leaq  4(%rdi,%rdx), %rcx      # rcx = x+4+48y    (t5)
   imulq %rcx, %rax              # rax = t2*t5       (rval)
-  ret</div><div class="key-point"><strong>C에는 곱셈이 2개</strong>(y*48, t2*t5)이지만, <strong>어셈블리에는 imulq가 1개</strong>뿐입니다. y*48은 leaq + salq로 대체되었습니다:<br>48 = 3 × 16 → leaq로 ×3, salq $4로 ×16</div></div>`}},
-// 34: Summary (p42)
-{title:"요약 — Machine Programming I",render:function(c){c.innerHTML=`<div class="explanation"><div class="key-point"><strong>핵심 정리:</strong><br><br>• <strong>Intel x86:</strong> 진화적 설계 → 많은 호환성 유산과 복잡성<br>• <strong>C → 기계어:</strong> 컴파일러 → 어셈블러 → 링커 과정. 새로운 가시 상태: PC, 레지스터, 조건 코드<br>• <strong>어셈블리 기초:</strong> 16개 레지스터, movq로 데이터 이동, 다양한 주소 지정 모드<br>• <strong>산술 연산:</strong> 컴파일러가 leaq, shift 등을 조합하여 효율적인 명령어 시퀀스 생성</div></div>`}}
-];
-let cur=0;function renderSlide(){const app=document.getElementById('content');app.innerHTML='';const nav=document.createElement('div');nav.className='nav';nav.innerHTML='<button onclick="goSlide(0)">목차</button><button onclick="prev()"'+(cur===0?' disabled':'')+'>◀ 이전</button><span class="slide-num">'+(cur+1)+' / '+slides.length+'</span><button onclick="next()"'+(cur===slides.length-1?' disabled':'')+'>다음 ▶</button><div class="progress-bar"><div class="progress-fill" style="width:'+((cur+1)/slides.length*100)+'%"></div></div>';app.appendChild(nav);const slide=document.createElement('div');slide.className='slide';const t=document.createElement('div');t.className='slide-title';t.innerHTML='<span class="num">'+(cur+1)+'</span>'+slides[cur].title;slide.appendChild(t);const body=document.createElement('div');slides[cur].render(body);slide.appendChild(body);app.appendChild(slide);window.scrollTo({top:0,behavior:'smooth'});if(window.MathJax&&MathJax.typesetPromise){MathJax.typesetPromise([slide]).catch(function(e){})}}
-function next(){if(cur<slides.length-1){cur++;renderSlide()}}function prev(){if(cur>0){cur--;renderSlide()}}function goSlide(n){cur=n;renderSlide()}document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowDown')next();if(e.key==='ArrowLeft'||e.key==='ArrowUp')prev()});renderSlide();
+  ret</pre>
+      </div>
+      <div class="key-point"><strong>C에는 곱셈이 2개</strong>(y*48, t2*t5)이지만, <strong>어셈블리에는 imulq가 1개</strong>뿐입니다. y*48은 leaq + salq로 대체되었습니다:<br>48 = 3 × 16 → leaq로 ×3, salq $4로 ×16</div>
+    </section>
+
+    <!-- 34. 요약 -->
+    <section class="page-section" id="summary">
+      <div class="page-num">Page 34</div>
+      <h2>요약 — Machine Programming I</h2>
+      <div class="summary-box">
+        <strong>핵심 정리:</strong>
+        <ul style="margin-top: 10px;">
+          <li><strong>Intel x86:</strong> 진화적 설계 → 많은 호환성 유산과 복잡성</li>
+          <li><strong>C → 기계어:</strong> 컴파일러 → 어셈블러 → 링커 과정. 새로운 가시 상태: PC, 레지스터, 조건 코드</li>
+          <li><strong>어셈블리 기초:</strong> 16개 레지스터, movq로 데이터 이동, 다양한 주소 지정 모드</li>
+          <li><strong>산술 연산:</strong> 컴파일러가 leaq, shift 등을 조합하여 효율적인 명령어 시퀀스 생성</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Dark mode toggle
+  function toggleTheme() {
+    var html = document.documentElement;
+    var btn = document.querySelector('.theme-toggle');
+    if (html.getAttribute('data-theme') === 'dark') {
+      html.removeAttribute('data-theme');
+      btn.textContent = 'Dark Mode';
+      localStorage.setItem('theme', 'light');
+    } else {
+      html.setAttribute('data-theme', 'dark');
+      btn.textContent = 'Light Mode';
+      localStorage.setItem('theme', 'dark');
+    }
+  }
+
+  // Restore saved theme
+  (function() {
+    var saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.querySelector('.theme-toggle').textContent = 'Light Mode';
+    }
+  })();
+
+  // Sidebar active link tracking
+  var sections = document.querySelectorAll('.page-section');
+  var navLinks = document.querySelectorAll('.sidebar a');
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        navLinks.forEach(function(link) { link.classList.remove('active'); });
+        var active = document.querySelector('.sidebar a[href="#' + entry.target.id + '"]');
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(function(section) { observer.observe(section); });
 </script>
+
 </body>
 </html>
