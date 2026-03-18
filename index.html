@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture Notes Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAFAF7;
+  --bg-card: #FFFFFF;
+  --bg-hero: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  --text: #1E293B;
+  --text-muted: #64748B;
+  --text-on-dark: #E2E8F0;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 6px 16px rgba(0,0,0,0.04);
+  --shadow-hover: 0 4px 12px rgba(0,0,0,0.1), 0 12px 28px rgba(0,0,0,0.08);
+  --radius: 14px;
+
+  --c-sp: #3B82F6;
+  --c-sp-light: #EFF6FF;
+  --c-sp-border: #BFDBFE;
+
+  --c-coa: #8B5CF6;
+  --c-coa-light: #F5F3FF;
+  --c-coa-border: #DDD6FE;
+
+  --c-cv: #059669;
+  --c-cv-light: #ECFDF5;
+  --c-cv-border: #A7F3D0;
+
+  --c-la: #EA580C;
+  --c-la-light: #FFF7ED;
+  --c-la-border: #FED7AA;
+
+  --c-ml: #DB2777;
+  --c-ml-light: #FDF2F8;
+  --c-ml-border: #FBCFE8;
+}
+
+[data-theme="dark"] {
+  --bg: #0F172A;
+  --bg-card: #1E293B;
+  --bg-hero: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  --text: #E2E8F0;
+  --text-muted: #94A3B8;
+  --text-on-dark: #E2E8F0;
+  --border: #334155;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.2);
+  --shadow-hover: 0 4px 12px rgba(0,0,0,0.4), 0 12px 28px rgba(0,0,0,0.3);
+
+  --c-sp-light: rgba(59,130,246,0.12);
+  --c-sp-border: rgba(59,130,246,0.3);
+
+  --c-coa-light: rgba(139,92,246,0.12);
+  --c-coa-border: rgba(139,92,246,0.3);
+
+  --c-cv-light: rgba(5,150,105,0.12);
+  --c-cv-border: rgba(5,150,105,0.3);
+
+  --c-la-light: rgba(234,88,12,0.12);
+  --c-la-border: rgba(234,88,12,0.3);
+
+  --c-ml-light: rgba(219,39,119,0.12);
+  --c-ml-border: rgba(219,39,119,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Hero */
+.hero {
+  background: var(--bg-hero);
+  padding: 56px 24px 48px;
+  text-align: center;
+  position: relative;
+}
+.hero h1 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #F8FAFC;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+.hero p {
+  color: #94A3B8;
+  font-size: 15px;
+  font-weight: 300;
+}
+.hero .stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 24px;
+}
+.hero .stat {
+  text-align: center;
+}
+.hero .stat .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px;
+  font-weight: 500;
+  color: #60A5FA;
+}
+.hero .stat .label {
+  font-size: 12px;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.theme-btn {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #94A3B8;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+  transition: all 0.2s;
+}
+.theme-btn:hover { background: rgba(255,255,255,0.18); color: #E2E8F0; }
+
+/* Container */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+/* Course Section */
+.course-section {
+  margin-bottom: 40px;
+}
+.course-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+.course-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.course-header h2 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.course-header .count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-left: auto;
+}
+
+/* Cards Grid */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.card-link::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 4px 0 0 4px;
+}
+.card-link:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+  border-color: transparent;
+}
+
+/* Color variants */
+.card-link.sp::before { background: var(--c-sp); }
+.card-link.sp:hover { border-color: var(--c-sp-border); background: var(--c-sp-light); }
+.card-link.sp .card-tag { color: var(--c-sp); background: var(--c-sp-light); border: 1px solid var(--c-sp-border); }
+
+.card-link.coa::before { background: var(--c-coa); }
+.card-link.coa:hover { border-color: var(--c-coa-border); background: var(--c-coa-light); }
+.card-link.coa .card-tag { color: var(--c-coa); background: var(--c-coa-light); border: 1px solid var(--c-coa-border); }
+
+.card-link.cv::before { background: var(--c-cv); }
+.card-link.cv:hover { border-color: var(--c-cv-border); background: var(--c-cv-light); }
+.card-link.cv .card-tag { color: var(--c-cv); background: var(--c-cv-light); border: 1px solid var(--c-cv-border); }
+
+.card-link.la::before { background: var(--c-la); }
+.card-link.la:hover { border-color: var(--c-la-border); background: var(--c-la-light); }
+.card-link.la .card-tag { color: var(--c-la); background: var(--c-la-light); border: 1px solid var(--c-la-border); }
+
+.card-link.ml::before { background: var(--c-ml); }
+.card-link.ml:hover { border-color: var(--c-ml-border); background: var(--c-ml-light); }
+.card-link.ml .card-tag { color: var(--c-ml); background: var(--c-ml-light); border: 1px solid var(--c-ml-border); }
+
+.card-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.card-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 300;
+  line-height: 1.6;
+}
+.card-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+.card-arrow {
+  position: absolute;
+  top: 20px;
+  right: 18px;
+  color: var(--text-muted);
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+.card-link:hover .card-arrow { transform: translateX(3px); }
+
+
+/* Edit Mode */
+.edit-toggle {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #94A3B8;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+  transition: all 0.2s;
+}
+.edit-toggle:hover { background: rgba(255,255,255,0.18); color: #E2E8F0; }
+.edit-toggle.active { background: rgba(59,130,246,0.3); border-color: rgba(59,130,246,0.5); color: #60A5FA; }
+
+.reset-btn {
+  position: absolute;
+  top: 20px;
+  left: 120px;
+  background: rgba(239,68,68,0.15);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #F87171;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+  transition: all 0.2s;
+  display: none;
+}
+.reset-btn:hover { background: rgba(239,68,68,0.25); }
+body.edit-mode .reset-btn { display: inline-block; }
+
+.editable {
+  cursor: default;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+body.edit-mode .editable {
+  cursor: text;
+  background: rgba(59,130,246,0.08);
+  outline: 1px dashed rgba(59,130,246,0.3);
+  padding: 1px 4px;
+}
+body.edit-mode .editable:hover {
+  background: rgba(59,130,246,0.15);
+}
+body.edit-mode .editable:focus {
+  outline: 2px solid var(--c-sp);
+  background: rgba(59,130,246,0.12);
+}
+
+.card-file {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  display: none;
+  word-break: break-all;
+}
+body.edit-mode .card-file {
+  display: block;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 32px 24px;
+  color: var(--text-muted);
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 600px) {
+  .hero h1 { font-size: 24px; }
+  .cards { grid-template-columns: 1fr; }
+  .hero .stats { gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <button class="edit-toggle" onclick="toggleEdit()">편집모드</button>
+  <button class="reset-btn" onclick="resetCourses()">초기화</button>
+  <button class="theme-btn" onclick="toggleTheme()">다크모드</button>
+  <h1>Lecture Notes Hub</h1>
+  <p>강의노트 모음</p>
+  <div class="stats">
+    <div class="stat">
+      <div class="num" id="totalCount">0</div>
+      <div class="label">Total Notes</div>
+    </div>
+    <div class="stat">
+      <div class="num" id="courseCount">0</div>
+      <div class="label">Courses</div>
+    </div>
+  </div>
+</div>
+
+<div class="container" id="app"></div>
+
+<div class="footer">
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// 여기만 수정하면 됩니다!
+// 새 강의노트를 추가하려면 해당 과목의 lectures 배열에 항목을 추가하세요.
+// ══════════════════════════════════════════════════════
+const DEFAULT_COURSES = [
+  {
+    name: "시스템 프로그래밍",
+    color: "sp",       // CSS class (sp, coa, cv, la, ml 등)
+    lectures: [
+      {
+        num: "02",
+        title: "Bit & Integer",
+        desc: "비트 표현, 정수 인코딩, 2의 보수 등",
+        file: "02_Bit_Integer_lecture.html"
+      },
+      {
+        num: "03",
+        title: "Floating Point",
+        desc: "부동소수점 표현, IEEE 754, 정밀도",
+        file: "03_Floating_Point_lecture.html"
+      },
+      {
+        num: "04",
+        title: "Machine-Level Programming: Basics",
+        desc: "어셈블리 기초, 레지스터, 데이터 이동",
+        file: "04_Machine_Basic_lecture.html"
+      },
+      {
+        num: "05",
+        title: "Machine-Level Programming: Control",
+        desc: "조건 분기, 반복문, switch문",
+        file: "05_Machine_Control_lecture.html"
+      }
+    ]
+  },
+  {
+    name: "컴퓨터 구조",
+    color: "coa",
+    lectures: [
+      {
+        num: "1.5",
+        title: "RECAP",
+        desc: "컴퓨터 구조 중간 복습 정리",
+        file: "COA_1.5_RECAP_lecture.html"
+      },
+      {
+        num: "02",
+        title: "ISA (Instruction Set Architecture)",
+        desc: "명령어 집합 구조, RISC vs CISC",
+        file: "COA_2_ISA_lecture.html"
+      },
+      {
+        num: "03",
+        title: "MIPS",
+        desc: "MIPS 아키텍처, 명령어 형식, 어셈블리",
+        file: "COA_3_MIPS_lecture.html"
+      },
+      {
+        num: "04",
+        title: "Single-Cycle Microarchitecture",
+        desc: "단일 사이클 데이터패스, 제어 유닛",
+        file: "COA_4_SingleCycle_uarch_lecture.html"
+      }
+    ]
+  },
+  {
+    name: "컴퓨터 비전 개론",
+    color: "cv",
+    lectures: [
+      {
+        num: "01",
+        title: "Course Introduction",
+        desc: "강의 소개, CV 정의, 과목 구성",
+        file: "slide01_CourseIntroduction_lecture.html"
+      },
+      {
+        num: "02",
+        title: "Image Sensing Pipeline",
+        desc: "이미지 센서, 컬러 필터, ISP 파이프라인",
+        file: "slide02_ImageSensingPipeline_lecture.html"
+      },
+      {
+        num: "03",
+        title: "Image Formation",
+        desc: "이미지 형성, 핀홀 카메라, 투영 기하학",
+        file: "slide03_ImageFormation_lecture.html"
+      },
+      {
+        num: "04",
+        title: "Camera Geometry",
+        desc: "카메라 내부/외부 파라미터, 에피폴라 기하학",
+        file: "slide04_CameraGeometry_lecture.html"
+      },
+      {
+        num: "05",
+        title: "3D Reconstruction",
+        desc: "스테레오 매칭, SfM, Visual SLAM, 캘리브레이션",
+        file: "slide05_3Dreconstruction_lecture.html"
+      }
+    ]
+  },
+  {
+    name: "선형대수학",
+    color: "la",
+    lectures: [
+      {
+        num: "Full",
+        title: "선형대수학 완전 강의노트",
+        desc: "가우스 소거법부터 SVD까지 — 기초~심화 전 범위",
+        file: "linear_algebra_lecture.html"
+      }
+    ]
+  },
+  {
+    name: "머신러닝",
+    color: "ml",
+    lectures: [
+      {
+        num: "01",
+        title: "Linear Regression",
+        desc: "선형 회귀, 경사하강법, 정규방정식",
+        file: "linear_regression_lecture_kor.html"
+      }
+    ]
+  }
+];
+// ══════════════════════════════════════════════════════
+
+// localStorage에서 저장된 데이터 불러오기, 없으면 기본값 사용
+let COURSES = JSON.parse(localStorage.getItem('COURSES_DATA')) || JSON.parse(JSON.stringify(DEFAULT_COURSES));
+
+function saveCourses() {
+  localStorage.setItem('COURSES_DATA', JSON.stringify(COURSES));
+}
+
+function resetCourses() {
+  if (confirm('모든 수정사항을 초기화하시겠습니까?')) {
+    localStorage.removeItem('COURSES_DATA');
+    COURSES = JSON.parse(JSON.stringify(DEFAULT_COURSES));
+    render();
+  }
+}
+
+function render() {
+  const app = document.getElementById('app');
+  let totalNotes = 0;
+  let html = '';
+  const isEdit = document.body.classList.contains('edit-mode');
+
+  COURSES.forEach((course, ci) => {
+    const count = course.lectures.length;
+    totalNotes += count;
+
+    html += `<div class="course-section">`;
+    html += `<div class="course-header">`;
+    html += `  <span class="course-dot" style="background:var(--c-${course.color})"></span>`;
+    html += `  <h2><span class="editable" data-type="course-name" data-ci="${ci}" contenteditable="${isEdit}">${course.name}</span></h2>`;
+    html += `  <span class="count">${count}개</span>`;
+    html += `</div>`;
+    html += `<div class="cards">`;
+
+    course.lectures.forEach((lec, li) => {
+      const href = isEdit ? 'javascript:void(0)' : lec.file;
+      const target = isEdit ? '' : 'target="_blank"';
+      html += `
+        <a href="${href}" class="card-link ${course.color}" ${target}>
+          <span class="card-arrow">&rarr;</span>
+          <div class="card-num">#${lec.num}</div>
+          <div class="card-title"><span class="editable" data-type="lec-title" data-ci="${ci}" data-li="${li}" contenteditable="${isEdit}">${lec.title}</span></div>
+          <div class="card-desc"><span class="editable" data-type="lec-desc" data-ci="${ci}" data-li="${li}" contenteditable="${isEdit}">${lec.desc}</span></div>
+          <div class="card-file"><span class="editable" data-type="lec-file" data-ci="${ci}" data-li="${li}" contenteditable="${isEdit}">${lec.file}</span></div>
+          <span class="card-tag">${course.name}</span>
+        </a>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  app.innerHTML = html;
+  document.getElementById('totalCount').textContent = totalNotes;
+  document.getElementById('courseCount').textContent = COURSES.length;
+
+  // Bind blur events for editable fields
+  document.querySelectorAll('.editable').forEach(el => {
+    el.addEventListener('blur', handleEdit);
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+    });
+    // Prevent link navigation when clicking editable in edit mode
+    el.addEventListener('click', e => {
+      if (document.body.classList.contains('edit-mode')) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+  });
+
+}
+
+function handleEdit(e) {
+  const el = e.target;
+  const type = el.dataset.type;
+  const ci = parseInt(el.dataset.ci);
+  const li = el.dataset.li !== undefined ? parseInt(el.dataset.li) : null;
+  const val = el.textContent.trim();
+
+  if (type === 'course-name') {
+    COURSES[ci].name = val;
+  } else if (type === 'lec-title') {
+    COURSES[ci].lectures[li].title = val;
+  } else if (type === 'lec-desc') {
+    COURSES[ci].lectures[li].desc = val;
+  } else if (type === 'lec-file') {
+    COURSES[ci].lectures[li].file = val;
+  }
+  saveCourses();
+  render();
+}
+
+function toggleEdit() {
+  const btn = document.querySelector('.edit-toggle');
+  document.body.classList.toggle('edit-mode');
+  const isEdit = document.body.classList.contains('edit-mode');
+  btn.textContent = isEdit ? '편집완료' : '편집모드';
+  btn.classList.toggle('active', isEdit);
+  render();
+}
+
+function toggleTheme() {
+  const body = document.body;
+  const btn = document.querySelector('.theme-btn');
+  if (body.getAttribute('data-theme') === 'dark') {
+    body.removeAttribute('data-theme');
+    btn.textContent = '다크모드';
+  } else {
+    body.setAttribute('data-theme', 'dark');
+    btn.textContent = '라이트모드';
+  }
+}
+
+// Auto dark mode
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  document.body.setAttribute('data-theme', 'dark');
+  document.querySelector('.theme-btn').textContent = '라이트모드';
+}
+
+render();
+
+// ── 없는 파일 클릭 시 안내 (사라지지 않고 항상 표시) ──
+document.addEventListener('click', function(e) {
+  const card = e.target.closest('.card-link');
+  if (!card || document.body.classList.contains('edit-mode')) return;
+  const file = card.getAttribute('href');
+  if (!file || file === 'javascript:void(0)') return;
+
+  // XMLHttpRequest로 동기 체크 (file:// 에서도 동작)
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open('HEAD', file, false);
+    xhr.send();
+    if (xhr.status === 0 && location.protocol === 'file:') return; // file://은 판단 불가, 그냥 열기
+    if (xhr.status >= 400) {
+      e.preventDefault();
+      alert('파일이 없습니다: ' + file);
+    }
+  } catch {
+    // file://에서 에러나면 그냥 브라우저에 맡김
+  }
+});
+</script>
+</body>
+</html>

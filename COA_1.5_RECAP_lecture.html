@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Recap of Digital Logic Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    processEscapes: false
+  },
+  startup: {
+    ready: function() {
+      MathJax.startup.defaultReady();
+      window.mathJaxReady = true;
+    }
+  }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-top: 16px;
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .math-block {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    overflow-x: auto;
+    font-size: 1.05em;
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+
+  strong { color: var(--accent); font-weight: 500; }
+
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 8px 0 12px 20px; }
+  li { margin-bottom: 4px; }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .page-section h2 { font-size: 20px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Quick Recap of Digital Logic Design</h1>
+      <div class="meta">Computer Organization &amp; Architecture &mdash; Instructor: Hyokeun Lee Ph.D.</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">페이지 목록</div>
+      <div class="section-label">Overview</div>
+      <a href="#p1">01 &mdash; 표지</a>
+      <a href="#p2">02 &mdash; 목차</a>
+      <a href="#p3">03 &mdash; 데이터 표현 (1)</a>
+      <a href="#p4">04 &mdash; 데이터 표현 (2)</a>
+      <a href="#p5">05 &mdash; 디지털 시스템 분류</a>
+      <a href="#p6">06 &mdash; 신호(Signal)</a>
+      <a href="#p7">07 &mdash; 신호 활성 레벨</a>
+      <div class="section-label">Combinational Logic</div>
+      <a href="#p8">08 &mdash; 목차 (CL)</a>
+      <a href="#p9">09 &mdash; 논리 게이트</a>
+      <a href="#p10">10 &mdash; NOT 게이트</a>
+      <a href="#p11">11 &mdash; AND / NAND</a>
+      <a href="#p12">12 &mdash; OR / NOR</a>
+      <a href="#p13">13 &mdash; XOR</a>
+      <a href="#p14">14 &mdash; 디코더</a>
+      <a href="#p15">15 &mdash; 멀티플렉서</a>
+      <a href="#p16">16 &mdash; DeMUX &amp; Bus</a>
+      <a href="#p17">17 &mdash; 전파 지연</a>
+      <div class="section-label">Sequential Logic</div>
+      <a href="#p18">18 &mdash; 목차 (SL)</a>
+      <a href="#p19">19 &mdash; 상태와 FSM</a>
+      <a href="#p20">20 &mdash; D 플립플롭</a>
+      <a href="#p21">21 &mdash; 상태 저장</a>
+      <a href="#p22">22 &mdash; 타이밍</a>
+      <a href="#p23">23 &mdash; 레지스터</a>
+      <a href="#p24">24 &mdash; 레지스터 저장 메커니즘</a>
+      <a href="#p25">25 &mdash; Moore Machine</a>
+      <a href="#p26">26 &mdash; Mealy Machine</a>
+      <div class="section-label">Verilog HDL</div>
+      <a href="#p27">27 &mdash; 목차 (Verilog)</a>
+      <a href="#p28">28 &mdash; 모듈</a>
+      <a href="#p29">29 &mdash; 토큰</a>
+      <a href="#p30">30 &mdash; 스타일 규칙</a>
+      <a href="#p31">31 &mdash; 숫자 표현 (1)</a>
+      <a href="#p32">32 &mdash; 숫자 표현 (2)</a>
+      <a href="#p33">33 &mdash; 조합 논리 구현</a>
+      <a href="#p34">34 &mdash; 순차 논리 구현</a>
+      <a href="#p35">35 &mdash; 모듈 연결</a>
+      <a href="#p36">36 &mdash; APPENDIX 표지</a>
+      <a href="#p37">37 &mdash; 데이터 타입: 변수</a>
+      <a href="#p38">38 &mdash; 포트 타입</a>
+      <a href="#p39">39 &mdash; 파라미터</a>
+      <a href="#p40">40 &mdash; 벡터 사용법</a>
+      <a href="#p41">41 &mdash; 벡터 연산 (1)</a>
+      <a href="#p42">42 &mdash; 벡터 연산 (2)</a>
+      <a href="#p43">43 &mdash; 벡터 연산 (3)</a>
+      <a href="#p44">44 &mdash; 벡터 연산 (4)</a>
+      <a href="#p45">45 &mdash; 배열</a>
+      <a href="#p46">46 &mdash; 논리식: 참값</a>
+      <a href="#p47">47 &mdash; 논리 연산자</a>
+      <a href="#p48">48 &mdash; 조건 연산자</a>
+      <a href="#p49">49 &mdash; Function</a>
+      <a href="#p50">50 &mdash; Task</a>
+      <a href="#p51">51 &mdash; 시스템 함수/태스크</a>
+      <div class="section-label">Performance</div>
+      <a href="#p52">52 &mdash; 목차 (성능)</a>
+      <a href="#p53">53 &mdash; 트레이드오프</a>
+      <a href="#p54">54 &mdash; 성능 지표</a>
+      <a href="#p55">55 &mdash; Throughput vs Latency</a>
+      <a href="#p56">56 &mdash; Rate Metrics</a>
+      <a href="#p57">57 &mdash; Throughput vs Bandwidth</a>
+      <a href="#p58">58 &mdash; FLOPS</a>
+      <a href="#p59">59 &mdash; Roofline 모델</a>
+      <a href="#p60">60 &mdash; Roofline 예시</a>
+      <a href="#p61">61 &mdash; 상대 성능</a>
+      <a href="#p62">62 &mdash; Percentage Change</a>
+      <a href="#p63">63 &mdash; Normalized Performance</a>
+      <a href="#p64">64 &mdash; 성능의 평균</a>
+      <a href="#p65">65 &mdash; 산술 평균</a>
+      <a href="#p66">66 &mdash; 기하 평균 (1)</a>
+      <a href="#p67">67 &mdash; 기하 평균 (2)</a>
+      <a href="#p68">68 &mdash; 조화 평균</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== Page 1 ==================== -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>Quick Recap of Digital Logic Design</h2>
+        <div class="summary-box">
+          컴퓨터 구조(Computer Organization &amp; Architecture) 과목을 본격적으로 학습하기 전에, 디지털 논리 설계의 핵심 개념을 빠르게 복습하는 강의이다.
+        </div>
+        <div class="card">
+          <div class="card-label">강의 개요</div>
+          <p>이 자료는 <strong>디지털 논리 설계(Digital Logic Design)</strong>의 주요 내용을 요약 정리한 RECAP 자료이다. 컴퓨터 구조를 이해하려면 디지털 회로의 기초가 필수적이므로, 조합 논리, 순차 논리, Verilog HDL, 그리고 하드웨어 성능 측정까지 전반적인 내용을 다룬다.</p>
+          <p>담당 교수: <strong>Hyokeun Lee Ph.D.</strong></p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 2 ==================== -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>목차 (Contents)</h2>
+        <div class="summary-box">
+          본 강의는 5개의 큰 주제로 구성되어 있으며, 디지털 시스템의 기초부터 성능 측정까지 전 범위를 다룬다.
+        </div>
+        <div class="card">
+          <div class="card-label">강의 구성</div>
+          <ol>
+            <li><strong>Overview of Digital Systems</strong> &mdash; 디지털 시스템의 기본 개념, 데이터 표현, 신호</li>
+            <li><strong>Combinational Logic Components</strong> &mdash; 논리 게이트, 디코더, 멀티플렉서</li>
+            <li><strong>Sequential Logic</strong> &mdash; 플립플롭, 레지스터, FSM</li>
+            <li><strong>Verilog HDL Quick View</strong> &mdash; 하드웨어 기술 언어 기초</li>
+            <li><strong>Measuring Performance of Hardware</strong> &mdash; 성능 지표와 평균 산출법</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ==================== Page 3 ==================== -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>디지털 시스템의 데이터 표현 (1)</h2>
+        <div class="summary-box">
+          디지털 시스템은 연속적인 전압을 이산적인 값(0과 1)으로 구분하여 데이터를 처리한다. 이것이 바로 <strong>이진(binary)</strong> 체계의 핵심이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>디지털 시스템은 <strong>이산 데이터(discrete data)</strong>를 다룬다. 물리적으로는 전기 전압(voltage)을 사용하는데, 이 전압을 두 구간으로 나누어 해석한다:</p>
+          <ul>
+            <li><strong>높은 전압 구간(High voltage interval)</strong> &rarr; 논리 1</li>
+            <li><strong>낮은 전압 구간(Low voltage interval)</strong> &rarr; 논리 0</li>
+          </ul>
+          <p>이렇게 전압을 두 레벨로 나누는 것이 <strong>이진법(binary)</strong>의 물리적 기반이다. 이진 숫자(binary digit, 줄여서 <strong>bit</strong>)는 다양한 방식으로 표현할 수 있다:</p>
+          <ul>
+            <li>0과 1</li>
+            <li>T(True)와 F(False)</li>
+            <li>H(High)와 L(Low)</li>
+          </ul>
+          <p>특수한 용도로는 3-레벨(ternary)이나 4-레벨(quad-level) 숫자를 사용하기도 한다. 이들은 하나의 신호선에 더 많은 정보를 실을 수 있어 <strong>대역폭 효율(bandwidth efficiency)</strong>이 높다.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Binary</td><td>이진</td><td>0과 1 두 가지 값으로 데이터를 표현하는 체계</td></tr>
+              <tr><td class="en">Bit</td><td>비트</td><td>Binary digit의 줄임말, 정보의 최소 단위</td></tr>
+              <tr><td class="en">Logic Level</td><td>논리 레벨</td><td>전압을 구분하는 기준 (High/Low)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">시험 포인트: "왜 이진법을 사용하는가?" &mdash; 전압 구간을 2개로 나누면 잡음(noise)에 대한 여유가 커져 오류가 적다. 레벨이 많아질수록 구간 간격이 좁아져 오류 가능성이 높아진다.</div>
+      </section>
+
+      <!-- ==================== Page 4 ==================== -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>디지털 시스템의 데이터 표현 (2)</h2>
+        <div class="summary-box">
+          현실 세계의 연속적인 데이터를 디지털 시스템에서 처리하려면 <strong>양자화(Quantization)/디지털화(Digitization)</strong> 과정이 필요하며, 이를 수행하는 장치가 ADC이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>현실의 데이터(온도, 소리, 빛 등)는 <strong>연속적(continuous)</strong>이다. 이를 디지털 시스템에서 처리하려면 <strong>이산적(discrete)</strong>인 값으로 변환해야 한다. 이 과정을 <strong>양자화(quantization)</strong> 또는 <strong>디지털화(digitization)</strong>라고 한다.</p>
+          <p><strong>아날로그-디지털 변환기(ADC, Analog-Digital Converter)</strong>는 아날로그 세계와 디지털 세계의 인터페이스 역할을 한다:</p>
+          <ul>
+            <li>아날로그 신호를 주기적으로 <strong>샘플링(sampling, 수집)</strong>한다</li>
+            <li><strong>클록 신호(clock signal)</strong>에 맞춰 디지털화된 데이터를 출력한다</li>
+            <li>예를 들어, 4-bit ADC는 아날로그 신호를 0000~1111(0~15)의 16단계로 변환한다</li>
+          </ul>
+          <p>슬라이드의 다이어그램은 왼쪽에 연속적인 아날로그 파형이 있고, ADC를 거쳐 오른쪽에 계단 형태의 디지털 데이터(4비트 값)가 클록 주기마다 출력되는 모습을 보여준다.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">ADC</td><td>아날로그-디지털 변환기</td><td>연속 신호를 이산 디지털 값으로 변환하는 장치</td></tr>
+              <tr><td class="en">Sampling</td><td>샘플링</td><td>연속 신호를 일정 주기로 값을 추출하는 과정</td></tr>
+              <tr><td class="en">Clock Signal</td><td>클록 신호</td><td>디지털 시스템의 동작 타이밍을 결정하는 주기적 신호</td></tr>
+              <tr><td class="en">Quantization</td><td>양자화</td><td>연속값을 유한한 이산값으로 근사하는 과정</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 5 ==================== -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>디지털 시스템과 분류</h2>
+        <div class="summary-box">
+          디지털 시스템(회로)은 논리 게이트들의 조합으로 이루어지며, 크게 <strong>조합 논리(Combinational Logic)</strong>와 <strong>순차 논리(Sequential Logic)</strong> 두 가지로 분류된다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>디지털 시스템(또는 디지털 회로, 디지털 컴포넌트)은 수많은 <strong>논리 게이트(logic gate)</strong>들로 구성된다. 이러한 디지털 회로는 체계적으로 두 종류로 분류할 수 있다:</p>
+          <ul>
+            <li><strong>조합 논리(Combinational Logic)</strong>: 출력이 <strong>오직 현재 입력에 의해서만</strong> 결정된다. 과거의 상태나 이력과 무관하다. 예: 덧셈기, 멀티플렉서</li>
+            <li><strong>순차 논리(Sequential Logic)</strong>: 출력이 현재 입력뿐만 아니라 <strong>현재의 논리 상태(state)</strong>에 의해서도 결정된다. 즉, "기억"이 있는 회로이다. 예: 카운터, 레지스터</li>
+          </ul>
+          <p>비유하자면, 조합 논리는 "계산기"(버튼을 누르면 바로 답이 나옴)이고, 순차 논리는 "자판기"(현재 투입된 금액 상태에 따라 동작이 달라짐)와 같다.</p>
+        </div>
+        <div class="key-point">핵심: 조합 논리 = 입력만으로 출력 결정, 순차 논리 = 입력 + 현재 상태로 출력 결정. 이 구분이 디지털 회로 설계의 가장 기본적인 분류이다.</div>
+      </section>
+
+      <!-- ==================== Page 6 ==================== -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>디지털 컴포넌트의 신호(Signals)</h2>
+        <div class="summary-box">
+          디지털 컴포넌트들은 <strong>신호(signal)</strong>를 통해 서로 통신하며, 각 신호는 1비트 또는 여러 비트로 구성될 수 있다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>디지털 컴포넌트는 다른 컴포넌트들과 정보를 주고받는다. 이때 사용되는 통신 매체가 바로 <strong>신호(signal)</strong>이다.</p>
+          <ul>
+            <li>신호는 <strong>1비트</strong>일 수도 있고, <strong>여러 비트/핀</strong>으로 구성될 수도 있다</li>
+            <li>좋은 신호 이름은 직관적이어야 한다: GO, PAUSE, READY, ERROR 등</li>
+          </ul>
+          <p>슬라이드의 MEMORY 컴포넌트 예시를 보면:</p>
+          <ul>
+            <li><strong>write_address</strong>, <strong>read_address</strong>: 메모리의 읽기/쓰기 주소를 지정하는 신호 (여러 비트)</li>
+            <li><strong>write_data</strong>, <strong>read_data</strong>: 실제 데이터를 전달하는 신호 (여러 비트)</li>
+            <li><strong>ENABLE</strong>, <strong>RESET</strong>: 메모리의 동작을 제어하는 신호 (1비트)</li>
+            <li><strong>VALID</strong>: 출력 데이터가 유효한지 알려주는 신호 (1비트)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Signal</td><td>신호</td><td>디지털 컴포넌트 간 통신을 위한 전기적 매체</td></tr>
+              <tr><td class="en">Pin</td><td>핀</td><td>신호가 물리적으로 연결되는 단자</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 7 ==================== -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>신호의 활성 레벨 (Active Levels)</h2>
+        <div class="summary-box">
+          신호가 자신의 이름이 의미하는 동작을 수행하는 상태를 <strong>활성(active)</strong>이라 하며, <strong>Active-High</strong>와 <strong>Active-Low</strong> 두 가지 방식이 있다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>신호가 <strong>활성(active)</strong> 상태라 함은, 그 신호가 자기 이름이 뜻하는 기능을 실제로 수행하고 있다는 의미이다. 예를 들어 ENABLE이라는 신호가 활성이면, 연결된 장치가 실제로 동작 가능 상태가 된다.</p>
+          <p><strong>활성 시점의 두 가지 방식:</strong></p>
+          <ul>
+            <li><strong>Active-High</strong>: 신호가 1(High)일 때 활성. 가장 직관적인 방식</li>
+            <li><strong>Active-Low</strong>: 신호가 0(Low)일 때 활성. 이름 뒤에 특수 표기를 붙인다</li>
+          </ul>
+          <p><strong>신호의 상태:</strong></p>
+          <ul>
+            <li><strong>Asserted(어서트)</strong>: 신호가 활성 상태에 있음</li>
+            <li><strong>De-asserted(디어서트)</strong>: 신호가 비활성 상태에 있음</li>
+          </ul>
+          <p><strong>Active-Low 신호의 표기법:</strong> SIGNAL~, ~SIGNAL, /SIGNAL, SIGNAL_L, SIGNAL_N 등 다양한 방법으로 Active-Low임을 나타낸다.</p>
+        </div>
+        <div class="warning-box">주의: Active-Low 신호는 0이 "켜진" 상태이다. RESET_N이라는 신호가 0이면 리셋이 동작 중이라는 뜻이다. 초보자가 자주 혼동하는 부분이므로 표기법을 잘 확인해야 한다.</div>
+      </section>
+
+      <!-- ==================== Page 8 ==================== -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>목차 &mdash; 조합 논리(Combinational Logic) 컴포넌트</h2>
+        <div class="summary-box">
+          이제 두 번째 주제인 조합 논리 컴포넌트에 대해 다룬다. 논리 게이트부터 디코더, 멀티플렉서, 전파 지연까지 살펴본다.
+        </div>
+        <div class="card">
+          <div class="card-label">이 섹션에서 다룰 내용</div>
+          <p>조합 논리(CL)는 현재 입력만으로 출력이 결정되는 회로이다. 이번 섹션에서는 조합 논리의 기본 구성 요소인 <strong>논리 게이트</strong>부터 시작하여, 이를 활용한 <strong>디코더</strong>와 <strong>멀티플렉서</strong>, 그리고 실제 회로에서 발생하는 <strong>전파 지연(propagation delay)</strong>까지 학습한다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 9 ==================== -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>논리 게이트 &mdash; 조합 논리의 기본 구성 요소</h2>
+        <div class="summary-box">
+          <strong>논리 게이트(Logic Gate)</strong>는 디지털 시스템의 가장 기본적인 구성 블록으로, 실제 물리 회로(CMOS 트랜지스터)의 추상화이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>논리 게이트</strong>는 디지털 시스템을 구성하는 기본 빌딩 블록이다. 현대 디지털 시스템은 근본적으로 <strong>수십억 개의 논리 게이트</strong>로 구성된다.</p>
+          <p>논리 게이트는 디지털 세계를 위한 <strong>추상화 레이어(abstraction layer)</strong>이다:</p>
+          <ul>
+            <li>논리 게이트와 실제 물리적 회로 사이에 대응 관계가 존재한다</li>
+            <li>실제로는 상보적 트랜지스터 쌍(<strong>CMOS</strong>)으로 구성된다 &mdash; <strong>PMOS</strong>와 <strong>NMOS</strong>의 쌍</li>
+          </ul>
+          <p>슬라이드에서 보여주는 인버터(NOT 게이트) 회로를 예로 들면:</p>
+          <ul>
+            <li>위쪽의 PMOS 트랜지스터와 아래쪽의 NMOS 트랜지스터가 직렬로 연결</li>
+            <li>입력(VIN)이 0이면 PMOS가 켜지고 NMOS가 꺼져 출력(VOUT)이 1</li>
+            <li>입력(VIN)이 1이면 PMOS가 꺼지고 NMOS가 켜져 출력(VOUT)이 0</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Logic Gate</td><td>논리 게이트</td><td>0/1 입력에 대해 논리 연산을 수행하는 기본 소자</td></tr>
+              <tr><td class="en">CMOS</td><td>상보형 금속-산화물 반도체</td><td>PMOS와 NMOS를 함께 사용하는 트랜지스터 기술</td></tr>
+              <tr><td class="en">PMOS / NMOS</td><td>P형/N형 MOS 트랜지스터</td><td>CMOS를 구성하는 두 종류의 트랜지스터</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 10 ==================== -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>NOT 게이트 (인버터, Inverter)</h2>
+        <div class="summary-box">
+          NOT 게이트는 유일하게 입력 1개, 출력 1개를 가지는 게이트로, 입력값을 반전(invert)시킨다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>NOT 게이트(인버터)</strong>는 가장 단순한 논리 게이트이다.</p>
+          <ul>
+            <li><strong>대수적 표현</strong>: A' (A의 보수)</li>
+            <li><strong>다양한 표기법</strong>: A', ~A, A-bar 등</li>
+            <li><strong>동작</strong>: 입력이 0이면 출력 1, 입력이 1이면 출력 0</li>
+          </ul>
+          <table class="terms-table">
+            <thead><tr><th>A (입력)</th><th>NOT A (출력)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>1</td></tr>
+              <tr><td>1</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 11 ==================== -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>AND 게이트 / NAND 게이트</h2>
+        <div class="summary-box">
+          AND는 모든 입력이 1일 때만 출력이 1이고, NAND는 AND의 출력을 반전한 것이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>대수적 표현:</strong></p>
+          <ul>
+            <li>AND: \( O = A \cdot B \)</li>
+            <li>NAND: \( O = (A \cdot B)' \)</li>
+          </ul>
+          <p>AND 게이트는 <strong>두 입력 모두 1</strong>일 때만 출력이 1이다. NAND 게이트는 AND의 출력에 반전 버블(inversion bubble)이 붙어 NOT을 나타낸다.</p>
+          <p><strong>AND 진리표:</strong></p>
+          <table class="terms-table">
+            <thead><tr><th>A</th><th>B</th><th>O (AND)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>0</td></tr>
+              <tr><td>0</td><td>1</td><td>0</td></tr>
+              <tr><td>1</td><td>0</td><td>0</td></tr>
+              <tr><td>1</td><td>1</td><td>1</td></tr>
+            </tbody>
+          </table>
+          <p><strong>NAND 진리표:</strong></p>
+          <table class="terms-table">
+            <thead><tr><th>A</th><th>B</th><th>O (NAND)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>1</td></tr>
+              <tr><td>0</td><td>1</td><td>1</td></tr>
+              <tr><td>1</td><td>0</td><td>1</td></tr>
+              <tr><td>1</td><td>1</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">NAND 게이트는 "범용 게이트(universal gate)"로, NAND만으로 AND, OR, NOT 등 모든 논리를 구현할 수 있다. 실제 CMOS 회로에서 가장 효율적인 게이트이기도 하다.</div>
+      </section>
+
+      <!-- ==================== Page 12 ==================== -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>OR 게이트 / NOR 게이트</h2>
+        <div class="summary-box">
+          OR는 입력 중 하나라도 1이면 출력이 1이고, NOR는 OR의 출력을 반전한 것이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>대수적 표현:</strong></p>
+          <ul>
+            <li>OR: \( O = A + B \)</li>
+            <li>NOR: \( O = (A + B)' \)</li>
+          </ul>
+          <p>OR 게이트는 입력 중 <strong>하나라도 1</strong>이면 출력이 1이다.</p>
+          <p><strong>OR 진리표:</strong></p>
+          <table class="terms-table">
+            <thead><tr><th>A</th><th>B</th><th>O (OR)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>0</td></tr>
+              <tr><td>0</td><td>1</td><td>1</td></tr>
+              <tr><td>1</td><td>0</td><td>1</td></tr>
+              <tr><td>1</td><td>1</td><td>1</td></tr>
+            </tbody>
+          </table>
+          <p><strong>NOR 진리표:</strong></p>
+          <table class="terms-table">
+            <thead><tr><th>A</th><th>B</th><th>O (NOR)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>1</td></tr>
+              <tr><td>0</td><td>1</td><td>0</td></tr>
+              <tr><td>1</td><td>0</td><td>0</td></tr>
+              <tr><td>1</td><td>1</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">슬라이드에서 "각 논리 게이트의 트랜지스터 비용을 생각해보라"고 언급한다. NAND/NOR 게이트가 AND/OR 게이트보다 트랜지스터 수가 적다. AND = NAND + NOT이므로 NAND가 더 기본적인 게이트이다.</div>
+      </section>
+
+      <!-- ==================== Page 13 ==================== -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>XOR 게이트 (Exclusive OR)</h2>
+        <div class="summary-box">
+          XOR 게이트는 두 입력이 <strong>서로 다를 때</strong> 1을 출력한다. 짝수 개의 입력이 1일 때 출력이 1이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>대수적 표현:</strong></p>
+          <ul>
+            <li>\( O = A \oplus B \)</li>
+            <li>\( O = A \cdot B' + A' \cdot B \) (NOT, AND, OR 게이트로 분해 가능)</li>
+          </ul>
+          <p>XOR은 "배타적 OR"라는 뜻으로, 두 입력 값이 <strong>서로 다를 때만</strong> 1을 출력한다.</p>
+          <table class="terms-table">
+            <thead><tr><th>A</th><th>B</th><th>O (XOR)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>0</td></tr>
+              <tr><td>0</td><td>1</td><td>1</td></tr>
+              <tr><td>1</td><td>0</td><td>1</td></tr>
+              <tr><td>1</td><td>1</td><td>0</td></tr>
+            </tbody>
+          </table>
+          <p>XOR은 NOT, AND, OR 논리 게이트의 조합으로 구성할 수 있다. 이는 XOR이 기본 게이트가 아닌 <strong>파생 게이트</strong>임을 의미한다.</p>
+        </div>
+        <div class="tip">XOR은 덧셈기(adder)의 핵심 구성 요소이며, 패리티(parity) 검사, 암호화 등에 광범위하게 사용된다.</div>
+      </section>
+
+      <!-- ==================== Page 14 ==================== -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>이진 디코더 (Binary Decoder)</h2>
+        <div class="summary-box">
+          이진 디코더는 n비트 이진 입력을 \(2^n\)개 출력 코드로 변환하며, <strong>원-핫 인코딩(one-hot encoding)</strong>으로의 변환에 주로 사용된다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>이진 디코더(Binary Decoder)</strong>는 n비트의 이진 입력을 받아 \(2^n\)개의 출력 중 정확히 하나만 활성화시키는 조합 논리 회로이다.</p>
+          <p><strong>주요 용도:</strong></p>
+          <ul>
+            <li><strong>원-핫(one-hot) 변환</strong>: 이진 숫자를 "해당 위치만 1인" 형태로 변환</li>
+            <li><strong>명령어 디코딩(instruction decoding)</strong>: CPU에서 명령어를 해석할 때 사용</li>
+            <li><strong>메모리 모듈 선택</strong>: 특정 메모리 칩을 활성화할 때 사용</li>
+          </ul>
+          <p>예를 들어, 2비트 입력 "10"(=2)이 들어오면, 4개 출력 중 3번째(인덱스 2) 출력만 1이 되고 나머지는 0이 된다.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Binary Decoder</td><td>이진 디코더</td><td>n비트 이진 입력을 2^n개 출력으로 변환하는 회로</td></tr>
+              <tr><td class="en">One-Hot Encoding</td><td>원-핫 인코딩</td><td>하나의 비트만 1이고 나머지가 0인 표현 방식</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 15 ==================== -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>멀티플렉서 (Multiplexer, MUX)</h2>
+        <div class="summary-box">
+          멀티플렉서(MUX)는 여러 입력 중 <strong>하나를 선택</strong>하여 출력으로 내보내는 회로로, 디지털 시스템에서 가장 많이 사용되는 컴포넌트 중 하나이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>멀티플렉서(MUX)</strong>는 여러 개의 데이터 입력 중에서 <strong>선택 신호(selection signal)</strong>에 의해 지정된 하나를 골라 출력하는 조합 논리 회로이다.</p>
+          <ul>
+            <li>s비트의 선택 입력이 있으면, 최대 \(2^s\)개의 데이터 입력을 가질 수 있다</li>
+            <li>내부적으로 <strong>이진 디코더</strong>가 한 번에 하나의 스위치만 켜는 방식으로 동작한다</li>
+            <li>각 데이터 입력은 여러 비트(multi-bit)일 수 있다</li>
+          </ul>
+          <p>비유하자면, MUX는 TV 채널 선택기와 같다. 여러 채널(입력)이 있고, 리모컨(선택 신호)으로 하나의 채널을 골라 화면(출력)에 보여주는 것이다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 16 ==================== -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>MUX의 응용: DeMUX와 Bus</h2>
+        <div class="summary-box">
+          DeMUX는 MUX의 역동작(1-to-m)이고, Bus는 여러 소스와 목적지를 연결하는 공유 통신 경로이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>디멀티플렉서(DeMUX):</strong></p>
+          <ul>
+            <li>MUX가 m-to-1(다대일)이라면, DeMUX는 <strong>1-to-m(일대다)</strong>이다</li>
+            <li>하나의 입력 데이터를 지정된 목적지 중 하나로 전송하는 데 사용된다</li>
+          </ul>
+          <p><strong>버스(Bus):</strong></p>
+          <ul>
+            <li>여러 소스 모듈과 목적지 모듈을 상호 연결하는 컴포넌트</li>
+            <li>임의의 소스에서 임의의 목적지로 데이터를 전송할 수 있다</li>
+            <li>내부적으로 MUX와 DeMUX의 조합으로 구현된다</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">DeMUX</td><td>디멀티플렉서</td><td>하나의 입력을 여러 출력 중 하나로 전달하는 회로</td></tr>
+              <tr><td class="en">Bus</td><td>버스</td><td>여러 모듈 간 데이터를 전달하는 공유 통신 경로</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 17 ==================== -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>전파 지연 (Propagation Delay)</h2>
+        <div class="summary-box">
+          실제 논리 게이트는 결과를 즉시 출력하지 않는다. 출력이 안정되기까지 걸리는 시간을 <strong>전파 지연(propagation delay, tpd)</strong>이라 한다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>"논리 게이트가 결과를 즉시 출력하는가?" &mdash; <strong>아니다!</strong></p>
+          <ul>
+            <li>논리 게이트는 출력값이 안정화되기까지 시간이 필요하다. 이를 <strong>전파 지연(propagation delay, tpd)</strong>이라 한다</li>
+            <li>지연은 여러 변수에 의해 결정된다: 상태(state), 전압(voltage), 온도(temperature), 공정(process) 등</li>
+            <li>디지털 시스템의 <strong>지연 시간(latency)</strong>은 근본적으로 게이트들의 전파 지연에서 비롯된다</li>
+          </ul>
+          <p>전파 지연은 게이트 하나하나에서 발생하며, 여러 게이트를 직렬로 연결하면 각 게이트의 지연이 누적된다. 이것이 회로의 <strong>최대 동작 속도(maximum operating frequency)</strong>를 결정하는 핵심 요소이다.</p>
+        </div>
+        <div class="key-point">핵심: 회로의 최대 동작 주파수는 가장 긴 경로(critical path)의 전파 지연에 의해 제한된다. 게이트가 많이 직렬 연결될수록 지연이 커지고 속도가 느려진다.</div>
+      </section>
+
+      <!-- ==================== Page 18 ==================== -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>목차 &mdash; 순차 논리 (Sequential Logic)</h2>
+        <div class="summary-box">
+          세 번째 주제인 순차 논리를 다룬다. 상태(state), 플립플롭, 레지스터, FSM 구조(Moore/Mealy)를 학습한다.
+        </div>
+        <div class="card">
+          <div class="card-label">이 섹션에서 다룰 내용</div>
+          <p>순차 논리(Sequential Logic)는 "기억"을 가진 회로이다. 이번 섹션에서는 상태의 개념, 상태를 저장하는 <strong>플립플롭</strong>과 <strong>레지스터</strong>, 그리고 순차 논리를 체계적으로 설계하는 <strong>유한 상태 기계(FSM)</strong>의 두 가지 구조를 학습한다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 19 ==================== -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 19</span>
+        <h2>순차 논리에서의 상태 (States)</h2>
+        <div class="summary-box">
+          복잡한 디지털 시스템은 서로 다른 입력에 대해 다른 동작을 보일 수 있으며, 이러한 동작은 <strong>상태(state)</strong>에 의해 결정된다. 상태는 <strong>유한 상태 기계(FSM)</strong>로 구현된다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <ul>
+            <li>복잡한 디지털 시스템은 서로 다른 입력에 대해 서로 다른 행동을 보일 수 있다</li>
+            <li>순차 회로는 <strong>서로 다른 상태(state)</strong>에서 다르게 행동할 수 있다</li>
+            <li>상태는 <strong>"상태 메모리(state memory)"</strong>에 저장된다</li>
+            <li>순차 논리는 <strong>유한 상태 기계(Finite State Machine, FSM)</strong>로 구현된다</li>
+          </ul>
+          <p>비유하자면, 자판기의 동작을 생각해보자. "대기" 상태에서 동전을 넣으면 "투입" 상태로 전이하고, 버튼을 누르면 "배출" 상태가 된다. 같은 버튼이라도 현재 상태(돈이 들어왔는지)에 따라 결과가 다르다.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">State</td><td>상태</td><td>회로가 현재 어떤 동작 모드에 있는지를 나타내는 값</td></tr>
+              <tr><td class="en">FSM</td><td>유한 상태 기계</td><td>유한한 수의 상태와 상태 전이 규칙으로 동작을 기술하는 모델</td></tr>
+              <tr><td class="en">State Memory</td><td>상태 메모리</td><td>현재 상태를 저장하는 기억 소자</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 20 ==================== -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 20</span>
+        <h2>D 플립플롭 (D Flip-Flop)</h2>
+        <div class="summary-box">
+          D 플립플롭은 클록 신호의 <strong>에지(edge)</strong>에 민감하게 반응하여 데이터를 전파하는 기본 순차 소자이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>D 플립플롭(D Flip-Flop)</strong>은 순차 논리의 가장 기본적인 저장 소자이다.</p>
+          <ul>
+            <li><strong>에지 감응형(edge-sensitive)</strong> 컴포넌트 &mdash; 클록 신호의 상승 에지(rising edge) 또는 하강 에지(falling edge)에서만 동작한다</li>
+            <li><strong>주기적인 클록 신호(CLK)</strong>가 플립플롭에 공급된다</li>
+            <li>CLK은 디지털 시스템의 <strong>"심장 박동(heartbeat)"</strong>으로 비유된다</li>
+            <li>CLK의 상승/하강 에지에서 데이터 비트(D)를 출력(Q)으로 전파한다</li>
+          </ul>
+          <p>쉽게 말해, D 플립플롭은 "클록이 째깍할 때마다 D 입력의 값을 Q 출력으로 복사하는" 소자이다. 클록 에지 사이에서는 Q 값이 변하지 않는다.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">D Flip-Flop</td><td>D 플립플롭</td><td>클록 에지에서 D 입력을 Q 출력으로 전파하는 소자</td></tr>
+              <tr><td class="en">Edge-sensitive</td><td>에지 감응형</td><td>신호의 변화 순간(에지)에만 반응하는 특성</td></tr>
+              <tr><td class="en">Rising Edge</td><td>상승 에지</td><td>클록 신호가 0에서 1로 변하는 순간</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 21 ==================== -->
+      <section class="page-section" id="p21">
+        <span class="page-num">Page 21</span>
+        <h2>플립플롭을 이용한 상태 변수 저장</h2>
+        <div class="summary-box">
+          플립플롭은 클록 에지 타이밍에서만 출력이 갱신되므로, 다음 클록 에지까지 <strong>현재 상태를 유지</strong>할 수 있다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>플립플롭의 핵심 특성:</p>
+          <ul>
+            <li>출력(Q) 업데이트는 <strong>오직 클록 신호의 에지 타이밍에서만</strong> 트리거된다</li>
+            <li>CLK의 양(positive) 또는 음(negative) 에지가 올 때까지 <strong>이전(=현재) 상태를 출력(Q)에 유지</strong>한다</li>
+          </ul>
+          <p>이것이 바로 "기억" 기능이다. 조합 논리만으로는 값을 기억할 수 없지만, 플립플롭은 클록 사이에 값을 안정적으로 보존함으로써 <strong>상태 변수(state variable)</strong>를 저장할 수 있다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 22 ==================== -->
+      <section class="page-section" id="p22">
+        <span class="page-num">Page 22</span>
+        <h2>D 플립플롭의 타이밍</h2>
+        <div class="summary-box">
+          플립플롭은 조합 논리의 입출력을 묶어주며, <strong>셋업 시간(tSETUP)</strong>과 <strong>홀드 시간(tHOLD)</strong>을 반드시 만족해야 한다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>플립플롭은 조합 논리의 입출력 사이에 위치하여 데이터 흐름을 동기화한다. 그런데 플립플롭이 정상적으로 동작하려면 두 가지 타이밍 조건을 반드시 만족해야 한다:</p>
+          <ul>
+            <li><strong>tSETUP (셋업 시간)</strong>: 조합 논리의 결과가 클록 에지 <strong>이전</strong>에 도착해야 하는 최소 시간. 즉, 데이터가 충분히 일찍 안정화되어야 한다.</li>
+            <li><strong>tHOLD (홀드 시간)</strong>: 조합 논리의 결과가 클록 에지 <strong>이후</strong>에도 안정적으로 유지되어야 하는 최소 시간.</li>
+          </ul>
+          <p>이 두 조건을 만족하지 못하면, <strong>오동작(malfunction)</strong>이 발생할 확률이 매우 높다. 이를 타이밍 위반(timing violation)이라 하며, 실제 칩 설계에서 가장 중요한 검증 항목 중 하나이다.</p>
+        </div>
+        <div class="warning-box">주의: tSETUP과 tHOLD를 위반하면 <strong>메타안정 상태(metastability)</strong>에 빠질 수 있다. 출력이 0도 1도 아닌 불확정 상태가 되어 전체 시스템이 오동작할 수 있다.</div>
+      </section>
+
+      <!-- ==================== Page 23 ==================== -->
+      <section class="page-section" id="p23">
+        <span class="page-num">Page 23</span>
+        <h2>레지스터 (Registers)</h2>
+        <div class="summary-box">
+          레지스터는 여러 개의 플립플롭을 묶어 <strong>다중 비트(multi-bit) 데이터를 저장</strong>하는 컴포넌트이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>레지스터(Register)</strong>는 플립플롭들의 집합이다:</p>
+          <ul>
+            <li>각 플립플롭이 데이터의 <strong>1비트</strong>에 해당한다</li>
+            <li>따라서 n비트 레지스터는 n개의 플립플롭으로 구성된다</li>
+            <li>다중 비트 상태 변수(multi-bit state variable)를 보존하는 저장 컴포넌트이다</li>
+          </ul>
+          <p>슬라이드의 간단한 마이크로프로세서 예시:</p>
+          <ul>
+            <li><strong>피연산자 A를 위한 레지스터(Register for operand A)</strong></li>
+            <li><strong>피연산자 B를 위한 레지스터(Register for operand B)</strong></li>
+            <li>두 레지스터의 값이 <strong>가산기(ADDER)</strong>에 입력되어 덧셈 연산을 수행한다</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 24 ==================== -->
+      <section class="page-section" id="p24">
+        <span class="page-num">Page 24</span>
+        <h2>레지스터의 데이터 저장 메커니즘</h2>
+        <div class="summary-box">
+          레지스터의 <strong>ENABLE 신호(OE)</strong>가 어서트되면 입력 데이터가 저장되고, 디어서트되면 기존 값이 유지된다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>레지스터의 저장 동작은 <strong>ENABLE 신호(OE, Output Enable)</strong>에 의해 제어된다:</p>
+          <ul>
+            <li><strong>OE가 디어서트(de-asserted)</strong>되면: 출력(Q)이 이전 값을 유지한다. 새로운 입력이 들어와도 무시된다.</li>
+            <li><strong>OE가 어서트(asserted)</strong>되면: 출력이 입력 데이터(D)로 갱신된다. 내부 D 플립플롭이 값을 전파한다.</li>
+          </ul>
+          <p>이 메커니즘을 통해 원하는 시점에만 데이터를 저장하고, 나머지 시간에는 기존 데이터를 안전하게 보존할 수 있다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 25 ==================== -->
+      <section class="page-section" id="p25">
+        <span class="page-num">Page 25</span>
+        <h2>FSM 구조: 무어 머신 (Moore Machine)</h2>
+        <div class="summary-box">
+          무어 머신(Moore Machine)에서는 다음 상태가 현재 상태와 입력에 의해 결정되지만, <strong>출력은 오직 현재 상태에 의해서만</strong> 결정된다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>무어 머신(Moore Machine)</strong>의 두 가지 핵심 규칙:</p>
+          <ol>
+            <li><strong>다음 상태(Next State)</strong> = f(현재 상태, 입력) &mdash; 조합 논리(CL)로 계산</li>
+            <li><strong>출력(Output)</strong> = g(현재 상태) &mdash; 입력에 의존하지 않음</li>
+          </ol>
+          <p>구조적으로 보면:</p>
+          <ul>
+            <li>첫 번째 조합 논리(CL): 현재 상태 + 입력 &rarr; 다음 상태 계산</li>
+            <li>플립플롭(FF): 다음 상태를 저장하여 현재 상태로 만듦</li>
+            <li>두 번째 조합 논리(CL): 현재 상태 &rarr; 출력 생성</li>
+          </ul>
+          <p>무어 머신의 장점은 출력이 입력에 직접 연결되지 않아 <strong>글리치(glitch)</strong>가 적고 안정적이라는 것이다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 26 ==================== -->
+      <section class="page-section" id="p26">
+        <span class="page-num">Page 26</span>
+        <h2>FSM 구조: 밀리 머신 (Mealy Machine)</h2>
+        <div class="summary-box">
+          밀리 머신(Mealy Machine)에서는 출력이 <strong>현재 상태와 입력 모두</strong>에 의해 결정된다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>밀리 머신(Mealy Machine)</strong>의 두 가지 핵심 규칙:</p>
+          <ol>
+            <li><strong>다음 상태(Next State)</strong> = f(현재 상태, 입력) &mdash; 무어 머신과 동일</li>
+            <li><strong>출력(Output)</strong> = g(현재 상태, <strong>입력</strong>) &mdash; 입력도 출력에 영향</li>
+          </ol>
+          <p>무어 머신과의 차이점은 <strong>출력을 결정하는 조합 논리에 입력이 직접 연결</strong>된다는 것이다. 이로 인해:</p>
+          <ul>
+            <li>장점: 같은 기능을 더 적은 상태로 구현할 수 있다 (상태 수가 줄어듦)</li>
+            <li>단점: 입력 변화가 출력에 즉각 반영되므로 <strong>글리치(glitch)</strong>가 발생할 수 있다</li>
+          </ul>
+        </div>
+        <div class="tip">시험 포인트: "Moore vs Mealy 차이는?" &mdash; 핵심은 출력 함수에 입력이 포함되느냐 여부이다. Moore: Output = g(State), Mealy: Output = g(State, Input).</div>
+      </section>
+
+      <!-- ==================== Page 27 ==================== -->
+      <section class="page-section" id="p27">
+        <span class="page-num">Page 27</span>
+        <h2>목차 &mdash; Verilog HDL Quick View</h2>
+        <div class="summary-box">
+          네 번째 주제인 Verilog HDL(하드웨어 기술 언어)의 기초를 다룬다.
+        </div>
+        <div class="card">
+          <div class="card-label">이 섹션에서 다룰 내용</div>
+          <p><strong>Verilog HDL(Hardware Description Language)</strong>은 디지털 회로를 텍스트로 기술하는 언어이다. C 언어와 비슷한 문법을 가지고 있지만, 하드웨어를 기술한다는 점에서 근본적으로 다르다. 이 섹션에서는 모듈, 토큰, 숫자 표현, 조합/순차 논리 구현, 모듈 간 연결 등을 학습한다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 28 ==================== -->
+      <section class="page-section" id="p28">
+        <span class="page-num">Page 28</span>
+        <h2>모듈 (Module)</h2>
+        <div class="summary-box">
+          모듈(Module)은 Verilog에서 설계의 <strong>기본 단위</strong>이다. 보통 하나의 소스 파일에 하나의 모듈이 포함된다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>Module</strong>은 Verilog 설계의 기본 단위이다. 보통 하나의 소스 파일(source_code.v)에 하나의 모듈이 포함된다.</p>
+          <p>모듈은 두 부분으로 구성된다:</p>
+          <ul>
+            <li><strong>선언부(Declaration)</strong>: 모듈 내부에서 사용되는 변수들 (input, output, 신호, 함수 등)</li>
+            <li><strong>문장부(Statements)</strong>: 모듈의 동작을 기술 (다른 인스턴스화된 모듈 포함 가능)</li>
+          </ul>
+<pre>module moduleA();
+  input B, C, D;          // 선언부
+
+  assign result = B+C+D;  // 문장부
+  moduleB(B);             // 하위 모듈 인스턴스화
+  moduleC(C);
+  moduleD(D);
+endmodule</pre>
+          <p>하나의 모듈 내부에 다른 모듈을 <strong>인스턴스화(instantiation)</strong>할 수 있다. 이를 통해 계층적(hierarchical) 설계가 가능하다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 29 ==================== -->
+      <section class="page-section" id="p29">
+        <span class="page-num">Page 29</span>
+        <h2>토큰 (Tokens)</h2>
+        <div class="summary-box">
+          Verilog의 문장(statement)은 토큰(token)과 숫자로 구성된다. 토큰에는 <strong>키워드(keyword)</strong>와 <strong>식별자(identifier)</strong>가 있다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>키워드(Keywords = reserved words)</strong>:</p>
+          <ul>
+            <li>Verilog 명세에서 미리 정의된 이름 (예: module, input, output, wire, reg 등)</li>
+            <li>사용자가 키워드를 변수 이름으로 사용할 수 없다</li>
+          </ul>
+          <p><strong>식별자(Identifiers)</strong>:</p>
+          <ul>
+            <li>사용자가 정의하는 이름 &mdash; <strong>대소문자 구분(case-sensitive)</strong></li>
+            <li>명명 규칙: 문자(letter) 또는 밑줄(_)로 시작해야 한다</li>
+            <li>중간에 문자, 숫자, 밑줄, 달러 기호($)를 포함할 수 있다</li>
+          </ul>
+<pre>module example(result, in1, in2);
+  input in1, in2;
+  output result;
+  assign result = in1 + in2;
+endmodule</pre>
+        </div>
+      </section>
+
+      <!-- ==================== Page 30 ==================== -->
+      <section class="page-section" id="p30">
+        <span class="page-num">Page 30</span>
+        <h2>토큰 &mdash; 스타일 규칙</h2>
+        <div class="summary-box">
+          Verilog 코딩 시 대소문자 구분과 명명 규칙(naming convention)을 잘 지켜야 코드의 가독성과 유지보수성이 높아진다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>대소문자 규칙:</strong></p>
+          <ul>
+            <li><strong>소문자</strong>: 모든 신호(signal), 변수(variable), 포트(port) 이름에 사용</li>
+            <li><strong>대문자</strong>: 상수(constant)와 사용자 정의 타입(user-defined type) 이름에 사용</li>
+          </ul>
+          <p><strong>명명 규칙(Naming conventions):</strong></p>
+          <ul>
+            <li>접미사 <strong>"_r"</strong>: 레지스터된(registered) 값임을 표시</li>
+            <li>접미사 <strong>"_w"</strong>: 와이어(wired) 값임을 표시</li>
+            <li>접미사 <strong>"_L"</strong> 또는 <strong>"_n"</strong>: Active-Low 신호임을 표시</li>
+          </ul>
+          <p>단, 규칙은 프로젝트마다 다를 수 있다. 중요한 것은 팀 내에서 일관성을 유지하는 것이다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 31 ==================== -->
+      <section class="page-section" id="p31">
+        <span class="page-num">Page 31</span>
+        <h2>Verilog에서의 숫자 표현 (1)</h2>
+        <div class="summary-box">
+          Verilog는 <strong>4가지 논리 값(0, 1, z, x)</strong>을 지원하며, 강력한 비트별 연산(bitwise operations)을 제공한다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>4-value logic (4값 논리):</strong></p>
+          <ul>
+            <li><strong>0</strong>: 논리 0, 거짓(false) 조건</li>
+            <li><strong>1</strong>: 논리 1, 참(true) 조건</li>
+            <li><strong>z</strong>: 고임피던스(high-impedance) &mdash; 외부로 신호를 전파하지 않음
+              <ul>
+                <li>연결되지 않은(open) 상태를 나타냄</li>
+                <li>"?"로 표현 가능: 01?? = 01zz</li>
+                <li>inout 포트에서 자주 발생</li>
+              </ul>
+            </li>
+            <li><strong>x</strong>: 불확정(unknown), don't care
+              <ul>
+                <li>초기값이 없을 때 발생</li>
+                <li>중복 할당(duplicate allocation)으로 충돌 시 발생</li>
+              </ul>
+            </li>
+          </ul>
+          <p><strong>비트별 연산자(Bitwise operators):</strong></p>
+          <table class="terms-table">
+            <thead><tr><th>연산자</th><th>동작</th></tr></thead>
+            <tbody>
+              <tr><td class="en">&amp;</td><td>AND</td></tr>
+              <tr><td class="en">|</td><td>OR</td></tr>
+              <tr><td class="en">~</td><td>NOT (물결/tilde)</td></tr>
+              <tr><td class="en">^</td><td>XOR (캐럿/caret)</td></tr>
+              <tr><td class="en">~^ 또는 ^~</td><td>XNOR</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 32 ==================== -->
+      <section class="page-section" id="p32">
+        <span class="page-num">Page 32</span>
+        <h2>Verilog에서의 숫자 표현 (2)</h2>
+        <div class="summary-box">
+          Verilog에서 숫자는 <strong>크기 지정(sized)</strong>과 <strong>크기 미지정(unsized)</strong> 두 가지 형식으로 표현하며, 밑줄(_)로 가독성을 높일 수 있다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>리터럴 형식(Literal formats):</strong></p>
+          <ul>
+            <li><strong>크기 지정(Sized numbers)</strong>: <code>&lt;size&gt;`&lt;base&gt;&lt;digits&gt;</code>
+              <ul>
+                <li>예: <code>4'b1001</code> (4비트 이진수), <code>16'habcd</code> (16비트 16진수)</li>
+              </ul>
+            </li>
+            <li><strong>크기 미지정(Unsized numbers)</strong>: <code>`&lt;base&gt;&lt;digits&gt;</code>
+              <ul>
+                <li>암묵적으로 32비트로 고정</li>
+                <li>예: <code>2009</code>, <code>'habc</code></li>
+              </ul>
+            </li>
+          </ul>
+          <p><strong>진법(Base):</strong></p>
+          <ul>
+            <li><code>b</code> 또는 <code>B</code>: 이진(binary)</li>
+            <li><code>o</code> 또는 <code>O</code>: 8진(octal)</li>
+            <li><code>h</code> 또는 <code>H</code>: 16진(hexadecimal)</li>
+            <li><code>d</code> 또는 <code>D</code>: 10진(decimal)</li>
+          </ul>
+          <p><strong>가독성을 위한 구분자(separator):</strong> 긴 숫자의 자릿수를 확인하기 어려울 때 밑줄(_)을 사용한다.</p>
+          <pre>16'b0101_1001_1110_0000  // 밑줄로 4비트씩 구분</pre>
+        </div>
+      </section>
+
+      <!-- ==================== Page 33 ==================== -->
+      <section class="page-section" id="p33">
+        <span class="page-num">Page 33</span>
+        <h2>조합 논리 구현 (Implementing Combinational Logic)</h2>
+        <div class="summary-box">
+          Verilog에서 조합 논리는 <strong>"assign"</strong> 또는 <strong>"always @(*)"</strong>로 구현하며, 반드시 <strong>블로킹 할당(=)</strong>만 사용해야 한다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>조합 논리 구현의 핵심 규칙:</p>
+          <ul>
+            <li><strong>"assign"</strong> 또는 <strong>"always @(*)"</strong> 사용</li>
+            <li><strong>"=" 블로킹 할당(blocking assignment)</strong>만 사용! ("&lt;="는 순차 논리용)</li>
+            <li>모든 경우를 <strong>"else"까지 정의</strong>해야 한다 (그렇지 않으면 래치가 생성됨)</li>
+          </ul>
+          <p>슬라이드의 MUX 기반 조합 논리 예시 (두 가지 스타일):</p>
+<pre>// 스타일 1: always 블록 사용
+module example(
+  input [3:0] N,
+  input enable,
+  output reg OUT);
+  reg mux_w;
+  always @(*) begin
+    if (N[3]==1'b1)
+      mux_w = N[0] &amp; (N[1]^N[2]);
+    else
+      mux_w = N[0] | (N[1]^~N[2]);
+    OUT = mux_w &amp; enable;
+  end
+endmodule</pre>
+<pre>// 스타일 2: assign 사용
+module example(
+  input [3:0] N,
+  input enable,
+  output OUT);
+  wire mux_w;
+  assign mux_w = N[3]? (N[0] &amp; (N[1]^N[2]))
+                      :(N[0] | (N[1]^~N[2]));
+  assign OUT = enable &amp; mux_w;
+endmodule</pre>
+        </div>
+        <div class="warning-box">주의: 조합 논리에서 모든 경우를 정의하지 않으면(else 누락) Verilog 합성 도구가 의도치 않은 <strong>래치(latch)</strong>를 생성한다. 이는 타이밍 문제의 주요 원인이 된다.</div>
+      </section>
+
+      <!-- ==================== Page 34 ==================== -->
+      <section class="page-section" id="p34">
+        <span class="page-num">Page 34</span>
+        <h2>순차 논리 구현 (Implementing Sequential Logic)</h2>
+        <div class="summary-box">
+          순차 논리는 <strong>"always @(posedge ...)"</strong>로 구현하며, 반드시 <strong>넌블로킹 할당(&lt;=)</strong>만 사용해야 한다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>순차 논리 구현의 핵심 규칙:</p>
+          <ul>
+            <li><strong>"always @(posedge ...)"</strong> 사용 (또는 사양에 따라 negedge)</li>
+            <li><strong>"&lt;=" 넌블로킹 할당(non-blocking assignment)</strong>만 사용!</li>
+          </ul>
+          <p>8비트 데이터 레지스터 예시:</p>
+<pre>always @(posedge clk) begin
+  if (enable)
+    data_out &lt;= data_in;   // 넌블로킹 할당
+end</pre>
+          <p>블로킹(=)과 넌블로킹(&lt;=)의 차이:</p>
+          <ul>
+            <li><strong>블로킹(=)</strong>: 문장이 순차적으로 실행. 조합 논리에 적합</li>
+            <li><strong>넌블로킹(&lt;=)</strong>: 모든 우변(RHS)을 먼저 평가한 후 동시에 좌변(LHS)에 할당. 순차 논리에 적합</li>
+          </ul>
+        </div>
+        <div class="key-point">핵심 규칙: 조합 논리 = always @(*) + 블로킹(=), 순차 논리 = always @(posedge clk) + 넌블로킹(&lt;=). 이 규칙을 반드시 지켜야 한다.</div>
+      </section>
+
+      <!-- ==================== Page 35 ==================== -->
+      <section class="page-section" id="p35">
+        <span class="page-num">Page 35</span>
+        <h2>모듈 간 연결: 사례 연구</h2>
+        <div class="summary-box">
+          서로 다른 모듈을 연결할 때는 <strong>인스턴스화(instantiation)</strong>, <strong>이름 연결(named association)</strong>, <strong>파라미터화(parameterization)</strong>를 사용한다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>모듈 간 연결의 핵심 원칙:</p>
+          <ul>
+            <li><strong>모듈 인스턴스화</strong>: 하위 모듈을 상위 모듈 안에서 생성</li>
+            <li><strong>이름 연결(named association)</strong>: <code>.포트이름(와이어이름)</code> 형식으로 명시적 연결</li>
+            <li><strong>비트 폭 파라미터화</strong>: 유연하고 모듈화된 연결을 위해 비트 폭을 파라미터로 설정</li>
+            <li><strong>비트 폭 일치</strong>: 연결된 와이어와 포트의 비트 폭이 일치해야 한다</li>
+          </ul>
+<pre>module top();
+  input i_data;
+  output o_data;
+  wire p2i_w, i2m_w, wpath_w, rpath_w;
+
+  interface #(...) itf_0(
+    .m2s0(i2m_w), .s2m0(p2i_w),
+    .m2s1(o_data), .s2m1(i_data));
+
+  process_unit #(...) pu_0(
+    .p2i(p2i_w),
+    .wmem(wpath_w), .rmem(rpath_w));
+
+  memory #(...) mem_0(
+    .wport(wpath_w), .rport(rpath_w),
+    .wport2(i2m_w));
+endmodule</pre>
+          <p>이 예시는 <strong>interface</strong>, <strong>process_unit</strong>, <strong>memory</strong> 세 모듈이 wire로 상호 연결된 <strong>top</strong> 모듈을 보여준다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 36 ==================== -->
+      <section class="page-section" id="p36">
+        <span class="page-num">Page 36</span>
+        <h2>APPENDIX</h2>
+        <div class="summary-box">
+          여기서부터는 부록(Appendix)으로, Verilog HDL의 세부 문법과 개념을 더 깊이 다룬다.
+        </div>
+        <div class="card">
+          <div class="card-label">부록 내용</div>
+          <p>이후 페이지에서는 Verilog의 <strong>데이터 타입, 포트 타입, 파라미터, 벡터 연산, 배열, 논리 표현식, 함수와 태스크</strong> 등을 상세히 다룬다. 기본 문법을 넘어 실제 설계에 필요한 심화 내용이다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 37 ==================== -->
+      <section class="page-section" id="p37">
+        <span class="page-num">Page 37</span>
+        <h2>데이터 타입: 변수 (Variables)</h2>
+        <div class="summary-box">
+          Verilog의 데이터 저장 요소 중 실제 설계에서는 주로 <strong>reg</strong>와 <strong>integer</strong> 타입을 사용하며, 나머지 타입은 합성 불가능(not synthesizable)하다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>변수(variable)는 데이터를 저장하는 요소이다:</p>
+          <ul>
+            <li>다양한 타입이 있지만, 실무에서는 <strong>reg</strong>와 <strong>integer</strong>를 주로 사용한다</li>
+            <li>나머지 타입은 <strong>합성 불가능(not synthesizable)</strong>하다 &mdash; 시뮬레이션에서만 사용</li>
+            <li>값을 할당할 때는 <strong>"always" / "initial" 블록</strong>을 사용한다 (절차적 할당, procedural assignment)</li>
+          </ul>
+<pre>module example();
+  wire a;
+  reg b;
+  always @* begin
+    b = ~a;  // 절차적 할당
+  end
+endmodule</pre>
+        </div>
+        <div class="warning-box">중요: Verilog의 변수 타입 <strong>"reg"는 물리적 플립플롭이나 레지스터와 아무 관련이 없다!</strong> 단지 always 블록 안에서 할당할 수 있는 변수 타입일 뿐이다. 이름 때문에 혼동하기 쉬우니 주의하자.</div>
+      </section>
+
+      <!-- ==================== Page 38 ==================== -->
+      <section class="page-section" id="p38">
+        <span class="page-num">Page 38</span>
+        <h2>포트 타입 (Port Types)</h2>
+        <div class="summary-box">
+          Verilog 포트는 <strong>input</strong>, <strong>output</strong>, <strong>inout</strong> 세 가지 타입이 있으며, 각각 사용 규칙이 다르다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <ul>
+            <li><strong>input</strong>: 모듈이 소비하는 신호
+              <ul><li>변수(reg)를 input으로 사용할 수 없다</li></ul>
+            </li>
+            <li><strong>output</strong>: 모듈이 생산하는 신호
+              <ul>
+                <li>소유 모듈 자체가 소비할 수 없다</li>
+                <li>변수(reg)를 output으로 사용할 수 있다</li>
+              </ul>
+            </li>
+            <li><strong>inout</strong>: 입력 또는 출력으로 사용 가능 &mdash; 양방향(tri-state) 핀용
+              <ul><li>변수(reg)를 inout으로 사용할 수 없다</li></ul>
+            </li>
+          </ul>
+<pre>module example(G1, G2, G3, A, Y);
+  input G1, G2, G3;       // = input wire G1, G2, G3
+  input wire [2:0] A;
+  output reg [7:0] Y;
+  ...
+endmodule</pre>
+          <p>암묵적으로 선언된 포트는 <strong>wire</strong> 타입이다. 슬라이드에서는 "같은 기능인데 비트 폭만 다른 새 모듈을 매번 만들어야 하나?"라는 질문을 던지며, 다음 페이지의 파라미터 개념으로 연결한다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 39 ==================== -->
+      <section class="page-section" id="p39">
+        <span class="page-num">Page 39</span>
+        <h2>파라미터 (Parameters)</h2>
+        <div class="summary-box">
+          파라미터(parameter)는 상수를 표현하는 데 사용되며, <strong>비트 폭을 유연하게 변경</strong>할 수 있어 범용적인 모듈 설계가 가능하다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>parameter</strong>는 상수값을 나타내는 데 사용된다 &mdash; 주로 비트 폭, 인덱스 등에 활용된다.</p>
+          <p>문법: <code>parameter &lt;identifier&gt; = value;</code></p>
+<pre>// 파라미터가 있는 모듈 정의
+module example #(
+  parameter WIDTH_IN = 4,
+  parameter WIDTH_OUT = 10)
+(
+  input [WIDTH_IN-1:0] in,
+  output [WIDTH_OUT-1:0] out
+);
+  ...
+endmodule
+
+// 상위 모듈에서 인스턴스화 시 파라미터 오버라이드
+module top;
+  input [4:0] in_top;
+  output [17:0] out_top;
+  example #(
+    .WIDTH_IN(5),
+    .WIDTH_OUT(18)
+  ) example_uut(
+    .in(in_top),
+    .out(out_top)
+  );
+endmodule</pre>
+        </div>
+        <div class="tip">상수이므로 코드에서 <strong>대문자</strong>로 정의하는 것이 권장된다 (예: WIDTH_IN, MAX_SIZE).</div>
+      </section>
+
+      <!-- ==================== Page 40 ==================== -->
+      <section class="page-section" id="p40">
+        <span class="page-num">Page 40</span>
+        <h2>벡터 (Vectors): 사용법</h2>
+        <div class="summary-box">
+          벡터는 여러 비트를 가진 데이터를 나타내며, net(wire), 변수(reg), 상수에 사용할 수 있다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>벡터(vector)는 <strong>다중 비트 데이터</strong>를 표현하는 방법이다.</p>
+          <p><strong>형식:</strong></p>
+<pre>wire [MSB:LSB] identifier;
+reg  [MSB:LSB] identifier;</pre>
+          <p>MSB(최상위 비트)가 LSB(최하위 비트)보다 반드시 클 필요는 없다.</p>
+          <p><strong>예시:</strong></p>
+<pre>reg [1:16] Zbus;
+Zbus = 16'b1000_0110_1100_1010;
+Zbus[01] = 1   // 인덱스 1의 비트값
+Zbus[16] = 0   // 인덱스 16의 비트값</pre>
+        </div>
+      </section>
+
+      <!-- ==================== Page 41 ==================== -->
+      <section class="page-section" id="p41">
+        <span class="page-num">Page 41</span>
+        <h2>벡터 연산 (1): 선택, 연결, 반복</h2>
+        <div class="summary-box">
+          벡터에 대해 <strong>비트 선택(indexing)</strong>, <strong>연결(concatenation)</strong>, <strong>반복(replication)</strong> 연산을 수행할 수 있다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>선택(Selection / Indexing):</strong></p>
+          <ul>
+            <li><code>[&lt;index&gt;]</code>: 비트 선택</li>
+            <li><code>[a:b]</code>: 상수를 이용한 부분 선택</li>
+            <li><code>[a+:n]</code> / <code>[a-:n]</code>: 변수를 이용한 부분 선택 &mdash; [(a+n-1):a] / [a:(a+1-n)]</li>
+          </ul>
+<pre>reg [1:16] Zbus;
+Zbus = 16'b1000_0110_1100_1011;
+Zbus[1:2] = 10      // 정상
+Zbus[2:1]            // ERROR! (선언과 방향이 다름)</pre>
+          <p><strong>연결(Concatenation):</strong> <code>{A, B, C, ...}</code></p>
+          <ul><li><code>{2'b00, 2'b11}</code> = <code>4'b0011</code></li></ul>
+          <p><strong>반복(Replication):</strong> <code>{&lt;횟수&gt;{DATA}}</code></p>
+          <ul>
+            <li><code>{2{8'h43}}</code> = <code>16'h4343</code></li>
+            <li><code>{16{1'b0}}</code> = <code>16'h0000</code></li>
+            <li><code>{2{byte1}, 3{byte2}}</code> = <code>{byte1, byte1, byte2, byte2, byte2}</code></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 42 ==================== -->
+      <section class="page-section" id="p42">
+        <span class="page-num">Page 42</span>
+        <h2>벡터 연산 (2): 부울 축소 연산</h2>
+        <div class="summary-box">
+          축소 연산(reduction operation)은 벡터를 비트별 연산으로 <strong>단일 비트</strong>로 줄이는 연산이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>부울 축소 연산은 벡터 자기 자신에 대해 비트별 연산을 수행하여 <strong>1비트 결과</strong>를 만들어낸다.</p>
+          <p><strong>축소 연산자:</strong> <code>&amp;</code>, <code>|</code>, <code>^</code>, <code>^~</code>, <code>~^</code></p>
+          <p><strong>예시:</strong></p>
+          <ul>
+            <li><code>|DATA</code>: DATA 비트 중 하나라도 1이면 결과가 1'b1</li>
+            <li><code>&amp;DATA</code>: DATA 비트 중 하나라도 0이면 결과가 1'b0, 모두 1이면 1'b1</li>
+            <li><code>^DATA</code>: DATA에서 1의 개수가 홀수이면 결과가 1'b1</li>
+          </ul>
+          <p>예를 들어, 4비트 데이터 DATA = 4'b1010이면:</p>
+          <ul>
+            <li><code>|DATA</code> = 1|0|1|0 = 1</li>
+            <li><code>&amp;DATA</code> = 1&amp;0&amp;1&amp;0 = 0</li>
+            <li><code>^DATA</code> = 1^0^1^0 = 0 (1이 2개, 짝수)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 43 ==================== -->
+      <section class="page-section" id="p43">
+        <span class="page-num">Page 43</span>
+        <h2>벡터 연산 (3): 산술 연산</h2>
+        <div class="summary-box">
+          Verilog는 다양한 산술 연산을 지원하며, 기본 연산은 합성 가능하지만 일부 복잡한 연산은 합성 불가능하다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>기본 산술 연산 (합성 가능):</strong></p>
+          <table class="terms-table">
+            <thead><tr><th>연산자</th><th>동작</th></tr></thead>
+            <tbody>
+              <tr><td class="en">+</td><td>덧셈 (Addition)</td></tr>
+              <tr><td class="en">-</td><td>뺄셈 (Subtraction)</td></tr>
+              <tr><td class="en">*</td><td>곱셈 (Multiplication)</td></tr>
+            </tbody>
+          </table>
+          <p><strong>복잡한 산술 연산 (대부분 합성 불가능):</strong></p>
+          <table class="terms-table">
+            <thead><tr><th>연산자</th><th>동작</th></tr></thead>
+            <tbody>
+              <tr><td class="en">/</td><td>나눗셈 (Division)</td></tr>
+              <tr><td class="en">%</td><td>나머지 (Modulus)</td></tr>
+              <tr><td class="en">**</td><td>거듭제곱 (Exponentiation)</td></tr>
+            </tbody>
+          </table>
+          <p><strong>시프트 연산:</strong></p>
+          <table class="terms-table">
+            <thead><tr><th>연산자</th><th>동작</th><th>비고</th></tr></thead>
+            <tbody>
+              <tr><td class="en">&lt;&lt;</td><td>논리 좌시프트</td><td>선택적 합성 가능</td></tr>
+              <tr><td class="en">&gt;&gt;</td><td>논리 우시프트</td><td>선택적 합성 가능</td></tr>
+              <tr><td class="en">&lt;&lt;&lt;</td><td>산술 좌시프트</td><td>선택적 합성 가능</td></tr>
+              <tr><td class="en">&gt;&gt;&gt;</td><td>산술 우시프트</td><td>선택적 합성 가능</td></tr>
+            </tbody>
+          </table>
+          <p>FPGA에서 곱셈은 DSP 블록에 매핑될 수 있다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 44 ==================== -->
+      <section class="page-section" id="p44">
+        <span class="page-num">Page 44</span>
+        <h2>벡터 연산 (4): 부호 있는 산술</h2>
+        <div class="summary-box">
+          Verilog-2001부터 <strong>signed 타입</strong>을 지원하며, 부호 있는(signed) 연산과 부호 없는(unsigned) 연산이 섞일 때 <strong>의도치 않은 타입캐스팅</strong>에 주의해야 한다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <ul>
+            <li>Verilog-2001부터 net과 variable 모두 <strong>signed</strong>로 정의 가능</li>
+            <li>예: <code>reg signed A;</code> <code>wire signed B;</code></li>
+            <li>음수값은 <strong>2의 보수(2's complement)</strong>로 표현된다</li>
+          </ul>
+          <p><strong>의도치 않은 타입캐스팅 주의!</strong></p>
+          <ul>
+            <li>signed 피연산자와 unsigned 피연산자가 만나면, signed가 <strong>암묵적으로 unsigned로 캐스팅</strong>된다</li>
+            <li>이를 방지하려면 내장 함수 <code>$signed()</code> / <code>$unsigned()</code>를 사용해야 한다</li>
+          </ul>
+<pre>// 잘못된 코드 (in_2가 unsigned라 in_1도 unsigned로 캐스팅됨)
+assign out = in_1 * in_2;
+
+// 올바른 코드 (in_2를 signed로 명시적 변환)
+assign out = in_1 * $signed({1'b0, in_2});</pre>
+        </div>
+        <div class="warning-box">주의: signed * unsigned 연산은 unsigned로 처리된다! 반드시 $signed()로 감싸야 올바른 결과를 얻는다.</div>
+      </section>
+
+      <!-- ==================== Page 45 ==================== -->
+      <section class="page-section" id="p45">
+        <span class="page-num">Page 45</span>
+        <h2>배열 (Array)</h2>
+        <div class="summary-box">
+          Verilog-2001부터 다차원 배열이 지원되며, 메모리 구조나 룩업 테이블(LUT)을 정의하는 데 사용된다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <ul>
+            <li>Verilog-1995까지는 다차원 데이터 타입이 지원되지 않았다</li>
+            <li>Verilog-2001부터 배열 지원 &mdash; 메모리 구조, 룩업 테이블(LUT) 정의에 활용</li>
+          </ul>
+          <p><strong>형식:</strong></p>
+<pre>reg mem [0:255][7:0];       // 256 x 8비트
+// 또는 동일하게:
+reg [7:0] mem [0:255];      // 8비트 데이터 256개 엔트리</pre>
+          <p><strong>물리적 대응:</strong></p>
+          <ul>
+            <li>256개 엔트리, 각 엔트리 8비트 &mdash; 이것은 물리 세계에서 <strong>메모리</strong>에 해당한다</li>
+            <li>대부분의 배열은 <strong>조합 논리</strong>로 매핑된다</li>
+            <li>때로는 EDA 도구에 따라 <strong>메모리(BRAM 등)</strong>로 합성될 수도 있다</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 46 ==================== -->
+      <section class="page-section" id="p46">
+        <span class="page-num">Page 46</span>
+        <h2>논리식: 참값 (Truth Values)</h2>
+        <div class="summary-box">
+          Verilog에서 참값(truth value)은 1비트 값이며, 다중 비트 값에서는 <strong>0이 아닌 모든 값이 참(TRUE)</strong>이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>논리식 <code>A &amp;&amp; B</code>, <code>A || B</code> 등에서 사용되는 참값:</p>
+          <ul>
+            <li>참값은 <strong>1비트 값</strong>이다</li>
+            <li><strong>True</strong>: 1'b1</li>
+            <li><strong>False</strong>: 1'b0, 또는 x나 z가 포함된 값</li>
+          </ul>
+          <p><strong>다중 비트 값의 경우:</strong></p>
+          <ul>
+            <li><strong>0이 아닌 모든 값</strong>이 TRUE로 간주된다</li>
+            <li>따라서 모든 비트가 0인 경우만 FALSE이다</li>
+            <li>예: <code>(4'b0000)?</code> &rarr; FALSE</li>
+          </ul>
+          <p>Verilog에서 논리 연산자는 결과적으로 <strong>1비트 크기의 참값</strong>을 산출한다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 47 ==================== -->
+      <section class="page-section" id="p47">
+        <span class="page-num">Page 47</span>
+        <h2>논리식: 논리 연산자 (Logical Operators)</h2>
+        <div class="summary-box">
+          Verilog의 논리 연산자는 C 스타일과 유사하며, 논리(Logical), 동등(Equality), 크기 비교(Magnitude) 세 그룹으로 나뉜다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <table class="terms-table">
+            <thead><tr><th>분류</th><th>연산자</th><th>동작</th></tr></thead>
+            <tbody>
+              <tr><td>논리(Logical)</td><td class="en">&amp;&amp;</td><td>AND</td></tr>
+              <tr><td>논리</td><td class="en">||</td><td>OR</td></tr>
+              <tr><td>논리</td><td class="en">!</td><td>NOT</td></tr>
+              <tr><td>동등(Equality)</td><td class="en">==</td><td>같음</td></tr>
+              <tr><td>동등</td><td class="en">!=</td><td>다름</td></tr>
+              <tr><td>크기 비교</td><td class="en">&gt;</td><td>크다</td></tr>
+              <tr><td>크기 비교</td><td class="en">&gt;=</td><td>크거나 같다</td></tr>
+              <tr><td>크기 비교</td><td class="en">&lt;</td><td>작다</td></tr>
+              <tr><td>크기 비교</td><td class="en">&lt;=</td><td>작거나 같다</td></tr>
+            </tbody>
+          </table>
+          <p><strong>동등 연산자 주의:</strong> 피연산자에 x나 z가 포함되면 결과가 x가 된다.</p>
+          <p><strong>예시 (짧은 쪽이 부호 확장됨):</strong></p>
+          <ul>
+            <li><code>8'h0a == 4'b1010</code> &rarr; True</li>
+            <li><code>2'b11 &lt; 4'b1100</code> &rarr; False</li>
+            <li><code>8'hs08 &lt; 4'bs1001</code> &rarr; False</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 48 ==================== -->
+      <section class="page-section" id="p48">
+        <span class="page-num">Page 48</span>
+        <h2>논리식: 조건 연산자와 케이스 동등 연산자</h2>
+        <div class="summary-box">
+          조건 연산자(?)는 C 스타일 삼항 연산자이며, 케이스 동등 연산자(===)는 x, z까지 비교하지만 합성 불가능하다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>조건 연산자 (Conditional Operator, ?):</strong></p>
+          <ul>
+            <li>논리식의 평가 결과에 따라 하나의 값을 선택한다</li>
+            <li>형식: <code>&lt;논리식&gt; ? &lt;참 표현식&gt; : &lt;거짓 표현식&gt;</code></li>
+            <li>C 언어의 삼항 연산자와 동일하다</li>
+          </ul>
+          <p><strong>케이스 동등 연산자 (Case equality, ===, !==):</strong></p>
+          <ul>
+            <li>일반 동등 연산자(==)와 유사하지만, <strong>모든 비트 위치</strong>를 비교한다</li>
+            <li>x와 z도 정확히 비교한다 (== 연산자는 x/z가 있으면 결과가 x)</li>
+            <li><strong>합성 불가능(NOT synthesizable)</strong>하지만, 시뮬레이션에서 x나 z의 존재를 검사할 때 유용하다</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 49 ==================== -->
+      <section class="page-section" id="p49">
+        <span class="page-num">Page 49</span>
+        <h2>함수 (Function)</h2>
+        <div class="summary-box">
+          Verilog의 Function은 모듈 내에서 재사용을 위해 정의되며, <strong>조합 논리로 실행</strong>되고 합성 가능하다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>Function의 특성:</p>
+          <ul>
+            <li>표현식(expression)의 위치, 즉 값 할당의 <strong>우변(RHS)</strong>에서 사용 가능</li>
+            <li>자기 이름으로 <strong>암묵적 반환(implicit return)</strong></li>
+            <li><strong>조합 논리</strong>로 실행된다</li>
+            <li>내부에서 task를 호출할 수 <strong>없다</strong></li>
+            <li><strong>합성 가능(synthesizable)</strong> &mdash; 실제 하드웨어 설계에 추천</li>
+          </ul>
+<pre>module test;
+  input [7:0] A;
+  input [7:0] B;
+  output [7:0] F1, F2;
+  assign F1 = sum(A, B);
+  assign F2 = sum(F1, 8'hEE);
+
+  function [7:0] sum;
+    input [7:0] a, b;
+    sum = a + b;  // 함수 이름으로 반환
+  endfunction
+endmodule</pre>
+        </div>
+      </section>
+
+      <!-- ==================== Page 50 ==================== -->
+      <section class="page-section" id="p50">
+        <span class="page-num">Page 50</span>
+        <h2>태스크 (Task)</h2>
+        <div class="summary-box">
+          Task는 Function보다 범용적이며 타이밍 키워드를 포함할 수 있지만, <strong>대부분 합성 불가능</strong>하여 시뮬레이션에 주로 사용된다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>Task의 특성:</strong></p>
+          <ul>
+            <li>Function보다 범용적: <strong>타이밍 키워드</strong>(@, posedge 등) 포함 가능</li>
+            <li>문장(statement)의 위치에서 사용 가능</li>
+            <li>모듈 내부와 외부 모두에서 정의 가능</li>
+          </ul>
+          <p><strong>두 가지 종류:</strong></p>
+          <ul>
+            <li><strong>Static task</strong>: 멤버 변수가 여러 호출 간에 <strong>공유</strong>됨</li>
+            <li><strong>Automatic task</strong>: 멤버 변수가 여러 호출 간에 <strong>공유되지 않음</strong></li>
+          </ul>
+<pre>// Static task: i값이 공유됨        // Automatic task: i값이 독립적
+task display();                    task automatic display();
+  integer i = 0;                     integer i = 0;
+  i = i + 1;                         i = i + 1;
+  $display("i=%0d", i);              $display("i=%0d", i);
+endtask                            endtask
+// 결과: i=1, i=2, i=3             // 결과: i=1, i=1, i=1</pre>
+        </div>
+        <div class="key-point">핵심: Function = 합성 가능, 조합 논리용. Task = 대부분 합성 불가능, 시뮬레이션용.</div>
+      </section>
+
+      <!-- ==================== Page 51 ==================== -->
+      <section class="page-section" id="p51">
+        <span class="page-num">Page 51</span>
+        <h2>시스템 함수와 태스크 (System Functions &amp; Tasks)</h2>
+        <div class="summary-box">
+          시스템 함수/태스크는 Verilog에 내장된 기능으로, 이름이 <strong>"$"</strong>로 시작하며 시뮬레이션/디버깅에 사용된다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>내장 함수/태스크(built-in functions and tasks)로, "$" 기호로 시작한다.</p>
+          <p><strong>주요 시스템 태스크/함수:</strong></p>
+          <table class="terms-table">
+            <thead><tr><th>이름</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">$display</td><td>포맷된 텍스트를 콘솔에 출력 (개행 포함)</td></tr>
+              <tr><td class="en">$fwrite</td><td>포맷된 문자열을 파일에 기록 (개행 없음). 관련: $fopen, $fclose</td></tr>
+              <tr><td class="en">$time</td><td>현재 시뮬레이션 시간값을 반환</td></tr>
+              <tr><td class="en">$stop</td><td>시뮬레이션 일시 중단</td></tr>
+              <tr><td class="en">$finish</td><td>시뮬레이션 종료</td></tr>
+              <tr><td class="en">$monitor</td><td>매개변수 중 하나라도 변경될 때마다 값을 출력</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 52 ==================== -->
+      <section class="page-section" id="p52">
+        <span class="page-num">Page 52</span>
+        <h2>목차 &mdash; 하드웨어 성능 측정 (Measuring Performance)</h2>
+        <div class="summary-box">
+          마지막 주제인 하드웨어 성능 측정을 다룬다. 성능의 정의, 지표, 그리고 평균 산출법을 학습한다.
+        </div>
+        <div class="card">
+          <div class="card-label">이 섹션에서 다룰 내용</div>
+          <p>하드웨어 시스템의 성능을 어떻게 정의하고, 측정하고, 비교하는지에 대한 내용이다. 처리량(throughput), 지연 시간(latency), FLOPS, 루프라인 모델(roofline model), 상대 성능, 그리고 다양한 평균(산술, 기하, 조화 평균)의 올바른 사용법을 다룬다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 53 ==================== -->
+      <section class="page-section" id="p53">
+        <span class="page-num">Page 53</span>
+        <h2>성능? 트레이드오프의 문제 (Trade-Off)</h2>
+        <div class="summary-box">
+          시스템 성능 최적화는 결국 <strong>트레이드오프(trade-off)</strong> 지점을 찾는 것이다. 에너지, 시간, 비용, 보안 등 여러 요소가 상충한다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>시스템의 성능을 최적화한다는 것은 트레이드오프 지점을 찾는 것이다:</p>
+          <ul>
+            <li>에너지를 더 쓰면 &rarr; 보통 더 빠른 실행 시간</li>
+            <li>면적/비용을 더 투자하면 &rarr; 에너지 절약 / 더 빠른 실행 시간</li>
+            <li>보안/신뢰성을 높이면 &rarr; 더 느린 실행 시간 / 더 높은 에너지</li>
+          </ul>
+          <p><strong>성능은 에너지, 시간, 신뢰성, 비용, 보안 등의 함수</strong>이다. 어떤 하나를 개선하면 다른 것이 희생되는 경우가 많다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 54 ==================== -->
+      <section class="page-section" id="p54">
+        <span class="page-num">Page 54</span>
+        <h2>성능 지표 (Performance Metrics)</h2>
+        <div class="summary-box">
+          높은 성능이란 <strong>높은 처리량(Throughput)</strong> 또는 <strong>낮은 지연 시간(Latency)</strong>을 의미한다. 이 둘은 서로 다른 관점의 지표이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>처리량(Throughput):</strong></p>
+          <ul>
+            <li>주어진 시간 내에 처리된 작업의 양</li>
+            <li>CPU에서는 <strong>IPC(Instructions Per Cycle)</strong>로 반영</li>
+            <li><strong>비율(rate) 측정</strong>이다</li>
+          </ul>
+          <p><strong>지연 시간(Latency):</strong></p>
+          <ul>
+            <li>작업의 시작부터 완료까지 걸린 시간</li>
+            <li>보통 프로그램/사용자 관점에서 측정</li>
+            <li><strong>시간(time) 측정</strong>이다</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Throughput</td><td>처리량</td><td>단위 시간당 처리된 작업의 양 (비율)</td></tr>
+              <tr><td class="en">Latency</td><td>지연 시간</td><td>작업 완료에 걸린 시간</td></tr>
+              <tr><td class="en">IPC</td><td>사이클당 명령어 수</td><td>CPU의 처리량을 나타내는 대표 지표</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 55 ==================== -->
+      <section class="page-section" id="p55">
+        <span class="page-num">Page 55</span>
+        <h2>Throughput == 1 / Latency 인가?</h2>
+        <div class="summary-box">
+          처리량은 지연 시간의 역수가 <strong>아닐 수 있다</strong>. 파이프라이닝(pipelining)을 사용하면 개별 작업의 지연은 늘어나도 전체 처리량은 증가한다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>하드웨어 파이프라이닝의 예를 통해 이해해보자:</p>
+          <p><strong>파이프라인 없이:</strong></p>
+          <ul>
+            <li>하나의 로직 블록 (40ns)</li>
+            <li>Task A: 40ns, Task B: 40ns, Task C: 40ns</li>
+            <li>총 시간: 120ns</li>
+          </ul>
+          <p><strong>3단계 파이프라인 사용 (clk=20ns):</strong></p>
+          <ul>
+            <li>Stage 1: 10ns, Stage 2: 20ns, Stage 3: 10ns</li>
+            <li>각 Task의 개별 지연: 60ns (40ns보다 오히려 <strong>증가</strong>!)</li>
+            <li>총 시간: 100ns (120ns에서 <strong>감소</strong>)</li>
+          </ul>
+          <p>파이프라이닝은 여러 작업을 겹쳐서(concurrently) 실행하므로, 개별 작업의 지연은 증가하지만 전체 작업의 처리량(throughput)은 증가한다.</p>
+        </div>
+        <div class="key-point">핵심: 높은 처리량이 반드시 낮은 지연 시간을 의미하지 않는다. 동시성(concurrency)을 고려하면 두 지표는 독립적일 수 있다. 다만, 전체 작업들의 총 지연은 줄어든다.</div>
+      </section>
+
+      <!-- ==================== Page 56 ==================== -->
+      <section class="page-section" id="p56">
+        <span class="page-num">Page 56</span>
+        <h2>처리량 지표: 비율 지표 (Rate Metrics)</h2>
+        <div class="summary-box">
+          대표적인 비율 지표로 IPC, MIPS, GHz가 있으며, 이들을 조합하여 벽시계 시간(wall clock time)을 계산할 수 있다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>대표적인 비율 지표:</strong></p>
+          <ul>
+            <li><strong>IPC</strong>: 사이클당 명령어 수 (Instructions Per Cycle)</li>
+            <li><strong>MIPS</strong>: 초당 백만 명령어 (Million Instructions Per Second) &mdash; MIPS ISA와 혼동 주의!</li>
+            <li><strong>GHz</strong>: 초당 십억 사이클 (Billion Cycles Per Second)</li>
+          </ul>
+          <p><strong>비율에서 시간으로 변환:</strong></p>
+          <div class="math-block">
+            \[ \text{Wall clock time} = \frac{1}{\text{GHz}} \times \frac{1}{\text{IPC}} \times \text{명령어 수} \]
+          </div>
+          <p>차원 분석: 시간/사이클 &times; 사이클/명령어 &times; 명령어 수 = 시간</p>
+          <p>각 요소의 결정 인자:</p>
+          <ul>
+            <li><strong>명령어 수</strong>: ISA와 컴파일러에 의해 결정</li>
+            <li><strong>1/GHz</strong>: 주파수와 공정 기술에 의해 결정</li>
+            <li><strong>1/IPC</strong>: 마이크로아키텍처에 의해 결정</li>
+          </ul>
+          <p>MIPS와 IPC는 <strong>평균(average)</strong> 비율 값이다. 또한, 이 공식은 <strong>단일 코어</strong> 추정에 적합하다.</p>
+        </div>
+        <div class="warning-box">주의: 마이크로아키텍처 개선이 IPC를 <strong>감소</strong>시킬 수도 있다! 멀티프로세서 워크로드에서 IPC는 오해를 유발할 수 있다 (Alameldeen et al., "IPC CONSIDERED HARMFUL FOR MULTIPROCESSOR WORKLOADS," IEEE Micro, 2006).</div>
+      </section>
+
+      <!-- ==================== Page 57 ==================== -->
+      <section class="page-section" id="p57">
+        <span class="page-num">Page 57</span>
+        <h2>Throughput vs. Bandwidth</h2>
+        <div class="summary-box">
+          Throughput과 Bandwidth는 단위가 거의 같지만 서로 다른 지표이다. Bandwidth는 <strong>이론적 최대 능력</strong>, Throughput은 <strong>실제 처리량</strong>이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>대역폭(Bandwidth):</strong></p>
+          <ul>
+            <li>단위 시간 내에 전송 가능한 <strong>최대</strong> 데이터 양</li>
+            <li>처리의 <strong>이상적인 능력</strong>을 나타냄 (보통 이론적 전송량)</li>
+          </ul>
+          <p><strong>처리량(Throughput):</strong></p>
+          <ul>
+            <li>단위 시간 내에 <strong>실제로</strong> 처리된 데이터/계산의 양</li>
+            <li>주어진 상황(예: 애플리케이션, 설정)에서의 <strong>실제 성능</strong>을 나타냄</li>
+          </ul>
+          <p>비유: 고속도로의 차선 수가 bandwidth(동시에 통과할 수 있는 최대 차량 수)이고, 실제 교통 상황에서 통과하는 차량 수가 throughput이다.</p>
+        </div>
+        <div class="key-point">Throughput &le; Bandwidth. 실제 처리량은 이론적 대역폭을 초과할 수 없다.</div>
+      </section>
+
+      <!-- ==================== Page 58 ==================== -->
+      <section class="page-section" id="p58">
+        <span class="page-num">Page 58</span>
+        <h2>FLOPS (Floating-Point Operations)</h2>
+        <div class="summary-box">
+          FLOPS는 프로그램 실행 중 수행된 <strong>부동소수점 연산의 횟수</strong>이며, 과학 계산 분야에서 널리 사용되는 성능 지표이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <ul>
+            <li><strong>FLOPS</strong>: 프로그램 실행 동안의 부동소수점 연산(floating-point operation) 횟수</li>
+            <li>과학 계산(scientific computing) 연구자들이 주로 사용한다
+              <ul>
+                <li>과학 애플리케이션은 대부분 실수(real number) 연산이 필요</li>
+                <li>부동소수점 연산은 일반적으로 알고리즘 복잡도가 높다</li>
+              </ul>
+            </li>
+            <li>과학 계산 워크로드에 좋은 지표이다</li>
+          </ul>
+          <p><strong>주의:</strong> FLOPS는 <strong>비율(rate)이 아니다</strong>. 단순히 부동소수점 연산의 개수를 세는 것이다. 모든 알고리즘은 명령어 수가 다르므로, 단독으로는 공정한 비교 지표가 되기 어렵다.</p>
+        </div>
+        <div class="tip">FLOPS와 FLOPS/s를 구분하자. FLOPS 자체는 연산 횟수이고, FLOPS/s (= FLOP/s)가 초당 연산 비율이다.</div>
+      </section>
+
+      <!-- ==================== Page 59 ==================== -->
+      <section class="page-section" id="p59">
+        <span class="page-num">Page 59</span>
+        <h2>하드웨어 성능 시각화: 루프라인 모델 (Roofline Model)</h2>
+        <div class="summary-box">
+          루프라인 모델은 알고리즘의 <strong>산술 강도(Arithmetic Intensity)</strong>와 하드웨어의 <strong>대역폭(Bandwidth)</strong>을 이용하여 성능의 상한을 시각화하는 모델이다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>FLOPS를 떠올리면:</p>
+          <div class="math-block">
+            \[ \text{FLOPS per second} = AI \times BW \]
+          </div>
+          <ul>
+            <li><strong>AI (Arithmetic Intensity, 산술 강도)</strong>: 데이터 1바이트당 수행되는 부동소수점 연산 수 &mdash; 알고리즘에 의존적 (데이터 재사용률)</li>
+            <li><strong>BW (Bandwidth, 대역폭)</strong>: 최대 처리 가능한 데이터 양 &mdash; 하드웨어에 의존적</li>
+          </ul>
+          <p>양변에 로그를 취하면:</p>
+          <div class="math-block">
+            \[ \log(\text{FLOPS/s}) = \log(AI) + \log(BW) \]
+            \[ \Rightarrow y = x + b \]
+          </div>
+          <p>이를 그래프로 그리면 지붕(roofline) 모양이 나온다:</p>
+          <ul>
+            <li><strong>왼쪽 영역 (기울기 1 직선)</strong>: <strong>메모리 제한(memory-bounded)</strong> 영역. 데이터 전송에 대부분의 시간을 소비</li>
+            <li><strong>오른쪽 영역 (수평선)</strong>: <strong>계산 제한(compute-bounded)</strong> 영역. 하드웨어 연산 능력에 의해 제한</li>
+          </ul>
+          <p>프로그램 X가 왼쪽에 위치하면 메모리 바운드, 프로그램 Y가 오른쪽에 위치하면 컴퓨트 바운드이다.</p>
+        </div>
+        <div class="tip">루프라인 모델의 실용적 가치: 내 프로그램이 메모리 병목인지 계산 병목인지 한눈에 판단할 수 있다. 메모리 바운드라면 데이터 접근 패턴을 최적화하고, 컴퓨트 바운드라면 연산 효율을 높여야 한다.</div>
+      </section>
+
+      <!-- ==================== Page 60 ==================== -->
+      <section class="page-section" id="p60">
+        <span class="page-num">Page 60</span>
+        <h2>다양한 하드웨어의 루프라인 예시</h2>
+        <div class="summary-box">
+          TPU, K80(GPU), HSW(CPU) 등 서로 다른 하드웨어가 각기 다른 루프라인 형태를 보여준다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>슬라이드에서는 세 가지 하드웨어의 루프라인을 비교한다:</p>
+          <ul>
+            <li><strong>TPU</strong>: Google의 Tensor Processing Unit &mdash; 딥러닝 특화 프로세서</li>
+            <li><strong>K80</strong>: NVIDIA의 GPU (Kepler 아키텍처)</li>
+            <li><strong>HSW</strong>: Intel의 Haswell CPU 아키텍처</li>
+          </ul>
+          <p>각 하드웨어마다 컴퓨트 성능(수평선의 높이)과 메모리 대역폭(기울기 직선의 위치)이 다르다. TPU는 딥러닝 워크로드에 최적화되어 높은 연산 처리량을 보여주며, CPU는 범용적이지만 특화 성능은 상대적으로 낮다.</p>
+          <p>출처: Jouppi et al., "A Domain-Specific Architecture for Deep Neural Networks," Communications of the ACM, 2018.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 61 ==================== -->
+      <section class="page-section" id="p61">
+        <span class="page-num">Page 61</span>
+        <h2>상대 성능 (Relative Performance)</h2>
+        <div class="summary-box">
+          시스템의 성능이 "좋다" 또는 "나쁘다"를 판단하려면 <strong>기준선(baseline)</strong> 시스템과 비교하는 상대 성능이 필요하다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <ul>
+            <li>시스템 A는 높은 처리량을 가지고, 시스템 B는 낮은 지연 시간을 가진다고 하자</li>
+            <li>그것이 "높다" 또는 "낮다"는 것을 어떻게 알 수 있는가?</li>
+            <li>&rarr; <strong>상대 성능(relative performance)</strong>을 사용한다</li>
+          </ul>
+          <p>상대 성능의 핵심:</p>
+          <ul>
+            <li>성능의 품질을 보여주는 방법</li>
+            <li><strong>기준선(baseline) 시스템</strong>이 필요하다 &mdash; 이를 통해 시스템이 좋은지 나쁜지 판단 가능</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 62 ==================== -->
+      <section class="page-section" id="p62">
+        <span class="page-num">Page 62</span>
+        <h2>상대 성능: 백분율 변화 (Percentage Change)</h2>
+        <div class="summary-box">
+          백분율 변화에서 <strong>분모가 기준값(reference)</strong>이라는 점이 핵심이다. "X보다 Y가 50% 빠르다"의 정확한 의미를 이해해야 한다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>예제:</strong> 시스템 X의 시간이 \( t_X = 1.0s \)이고, X가 Y보다 50% 느리다. \( t_Y \)는?</p>
+          <ul>
+            <li><strong>Case 1</strong>: \( \frac{t_X - t_Y}{t_X} = 50\% \) &rarr; \( t_Y / t_X = 0.5 \) &rarr; \( t_Y = 0.5s \)</li>
+            <li><strong>Case 2</strong>: \( \frac{t_X - t_Y}{t_Y} = 50\% \) &rarr; \( t_Y / t_X = 1/1.5 \) &rarr; \( t_Y = 0.666s \)</li>
+          </ul>
+          <p><strong>상대 변화(relative change)</strong>의 정의에 집중하자:</p>
+          <ul>
+            <li>분모는 <strong>기준값(reference value)</strong> 또는 <strong>이전 값(old value)</strong>이다</li>
+            <li>즉, "v는 vref에 대한 변화"라는 의미 &mdash; <strong>Case 1</strong>이 표준적 정의이다</li>
+          </ul>
+          <p>이 강의에서는 Case 1의 정의를 따른다.</p>
+        </div>
+        <div class="warning-box">주의: "50% 느리다"에서 분모가 무엇인지에 따라 답이 완전히 달라진다! 항상 기준값이 무엇인지 명확히 해야 한다.</div>
+      </section>
+
+      <!-- ==================== Page 63 ==================== -->
+      <section class="page-section" id="p63">
+        <span class="page-num">Page 63</span>
+        <h2>상대 성능: 정규화 성능 (Normalized Performance)</h2>
+        <div class="summary-box">
+          두 성능의 비율을 직접 취하는 것을 정규화 성능 또는 <strong>스피드업(Speedup)</strong>이라 하며, 백분율 변화와 관계를 가진다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>정규화 성능(Normalized Performance):</strong></p>
+          <ul>
+            <li>두 성능의 비율을 직접 계산</li>
+            <li>때때로 <strong>스피드업(speedup)</strong>이라고도 한다</li>
+          </ul>
+          <p>"X가 Y보다 n배 빠르다"의 의미:</p>
+          <div class="math-block">
+            \[ n = \frac{\text{Performance}_X}{\text{Performance}_Y} = \frac{\text{Throughput}_X}{\text{Throughput}_Y} = \frac{\text{Time}_Y}{\text{Time}_X} \]
+          </div>
+          <p><strong>백분율 변화와의 관계:</strong></p>
+          <p>"X가 Y보다 m% 빠르다"라면:</p>
+          <div class="math-block">
+            \[ 1 + m\% = \frac{\text{Performance}_X}{\text{Performance}_Y} \]
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 64 ==================== -->
+      <section class="page-section" id="p64">
+        <span class="page-num">Page 64</span>
+        <h2>성능의 평균 (Means of Performance)</h2>
+        <div class="summary-box">
+          시스템의 성능은 프로그램/워크로드에 따라 달라지므로, 평균적/일반적 경향을 파악하기 위해 <strong>적절한 평균(mean)</strong>을 사용해야 한다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <ul>
+            <li>시스템의 성능은 다양한 요인(특히 프로그램/워크로드)에 따라 달라진다</li>
+            <li>서로 다른 프로그램은 서로 다른 성능을 보인다</li>
+            <li>평균적/일반적 경향을 알고 싶다 &mdash; <strong>평균(mean)</strong>이 핵심 방법이다</li>
+          </ul>
+          <p>하지만 아무 평균이나 사용하면 안 된다! <strong>데이터의 성격에 따라 올바른 평균을 선택</strong>해야 한다:</p>
+          <ul>
+            <li><strong>절대값(absolute numbers)</strong>에 대해서는 산술 평균(Arithmetic Mean)</li>
+            <li><strong>정규화된 값(normalized numbers)</strong>에 대해서는 기하 평균(Geometric Mean)</li>
+            <li><strong>비율(rate)</strong>에 대해서는 조화 평균(Harmonic Mean)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 65 ==================== -->
+      <section class="page-section" id="p65">
+        <span class="page-num">Page 65</span>
+        <h2>산술 평균 (Arithmetic Mean)</h2>
+        <div class="summary-box">
+          산술 평균은 <strong>절대적인 수치</strong>(실행 시간, 처리량, 지연 시간 등)의 평균을 구할 때 사용하며, 가중치를 적용할 수도 있다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>단순 산술 평균(Naive Arithmetic Mean):</strong></p>
+          <div class="math-block">
+            \[ \overline{\text{performance}} = \sum_{i=0}^{n-1} \text{performance}_{AM_i} \]
+          </div>
+          <p><strong>가중 산술 평균(Weighted Arithmetic Mean):</strong></p>
+          <ul>
+            <li>애플리케이션/워크로드마다 실행 길이가 다르다</li>
+            <li>각 애플리케이션에 대한 <strong>가중치(weight)</strong>를 고려해야 한다</li>
+          </ul>
+          <div class="math-block">
+            \[ \overline{\text{performance}} = \sum_{i=0}^{n-1} \text{weight}_i \times \text{performance}_{AM_i}, \quad \sum_{i=0}^{n-1} \text{weight}_i = 1 \]
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 66 ==================== -->
+      <section class="page-section" id="p66">
+        <span class="page-num">Page 66</span>
+        <h2>기하 평균 (Geometric Mean) (1)</h2>
+        <div class="summary-box">
+          기하 평균은 <strong>정규화된 수치</strong>(스피드업, 정규화 에너지 등)의 평균에 사용하며, 산술 평균을 정규화 값에 사용하면 잘못된 결과가 나온다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <div class="math-block">
+            \[ \text{normalized metric} = \sqrt[n]{\prod_{i=0}^{n-1} \text{normalized metric}_{AM_i}} \]
+          </div>
+          <p><strong>중요: 정규화된 수치에 산술 평균을 사용하면 안 된다!</strong></p>
+          <p>슬라이드의 실제 데이터 예시 (3개 시스템, 8개 애플리케이션):</p>
+          <table class="terms-table">
+            <thead><tr><th>방법</th><th>PerfX/PerfBase</th><th>PerfY/PerfBase</th><th>PerfY/PerfX</th></tr></thead>
+            <tbody>
+              <tr><td><strong>기하 평균</strong></td><td>a=0.2388</td><td>b=1.1313</td><td>b/a = <strong>4.7360</strong></td></tr>
+              <tr><td><strong>산술 평균</strong></td><td>c=0.2748</td><td>d=1.1359</td><td>d/c = <strong>4.13</strong></td></tr>
+            </tbody>
+          </table>
+          <p>기하 평균의 비율(b/a = 4.7360)은 직접 계산한 PerfY/PerfX의 기하 평균과 <strong>일치</strong>한다. 반면, 산술 평균의 비율(d/c = 4.13)은 직접 계산한 값(5.8677)과 <strong>큰 차이</strong>가 있다.</p>
+        </div>
+        <div class="warning-box">핵심 경고: 정규화된 성능(스피드업 등)에 산술 평균을 사용하면, 기준 시스템에 따라 결과가 달라지는 일관성 없는(inconsistent) 결과를 얻는다! 반드시 기하 평균을 사용해야 한다.</div>
+      </section>
+
+      <!-- ==================== Page 67 ==================== -->
+      <section class="page-section" id="p67">
+        <span class="page-num">Page 67</span>
+        <h2>기하 평균 (Geometric Mean) (2) &mdash; 수학적 증명</h2>
+        <div class="summary-box">
+          기하 평균은 비율의 비율을 취해도 일관된 결과를 보장하지만, 산술 평균은 그렇지 않다는 것을 수학적으로 보여준다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>기하 평균(G.M.)의 일관성 증명:</strong></p>
+          <div class="math-block">
+            \[ \frac{G.M.\left(\frac{Perf_Y}{Perf_{base}}\right)}{G.M.\left(\frac{Perf_X}{Perf_{base}}\right)} = \frac{\sqrt[8]{Perf_{Y,A1} \cdots Perf_{Y,A8}}}{\sqrt[8]{Perf_{X,A1} \cdots Perf_{X,A8}}} \times \frac{\sqrt[8]{Perf_{base,A1} \cdots Perf_{base,A8}}}{\sqrt[8]{Perf_{base,A1} \cdots Perf_{base,A8}}} \]
+          </div>
+          <p>분모의 baseline 부분이 약분되어:</p>
+          <div class="math-block">
+            \[ = \sqrt[8]{\frac{Perf_{Y,A1} \cdots Perf_{Y,A8}}{Perf_{X,A1} \cdots Perf_{X,A8}}} = G.M.\left(\frac{Perf_Y}{Perf_X}\right) \]
+          </div>
+          <p>즉, 기하 평균은 baseline이 무엇이든 <strong>비율의 비율이 일관적</strong>이다.</p>
+          <p><strong>산술 평균(A.M.)의 경우:</strong></p>
+          <div class="math-block">
+            \[ \frac{A.M.\left(\frac{Perf_Y}{Perf_{base}}\right)}{A.M.\left(\frac{Perf_X}{Perf_{base}}\right)} = \frac{\frac{Perf_{Y,A1}/Perf_{base,A1} + \cdots}{8}}{\frac{Perf_{X,A1}/Perf_{base,A1} + \cdots}{8}} \neq A.M.\left(\frac{Perf_Y}{Perf_X}\right) \]
+          </div>
+          <p>산술 평균에서는 baseline이 약분되지 않아 <strong>일관성이 보장되지 않는다</strong>.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 68 ==================== -->
+      <section class="page-section" id="p68">
+        <span class="page-num">Page 68</span>
+        <h2>조화 평균 (Harmonic Mean)</h2>
+        <div class="summary-box">
+          조화 평균은 <strong>비율(rate)</strong>의 평균을 구할 때 사용하며, IPC, MIPS 등 처리량 지표의 평균에 적합하다.
+        </div>
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>조화 평균은 비율의 평균에 사용된다:</p>
+          <ul>
+            <li>대표적 예: 처리량(throughput) &mdash; IPC, MIPS 등</li>
+          </ul>
+          <p><strong>IPC = 1/CPI</strong>를 떠올려보자 (CPI는 지연 시간 지표):</p>
+          <p>"A.M.(CPI)의 역수"는 무엇인가?</p>
+          <div class="math-block">
+            \[ A.M.(CPI)^{-1} = \frac{n}{CPI_1 + CPI_2 + \cdots + CPI_n} = \frac{n}{\frac{1}{IPC_1} + \frac{1}{IPC_2} + \cdots + \frac{1}{IPC_n}} = H.M.(IPC) \]
+          </div>
+          <p>즉, <strong>지연 시간(CPI)의 산술 평균의 역수</strong>는 <strong>비율(IPC)의 조화 평균</strong>과 같다! 이것이 비율에 조화 평균을 사용해야 하는 이론적 근거이다.</p>
+        </div>
+        <div class="key-point">
+          <strong>평균 선택 요약:</strong><br>
+          &bull; 절대값 (실행시간, 에너지) &rarr; <strong>산술 평균 (Arithmetic Mean)</strong><br>
+          &bull; 정규화된 값 (스피드업) &rarr; <strong>기하 평균 (Geometric Mean)</strong><br>
+          &bull; 비율 (IPC, MIPS) &rarr; <strong>조화 평균 (Harmonic Mean)</strong>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '다크모드';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '라이트모드';
+      }
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>

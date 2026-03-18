@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linear Algebra — 완전 강의노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$','$']],
+    displayMath: [['$$','$$']],
+    macros: {
+      R: '\\mathbb{R}',
+      C: '\\mathbb{C}',
+      N: '\\mathbb{N}',
+      Z: '\\mathbb{Z}',
+      F: '\\mathbb{F}',
+      rank: '\\operatorname{rank}',
+      nullity: '\\operatorname{nullity}',
+      dim: '\\operatorname{dim}',
+      span: '\\operatorname{span}',
+      col: '\\operatorname{col}',
+      row: '\\operatorname{row}',
+      nul: '\\operatorname{null}',
+      tr: '\\operatorname{tr}',
+      proj: '\\operatorname{proj}',
+      det: '\\operatorname{det}'
+    }
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #2563EB;
+    --accent-light: #EFF6FF;
+    --accent2: #7C3AED;
+    --accent2-light: #F5F3FF;
+    --accent3: #059669;
+    --accent3-light: #ECFDF5;
+    --danger: #DC2626;
+    --danger-light: #FEF2F2;
+    --orange: #EA580C;
+    --orange-light: #FFF7ED;
+    --border: #E5E7EB;
+    --code-bg: #F3F4F6;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #0F172A;
+    --bg-card: #1E293B;
+    --bg-aside: #1E293B;
+    --text: #E2E8F0;
+    --text-muted: #94A3B8;
+    --accent: #60A5FA;
+    --accent-light: rgba(96,165,250,0.12);
+    --accent2: #A78BFA;
+    --accent2-light: rgba(167,139,250,0.12);
+    --accent3: #34D399;
+    --accent3-light: rgba(52,211,153,0.12);
+    --danger: #F87171;
+    --danger-light: rgba(248,113,113,0.12);
+    --orange: #FB923C;
+    --orange-light: rgba(251,146,60,0.12);
+    --border: #334155;
+    --code-bg: #1E293B;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.9;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    max-width: 1300px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 20px 16px;
+    border-right: 1px solid var(--border);
+    font-size: 12.5px;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin: 16px 0 8px;
+    font-weight: 500;
+    padding-left: 10px;
+  }
+  .sidebar .label:first-child { margin-top: 0; }
+
+  .sidebar a {
+    display: block;
+    padding: 5px 10px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.15s;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+  .sidebar a.sub {
+    padding-left: 22px;
+    font-size: 11.5px;
+  }
+
+  .content {
+    padding: 40px 52px 100px;
+    max-width: 900px;
+  }
+
+  .page-section {
+    margin-bottom: 64px;
+    scroll-margin-top: 70px;
+  }
+
+  .chapter-header {
+    margin-bottom: 48px;
+    padding: 32px 0;
+    border-bottom: 2px solid var(--border);
+    scroll-margin-top: 70px;
+  }
+  .chapter-header .ch-num {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .chapter-header h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.3;
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent2);
+    margin-bottom: 6px;
+  }
+  .page-section h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .def-box {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 16px;
+  }
+  .def-box .def-title {
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+
+  .thm-box {
+    background: var(--accent2-light);
+    border-left: 3px solid var(--accent2);
+    padding: 20px 24px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 16px;
+  }
+  .thm-box .thm-title {
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+
+  .proof-box {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .proof-box .proof-title {
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    user-select: none;
+  }
+  .proof-box .proof-title::after {
+    content: ' [펼치기]';
+    font-size: 11px;
+    font-weight: 400;
+  }
+  .proof-box.open .proof-title::after {
+    content: ' [접기]';
+  }
+  .proof-box .proof-content {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+  }
+  .proof-box.open .proof-content {
+    display: block;
+  }
+  .proof-box .qed {
+    text-align: right;
+    font-size: 18px;
+    margin-top: 8px;
+  }
+
+  .example-box {
+    background: var(--accent3-light);
+    border-left: 3px solid var(--accent3);
+    padding: 20px 24px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 16px;
+  }
+  .example-box .ex-title {
+    font-weight: 700;
+    color: var(--accent3);
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+
+  .warn-box {
+    background: var(--danger-light);
+    border-left: 3px solid var(--danger);
+    padding: 16px 20px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+
+  .tip-box {
+    background: var(--orange-light);
+    border-left: 3px solid var(--orange);
+    padding: 16px 20px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+
+  .math-display {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    overflow-x: auto;
+    text-align: center;
+  }
+
+  .step-list {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+  }
+  .step-list li {
+    counter-increment: step;
+    padding: 8px 0 8px 36px;
+    position: relative;
+  }
+  .step-list li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    width: 24px; height: 24px;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    top: 10px;
+  }
+
+  table.matrix-table {
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  table.matrix-table th {
+    padding: 8px 14px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  table.matrix-table td {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .interactive-box {
+    background: var(--bg-card);
+    border: 2px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: 16px 0;
+  }
+  .interactive-box .ib-title {
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .interactive-box button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    margin: 4px;
+    transition: opacity 0.2s;
+  }
+  .interactive-box button:hover { opacity: 0.85; }
+  .interactive-box .result {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--code-bg);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    min-height: 40px;
+    white-space: pre-wrap;
+  }
+
+  p { margin-bottom: 10px; }
+  strong { font-weight: 700; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .proof-box .proof-content { display: block !important; }
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div>
+    <h1>Linear Algebra &mdash; Complete Lecture Notes</h1>
+    <div class="meta">선형대수학 기초부터 심화까지</div>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="label">Ch 1. 연립방정식</div>
+  <a href="#ch1">개요</a>
+  <a href="#s1-1" class="sub">1.1 연립일차방정식</a>
+  <a href="#s1-2" class="sub">1.2 가우스 소거법</a>
+  <a href="#s1-3" class="sub">1.3 가우스-조던 소거법</a>
+  <a href="#s1-4" class="sub">1.4 해의 존재성과 유일성</a>
+
+  <div class="label">Ch 2. 행렬</div>
+  <a href="#ch2">개요</a>
+  <a href="#s2-1" class="sub">2.1 행렬의 연산</a>
+  <a href="#s2-2" class="sub">2.2 역행렬</a>
+  <a href="#s2-3" class="sub">2.3 기본행렬</a>
+  <a href="#s2-4" class="sub">2.4 LU 분해</a>
+
+  <div class="label">Ch 3. 행렬식</div>
+  <a href="#ch3">개요</a>
+  <a href="#s3-1" class="sub">3.1 행렬식의 정의</a>
+  <a href="#s3-2" class="sub">3.2 여인수 전개</a>
+  <a href="#s3-3" class="sub">3.3 행렬식의 성질</a>
+  <a href="#s3-4" class="sub">3.4 크래머 공식</a>
+  <a href="#s3-5" class="sub">3.5 수반행렬과 역행렬</a>
+
+  <div class="label">Ch 4. 벡터공간</div>
+  <a href="#ch4">개요</a>
+  <a href="#s4-1" class="sub">4.1 벡터공간의 정의</a>
+  <a href="#s4-2" class="sub">4.2 부분공간</a>
+  <a href="#s4-3" class="sub">4.3 일차독립/종속</a>
+  <a href="#s4-4" class="sub">4.4 기저와 차원</a>
+  <a href="#s4-5" class="sub">4.5 행공간, 열공간, 영공간</a>
+  <a href="#s4-6" class="sub">4.6 랭크-널리티 정리</a>
+
+  <div class="label">Ch 5. 선형변환</div>
+  <a href="#ch5">개요</a>
+  <a href="#s5-1" class="sub">5.1 선형변환의 정의</a>
+  <a href="#s5-2" class="sub">5.2 핵과 치역</a>
+  <a href="#s5-3" class="sub">5.3 행렬표현</a>
+  <a href="#s5-4" class="sub">5.4 좌표변환</a>
+
+  <div class="label">Ch 6. 고유값</div>
+  <a href="#ch6">개요</a>
+  <a href="#s6-1" class="sub">6.1 고유값과 고유벡터</a>
+  <a href="#s6-2" class="sub">6.2 특성방정식</a>
+  <a href="#s6-3" class="sub">6.3 대각화</a>
+  <a href="#s6-4" class="sub">6.4 케일리-해밀턴 정리</a>
+
+  <div class="label">Ch 7. 내적공간</div>
+  <a href="#ch7">개요</a>
+  <a href="#s7-1" class="sub">7.1 내적의 정의</a>
+  <a href="#s7-2" class="sub">7.2 직교와 정규직교</a>
+  <a href="#s7-3" class="sub">7.3 그람-슈미트 과정</a>
+  <a href="#s7-4" class="sub">7.4 직교여공간과 정사영</a>
+
+  <div class="label">Ch 8. 직교 대각화</div>
+  <a href="#ch8">개요</a>
+  <a href="#s8-1" class="sub">8.1 대칭행렬</a>
+  <a href="#s8-2" class="sub">8.2 직교 대각화</a>
+  <a href="#s8-3" class="sub">8.3 이차형식</a>
+  <a href="#s8-4" class="sub">8.4 특이값 분해 (SVD)</a>
+</nav>
+
+<main class="content">
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CHAPTER 1: 연립일차방정식과 가우스 소거법             -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<div class="chapter-header" id="ch1">
+  <div class="ch-num">Chapter 1</div>
+  <h2>연립일차방정식과 가우스 소거법</h2>
+</div>
+
+<section class="page-section" id="s1-1">
+  <span class="page-num">Section 1.1</span>
+  <h3>연립일차방정식 (Systems of Linear Equations)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 1.1 &mdash; 일차방정식 (Linear Equation)</div>
+    <p>변수 $x_1, x_2, \ldots, x_n$에 대한 <strong>일차방정식</strong>이란 다음 형태의 방정식이다:</p>
+    <div class="math-display">$$a_1 x_1 + a_2 x_2 + \cdots + a_n x_n = b$$</div>
+    <p>여기서 $a_1, a_2, \ldots, a_n$은 <strong>계수(coefficient)</strong>, $b$는 <strong>상수항(constant term)</strong>이다.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">왜 "일차"인가?</div>
+    <p>일차방정식에서 모든 변수는 <strong>1차(first degree)</strong>로만 등장한다. 즉 $x^2$, $xy$, $\sin x$ 같은 항은 없다. 이 "선형(linear)"이라는 조건이 선형대수학 전체의 기반이다.</p>
+    <p>기하학적으로 보면, 2변수 일차방정식 $ax + by = c$는 <strong>직선</strong>을, 3변수 일차방정식 $ax + by + cz = d$는 <strong>평면</strong>을 나타낸다.</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 1.2 &mdash; 연립일차방정식</div>
+    <p><strong>연립일차방정식</strong>은 같은 변수들에 대한 일차방정식의 모임이다:</p>
+    <div class="math-display">$$\begin{cases} a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n = b_1 \\ a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n = b_2 \\ \quad\vdots \\ a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n = b_m \end{cases}$$</div>
+    <p>이를 행렬 형태로 $A\mathbf{x} = \mathbf{b}$로 쓸 수 있다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 1.1 &mdash; 두 직선의 교점</div>
+    <p>연립방정식 $\begin{cases} x + y = 3 \\ 2x - y = 0 \end{cases}$을 풀어보자.</p>
+    <p>두 번째 식에서 $y = 2x$. 이를 첫 번째 식에 대입하면:</p>
+    <div class="math-display">$$x + 2x = 3 \implies 3x = 3 \implies x = 1, \quad y = 2$$</div>
+    <p>기하학적으로 직선 $x + y = 3$과 $2x - y = 0$이 점 $(1, 2)$에서 만난다.</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 1.3 &mdash; 첨가행렬 (Augmented Matrix)</div>
+    <p>연립방정식 $A\mathbf{x} = \mathbf{b}$의 <strong>첨가행렬</strong>은 계수행렬 $A$에 상수 벡터 $\mathbf{b}$를 열로 붙인 것이다:</p>
+    <div class="math-display">$$[A \mid \mathbf{b}] = \left[\begin{array}{cccc|c} a_{11} & a_{12} & \cdots & a_{1n} & b_1 \\ a_{21} & a_{22} & \cdots & a_{2n} & b_2 \\ \vdots & \vdots & \ddots & \vdots & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} & b_m \end{array}\right]$$</div>
+  </div>
+</section>
+
+<section class="page-section" id="s1-2">
+  <span class="page-num">Section 1.2</span>
+  <h3>가우스 소거법 (Gaussian Elimination)</h3>
+
+  <div class="card">
+    <div class="card-label">핵심 아이디어</div>
+    <p>가우스 소거법의 목표는 <strong>기본 행 연산(Elementary Row Operations)</strong>을 이용해 첨가행렬을 <strong>행 사다리꼴(Row Echelon Form, REF)</strong>로 변환하는 것이다. 이때 행 연산은 해를 바꾸지 않는다.</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 1.4 &mdash; 기본 행 연산 (3가지)</div>
+    <ol class="step-list">
+      <li><strong>교환 (Interchange)</strong>: 두 행을 서로 바꾼다. $R_i \leftrightarrow R_j$</li>
+      <li><strong>스칼라 곱 (Scaling)</strong>: 한 행에 0이 아닌 상수를 곱한다. $cR_i \to R_i$ $(c \neq 0)$</li>
+      <li><strong>행 덧셈 (Row Addition)</strong>: 한 행의 상수배를 다른 행에 더한다. $R_i + cR_j \to R_i$</li>
+    </ol>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">왜 행 연산은 해를 보존하는가?</div>
+    <p>각 행 연산은 <strong>역연산(inverse operation)</strong>이 존재하는 가역적 변환이다:</p>
+    <p>&bull; 교환의 역: 같은 두 행을 다시 교환</p>
+    <p>&bull; 스칼라 곱의 역: $\frac{1}{c}$를 곱함</p>
+    <p>&bull; 행 덧셈의 역: $R_i - cR_j \to R_i$</p>
+    <p>따라서 원래 연립방정식과 변환된 연립방정식의 해집합은 완전히 동일하다.</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 1.5 &mdash; 행 사다리꼴 (REF)</div>
+    <p>행렬이 <strong>행 사다리꼴</strong>이라 함은 다음을 만족하는 것이다:</p>
+    <p>1. 영행(모든 성분이 0인 행)은 맨 아래에 위치한다.</p>
+    <p>2. 각 비영행의 <strong>선행 성분(leading entry, pivot)</strong>은 바로 윗행의 선행 성분보다 오른쪽에 있다.</p>
+    <p>3. 선행 성분 아래의 모든 성분은 0이다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 1.2 &mdash; 가우스 소거법 적용</div>
+    <p>연립방정식을 풀자: $\begin{cases} x + 2y + z = 9 \\ 2x + 4y + 3z = 21 \\ 3x + 5y + z = 17 \end{cases}$</p>
+    <p><strong>Step 1.</strong> 첨가행렬 작성:</p>
+    <div class="math-display">$$\left[\begin{array}{ccc|c} 1 & 2 & 1 & 9 \\ 2 & 4 & 3 & 21 \\ 3 & 5 & 1 & 17 \end{array}\right]$$</div>
+    <p><strong>Step 2.</strong> $R_2 - 2R_1 \to R_2$, &ensp; $R_3 - 3R_1 \to R_3$:</p>
+    <div class="math-display">$$\left[\begin{array}{ccc|c} 1 & 2 & 1 & 9 \\ 0 & 0 & 1 & 3 \\ 0 & -1 & -2 & -10 \end{array}\right]$$</div>
+    <p><strong>Step 3.</strong> $R_2 \leftrightarrow R_3$ (피벗 확보):</p>
+    <div class="math-display">$$\left[\begin{array}{ccc|c} 1 & 2 & 1 & 9 \\ 0 & -1 & -2 & -10 \\ 0 & 0 & 1 & 3 \end{array}\right]$$</div>
+    <p><strong>Step 4.</strong> 후진 대입(Back Substitution):</p>
+    <p>$z = 3$ &rarr; $-y - 2(3) = -10 \implies y = 4$ &rarr; $x + 2(4) + 3 = 9 \implies x = -2$</p>
+    <div class="math-display">$$\therefore \quad (x, y, z) = (-2, 4, 3)$$</div>
+  </div>
+</section>
+
+<section class="page-section" id="s1-3">
+  <span class="page-num">Section 1.3</span>
+  <h3>가우스-조던 소거법 (Gauss-Jordan Elimination)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 1.6 &mdash; 기약 행 사다리꼴 (RREF)</div>
+    <p>행렬이 <strong>기약 행 사다리꼴(Reduced Row Echelon Form)</strong>이라 함은 REF 조건에 추가로:</p>
+    <p>4. 각 선행 성분(피벗)은 <strong>1</strong>이다.</p>
+    <p>5. 각 피벗은 자기 열에서 <strong>유일한 비영 성분</strong>이다. (피벗 위의 성분도 0)</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">REF vs RREF 비교</div>
+    <div class="two-col">
+      <div>
+        <p><strong>REF 예시:</strong></p>
+        <div class="math-display">$$\begin{bmatrix} \boxed{1} & 3 & 2 \\ 0 & \boxed{1} & -1 \\ 0 & 0 & \boxed{1} \end{bmatrix}$$</div>
+        <p style="font-size:13px; color:var(--text-muted);">피벗 아래만 0, 위에는 비영 성분 가능</p>
+      </div>
+      <div>
+        <p><strong>RREF 예시:</strong></p>
+        <div class="math-display">$$\begin{bmatrix} \boxed{1} & 0 & 0 \\ 0 & \boxed{1} & 0 \\ 0 & 0 & \boxed{1} \end{bmatrix}$$</div>
+        <p style="font-size:13px; color:var(--text-muted);">피벗 위아래 모두 0, 피벗=1</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 1.1 &mdash; RREF의 유일성</div>
+    <p>임의의 행렬의 RREF는 <strong>유일</strong>하다. 즉, 어떤 순서로 행 연산을 수행하든 같은 RREF에 도달한다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 1.3 &mdash; RREF로의 변환</div>
+    <p>예제 1.2의 REF에서 계속:</p>
+    <div class="math-display">$$\left[\begin{array}{ccc|c} 1 & 2 & 1 & 9 \\ 0 & -1 & -2 & -10 \\ 0 & 0 & 1 & 3 \end{array}\right]$$</div>
+    <p>$-R_2 \to R_2$: &ensp; $\left[\begin{array}{ccc|c} 1 & 2 & 1 & 9 \\ 0 & 1 & 2 & 10 \\ 0 & 0 & 1 & 3 \end{array}\right]$</p>
+    <p>$R_2 - 2R_3 \to R_2$, &ensp; $R_1 - R_3 \to R_1$:</p>
+    <div class="math-display">$$\left[\begin{array}{ccc|c} 1 & 2 & 0 & 6 \\ 0 & 1 & 0 & 4 \\ 0 & 0 & 1 & 3 \end{array}\right]$$</div>
+    <p>$R_1 - 2R_2 \to R_1$:</p>
+    <div class="math-display">$$\left[\begin{array}{ccc|c} 1 & 0 & 0 & -2 \\ 0 & 1 & 0 & 4 \\ 0 & 0 & 1 & 3 \end{array}\right] \implies (x,y,z) = (-2, 4, 3)$$</div>
+  </div>
+</section>
+
+<section class="page-section" id="s1-4">
+  <span class="page-num">Section 1.4</span>
+  <h3>해의 존재성과 유일성</h3>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 1.2 &mdash; 연립방정식 해의 분류</div>
+    <p>연립일차방정식 $A\mathbf{x} = \mathbf{b}$의 해는 정확히 다음 세 가지 경우 중 하나이다:</p>
+    <p><strong>1. 해가 없다</strong> (inconsistent): 첨가행렬의 RREF에 $[0\ 0\ \cdots\ 0\ |\ c]$ ($c \neq 0$) 형태의 행이 존재</p>
+    <p><strong>2. 유일한 해</strong>: 모든 변수가 피벗 변수 (자유 변수 없음)</p>
+    <p><strong>3. 무한히 많은 해</strong>: 자유 변수(free variable)가 하나 이상 존재</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 1.7 &mdash; 피벗 변수와 자유 변수</div>
+    <p><strong>피벗 변수(pivot variable)</strong>: RREF에서 피벗이 있는 열에 대응하는 변수</p>
+    <p><strong>자유 변수(free variable)</strong>: 피벗이 없는 열에 대응하는 변수. 임의의 값(매개변수)을 가질 수 있다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 1.4 &mdash; 무한히 많은 해</div>
+    <p>$\begin{cases} x + 2y - z = 3 \\ 2x + 4y - 2z = 6 \end{cases}$</p>
+    <div class="math-display">$$\left[\begin{array}{ccc|c} 1 & 2 & -1 & 3 \\ 2 & 4 & -2 & 6 \end{array}\right] \xrightarrow{R_2-2R_1} \left[\begin{array}{ccc|c} 1 & 2 & -1 & 3 \\ 0 & 0 & 0 & 0 \end{array}\right]$$</div>
+    <p>피벗 변수: $x$. 자유 변수: $y = s$, $z = t$ (매개변수)</p>
+    <div class="math-display">$$x = 3 - 2s + t \implies \begin{pmatrix} x \\ y \\ z \end{pmatrix} = \begin{pmatrix} 3 \\ 0 \\ 0 \end{pmatrix} + s\begin{pmatrix} -2 \\ 1 \\ 0 \end{pmatrix} + t\begin{pmatrix} 1 \\ 0 \\ 1 \end{pmatrix}$$</div>
+    <p>이것은 $\R^3$에서 점 $(3,0,0)$을 지나고 두 방향벡터에 의해 생성된 <strong>평면</strong>이다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 1.5 &mdash; 해가 없는 경우</div>
+    <p>$\begin{cases} x + y = 2 \\ x + y = 5 \end{cases}$</p>
+    <div class="math-display">$$\left[\begin{array}{cc|c} 1 & 1 & 2 \\ 1 & 1 & 5 \end{array}\right] \xrightarrow{R_2-R_1} \left[\begin{array}{cc|c} 1 & 1 & 2 \\ 0 & 0 & 3 \end{array}\right]$$</div>
+    <p>두 번째 행은 $0 = 3$이라는 모순을 나타내므로 해가 없다. 기하학적으로는 두 평행선이다.</p>
+  </div>
+
+  <div class="tip-box">
+    <strong>동차 연립방정식 (Homogeneous System):</strong> $A\mathbf{x} = \mathbf{0}$ 형태의 연립방정식은 항상 $\mathbf{x} = \mathbf{0}$ (자명한 해)를 가지므로 반드시 해가 존재한다. 따라서 해가 유일(자명)하거나, 무한히 많다.
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 해의 유일성 — $\lambda$와 $\mu$를 이용한 엄밀한 논증</div>
+    <div class="proof-content">
+      <p><strong>주장:</strong> 모든 변수가 피벗 변수이면 (자유 변수 없음), $A\mathbf{x} = \mathbf{b}$의 해는 유일하다.</p>
+      <p><strong>증명:</strong> $\boldsymbol{\lambda} = (\lambda_1, \ldots, \lambda_n)^T$와 $\boldsymbol{\mu} = (\mu_1, \ldots, \mu_n)^T$가 모두 $A\mathbf{x} = \mathbf{b}$의 해라 가정하자:</p>
+      <div class="math-display">$$A\boldsymbol{\lambda} = \mathbf{b} \quad \text{그리고} \quad A\boldsymbol{\mu} = \mathbf{b}$$</div>
+      <p>양변을 빼면:</p>
+      <div class="math-display">$$A\boldsymbol{\lambda} - A\boldsymbol{\mu} = \mathbf{b} - \mathbf{b} = \mathbf{0}$$</div>
+      <div class="math-display">$$A(\boldsymbol{\lambda} - \boldsymbol{\mu}) = \mathbf{0}$$</div>
+      <p>즉, $\boldsymbol{\lambda} - \boldsymbol{\mu}$는 동차방정식 $A\mathbf{x} = \mathbf{0}$의 해이다.</p>
+      <p>모든 변수가 피벗 변수이면, 자유 변수가 없으므로 $A\mathbf{x} = \mathbf{0}$의 해는 오직 $\mathbf{x} = \mathbf{0}$뿐이다.</p>
+      <div class="math-display">$$\boldsymbol{\lambda} - \boldsymbol{\mu} = \mathbf{0} \implies \lambda_i = \mu_i \quad \text{for all } i = 1, \ldots, n$$</div>
+      <p>따라서 $\boldsymbol{\lambda} = \boldsymbol{\mu}$이다. 해는 유일하다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 연립방정식 해의 구조 — 일반해 = 특수해 + 동차해</div>
+    <div class="proof-content">
+      <p><strong>정리:</strong> $A\mathbf{x} = \mathbf{b}$의 일반해는 다음과 같은 구조를 가진다:</p>
+      <div class="math-display">$$\{\text{모든 해}\} = \{\mathbf{x}_p + \mathbf{x}_h : \mathbf{x}_h \in \nul(A)\}$$</div>
+      <p>여기서 $\mathbf{x}_p$는 $A\mathbf{x} = \mathbf{b}$의 한 특수해이다.</p>
+      <p><strong>증명 (1단계 — 특수해 + 동차해는 해이다):</strong></p>
+      <p>$A\mathbf{x}_p = \mathbf{b}$이고 $A\mathbf{x}_h = \mathbf{0}$이면:</p>
+      <div class="math-display">$$A(\mathbf{x}_p + \mathbf{x}_h) = A\mathbf{x}_p + A\mathbf{x}_h = \mathbf{b} + \mathbf{0} = \mathbf{b} \quad \checkmark$$</div>
+      <p><strong>증명 (2단계 — 모든 해는 이 형태이다):</strong></p>
+      <p>$\boldsymbol{\lambda}$를 $A\mathbf{x} = \mathbf{b}$의 임의의 해라 하자. 즉 $A\boldsymbol{\lambda} = \mathbf{b}$. 이미 특수해 $\mathbf{x}_p$가 있으므로:</p>
+      <div class="math-display">$$A\boldsymbol{\lambda} - A\mathbf{x}_p = \mathbf{b} - \mathbf{b} = \mathbf{0} \implies A(\boldsymbol{\lambda} - \mathbf{x}_p) = \mathbf{0}$$</div>
+      <p>따라서 $\boldsymbol{\lambda} - \mathbf{x}_p \in \nul(A)$이다. $\mathbf{x}_h := \boldsymbol{\lambda} - \mathbf{x}_p$로 놓으면:</p>
+      <div class="math-display">$$\boldsymbol{\lambda} = \mathbf{x}_p + \mathbf{x}_h \quad (\mathbf{x}_h \in \nul(A))$$</div>
+      <p>모든 해가 이 형태임을 보였다. <span class="qed">$\blacksquare$</span></p>
+      <p><strong>따름정리:</strong> 두 해 $\boldsymbol{\lambda}$와 $\boldsymbol{\mu}$의 차 $\boldsymbol{\lambda} - \boldsymbol{\mu}$는 항상 동차해이다. 이것이 "해의 유일성 ⟺ 동차방정식의 자명성"의 핵심이다.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CHAPTER 2: 행렬                                    -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<div class="chapter-header" id="ch2">
+  <div class="ch-num">Chapter 2</div>
+  <h2>행렬 (Matrices)</h2>
+</div>
+
+<section class="page-section" id="s2-1">
+  <span class="page-num">Section 2.1</span>
+  <h3>행렬의 연산</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 2.1 &mdash; 행렬 (Matrix)</div>
+    <p>$m \times n$ <strong>행렬</strong>은 $m$개의 행과 $n$개의 열로 이루어진 수의 직사각형 배열이다:</p>
+    <div class="math-display">$$A = \begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} \end{bmatrix} = [a_{ij}]_{m \times n}$$</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">행렬의 기본 연산</div>
+    <p><strong>행렬 덧셈</strong>: 같은 크기의 행렬끼리 대응하는 성분을 더한다. $(A+B)_{ij} = a_{ij} + b_{ij}$</p>
+    <p><strong>스칼라 곱</strong>: 모든 성분에 스칼라를 곱한다. $(cA)_{ij} = c \cdot a_{ij}$</p>
+    <p><strong>행렬 곱</strong>: $A$가 $m \times n$, $B$가 $n \times p$일 때 $AB$는 $m \times p$ 행렬:</p>
+    <div class="math-display">$$(AB)_{ij} = \sum_{k=1}^{n} a_{ik} b_{kj}$$</div>
+    <p style="font-size:14px; color:var(--text-muted);">직관: $A$의 $i$번째 행벡터와 $B$의 $j$번째 열벡터의 <strong>내적</strong></p>
+  </div>
+
+  <div class="warn-box">
+    <strong>행렬 곱은 교환법칙이 성립하지 않는다!</strong> 일반적으로 $AB \neq BA$. 이것은 선형대수학에서 가장 중요한 주의사항 중 하나이다.
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 2.1 &mdash; 행렬 곱셈</div>
+    <div class="math-display">$$\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}\begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix} = \begin{bmatrix} 1\cdot5+2\cdot7 & 1\cdot6+2\cdot8 \\ 3\cdot5+4\cdot7 & 3\cdot6+4\cdot8 \end{bmatrix} = \begin{bmatrix} 19 & 22 \\ 43 & 50 \end{bmatrix}$$</div>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 2.1 &mdash; 행렬 연산의 성질</div>
+    <p>적절한 크기의 행렬 $A, B, C$와 스칼라 $c, d$에 대해:</p>
+    <p>&bull; $A(BC) = (AB)C$ &emsp;(결합법칙)</p>
+    <p>&bull; $A(B+C) = AB + AC$ &emsp;(좌분배법칙)</p>
+    <p>&bull; $(A+B)C = AC + BC$ &emsp;(우분배법칙)</p>
+    <p>&bull; $(AB)^T = B^T A^T$ &emsp;(전치의 순서 반전!)</p>
+    <p>&bull; $c(AB) = (cA)B = A(cB)$</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 2.2 &mdash; 특수 행렬들</div>
+    <p><strong>단위행렬 (Identity Matrix)</strong> $I_n$: 대각 성분이 1, 나머지 0. $AI = IA = A$를 만족.</p>
+    <p><strong>영행렬 (Zero Matrix)</strong> $O$: 모든 성분이 0.</p>
+    <p><strong>대각행렬 (Diagonal Matrix)</strong>: 대각 성분 외 모두 0.</p>
+    <p><strong>대칭행렬 (Symmetric)</strong>: $A^T = A$.</p>
+    <p><strong>반대칭행렬 (Skew-symmetric)</strong>: $A^T = -A$.</p>
+    <p><strong>상삼각/하삼각행렬 (Upper/Lower Triangular)</strong>: 대각선 아래/위가 모두 0.</p>
+  </div>
+</section>
+
+<section class="page-section" id="s2-2">
+  <span class="page-num">Section 2.2</span>
+  <h3>역행렬 (Inverse Matrix)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 2.3 &mdash; 역행렬</div>
+    <p>$n \times n$ 정사각행렬 $A$에 대해, $AB = BA = I_n$을 만족하는 행렬 $B$가 존재하면 $A$를 <strong>가역(invertible)</strong>이라 하고, $B = A^{-1}$로 표기한다.</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 2.2 &mdash; 역행렬의 유일성</div>
+    <p>가역행렬의 역행렬은 유일하다.</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명</div>
+    <div class="proof-content">
+      <p>$B$와 $C$가 모두 $A$의 역행렬이라 하자. 즉 $AB = BA = I$이고 $AC = CA = I$.</p>
+      <div class="math-display">$$B = BI = B(AC) = (BA)C = IC = C$$</div>
+      <p>따라서 $B = C$이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">$2 \times 2$ 역행렬 공식</div>
+    <p>$A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}$이고 $ad - bc \neq 0$이면:</p>
+    <div class="math-display">$$A^{-1} = \frac{1}{ad - bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$$</div>
+    <p>여기서 $ad - bc$는 $A$의 <strong>행렬식(determinant)</strong>이다. 행렬식이 0이면 역행렬이 존재하지 않는다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 2.2 &mdash; $2 \times 2$ 역행렬</div>
+    <p>$A = \begin{bmatrix} 3 & 1 \\ 5 & 2 \end{bmatrix}$의 역행렬:</p>
+    <div class="math-display">$$\det(A) = 3 \cdot 2 - 1 \cdot 5 = 1 \neq 0$$</div>
+    <div class="math-display">$$A^{-1} = \frac{1}{1}\begin{bmatrix} 2 & -1 \\ -5 & 3 \end{bmatrix} = \begin{bmatrix} 2 & -1 \\ -5 & 3 \end{bmatrix}$$</div>
+    <p>검증: $AA^{-1} = \begin{bmatrix} 3\cdot2+1\cdot(-5) & 3\cdot(-1)+1\cdot3 \\ 5\cdot2+2\cdot(-5) & 5\cdot(-1)+2\cdot3 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$ ✓</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">역행렬 구하기: 가우스-조던 방법</div>
+    <p>$n \times n$ 행렬의 역행렬을 구하려면 $[A \mid I_n]$에 행 연산을 적용하여 $[I_n \mid A^{-1}]$로 변환한다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 2.3 &mdash; $3 \times 3$ 역행렬 (가우스-조던)</div>
+    <p>$A = \begin{bmatrix} 1 & 0 & 2 \\ 2 & -1 & 3 \\ 4 & 1 & 8 \end{bmatrix}$</p>
+    <div class="math-display">$$\left[\begin{array}{ccc|ccc} 1 & 0 & 2 & 1 & 0 & 0 \\ 2 & -1 & 3 & 0 & 1 & 0 \\ 4 & 1 & 8 & 0 & 0 & 1 \end{array}\right]$$</div>
+    <p>$R_2 - 2R_1 \to R_2$, $R_3 - 4R_1 \to R_3$:</p>
+    <div class="math-display">$$\left[\begin{array}{ccc|ccc} 1 & 0 & 2 & 1 & 0 & 0 \\ 0 & -1 & -1 & -2 & 1 & 0 \\ 0 & 1 & 0 & -4 & 0 & 1 \end{array}\right]$$</div>
+    <p>$R_3 + R_2 \to R_3$, &ensp; $-R_2 \to R_2$:</p>
+    <div class="math-display">$$\left[\begin{array}{ccc|ccc} 1 & 0 & 2 & 1 & 0 & 0 \\ 0 & 1 & 1 & 2 & -1 & 0 \\ 0 & 0 & -1 & -6 & 1 & 1 \end{array}\right]$$</div>
+    <p>$-R_3 \to R_3$, &ensp; $R_2 - R_3 \to R_2$, &ensp; $R_1 - 2R_3 \to R_1$:</p>
+    <div class="math-display">$$\left[\begin{array}{ccc|ccc} 1 & 0 & 0 & -11 & 2 & 2 \\ 0 & 1 & 0 & -4 & 0 & 1 \\ 0 & 0 & 1 & 6 & -1 & -1 \end{array}\right]$$</div>
+    <div class="math-display">$$A^{-1} = \begin{bmatrix} -11 & 2 & 2 \\ -4 & 0 & 1 \\ 6 & -1 & -1 \end{bmatrix}$$</div>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 2.3 &mdash; 역행렬의 성질</div>
+    <p>가역행렬 $A, B$에 대해:</p>
+    <p>&bull; $(A^{-1})^{-1} = A$</p>
+    <p>&bull; $(AB)^{-1} = B^{-1}A^{-1}$ &emsp;(순서 반전!)</p>
+    <p>&bull; $(A^T)^{-1} = (A^{-1})^T$</p>
+    <p>&bull; $(cA)^{-1} = \frac{1}{c}A^{-1}$ &emsp;($c \neq 0$)</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: $(AB)^{-1} = B^{-1}A^{-1}$</div>
+    <div class="proof-content">
+      <p>$(AB)(B^{-1}A^{-1})$를 계산하면:</p>
+      <div class="math-display">$$(AB)(B^{-1}A^{-1}) = A(BB^{-1})A^{-1} = AIA^{-1} = AA^{-1} = I$$</div>
+      <p>마찬가지로 $(B^{-1}A^{-1})(AB) = I$. 따라서 $B^{-1}A^{-1}$이 $AB$의 역행렬이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>역행렬과 연립방정식:</strong> $A$가 가역이면 $A\mathbf{x} = \mathbf{b}$의 유일한 해는 $\mathbf{x} = A^{-1}\mathbf{b}$이다. 하지만 실제 계산에서는 역행렬을 구하는 것보다 가우스 소거법이 더 효율적이다.
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 가역행렬이면 해가 유일하다 — $\boldsymbol{\lambda}$, $\boldsymbol{\mu}$ 논증</div>
+    <div class="proof-content">
+      <p><strong>주장:</strong> $A$가 가역이면 $A\mathbf{x} = \mathbf{b}$의 해는 유일하다.</p>
+      <p><strong>증명 (방법 1 — 직접 구성):</strong></p>
+      <p>$\boldsymbol{\lambda}$와 $\boldsymbol{\mu}$가 모두 $A\mathbf{x} = \mathbf{b}$의 해라 가정하자:</p>
+      <div class="math-display">$$A\boldsymbol{\lambda} = \mathbf{b}, \quad A\boldsymbol{\mu} = \mathbf{b}$$</div>
+      <p>양변에 $A^{-1}$을 왼쪽에 곱하면:</p>
+      <div class="math-display">$$\boldsymbol{\lambda} = A^{-1}\mathbf{b} = \boldsymbol{\mu}$$</div>
+      <p>두 해가 동일하므로 해는 유일하다.</p>
+      <p><strong>증명 (방법 2 — 차이 분석):</strong></p>
+      <p>$A\boldsymbol{\lambda} = \mathbf{b}$이고 $A\boldsymbol{\mu} = \mathbf{b}$이면, 빼서:</p>
+      <div class="math-display">$$A(\boldsymbol{\lambda} - \boldsymbol{\mu}) = \mathbf{0}$$</div>
+      <p>양변에 $A^{-1}$을 곱하면:</p>
+      <div class="math-display">$$\boldsymbol{\lambda} - \boldsymbol{\mu} = A^{-1}\mathbf{0} = \mathbf{0}$$</div>
+      <p>따라서 $\lambda_i = \mu_i$ for all $i$. <span class="qed">$\blacksquare$</span></p>
+      <p><strong>핵심 통찰:</strong> 가역행렬 $A$의 열벡터 $\mathbf{a}_1, \ldots, \mathbf{a}_n$은 일차독립이다. $A\mathbf{x} = \mathbf{b}$는 $x_1\mathbf{a}_1 + \cdots + x_n\mathbf{a}_n = \mathbf{b}$와 같으므로, 해의 유일성은 "일차독립인 벡터들에 의한 일차결합 표현의 유일성"과 정확히 같은 것이다.</p>
+    </div>
+  </div>
+</section>
+
+<section class="page-section" id="s2-3">
+  <span class="page-num">Section 2.3</span>
+  <h3>기본행렬 (Elementary Matrices)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 2.4 &mdash; 기본행렬</div>
+    <p><strong>기본행렬(Elementary Matrix)</strong>은 단위행렬 $I$에 기본 행 연산을 <strong>한 번</strong> 적용하여 얻은 행렬이다.</p>
+    <p>행렬 $A$에 기본 행 연산을 적용하는 것은 대응하는 기본행렬 $E$를 <strong>왼쪽에 곱하는 것</strong>과 같다: $EA$.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 2.4 &mdash; 세 가지 기본행렬</div>
+    <p><strong>교환</strong> ($R_1 \leftrightarrow R_2$):</p>
+    <div class="math-display">$$E_1 = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$</div>
+    <p><strong>스칼라 곱</strong> ($3R_2 \to R_2$):</p>
+    <div class="math-display">$$E_2 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 3 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$</div>
+    <p><strong>행 덧셈</strong> ($R_3 + 2R_1 \to R_3$):</p>
+    <div class="math-display">$$E_3 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 2 & 0 & 1 \end{bmatrix}$$</div>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 2.4 &mdash; 가역행렬과 기본행렬</div>
+    <p>$n \times n$ 행렬 $A$에 대해 다음은 모두 동치이다:</p>
+    <p>(a) $A$는 가역이다.</p>
+    <p>(b) $A\mathbf{x} = \mathbf{0}$의 해는 $\mathbf{x} = \mathbf{0}$뿐이다.</p>
+    <p>(c) $A$의 RREF는 $I_n$이다.</p>
+    <p>(d) $A$는 기본행렬들의 곱으로 표현된다: $A = E_1 E_2 \cdots E_k$</p>
+    <p>(e) $A\mathbf{x} = \mathbf{b}$는 모든 $\mathbf{b}$에 대해 유일한 해를 갖는다.</p>
+  </div>
+</section>
+
+<section class="page-section" id="s2-4">
+  <span class="page-num">Section 2.4</span>
+  <h3>LU 분해 (LU Decomposition)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 2.5 &mdash; LU 분해</div>
+    <p>행렬 $A$를 하삼각행렬 $L$과 상삼각행렬 $U$의 곱으로 분해하는 것이다:</p>
+    <div class="math-display">$$A = LU$$</div>
+    <p>$U$는 가우스 소거법으로 얻은 REF이고, $L$은 소거 과정에서 사용한 승수(multiplier)를 모아놓은 것이다.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">왜 LU 분해를 하는가?</div>
+    <p>$A\mathbf{x} = \mathbf{b}$를 풀 때, $A = LU$이면:</p>
+    <ol class="step-list">
+      <li>$L\mathbf{y} = \mathbf{b}$를 전진 대입(forward substitution)으로 풀어 $\mathbf{y}$를 구한다.</li>
+      <li>$U\mathbf{x} = \mathbf{y}$를 후진 대입(back substitution)으로 풀어 $\mathbf{x}$를 구한다.</li>
+    </ol>
+    <p>같은 $A$에 대해 여러 $\mathbf{b}$를 풀어야 할 때, LU 분해는 한 번만 하면 되므로 매우 효율적이다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 2.5 &mdash; LU 분해</div>
+    <p>$A = \begin{bmatrix} 2 & 1 & -1 \\ -4 & 0 & 3 \\ 6 & -3 & 1 \end{bmatrix}$</p>
+    <p><strong>소거 과정:</strong></p>
+    <p>$R_2 + 2R_1 \to R_2$ (승수: $-(-2) = 2$), &ensp; $R_3 - 3R_1 \to R_3$ (승수: $3$):</p>
+    <div class="math-display">$$\begin{bmatrix} 2 & 1 & -1 \\ 0 & 2 & 1 \\ 0 & -6 & 4 \end{bmatrix}$$</div>
+    <p>$R_3 + 3R_2 \to R_3$ (승수: $-(-3) = 3$):</p>
+    <div class="math-display">$$U = \begin{bmatrix} 2 & 1 & -1 \\ 0 & 2 & 1 \\ 0 & 0 & 7 \end{bmatrix}$$</div>
+    <p>$L$은 대각선이 1이고, 승수를 해당 위치에 넣은 것:</p>
+    <div class="math-display">$$L = \begin{bmatrix} 1 & 0 & 0 \\ -2 & 1 & 0 \\ 3 & -3 & 1 \end{bmatrix}, \quad A = LU \text{ 검증 가능}$$</div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CHAPTER 3: 행렬식 (Determinant)                    -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<div class="chapter-header" id="ch3">
+  <div class="ch-num">Chapter 3</div>
+  <h2>행렬식 (Determinant)</h2>
+</div>
+
+<section class="page-section" id="s3-1">
+  <span class="page-num">Section 3.1</span>
+  <h3>행렬식의 정의</h3>
+
+  <div class="card">
+    <div class="card-label">직관</div>
+    <p>행렬식(determinant)은 정사각행렬에 대해 정의된 <strong>하나의 수</strong>이다. 기하학적으로 행렬식은 열벡터(또는 행벡터)들이 만드는 <strong>부피(volume)의 부호 있는 크기</strong>를 나타낸다.</p>
+    <p>$\det(A) = 0$이면 열벡터들이 일차종속이고, 행렬은 비가역이다.</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 3.1 &mdash; $1 \times 1$과 $2 \times 2$ 행렬식</div>
+    <p>$1 \times 1$: $\det([a]) = a$</p>
+    <p>$2 \times 2$:</p>
+    <div class="math-display">$$\det\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ad - bc$$</div>
+    <p>기하학적 의미: 벡터 $(a,c)$와 $(b,d)$가 이루는 <strong>평행사변형의 부호 있는 넓이</strong></p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 3.2 &mdash; $3 \times 3$ 행렬식 (사루스 법칙)</div>
+    <div class="math-display">$$\det\begin{bmatrix} a_1 & a_2 & a_3 \\ b_1 & b_2 & b_3 \\ c_1 & c_2 & c_3 \end{bmatrix} = a_1 b_2 c_3 + a_2 b_3 c_1 + a_3 b_1 c_2 - a_3 b_2 c_1 - a_2 b_1 c_3 - a_1 b_3 c_2$$</div>
+    <p style="font-size:13px; color:var(--text-muted);">사루스(Sarrus) 법칙은 3×3에서만 적용 가능. 4×4 이상에서는 사용 불가!</p>
+  </div>
+</section>
+
+<section class="page-section" id="s3-2">
+  <span class="page-num">Section 3.2</span>
+  <h3>여인수 전개 (Cofactor Expansion)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 3.3 &mdash; 소행렬식과 여인수</div>
+    <p>$n \times n$ 행렬 $A$에서 $i$행과 $j$열을 제거한 $(n-1) \times (n-1)$ 행렬의 행렬식을 <strong>소행렬식(minor)</strong> $M_{ij}$라 한다.</p>
+    <p><strong>여인수(cofactor)</strong>는:</p>
+    <div class="math-display">$$C_{ij} = (-1)^{i+j} M_{ij}$$</div>
+    <p>$(-1)^{i+j}$는 체커보드 부호 패턴: $\begin{bmatrix} + & - & + & \cdots \\ - & + & - & \cdots \\ + & - & + & \cdots \\ \vdots & & & \ddots \end{bmatrix}$</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 3.1 &mdash; 여인수 전개</div>
+    <p>$n \times n$ 행렬 $A$의 행렬식은 임의의 행 $i$ 또는 열 $j$를 따라 전개할 수 있다:</p>
+    <p><strong>$i$행 전개:</strong></p>
+    <div class="math-display">$$\det(A) = \sum_{j=1}^{n} a_{ij} C_{ij} = a_{i1}C_{i1} + a_{i2}C_{i2} + \cdots + a_{in}C_{in}$$</div>
+    <p><strong>$j$열 전개:</strong></p>
+    <div class="math-display">$$\det(A) = \sum_{i=1}^{n} a_{ij} C_{ij} = a_{1j}C_{1j} + a_{2j}C_{2j} + \cdots + a_{nj}C_{nj}$$</div>
+  </div>
+
+  <div class="tip-box">
+    <strong>실전 팁:</strong> 0이 가장 많은 행이나 열을 선택하여 전개하면 계산량을 크게 줄일 수 있다!
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 3.1 &mdash; $3 \times 3$ 여인수 전개</div>
+    <p>$A = \begin{bmatrix} 2 & 1 & 3 \\ 0 & -1 & 2 \\ 1 & 0 & 4 \end{bmatrix}$의 행렬식을 1열로 전개:</p>
+    <div class="math-display">$$\det(A) = 2 \cdot C_{11} + 0 \cdot C_{21} + 1 \cdot C_{31}$$</div>
+    <p>($a_{21} = 0$이므로 $C_{21}$ 계산 불필요!)</p>
+    <div class="math-display">$$C_{11} = (+1)\det\begin{bmatrix} -1 & 2 \\ 0 & 4 \end{bmatrix} = (-1)(4) - (2)(0) = -4$$</div>
+    <div class="math-display">$$C_{31} = (+1)\det\begin{bmatrix} 1 & 3 \\ -1 & 2 \end{bmatrix} = (1)(2) - (3)(-1) = 5$$</div>
+    <div class="math-display">$$\det(A) = 2(-4) + 0 + 1(5) = -8 + 5 = -3$$</div>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 3.2 &mdash; $4 \times 4$ 행렬식</div>
+    <p>$A = \begin{bmatrix} 1 & 0 & 2 & 0 \\ 3 & 1 & 0 & -1 \\ 0 & 0 & 1 & 2 \\ 2 & 0 & 0 & 3 \end{bmatrix}$의 행렬식을 2열로 전개 (0이 3개!):</p>
+    <div class="math-display">$$\det(A) = 0 \cdot C_{12} + 1 \cdot C_{22} + 0 \cdot C_{32} + 0 \cdot C_{42} = C_{22}$$</div>
+    <div class="math-display">$$C_{22} = (-1)^{2+2}\det\begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 2 \\ 2 & 0 & 3 \end{bmatrix}$$</div>
+    <p>이 $3 \times 3$ 행렬식을 1행으로 전개:</p>
+    <div class="math-display">$$= 1(3-0) - 2(0-4) + 0 = 3 + 8 = 11$$</div>
+    <p>따라서 $\det(A) = 11$.</p>
+  </div>
+</section>
+
+<section class="page-section" id="s3-3">
+  <span class="page-num">Section 3.3</span>
+  <h3>행렬식의 성질</h3>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 3.2 &mdash; 행렬식의 핵심 성질</div>
+    <p><strong>1. 행 교환:</strong> 두 행을 교환하면 부호가 바뀐다. $\det(E_{ij}A) = -\det(A)$</p>
+    <p><strong>2. 스칼라 곱:</strong> 한 행에 $c$를 곱하면 행렬식도 $c$배가 된다. $\det(cR_i \to R_i) = c\det(A)$</p>
+    <p><strong>3. 행 덧셈:</strong> 한 행에 다른 행의 상수배를 더해도 행렬식은 변하지 않는다.</p>
+    <p><strong>4. 삼각행렬:</strong> 삼각행렬의 행렬식 = 대각 성분의 곱</p>
+    <div class="math-display">$$\det\begin{bmatrix} a_{11} & * & * \\ 0 & a_{22} & * \\ 0 & 0 & a_{33} \end{bmatrix} = a_{11} \cdot a_{22} \cdot a_{33}$$</div>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 3.3 &mdash; 행렬식의 추가 성질</div>
+    <p>&bull; $\det(AB) = \det(A)\det(B)$ &emsp;(곱의 행렬식 = 행렬식의 곱)</p>
+    <p>&bull; $\det(A^T) = \det(A)$ &emsp;(전치해도 행렬식 불변)</p>
+    <p>&bull; $\det(A^{-1}) = \frac{1}{\det(A)}$ &emsp;($A$ 가역일 때)</p>
+    <p>&bull; $\det(cA) = c^n \det(A)$ &emsp;($A$가 $n \times n$일 때, $n$개 행 각각에 $c$가 곱해지므로)</p>
+    <p>&bull; $A$가 가역 $\iff$ $\det(A) \neq 0$</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: $\det(AB) = \det(A)\det(B)$의 직관</div>
+    <div class="proof-content">
+      <p>기하학적 직관: $A$는 부피를 $|\det(A)|$배 만큼 변환하고, $B$는 $|\det(B)|$배 만큼 변환한다. $AB$는 $B$를 먼저, $A$를 나중에 적용하므로 총 부피 변환 비율은 $|\det(A)| \cdot |\det(B)|$이다.</p>
+      <p><strong>엄밀한 증명 스케치:</strong> $A$가 기본행렬인 경우를 먼저 보이고, 일반 가역행렬은 기본행렬의 곱이므로 귀납적으로 확장. $A$가 비가역이면 $\det(A)=0$이고 $AB$도 비가역($\det(AB)=0$)이므로 성립. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 3.3 &mdash; 행 연산으로 행렬식 계산</div>
+    <p>$A = \begin{bmatrix} 2 & 1 & 3 \\ 4 & -1 & 2 \\ 6 & 3 & 8 \end{bmatrix}$</p>
+    <p>$R_2 - 2R_1 \to R_2$, $R_3 - 3R_1 \to R_3$ (행 덧셈이므로 det 불변):</p>
+    <div class="math-display">$$\begin{bmatrix} 2 & 1 & 3 \\ 0 & -3 & -4 \\ 0 & 0 & -1 \end{bmatrix}$$</div>
+    <p>상삼각행렬이므로:</p>
+    <div class="math-display">$$\det(A) = 2 \cdot (-3) \cdot (-1) = 6$$</div>
+  </div>
+
+  <div class="warn-box">
+    <strong>흔한 실수:</strong> $\det(A+B) \neq \det(A) + \det(B)$. 행렬식은 행렬 덧셈에 대해 선형이 <strong>아니다</strong>! 행렬식의 "선형성"은 하나의 행(또는 열)에 대해서만 성립한다 (다중선형성).
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: $\det(A) \neq 0 \iff A$ 가역 — 열벡터의 일차독립성과의 관계</div>
+    <div class="proof-content">
+      <p><strong>($\Rightarrow$) $\det(A) \neq 0 \implies A$ 가역:</strong></p>
+      <p>$\det(A) \neq 0$이면 수반행렬을 이용하여 역행렬을 구성할 수 있다:</p>
+      <div class="math-display">$$A^{-1} = \frac{1}{\det(A)}\text{adj}(A)$$</div>
+      <p>$\det(A) \neq 0$이므로 $\frac{1}{\det(A)}$가 존재하고, 따라서 $A^{-1}$이 존재한다.</p>
+      <p><strong>($\Leftarrow$) $A$ 가역 $\implies \det(A) \neq 0$:</strong></p>
+      <p>$A$가 가역이면 $AA^{-1} = I$이다. 행렬식의 곱 성질을 적용하면:</p>
+      <div class="math-display">$$\det(A) \cdot \det(A^{-1}) = \det(AA^{-1}) = \det(I) = 1$$</div>
+      <p>$\det(A) \cdot \det(A^{-1}) = 1$이므로 $\det(A) \neq 0$이다. <span class="qed">$\blacksquare$</span></p>
+      <p style="margin-top:1em;"><strong>따름정리 — $\det(A) \neq 0$과 열벡터의 일차독립성:</strong></p>
+      <div class="math-display">$$\det(A) \neq 0 \iff A\text{의 열벡터들이 일차독립}$$</div>
+      <p><strong>증명:</strong> $A = [\mathbf{a}_1\ \mathbf{a}_2\ \cdots\ \mathbf{a}_n]$으로 열분해하자.</p>
+      <p>$\lambda_1\mathbf{a}_1 + \lambda_2\mathbf{a}_2 + \cdots + \lambda_n\mathbf{a}_n = \mathbf{0}$이라 가정하면, 이는 $A\boldsymbol{\lambda} = \mathbf{0}$과 동치이다.</p>
+      <p>$\det(A) \neq 0$이면 $A$는 가역이므로:</p>
+      <div class="math-display">$$\boldsymbol{\lambda} = A^{-1}\mathbf{0} = \mathbf{0} \implies \lambda_1 = \lambda_2 = \cdots = \lambda_n = 0$$</div>
+      <p>자명한 해만 존재하므로 열벡터들은 일차독립이다.</p>
+      <p>역으로 $\det(A) = 0$이면, $A\mathbf{x} = \mathbf{0}$에 자유 변수가 존재하여 $\boldsymbol{\mu} \neq \mathbf{0}$인 해가 존재한다:</p>
+      <div class="math-display">$$\mu_1\mathbf{a}_1 + \mu_2\mathbf{a}_2 + \cdots + \mu_n\mathbf{a}_n = \mathbf{0} \quad (\text{적어도 하나의 } \mu_i \neq 0)$$</div>
+      <p>따라서 열벡터들은 일차종속이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+</section>
+
+<section class="page-section" id="s3-4">
+  <span class="page-num">Section 3.4</span>
+  <h3>크래머 공식 (Cramer's Rule)</h3>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 3.4 &mdash; 크래머 공식</div>
+    <p>$A$가 $n \times n$ 가역행렬이고 $A\mathbf{x} = \mathbf{b}$이면, 해의 $i$번째 성분은:</p>
+    <div class="math-display">$$x_i = \frac{\det(A_i)}{\det(A)}$$</div>
+    <p>여기서 $A_i$는 $A$의 $i$번째 열을 $\mathbf{b}$로 대체한 행렬이다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 3.4 &mdash; 크래머 공식 적용</div>
+    <p>$\begin{cases} 2x + y = 5 \\ 3x - 2y = 4 \end{cases}$</p>
+    <div class="math-display">$$\det(A) = \det\begin{bmatrix} 2 & 1 \\ 3 & -2 \end{bmatrix} = -4 - 3 = -7$$</div>
+    <div class="math-display">$$x = \frac{\det\begin{bmatrix} 5 & 1 \\ 4 & -2 \end{bmatrix}}{\det(A)} = \frac{-10-4}{-7} = \frac{-14}{-7} = 2$$</div>
+    <div class="math-display">$$y = \frac{\det\begin{bmatrix} 2 & 5 \\ 3 & 4 \end{bmatrix}}{\det(A)} = \frac{8-15}{-7} = \frac{-7}{-7} = 1$$</div>
+  </div>
+
+  <div class="tip-box">
+    <strong>크래머 공식은 이론적으로 중요하지만</strong> 실제 계산에서는 비효율적이다 ($n!$ 복잡도). 가우스 소거법($n^3$ 복잡도)이 훨씬 빠르다. 크래머 공식은 해의 공식적 표현, 이론적 증명에 유용하다.
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 크래머 공식의 엄밀한 유도 — 다중선형성 활용</div>
+    <div class="proof-content">
+      <p>$A = [\mathbf{a}_1\ \mathbf{a}_2\ \cdots\ \mathbf{a}_n]$ (열분해)이고 $A\mathbf{x} = \mathbf{b}$라 하자.</p>
+      <p>$A$가 가역이므로 유일한 해 $\mathbf{x} = (x_1, \ldots, x_n)^T$가 존재한다. $\mathbf{b}$를 열벡터의 일차결합으로 쓰면:</p>
+      <div class="math-display">$$\mathbf{b} = x_1\mathbf{a}_1 + x_2\mathbf{a}_2 + \cdots + x_n\mathbf{a}_n$$</div>
+      <p><strong>$A_i$의 행렬식 계산:</strong> $A_i = [\mathbf{a}_1\ \cdots\ \mathbf{a}_{i-1}\ \mathbf{b}\ \mathbf{a}_{i+1}\ \cdots\ \mathbf{a}_n]$에서 $\mathbf{b}$를 대입하면:</p>
+      <div class="math-display">$$\det(A_i) = \det[\mathbf{a}_1\ \cdots\ (x_1\mathbf{a}_1 + \cdots + x_n\mathbf{a}_n)\ \cdots\ \mathbf{a}_n]$$</div>
+      <p>행렬식의 $i$번째 열에 대한 <strong>선형성(다중선형성)</strong>을 적용하면:</p>
+      <div class="math-display">$$= x_1\det[\mathbf{a}_1\ \cdots\ \mathbf{a}_1\ \cdots\ \mathbf{a}_n] + \cdots + x_i\det[\mathbf{a}_1\ \cdots\ \mathbf{a}_i\ \cdots\ \mathbf{a}_n] + \cdots + x_n\det[\mathbf{a}_1\ \cdots\ \mathbf{a}_n\ \cdots\ \mathbf{a}_n]$$</div>
+      <p>$j \neq i$인 항에서는 같은 열이 두 번 나타나므로 $\det = 0$. $j = i$인 항만 살아남는다:</p>
+      <div class="math-display">$$\det(A_i) = x_i \cdot \det[\mathbf{a}_1\ \cdots\ \mathbf{a}_i\ \cdots\ \mathbf{a}_n] = x_i \cdot \det(A)$$</div>
+      <p>따라서:</p>
+      <div class="math-display">$$x_i = \frac{\det(A_i)}{\det(A)} \quad (i = 1, 2, \ldots, n)$$</div>
+      <p>이것이 크래머 공식이다. <span class="qed">$\blacksquare$</span></p>
+      <p><strong>핵심:</strong> 이 증명에서 $\mathbf{b}$의 표현 $\mathbf{b} = x_1\mathbf{a}_1 + \cdots + x_n\mathbf{a}_n$이 <strong>유일</strong>하다는 사실 (열벡터들이 일차독립이므로)이 크래머 공식의 근본이다.</p>
+    </div>
+  </div>
+</section>
+
+<section class="page-section" id="s3-5">
+  <span class="page-num">Section 3.5</span>
+  <h3>수반행렬과 역행렬 (Adjugate Matrix)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 3.4 &mdash; 수반행렬 (Adjugate / Classical Adjoint)</div>
+    <p>$n \times n$ 행렬 $A$의 <strong>수반행렬</strong> $\text{adj}(A)$는 여인수 행렬의 전치이다:</p>
+    <div class="math-display">$$\text{adj}(A) = [C_{ij}]^T$$</div>
+    <p>즉 $\text{adj}(A)$의 $(i,j)$ 성분은 $C_{ji}$이다. (주의: $i,j$가 뒤바뀐다!)</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 3.5 &mdash; 수반행렬을 이용한 역행렬</div>
+    <p>$A$가 가역이면:</p>
+    <div class="math-display">$$A^{-1} = \frac{1}{\det(A)} \text{adj}(A)$$</div>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명</div>
+    <div class="proof-content">
+      <p>$A \cdot \text{adj}(A)$의 $(i,j)$ 성분을 계산하자:</p>
+      <div class="math-display">$$(A \cdot \text{adj}(A))_{ij} = \sum_{k=1}^n a_{ik} \cdot (\text{adj}(A))_{kj} = \sum_{k=1}^n a_{ik} C_{jk}$$</div>
+      <p>$i = j$이면 이것은 $j$행을 따른 여인수 전개 = $\det(A)$.</p>
+      <p>$i \neq j$이면 이것은 $A$의 $j$행을 $i$행으로 대체한 행렬의 행렬식 = $0$ (같은 행이 두 개이므로).</p>
+      <p>따라서 $A \cdot \text{adj}(A) = \det(A) \cdot I$, 즉 $A^{-1} = \frac{1}{\det(A)}\text{adj}(A)$. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 3.5 &mdash; 수반행렬로 역행렬 구하기</div>
+    <p>$A = \begin{bmatrix} 1 & 2 \\ 3 & 5 \end{bmatrix}$, $\det(A) = 5 - 6 = -1$</p>
+    <p>여인수: $C_{11}=5$, $C_{12}=-3$, $C_{21}=-2$, $C_{22}=1$</p>
+    <div class="math-display">$$\text{adj}(A) = \begin{bmatrix} C_{11} & C_{21} \\ C_{12} & C_{22} \end{bmatrix} = \begin{bmatrix} 5 & -2 \\ -3 & 1 \end{bmatrix}$$</div>
+    <div class="math-display">$$A^{-1} = \frac{1}{-1}\begin{bmatrix} 5 & -2 \\ -3 & 1 \end{bmatrix} = \begin{bmatrix} -5 & 2 \\ 3 & -1 \end{bmatrix}$$</div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CHAPTER 4: 벡터공간                                -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<div class="chapter-header" id="ch4">
+  <div class="ch-num">Chapter 4</div>
+  <h2>벡터공간 (Vector Spaces)</h2>
+</div>
+
+<section class="page-section" id="s4-1">
+  <span class="page-num">Section 4.1</span>
+  <h3>벡터공간의 정의</h3>
+
+  <div class="card">
+    <div class="card-label">왜 벡터공간인가?</div>
+    <p>지금까지 $\R^n$의 벡터만 다루었지만, "벡터"라는 개념은 훨씬 더 일반적이다. 함수, 행렬, 다항식도 벡터처럼 더하고 스칼라 곱을 할 수 있다. <strong>벡터공간</strong>은 이 공통 구조를 추상화한 것이다.</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 4.1 &mdash; 벡터공간</div>
+    <p>체 $\F$ (보통 $\R$ 또는 $\C$) 위의 <strong>벡터공간</strong> $V$는 두 연산이 정의된 집합이다:</p>
+    <p><strong>벡터 덧셈</strong>: $\mathbf{u} + \mathbf{v} \in V$ &emsp; <strong>스칼라 곱</strong>: $c\mathbf{v} \in V$</p>
+    <p>다음 <strong>8가지 공리</strong>를 만족해야 한다:</p>
+    <table class="matrix-table" style="width:100%; font-size:13.5px;">
+      <tr><th>#</th><th>공리</th><th>이름</th></tr>
+      <tr><td>1</td><td>$\mathbf{u}+\mathbf{v} = \mathbf{v}+\mathbf{u}$</td><td>교환법칙</td></tr>
+      <tr><td>2</td><td>$(\mathbf{u}+\mathbf{v})+\mathbf{w} = \mathbf{u}+(\mathbf{v}+\mathbf{w})$</td><td>결합법칙</td></tr>
+      <tr><td>3</td><td>$\exists\, \mathbf{0}$: $\mathbf{v}+\mathbf{0}=\mathbf{v}$</td><td>영벡터 존재</td></tr>
+      <tr><td>4</td><td>$\exists\, (-\mathbf{v})$: $\mathbf{v}+(-\mathbf{v})=\mathbf{0}$</td><td>역원 존재</td></tr>
+      <tr><td>5</td><td>$c(\mathbf{u}+\mathbf{v}) = c\mathbf{u}+c\mathbf{v}$</td><td>분배법칙 1</td></tr>
+      <tr><td>6</td><td>$(c+d)\mathbf{v} = c\mathbf{v}+d\mathbf{v}$</td><td>분배법칙 2</td></tr>
+      <tr><td>7</td><td>$c(d\mathbf{v}) = (cd)\mathbf{v}$</td><td>스칼라 결합법칙</td></tr>
+      <tr><td>8</td><td>$1\mathbf{v} = \mathbf{v}$</td><td>항등원</td></tr>
+    </table>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 4.1 &mdash; 벡터공간의 예</div>
+    <p><strong>1. $\R^n$:</strong> 가장 기본적인 벡터공간. 성분별 덧셈과 스칼라 곱.</p>
+    <p><strong>2. $M_{m \times n}$:</strong> 모든 $m \times n$ 실수 행렬의 집합. 행렬 덧셈과 스칼라 곱.</p>
+    <p><strong>3. $P_n$:</strong> 차수가 $n$ 이하인 다항식의 집합. $p(x) + q(x)$와 $cp(x)$.</p>
+    <p><strong>4. $C[a,b]$:</strong> 구간 $[a,b]$에서 연속인 함수의 집합. $(f+g)(x) = f(x)+g(x)$.</p>
+    <p><strong>5. $\{0\}$:</strong> 영벡터만으로 이루어진 집합. 가장 작은 벡터공간.</p>
+  </div>
+</section>
+
+<section class="page-section" id="s4-2">
+  <span class="page-num">Section 4.2</span>
+  <h3>부분공간 (Subspace)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 4.2 &mdash; 부분공간</div>
+    <p>벡터공간 $V$의 부분집합 $W$가 <strong>부분공간</strong>이려면 $W$ 자체가 같은 연산에 대해 벡터공간이어야 한다.</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 4.1 &mdash; 부분공간 판정법</div>
+    <p>$V$의 비어있지 않은 부분집합 $W$가 부분공간이 되려면 다음 <strong>두 조건</strong>만 확인하면 된다:</p>
+    <p><strong>1. 덧셈에 닫힘</strong>: $\mathbf{u}, \mathbf{v} \in W \implies \mathbf{u}+\mathbf{v} \in W$</p>
+    <p><strong>2. 스칼라 곱에 닫힘</strong>: $\mathbf{v} \in W,\, c \in \F \implies c\mathbf{v} \in W$</p>
+    <p>(또는 한 번에: $c\mathbf{u} + d\mathbf{v} \in W$ for all $c, d \in \F$, $\mathbf{u}, \mathbf{v} \in W$)</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 왜 두 조건이면 충분한가?</div>
+    <div class="proof-content">
+      <p>8가지 공리 중 1, 2, 5, 6, 7, 8은 $V$에서 성립하므로 부분집합 $W$에서도 자동으로 성립한다.</p>
+      <p>공리 3 (영벡터): $W \neq \emptyset$이므로 $\mathbf{v} \in W$가 존재. 스칼라 곱 닫힘에서 $0 \cdot \mathbf{v} = \mathbf{0} \in W$.</p>
+      <p>공리 4 (역원): $\mathbf{v} \in W$이면 $(-1)\mathbf{v} = -\mathbf{v} \in W$.</p>
+      <p>따라서 두 닫힘 조건만으로 모든 공리가 보장된다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 4.2 &mdash; 부분공간의 예와 비예</div>
+    <p><strong>부분공간 O:</strong> $W = \{(x,y,z) \in \R^3 : x + 2y - z = 0\}$ (원점을 지나는 평면)</p>
+    <p>확인: $(x_1+x_2) + 2(y_1+y_2) - (z_1+z_2) = (x_1+2y_1-z_1) + (x_2+2y_2-z_2) = 0+0 = 0$ ✓</p>
+    <p><strong>부분공간 X:</strong> $W = \{(x,y,z) \in \R^3 : x + 2y - z = 1\}$ (원점을 지나지 않는 평면)</p>
+    <p>$\mathbf{0} = (0,0,0)$에서 $0+0-0 = 0 \neq 1$이므로 $\mathbf{0} \notin W$. 부분공간이 아니다!</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 4.3 &mdash; 일차결합과 생성 (Span)</div>
+    <p>벡터 $\mathbf{v}_1, \ldots, \mathbf{v}_k$의 <strong>일차결합(linear combination)</strong>은:</p>
+    <div class="math-display">$$c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \cdots + c_k\mathbf{v}_k \quad (c_i \in \F)$$</div>
+    <p>이들의 모든 일차결합의 집합을 <strong>생성(span)</strong>이라 한다:</p>
+    <div class="math-display">$$\span\{\mathbf{v}_1, \ldots, \mathbf{v}_k\} = \{c_1\mathbf{v}_1 + \cdots + c_k\mathbf{v}_k : c_i \in \F\}$$</div>
+    <p>$\span\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$은 항상 부분공간이다.</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: $\span\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$은 부분공간이다</div>
+    <div class="proof-content">
+      <p>$S = \{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$로 놓자. 부분공간 판정법의 두 조건을 확인한다.</p>
+      <p><strong>비어있지 않음:</strong> $0\mathbf{v}_1 + \cdots + 0\mathbf{v}_k = \mathbf{0} \in \span(S)$.</p>
+      <p><strong>덧셈에 닫힘:</strong> $\mathbf{u} = \lambda_1\mathbf{v}_1 + \cdots + \lambda_k\mathbf{v}_k \in \span(S)$이고 $\mathbf{w} = \mu_1\mathbf{v}_1 + \cdots + \mu_k\mathbf{v}_k \in \span(S)$이면:</p>
+      <div class="math-display">$$\mathbf{u}+\mathbf{w} = (\lambda_1+\mu_1)\mathbf{v}_1 + (\lambda_2+\mu_2)\mathbf{v}_2 + \cdots + (\lambda_k+\mu_k)\mathbf{v}_k \in \span(S) \quad \checkmark$$</div>
+      <p><strong>스칼라 곱에 닫힘:</strong> $c \in \F$이면:</p>
+      <div class="math-display">$$c\mathbf{u} = (c\lambda_1)\mathbf{v}_1 + (c\lambda_2)\mathbf{v}_2 + \cdots + (c\lambda_k)\mathbf{v}_k \in \span(S) \quad \checkmark$$</div>
+      <p>따라서 $\span(S)$는 $V$의 부분공간이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+</section>
+
+<section class="page-section" id="s4-3">
+  <span class="page-num">Section 4.3</span>
+  <h3>일차독립과 일차종속</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 4.4 &mdash; 일차독립/종속</div>
+    <p>벡터 $\mathbf{v}_1, \ldots, \mathbf{v}_k$가 <strong>일차독립(linearly independent)</strong>이라 함은:</p>
+    <div class="math-display">$$c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \cdots + c_k\mathbf{v}_k = \mathbf{0} \implies c_1 = c_2 = \cdots = c_k = 0$$</div>
+    <p>즉 자명한 일차결합만이 영벡터를 만든다.</p>
+    <p>일차독립이 아니면 <strong>일차종속(linearly dependent)</strong>이다. 즉, 적어도 하나의 $c_i \neq 0$인 일차결합이 존재하여 $\mathbf{0}$을 만든다.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">일차종속의 직관적 의미</div>
+    <p>일차종속이란 벡터 중 하나가 나머지의 일차결합으로 표현될 수 있다는 의미이다. 즉, "중복된" 벡터가 있다.</p>
+    <p>예: $\{(1,0), (0,1), (2,3)\}$은 일차종속이다. $(2,3) = 2(1,0) + 3(0,1)$이기 때문.</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 4.2 &mdash; 일차독립 판정</div>
+    <p>$\R^n$의 벡터 $\mathbf{v}_1, \ldots, \mathbf{v}_k$를 열로 하는 행렬 $A = [\mathbf{v}_1 \cdots \mathbf{v}_k]$에 대해:</p>
+    <p>&bull; $\mathbf{v}_1, \ldots, \mathbf{v}_k$가 일차독립 $\iff$ $A\mathbf{x} = \mathbf{0}$의 해가 $\mathbf{x} = \mathbf{0}$뿐</p>
+    <p>&bull; $\iff$ $A$의 RREF에서 모든 열에 피벗이 있음</p>
+    <p>&bull; $k = n$일 때: $\iff$ $\det(A) \neq 0$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 4.3 &mdash; 일차독립 판정</div>
+    <p>$\mathbf{v}_1 = (1,2,3)$, $\mathbf{v}_2 = (4,5,6)$, $\mathbf{v}_3 = (2,1,0)$이 일차독립인지 판별:</p>
+    <div class="math-display">$$\det\begin{bmatrix} 1 & 4 & 2 \\ 2 & 5 & 1 \\ 3 & 6 & 0 \end{bmatrix} = 1(0-6) - 4(0-3) + 2(12-15) = -6+12-6 = 0$$</div>
+    <p>행렬식이 0이므로 <strong>일차종속</strong>이다.</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 4.2a &mdash; 일차독립과 표현의 유일성</div>
+    <p>$\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$가 일차독립이면, $\span\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$의 모든 벡터는 <strong>유일한</strong> 일차결합으로 표현된다.</p>
+    <p>역으로, $\span\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$의 벡터 표현이 항상 유일하면 $\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$는 일차독립이다.</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 일차독립 ⟺ 일차결합의 유일성</div>
+    <div class="proof-content">
+      <p><strong>($\Rightarrow$) 독립 → 유일:</strong></p>
+      <p>$\mathbf{w} \in \span\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$에 대해 두 표현이 있다고 가정하자:</p>
+      <div class="math-display">$$\mathbf{w} = \lambda_1\mathbf{v}_1 + \lambda_2\mathbf{v}_2 + \cdots + \lambda_k\mathbf{v}_k$$</div>
+      <div class="math-display">$$\mathbf{w} = \mu_1\mathbf{v}_1 + \mu_2\mathbf{v}_2 + \cdots + \mu_k\mathbf{v}_k$$</div>
+      <p>두 식을 빼면:</p>
+      <div class="math-display">$$(\lambda_1-\mu_1)\mathbf{v}_1 + (\lambda_2-\mu_2)\mathbf{v}_2 + \cdots + (\lambda_k-\mu_k)\mathbf{v}_k = \mathbf{0}$$</div>
+      <p>$\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$가 <strong>일차독립</strong>이므로 모든 계수가 0:</p>
+      <div class="math-display">$$\lambda_i - \mu_i = 0 \quad \Longrightarrow \quad \lambda_i = \mu_i \quad \text{for all } i$$</div>
+      <p>따라서 표현은 유일하다.</p>
+      <p><strong>($\Leftarrow$) 유일 → 독립:</strong></p>
+      <p>영벡터 $\mathbf{0}$는 자명한 표현 $\mathbf{0} = 0\mathbf{v}_1 + 0\mathbf{v}_2 + \cdots + 0\mathbf{v}_k$을 가진다.</p>
+      <p>표현이 유일하다고 가정하면, 이것이 $\mathbf{0}$을 만드는 <strong>유일한</strong> 일차결합이다.</p>
+      <p>따라서 $c_1\mathbf{v}_1 + \cdots + c_k\mathbf{v}_k = \mathbf{0}$이면 $c_1 = c_2 = \cdots = c_k = 0$, 즉 일차독립이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 4.3a &mdash; 유일성의 구체적 확인</div>
+    <p><strong>독립인 경우 (유일한 표현):</strong></p>
+    <p>$\mathbf{v}_1 = (1,0)$, $\mathbf{v}_2 = (0,1)$ &mdash; $\R^2$의 표준 기저, 일차독립.</p>
+    <p>$(3,5)$를 일차결합으로 쓰면: $\lambda_1(1,0) + \lambda_2(0,1) = (3,5)$</p>
+    <div class="math-display">$$(\lambda_1, \lambda_2) = (3, 5) \quad \text{(강제)}$$</div>
+    <p>표현이 유일하다 &mdash; 독립이므로 다른 선택의 여지가 없다.</p>
+    <p><strong>종속인 경우 (유일하지 않은 표현):</strong></p>
+    <p>$\mathbf{v}_1 = (1,0)$, $\mathbf{v}_2 = (0,1)$, $\mathbf{v}_3 = (1,1)$ &mdash; 일차종속 ($\mathbf{v}_3 = \mathbf{v}_1 + \mathbf{v}_2$).</p>
+    <p>$(1,1)$을 표현하는 방법이 여러 가지이다:</p>
+    <div class="math-display">$$(1,1) = 0\mathbf{v}_1 + 0\mathbf{v}_2 + 1\mathbf{v}_3 \quad \text{또는} \quad (1,1) = 1\mathbf{v}_1 + 1\mathbf{v}_2 + 0\mathbf{v}_3$$</div>
+    <p>표현이 유일하지 않다 &mdash; 종속 벡터가 있으면 "중복 경로"가 생긴다!</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 일차종속이면 적어도 하나의 벡터가 나머지의 일차결합</div>
+    <div class="proof-content">
+      <p><strong>($\Rightarrow$)</strong> $\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$가 일차종속이라 하자. 그러면 모두 0이 아닌 스칼라가 존재하여:</p>
+      <div class="math-display">$$c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \cdots + c_k\mathbf{v}_k = \mathbf{0}, \quad \text{어떤 } c_j \neq 0$$</div>
+      <p>$c_j \neq 0$인 $j$를 고르면 $\mathbf{v}_j$에 대해 풀 수 있다:</p>
+      <div class="math-display">$$\mathbf{v}_j = -\frac{c_1}{c_j}\mathbf{v}_1 - \cdots - \frac{c_{j-1}}{c_j}\mathbf{v}_{j-1} - \frac{c_{j+1}}{c_j}\mathbf{v}_{j+1} - \cdots - \frac{c_k}{c_j}\mathbf{v}_k$$</div>
+      <p>따라서 $\mathbf{v}_j$는 나머지 벡터들의 일차결합이다.</p>
+      <p><strong>($\Leftarrow$)</strong> 역으로, $\mathbf{v}_j$가 나머지의 일차결합이라 하자:</p>
+      <div class="math-display">$$\mathbf{v}_j = a_1\mathbf{v}_1 + \cdots + a_{j-1}\mathbf{v}_{j-1} + a_{j+1}\mathbf{v}_{j+1} + \cdots + a_k\mathbf{v}_k$$</div>
+      <p>모든 항을 한쪽으로 모으면:</p>
+      <div class="math-display">$$a_1\mathbf{v}_1 + \cdots + a_{j-1}\mathbf{v}_{j-1} + (-1)\mathbf{v}_j + a_{j+1}\mathbf{v}_{j+1} + \cdots + a_k\mathbf{v}_k = \mathbf{0}$$</div>
+      <p>$\mathbf{v}_j$의 계수가 $-1 \neq 0$이므로, 이것은 비자명 일차결합이다. 따라서 일차종속이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+</section>
+
+<section class="page-section" id="s4-4">
+  <span class="page-num">Section 4.4</span>
+  <h3>기저와 차원 (Basis and Dimension)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 4.5 &mdash; 기저 (Basis)</div>
+    <p>벡터공간 $V$의 <strong>기저(basis)</strong>는 다음 두 조건을 만족하는 벡터 집합 $\mathcal{B} = \{\mathbf{v}_1, \ldots, \mathbf{v}_n\}$이다:</p>
+    <p>1. $\mathcal{B}$는 <strong>일차독립</strong>이다.</p>
+    <p>2. $\mathcal{B}$는 $V$를 <strong>생성</strong>한다: $\span(\mathcal{B}) = V$</p>
+    <p>즉, 기저는 "최소한의 생성 집합" 또는 "최대한의 일차독립 집합"이다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 4.4 &mdash; 표준 기저</div>
+    <p><strong>$\R^n$의 표준 기저:</strong> $\{\mathbf{e}_1, \mathbf{e}_2, \ldots, \mathbf{e}_n\}$</p>
+    <div class="math-display">$$\mathbf{e}_1 = (1,0,\ldots,0), \quad \mathbf{e}_2 = (0,1,\ldots,0), \quad \ldots, \quad \mathbf{e}_n = (0,0,\ldots,1)$$</div>
+    <p><strong>$P_2$의 표준 기저:</strong> $\{1, x, x^2\}$ — 모든 이차 이하 다항식 $a + bx + cx^2$를 생성.</p>
+    <p><strong>$M_{2 \times 2}$의 표준 기저:</strong> $\left\{\begin{bmatrix}1&0\\0&0\end{bmatrix}, \begin{bmatrix}0&1\\0&0\end{bmatrix}, \begin{bmatrix}0&0\\1&0\end{bmatrix}, \begin{bmatrix}0&0\\0&1\end{bmatrix}\right\}$</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 4.3a &mdash; 기저에 의한 표현의 유일성</div>
+    <p>$\mathcal{B} = \{\mathbf{v}_1, \ldots, \mathbf{v}_n\}$이 벡터공간 $V$의 기저이면, 모든 $\mathbf{w} \in V$는 <strong>유일한</strong> 일차결합으로 표현된다:</p>
+    <div class="math-display">$$\mathbf{w} = \lambda_1\mathbf{v}_1 + \lambda_2\mathbf{v}_2 + \cdots + \lambda_n\mathbf{v}_n$$</div>
+    <p>이 유일한 계수 $(\lambda_1, \ldots, \lambda_n)$을 $\mathbf{w}$의 $\mathcal{B}$에 대한 <strong>좌표(coordinates)</strong>라 한다.</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명</div>
+    <div class="proof-content">
+      <p><strong>존재:</strong> $\span(\mathcal{B}) = V$이므로, 임의의 $\mathbf{w} \in V$는 $\mathcal{B}$의 일차결합으로 표현 가능하다.</p>
+      <p><strong>유일성:</strong> 두 가지 표현이 있다고 가정하자:</p>
+      <div class="math-display">$$\mathbf{w} = \lambda_1\mathbf{v}_1 + \cdots + \lambda_n\mathbf{v}_n = \mu_1\mathbf{v}_1 + \cdots + \mu_n\mathbf{v}_n$$</div>
+      <p>양변을 빼면:</p>
+      <div class="math-display">$$(\lambda_1-\mu_1)\mathbf{v}_1 + (\lambda_2-\mu_2)\mathbf{v}_2 + \cdots + (\lambda_n-\mu_n)\mathbf{v}_n = \mathbf{0}$$</div>
+      <p>$\mathcal{B}$가 <strong>일차독립</strong>이므로, 모든 계수가 0이어야 한다:</p>
+      <div class="math-display">$$\lambda_i - \mu_i = 0 \quad \text{for all } i = 1, \ldots, n$$</div>
+      <p>따라서 $\lambda_i = \mu_i$ for all $i$이고, 표현은 유일하다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 4.6 &mdash; 차원 (Dimension)</div>
+    <p>벡터공간 $V$의 <strong>차원</strong> $\dim(V)$은 기저의 벡터 개수이다.</p>
+    <p>핵심 사실: 같은 벡터공간의 모든 기저는 <strong>같은 개수</strong>의 벡터를 가진다. (따라서 차원이 잘 정의된다.)</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 4.3 &mdash; 차원에 관한 기본 정리들</div>
+    <p>$V$가 $n$차원 벡터공간일 때:</p>
+    <p>&bull; $n$개보다 많은 벡터는 반드시 일차종속이다.</p>
+    <p>&bull; $n$개보다 적은 벡터는 $V$를 생성할 수 없다.</p>
+    <p>&bull; 일차독립인 $n$개의 벡터 집합은 자동으로 기저이다.</p>
+    <p>&bull; $V$를 생성하는 $n$개의 벡터 집합은 자동으로 기저이다.</p>
+    <p>&bull; $W$가 $V$의 부분공간이면 $\dim(W) \leq \dim(V)$</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 모든 기저의 크기가 같다 (Steinitz Exchange Lemma)</div>
+    <div class="proof-content">
+      <p>$V$의 두 기저를 $\mathcal{B} = \{\mathbf{v}_1,\ldots,\mathbf{v}_m\}$, $\mathcal{C} = \{\mathbf{w}_1,\ldots,\mathbf{w}_n\}$이라 하자. $m = n$임을 보인다.</p>
+      <p><strong>$\mathcal{C}$가 $V$를 생성</strong>하므로 각 $\mathbf{v}_i$를 $\mathcal{C}$의 일차결합으로 쓸 수 있다:</p>
+      <div class="math-display">$$\mathbf{v}_i = \sum_{j=1}^{n} \lambda_{ij}\mathbf{w}_j \quad (i = 1,\ldots,m)$$</div>
+      <p>마찬가지로 <strong>$\mathcal{B}$가 $V$를 생성</strong>하므로:</p>
+      <div class="math-display">$$\mathbf{w}_j = \sum_{k=1}^{m} \mu_{jk}\mathbf{v}_k \quad (j = 1,\ldots,n)$$</div>
+      <p>첫 번째 식에 두 번째를 대입하면:</p>
+      <div class="math-display">$$\mathbf{v}_i = \sum_{j=1}^{n} \lambda_{ij}\left(\sum_{k=1}^{m} \mu_{jk}\mathbf{v}_k\right) = \sum_{k=1}^{m} \left(\sum_{j=1}^{n} \lambda_{ij}\mu_{jk}\right)\mathbf{v}_k$$</div>
+      <p>$\mathcal{B}$가 일차독립이므로 <strong>표현의 유일성</strong>에 의해, 계수행렬의 곱 $\Lambda M$은 $m \times m$ 단위행렬 $I_m$이어야 한다. 여기서 $\Lambda = [\lambda_{ij}]_{m \times n}$, $M = [\mu_{jk}]_{n \times m}$이다.</p>
+      <p>$\Lambda M = I_m$이므로 $\rank(\Lambda M) = m$. 그런데 $\rank(\Lambda M) \leq \rank(\Lambda) \leq n$이므로 $m \leq n$.</p>
+      <p>대칭적으로 $M\Lambda = I_n$을 보이면 $n \leq m$. 따라서 $m = n$이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: $n$차원 공간에서 $n$개보다 많은 벡터는 일차종속</div>
+    <div class="proof-content">
+      <p>$\dim(V) = n$이고 기저를 $\mathcal{B} = \{\mathbf{v}_1,\ldots,\mathbf{v}_n\}$이라 하자. $k > n$인 벡터 $\mathbf{w}_1,\ldots,\mathbf{w}_k \in V$가 주어졌다고 하자.</p>
+      <p>각 $\mathbf{w}_i$는 기저의 일차결합이므로 $\R^n$의 좌표벡터 $[\mathbf{w}_i]_\mathcal{B} \in \R^n$을 가진다.</p>
+      <p>이 좌표벡터들을 열로 하는 행렬 $A$를 만들면 $A$는 $n \times k$ 행렬이다.</p>
+      <p>$k > n$이므로 동차방정식 $A\mathbf{x} = \mathbf{0}$에서 미지수($k$개)가 방정식($n$개)보다 많다. 따라서 자유 변수가 존재하고, 비자명 해 $\mathbf{x} = (c_1,\ldots,c_k)^T \neq \mathbf{0}$가 존재한다.</p>
+      <p>이로부터:</p>
+      <div class="math-display">$$c_1\mathbf{w}_1 + c_2\mathbf{w}_2 + \cdots + c_k\mathbf{w}_k = \mathbf{0} \quad (\text{비자명})$$</div>
+      <p>따라서 $\mathbf{w}_1,\ldots,\mathbf{w}_k$는 일차종속이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 4.5 &mdash; 부분공간의 기저 구하기</div>
+    <p>$W = \{(x,y,z) \in \R^3 : x - 2y + z = 0\}$의 기저와 차원을 구하자.</p>
+    <p>$x = 2y - z$이므로:</p>
+    <div class="math-display">$$(x,y,z) = (2y-z, y, z) = y(2,1,0) + z(-1,0,1)$$</div>
+    <p>기저: $\{(2,1,0), (-1,0,1)\}$, &ensp; 차원: $\dim(W) = 2$ (평면)</p>
+  </div>
+</section>
+
+<section class="page-section" id="s4-5">
+  <span class="page-num">Section 4.5</span>
+  <h3>행공간, 열공간, 영공간</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 4.7 &mdash; 네 가지 기본 부분공간</div>
+    <p>$m \times n$ 행렬 $A$에 대해:</p>
+    <p><strong>열공간 (Column Space):</strong> $\col(A) = \{A\mathbf{x} : \mathbf{x} \in \R^n\} \subseteq \R^m$</p>
+    <p style="margin-left:20px;">&mdash; $A$의 열벡터들의 모든 일차결합. $A\mathbf{x}=\mathbf{b}$가 해를 가질 $\iff$ $\mathbf{b} \in \col(A)$</p>
+    <p><strong>행공간 (Row Space):</strong> $\row(A) = \col(A^T) \subseteq \R^n$</p>
+    <p style="margin-left:20px;">&mdash; $A$의 행벡터들의 모든 일차결합</p>
+    <p><strong>영공간 (Null Space):</strong> $\nul(A) = \{\mathbf{x} \in \R^n : A\mathbf{x} = \mathbf{0}\} \subseteq \R^n$</p>
+    <p style="margin-left:20px;">&mdash; 동차방정식의 해집합</p>
+    <p><strong>좌영공간 (Left Null Space):</strong> $\nul(A^T) = \{\mathbf{y} \in \R^m : A^T\mathbf{y} = \mathbf{0}\} \subseteq \R^m$</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">기저를 구하는 방법</div>
+    <p><strong>열공간의 기저:</strong> $A$를 RREF로 변환한 후, 피벗이 있는 열에 대응하는 <strong>원래 행렬 $A$의 열</strong>이 기저이다.</p>
+    <p><strong>행공간의 기저:</strong> $A$의 RREF에서 비영행들이 기저이다. (행 연산은 행공간을 보존한다.)</p>
+    <p><strong>영공간의 기저:</strong> $A\mathbf{x}=\mathbf{0}$을 풀어 자유 변수의 매개변수 표현에서 방향벡터를 추출한다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 4.6 &mdash; 네 가지 부분공간 구하기</div>
+    <p>$A = \begin{bmatrix} 1 & 2 & 0 & 1 \\ 2 & 4 & 1 & 3 \\ 3 & 6 & 1 & 4 \end{bmatrix}$</p>
+    <p>RREF:</p>
+    <div class="math-display">$$\text{RREF}(A) = \begin{bmatrix} 1 & 2 & 0 & 1 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 0 \end{bmatrix}$$</div>
+    <p>피벗: 1열, 3열. 자유 변수: $x_2 = s$, $x_4 = t$.</p>
+    <p><strong>열공간 기저:</strong> $A$의 1열, 3열: $\left\{\begin{pmatrix}1\\2\\3\end{pmatrix}, \begin{pmatrix}0\\1\\1\end{pmatrix}\right\}$</p>
+    <p><strong>행공간 기저:</strong> $\{(1,2,0,1),\, (0,0,1,1)\}$</p>
+    <p><strong>영공간:</strong> $x_1 = -2s - t$, $x_3 = -t$이므로:</p>
+    <div class="math-display">$$\nul(A) = s\begin{pmatrix}-2\\1\\0\\0\end{pmatrix} + t\begin{pmatrix}-1\\0\\-1\\1\end{pmatrix}$$</div>
+    <p>영공간 기저: $\left\{\begin{pmatrix}-2\\1\\0\\0\end{pmatrix}, \begin{pmatrix}-1\\0\\-1\\1\end{pmatrix}\right\}$</p>
+  </div>
+</section>
+
+<section class="page-section" id="s4-6">
+  <span class="page-num">Section 4.6</span>
+  <h3>랭크-널리티 정리 (Rank-Nullity Theorem)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 4.8 &mdash; 랭크와 널리티</div>
+    <p><strong>랭크 (Rank):</strong> $\rank(A) = \dim(\col(A)) = \dim(\row(A))$ = 피벗의 개수</p>
+    <p><strong>널리티 (Nullity):</strong> $\nullity(A) = \dim(\nul(A))$ = 자유 변수의 개수</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 4.4 &mdash; 랭크-널리티 정리 (차원 정리)</div>
+    <p>$m \times n$ 행렬 $A$에 대해:</p>
+    <div class="math-display">$$\rank(A) + \nullity(A) = n \quad \text{(열의 개수)}$$</div>
+    <p>직관: 열의 개수 = 피벗 변수 + 자유 변수</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명</div>
+    <div class="proof-content">
+      <p>$A$의 RREF에서 피벗의 개수를 $r$이라 하자.</p>
+      <p>$\rank(A) = r$: 피벗 열의 수 = 열공간(행공간)의 차원.</p>
+      <p>$\nullity(A) = n - r$: 자유 변수의 수 = $n$(전체 열) - $r$(피벗 열).</p>
+      <p>따라서 $\rank(A) + \nullity(A) = r + (n-r) = n$. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 4.7 &mdash; 랭크-널리티 확인</div>
+    <p>예제 4.6에서: $A$는 $3 \times 4$ 행렬, 피벗 2개, 자유 변수 2개.</p>
+    <div class="math-display">$$\rank(A) + \nullity(A) = 2 + 2 = 4 = n \quad \checkmark$$</div>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 4.5 &mdash; 가역행렬의 마스터 정리 (Invertible Matrix Theorem)</div>
+    <p>$n \times n$ 행렬 $A$에 대해 다음은 모두 <strong>동치</strong>이다:</p>
+    <p>(a) $A$는 가역이다 &emsp; (b) $\det(A) \neq 0$</p>
+    <p>(c) $\rank(A) = n$ &emsp; (d) $\nul(A) = \{\mathbf{0}\}$</p>
+    <p>(e) $A$의 열벡터는 일차독립 &emsp; (f) $A$의 열벡터는 $\R^n$을 생성</p>
+    <p>(g) $A\mathbf{x}=\mathbf{b}$는 모든 $\mathbf{b}$에 대해 유일한 해를 가짐</p>
+    <p>(h) $A$의 RREF는 $I_n$ &emsp; (i) $A$의 고유값은 모두 0이 아님</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CHAPTER 5: 선형변환                                -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<div class="chapter-header" id="ch5">
+  <div class="ch-num">Chapter 5</div>
+  <h2>선형변환 (Linear Transformations)</h2>
+</div>
+
+<section class="page-section" id="s5-1">
+  <span class="page-num">Section 5.1</span>
+  <h3>선형변환의 정의</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 5.1 &mdash; 선형변환</div>
+    <p>벡터공간 $V$에서 $W$로의 함수 $T: V \to W$가 <strong>선형변환</strong>이라 함은 모든 $\mathbf{u}, \mathbf{v} \in V$와 스칼라 $c$에 대해:</p>
+    <p>1. $T(\mathbf{u} + \mathbf{v}) = T(\mathbf{u}) + T(\mathbf{v})$ &emsp;(가법성)</p>
+    <p>2. $T(c\mathbf{v}) = cT(\mathbf{v})$ &emsp;(동차성)</p>
+    <p>또는 동치하게: $T(c\mathbf{u} + d\mathbf{v}) = cT(\mathbf{u}) + dT(\mathbf{v})$ &emsp;(중첩 원리)</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">즉각적 결과</div>
+    <p>$T$가 선형이면: $T(\mathbf{0}) = \mathbf{0}$ (영벡터는 항상 영벡터로 보낸다)</p>
+    <p>$T(-\mathbf{v}) = -T(\mathbf{v})$</p>
+    <p>$T(c_1\mathbf{v}_1 + \cdots + c_k\mathbf{v}_k) = c_1 T(\mathbf{v}_1) + \cdots + c_k T(\mathbf{v}_k)$</p>
+    <p>즉, 기저벡터에서의 값만 알면 모든 벡터에서의 값이 결정된다!</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 5.1a &mdash; 선형변환은 기저에서의 값으로 유일하게 결정된다</div>
+    <p>$\mathcal{B} = \{\mathbf{v}_1, \ldots, \mathbf{v}_n\}$이 $V$의 기저라 하자. 만약 $T, S: V \to W$가 선형변환이고 모든 $i$에 대해 $T(\mathbf{v}_i) = S(\mathbf{v}_i)$이면, $T = S$이다.</p>
+    <p>역으로, 임의의 $\mathbf{w}_1, \ldots, \mathbf{w}_n \in W$가 주어지면, $T(\mathbf{v}_i) = \mathbf{w}_i$를 만족하는 선형변환 $T: V \to W$가 유일하게 존재한다.</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명</div>
+    <div class="proof-content">
+      <p><strong>(유일성)</strong> 임의의 $\mathbf{x} \in V$를 택하자. $\mathcal{B}$가 기저이므로 $\mathbf{x}$는 유일한 표현</p>
+      <div class="math-display">$$\mathbf{x} = \lambda_1\mathbf{v}_1 + \cdots + \lambda_n\mathbf{v}_n$$</div>
+      <p>을 가진다 (계수 $\lambda_i$가 유일하게 결정됨). 그러면 선형성에 의해:</p>
+      <div class="math-display">$$T(\mathbf{x}) = \lambda_1 T(\mathbf{v}_1) + \cdots + \lambda_n T(\mathbf{v}_n) = \lambda_1 S(\mathbf{v}_1) + \cdots + \lambda_n S(\mathbf{v}_n) = S(\mathbf{x})$$</div>
+      <p>모든 $\mathbf{x} \in V$에 대해 $T(\mathbf{x}) = S(\mathbf{x})$이므로 $T = S$이다.</p>
+      <p>여기서 핵심은 계수 $\lambda_i$가 <strong>유일하게</strong> 결정된다는 점이다. $\mathcal{B}$가 기저이므로 일차독립(유일성 보장)이고 생성(존재 보장)이기 때문이다.</p>
+      <p><strong>(존재)</strong> 역으로, 임의의 $\mathbf{w}_1, \ldots, \mathbf{w}_n \in W$가 주어지면, 다음과 같이 정의하자:</p>
+      <div class="math-display">$$T(\lambda_1\mathbf{v}_1 + \cdots + \lambda_n\mathbf{v}_n) = \lambda_1\mathbf{w}_1 + \cdots + \lambda_n\mathbf{w}_n$$</div>
+      <p>이 정의가 <strong>well-defined</strong>인 이유: $\lambda_i$가 유일하므로, 같은 $\mathbf{x}$에 대해 두 가지 다른 값이 나올 수 없다. $T$가 선형임은 정의로부터 직접 확인된다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+
+  <div class="example-box">
+    <div class="ex-title">예제 5.1 &mdash; 선형변환의 예</div>
+    <p><strong>1. 행렬 변환:</strong> $T(\mathbf{x}) = A\mathbf{x}$ ($A$는 $m \times n$ 행렬) — 가장 기본적인 선형변환</p>
+    <p><strong>2. 미분:</strong> $D: P_n \to P_{n-1}$, $D(p) = p'$. $D(f+g)=f'+g'$, $D(cf)=cf'$ ✓</p>
+    <p><strong>3. 적분:</strong> $T: C[0,1] \to \R$, $T(f) = \int_0^1 f(x)\,dx$. 선형!</p>
+    <p><strong>4. 회전:</strong> $T: \R^2 \to \R^2$, 원점 중심 $\theta$ 회전. 행렬: $\begin{bmatrix}\cos\theta & -\sin\theta \\ \sin\theta & \cos\theta\end{bmatrix}$</p>
+    <p><strong>비선형의 예:</strong> $T(x,y) = (x^2, y)$ — $T(2,0) = (4,0) \neq 2T(1,0) = 2(1,0) = (2,0)$</p>
+  </div>
+</section>
+
+<section class="page-section" id="s5-2">
+  <span class="page-num">Section 5.2</span>
+  <h3>핵과 치역 (Kernel and Image)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 5.2 &mdash; 핵과 치역</div>
+    <p>선형변환 $T: V \to W$에 대해:</p>
+    <p><strong>핵 (Kernel):</strong> $\ker(T) = \{\mathbf{v} \in V : T(\mathbf{v}) = \mathbf{0}\} \subseteq V$</p>
+    <p><strong>치역 (Image/Range):</strong> $\text{Im}(T) = \{T(\mathbf{v}) : \mathbf{v} \in V\} \subseteq W$</p>
+    <p>$\ker(T)$는 $V$의 부분공간, $\text{Im}(T)$는 $W$의 부분공간이다.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">행렬과의 관계</div>
+    <p>$T(\mathbf{x}) = A\mathbf{x}$이면:</p>
+    <p>&bull; $\ker(T) = \nul(A)$ (영공간)</p>
+    <p>&bull; $\text{Im}(T) = \col(A)$ (열공간)</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 5.1 &mdash; 차원 정리 (선형변환 버전)</div>
+    <p>$T: V \to W$가 선형변환이고 $V$가 유한차원이면:</p>
+    <div class="math-display">$$\dim(\ker(T)) + \dim(\text{Im}(T)) = \dim(V)$$</div>
+    <p>이것은 랭크-널리티 정리의 일반화이다.</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 5.2 &mdash; 단사, 전사, 동형사상</div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: $T$가 단사 $\iff$ $\ker(T) = \{\mathbf{0}\}$</div>
+    <div class="proof-content">
+      <p><strong>($\Rightarrow$)</strong> $T$가 단사이고 $\mathbf{v} \in \ker(T)$라 하자. 그러면 $T(\mathbf{v}) = \mathbf{0} = T(\mathbf{0})$이다. $T$가 단사이므로 $\mathbf{v} = \mathbf{0}$. 따라서 $\ker(T) = \{\mathbf{0}\}$.</p>
+      <p><strong>($\Leftarrow$)</strong> $\ker(T) = \{\mathbf{0}\}$이라 가정하자. $T(\boldsymbol{\lambda}) = T(\boldsymbol{\mu})$라 하면:</p>
+      <div class="math-display">$$T(\boldsymbol{\lambda} - \boldsymbol{\mu}) = T(\boldsymbol{\lambda}) - T(\boldsymbol{\mu}) = \mathbf{0}$$</div>
+      <p>따라서 $\boldsymbol{\lambda} - \boldsymbol{\mu} \in \ker(T) = \{\mathbf{0}\}$이므로 $\boldsymbol{\lambda} = \boldsymbol{\mu}$. 즉 $T$는 단사이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 단사 선형변환은 일차독립을 보존한다</div>
+    <div class="proof-content">
+      <p>$T: V \to W$가 단사 선형변환이고, $\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$가 $V$에서 일차독립이라 하자.</p>
+      <p>$\{T(\mathbf{v}_1), \ldots, T(\mathbf{v}_k)\}$의 일차독립을 보이자. 다음을 가정하자:</p>
+      <div class="math-display">$$\lambda_1 T(\mathbf{v}_1) + \cdots + \lambda_k T(\mathbf{v}_k) = \mathbf{0}$$</div>
+      <p>$T$의 선형성에 의해:</p>
+      <div class="math-display">$$T(\lambda_1\mathbf{v}_1 + \cdots + \lambda_k\mathbf{v}_k) = \mathbf{0}$$</div>
+      <p>$T$가 단사이므로 $\ker(T) = \{\mathbf{0}\}$이고, 따라서:</p>
+      <div class="math-display">$$\lambda_1\mathbf{v}_1 + \cdots + \lambda_k\mathbf{v}_k = \mathbf{0}$$</div>
+      <p>$\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$가 일차독립이므로 $\lambda_1 = \cdots = \lambda_k = 0$이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+    <p><strong>단사 (Injective/One-to-one):</strong> $T$가 단사 $\iff$ $\ker(T) = \{\mathbf{0}\}$</p>
+    <p><strong>전사 (Surjective/Onto):</strong> $T$가 전사 $\iff$ $\text{Im}(T) = W$</p>
+    <p><strong>동형사상 (Isomorphism):</strong> 단사 + 전사. 이때 $V \cong W$이고 $\dim(V) = \dim(W)$.</p>
+  </div>
+</section>
+
+<section class="page-section" id="s5-3">
+  <span class="page-num">Section 5.3</span>
+  <h3>행렬표현 (Matrix Representation)</h3>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 5.3 &mdash; 모든 선형변환은 행렬로 표현된다</div>
+    <p>$V$의 기저 $\mathcal{B} = \{\mathbf{v}_1, \ldots, \mathbf{v}_n\}$, $W$의 기저 $\mathcal{C}$에 대해, 선형변환 $T: V \to W$는 유일한 $m \times n$ 행렬 $[T]_\mathcal{B}^\mathcal{C}$로 표현된다:</p>
+    <div class="math-display">$$[T]_\mathcal{B}^\mathcal{C} = \left[ [T(\mathbf{v}_1)]_\mathcal{C} \mid [T(\mathbf{v}_2)]_\mathcal{C} \mid \cdots \mid [T(\mathbf{v}_n)]_\mathcal{C} \right]$$</div>
+    <p>$j$번째 열 = 기저벡터 $\mathbf{v}_j$의 상(image)을 $\mathcal{C}$에 대해 좌표로 표현한 것.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 5.2 &mdash; 미분 연산자의 행렬표현</div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 선형변환의 행렬표현이 유일한 이유</div>
+    <div class="proof-content">
+      <p>기저 $\mathcal{B} = \{\mathbf{v}_1, \ldots, \mathbf{v}_n\}$, $\mathcal{C}$에 대해 같은 선형변환 $T$를 나타내는 두 행렬 $A$와 $B$가 있다고 가정하자. 즉, 모든 $\mathbf{x} \in V$에 대해:</p>
+      <div class="math-display">$$A[\mathbf{x}]_\mathcal{B} = [T(\mathbf{x})]_\mathcal{C} = B[\mathbf{x}]_\mathcal{B}$$</div>
+      <p>특별히 $\mathbf{x} = \mathbf{v}_j$ ($j$번째 기저벡터)를 대입하면:</p>
+      <div class="math-display">$$[\mathbf{v}_j]_\mathcal{B} = \mathbf{e}_j \quad \text{(표준 기저벡터)}$$</div>
+      <p>이므로:</p>
+      <div class="math-display">$$A\mathbf{e}_j = B\mathbf{e}_j \quad \text{for all } j = 1, \ldots, n$$</div>
+      <p>$A\mathbf{e}_j$는 $A$의 $j$번째 열이고, $B\mathbf{e}_j$는 $B$의 $j$번째 열이다. 모든 열이 같으므로 $A = B$이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+    <p>$D: P_2 \to P_1$, $D(p) = p'$. 표준 기저 $\{1, x, x^2\}$ (정의역), $\{1, x\}$ (공역).</p>
+    <p>$D(1) = 0 = 0 \cdot 1 + 0 \cdot x$</p>
+    <p>$D(x) = 1 = 1 \cdot 1 + 0 \cdot x$</p>
+    <p>$D(x^2) = 2x = 0 \cdot 1 + 2 \cdot x$</p>
+    <div class="math-display">$$[D] = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 2 \end{bmatrix}$$</div>
+    <p>확인: $D(3 + 2x - x^2) = 2 - 2x$. 행렬로: $\begin{bmatrix}0&1&0\\0&0&2\end{bmatrix}\begin{pmatrix}3\\2\\-1\end{pmatrix} = \begin{pmatrix}2\\-2\end{pmatrix}$ → $2 - 2x$ ✓</p>
+  </div>
+</section>
+
+<section class="page-section" id="s5-4">
+  <span class="page-num">Section 5.4</span>
+  <h3>좌표변환과 닮음 (Change of Basis and Similarity)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 5.3 &mdash; 좌표벡터와 전이행렬</div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 좌표벡터의 유일성</div>
+    <div class="proof-content">
+      <p>좌표벡터 $[\mathbf{x}]_\mathcal{B}$가 well-defined임을 보인다. 즉, 기저 표현의 계수가 유일함을 증명한다.</p>
+      <p>$\mathbf{x}$가 두 가지 표현을 가진다고 가정하자:</p>
+      <div class="math-display">$$\mathbf{x} = \lambda_1\mathbf{v}_1 + \cdots + \lambda_n\mathbf{v}_n = \mu_1\mathbf{v}_1 + \cdots + \mu_n\mathbf{v}_n$$</div>
+      <p>양변을 빼면:</p>
+      <div class="math-display">$$(\lambda_1 - \mu_1)\mathbf{v}_1 + \cdots + (\lambda_n - \mu_n)\mathbf{v}_n = \mathbf{0}$$</div>
+      <p>$\mathcal{B}$가 기저이므로 $\{\mathbf{v}_1, \ldots, \mathbf{v}_n\}$은 일차독립이다. 따라서:</p>
+      <div class="math-display">$$\lambda_1 - \mu_1 = \cdots = \lambda_n - \mu_n = 0$$</div>
+      <p>즉, $\lambda_i = \mu_i$ ($i = 1, \ldots, n$)이므로 좌표벡터 $(\lambda_1, \ldots, \lambda_n)^T$는 유일하다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+    <p>기저 $\mathcal{B} = \{\mathbf{v}_1, \ldots, \mathbf{v}_n\}$에 대한 $\mathbf{x}$의 <strong>좌표벡터</strong>:</p>
+    <div class="math-display">$$\mathbf{x} = c_1\mathbf{v}_1 + \cdots + c_n\mathbf{v}_n \implies [\mathbf{x}]_\mathcal{B} = \begin{pmatrix} c_1 \\ \vdots \\ c_n \end{pmatrix}$$</div>
+    <p>기저 $\mathcal{B}$에서 $\mathcal{C}$로의 <strong>전이행렬(transition matrix)</strong> $P_{\mathcal{B} \to \mathcal{C}}$:</p>
+    <div class="math-display">$$[\mathbf{x}]_\mathcal{C} = P_{\mathcal{B} \to \mathcal{C}} \, [\mathbf{x}]_\mathcal{B}$$</div>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 5.4 &mdash; 닮음 (Similarity)</div>
+    <p>$n \times n$ 행렬 $A$와 $B$가 <strong>닮음(similar)</strong>이라 함은 가역행렬 $P$가 존재하여:</p>
+    <div class="math-display">$$B = P^{-1}AP$$</div>
+    <p>$A$와 $B$는 같은 선형변환의 서로 다른 기저에 대한 행렬표현이다.</p>
+    <p>닮은 행렬은 같은 행렬식, 같은 랭크, 같은 대각합(trace), 같은 고유값을 가진다.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CHAPTER 6: 고유값과 고유벡터                        -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<div class="chapter-header" id="ch6">
+  <div class="ch-num">Chapter 6</div>
+  <h2>고유값과 고유벡터 (Eigenvalues &amp; Eigenvectors)</h2>
+</div>
+
+<section class="page-section" id="s6-1">
+  <span class="page-num">Section 6.1</span>
+  <h3>고유값과 고유벡터의 정의</h3>
+
+  <div class="card">
+    <div class="card-label">직관</div>
+    <p>선형변환 $T$에 의해 <strong>방향이 바뀌지 않는</strong> (크기만 변하는) 특별한 벡터가 있다. 이것이 고유벡터이고, 크기가 변하는 비율이 고유값이다.</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 6.1 &mdash; 고유값과 고유벡터</div>
+    <p>$n \times n$ 행렬 $A$에 대해, $\mathbf{v} \neq \mathbf{0}$이고:</p>
+    <div class="math-display">$$A\mathbf{v} = \lambda \mathbf{v}$$</div>
+    <p>을 만족하는 스칼라 $\lambda$를 <strong>고유값(eigenvalue)</strong>, 벡터 $\mathbf{v}$를 <strong>고유벡터(eigenvector)</strong>라 한다.</p>
+    <p>$\lambda$에 대한 <strong>고유공간</strong>: $E_\lambda = \nul(A - \lambda I) = \{\mathbf{v} : A\mathbf{v} = \lambda\mathbf{v}\}$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 6.1 &mdash; 고유값/고유벡터 직접 확인</div>
+    <p>$A = \begin{bmatrix} 3 & 1 \\ 0 & 2 \end{bmatrix}$, $\mathbf{v} = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$</p>
+    <div class="math-display">$$A\mathbf{v} = \begin{bmatrix} 3 & 1 \\ 0 & 2 \end{bmatrix}\begin{pmatrix} 1 \\ 0 \end{pmatrix} = \begin{pmatrix} 3 \\ 0 \end{pmatrix} = 3\begin{pmatrix} 1 \\ 0 \end{pmatrix} = 3\mathbf{v}$$</div>
+    <p>따라서 $\lambda = 3$은 고유값, $\mathbf{v} = (1,0)^T$은 대응 고유벡터이다.</p>
+  </div>
+</section>
+
+<section class="page-section" id="s6-2">
+  <span class="page-num">Section 6.2</span>
+  <h3>특성방정식 (Characteristic Equation)</h3>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 6.1 &mdash; 고유값을 구하는 방법</div>
+    <p>$A\mathbf{v} = \lambda\mathbf{v}$에서 $(A - \lambda I)\mathbf{v} = \mathbf{0}$. 비자명 해가 존재하려면:</p>
+    <div class="math-display">$$\det(A - \lambda I) = 0 \quad \text{(특성방정식, Characteristic Equation)}$$</div>
+    <p>$\det(A - \lambda I)$는 $\lambda$에 대한 $n$차 다항식이며, 이를 <strong>특성다항식(characteristic polynomial)</strong>이라 한다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 6.2 &mdash; $2 \times 2$ 고유값 구하기</div>
+    <p>$A = \begin{bmatrix} 4 & 2 \\ 1 & 3 \end{bmatrix}$</p>
+    <div class="math-display">$$\det(A - \lambda I) = \det\begin{bmatrix} 4-\lambda & 2 \\ 1 & 3-\lambda \end{bmatrix} = (4-\lambda)(3-\lambda) - 2$$</div>
+    <div class="math-display">$$= \lambda^2 - 7\lambda + 10 = (\lambda - 2)(\lambda - 5) = 0$$</div>
+    <p>고유값: $\lambda_1 = 2$, $\lambda_2 = 5$</p>
+    <p><strong>$\lambda = 2$의 고유벡터:</strong></p>
+    <div class="math-display">$$A - 2I = \begin{bmatrix} 2 & 2 \\ 1 & 1 \end{bmatrix} \xrightarrow{\text{RREF}} \begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix}$$</div>
+    <p>$x_1 = -x_2$이므로 $E_2 = \span\left\{\begin{pmatrix}-1\\1\end{pmatrix}\right\}$</p>
+    <p><strong>$\lambda = 5$의 고유벡터:</strong></p>
+    <div class="math-display">$$A - 5I = \begin{bmatrix} -1 & 2 \\ 1 & -2 \end{bmatrix} \xrightarrow{\text{RREF}} \begin{bmatrix} 1 & -2 \\ 0 & 0 \end{bmatrix}$$</div>
+    <p>$x_1 = 2x_2$이므로 $E_5 = \span\left\{\begin{pmatrix}2\\1\end{pmatrix}\right\}$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 6.3 &mdash; $3 \times 3$ 고유값</div>
+    <p>$A = \begin{bmatrix} 2 & 0 & 0 \\ 1 & 3 & 0 \\ 0 & -1 & 1 \end{bmatrix}$ (하삼각행렬)</p>
+    <div class="math-display">$$\det(A - \lambda I) = (2-\lambda)(3-\lambda)(1-\lambda) = 0$$</div>
+    <p>삼각행렬의 고유값 = 대각 성분! $\lambda_1 = 2$, $\lambda_2 = 3$, $\lambda_3 = 1$</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 6.2 &mdash; 고유값의 성질</div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 서로 다른 고유값의 고유벡터는 일차독립</div>
+    <div class="proof-content">
+      <p>서로 다른 고유값 $\sigma_1, \ldots, \sigma_k$에 대응하는 고유벡터 $\mathbf{v}_1, \ldots, \mathbf{v}_k$가 일차독립임을 $k$에 대한 귀납법으로 증명한다.</p>
+      <p><strong>기저 ($k=1$):</strong> 고유벡터는 정의에 의해 $\mathbf{v}_1 \neq \mathbf{0}$이므로 $\{\mathbf{v}_1\}$은 일차독립이다.</p>
+      <p><strong>귀납 단계:</strong> $k$개의 서로 다른 고유값의 고유벡터가 일차독립이라 가정하고, $k+1$개의 경우를 보이자.</p>
+      <div class="math-display">$$c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \cdots + c_{k+1}\mathbf{v}_{k+1} = \mathbf{0} \quad \cdots \text{①}$$</div>
+      <p>양변에 $A$를 적용하면 ($A\mathbf{v}_i = \sigma_i\mathbf{v}_i$):</p>
+      <div class="math-display">$$c_1\sigma_1\mathbf{v}_1 + c_2\sigma_2\mathbf{v}_2 + \cdots + c_{k+1}\sigma_{k+1}\mathbf{v}_{k+1} = \mathbf{0} \quad \cdots \text{②}$$</div>
+      <p>② $-$ $\sigma_{k+1}$ $\times$ ①을 계산하면:</p>
+      <div class="math-display">$$c_1(\sigma_1 - \sigma_{k+1})\mathbf{v}_1 + c_2(\sigma_2 - \sigma_{k+1})\mathbf{v}_2 + \cdots + c_k(\sigma_k - \sigma_{k+1})\mathbf{v}_k = \mathbf{0}$$</div>
+      <p>귀납 가정에 의해 $\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$는 일차독립이므로:</p>
+      <div class="math-display">$$c_i(\sigma_i - \sigma_{k+1}) = 0 \quad \text{for } i = 1, \ldots, k$$</div>
+      <p>고유값이 모두 다르므로 $\sigma_i - \sigma_{k+1} \neq 0$ ($i = 1, \ldots, k$). 따라서 $c_1 = c_2 = \cdots = c_k = 0$이다.</p>
+      <p>이를 ①에 대입하면 $c_{k+1}\mathbf{v}_{k+1} = \mathbf{0}$이고, $\mathbf{v}_{k+1} \neq \mathbf{0}$ (고유벡터)이므로 $c_{k+1} = 0$이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+    <p>&bull; $\det(A) = \lambda_1 \lambda_2 \cdots \lambda_n$ &emsp;(고유값의 곱 = 행렬식)</p>
+    <p>&bull; $\tr(A) = a_{11}+a_{22}+\cdots+a_{nn} = \lambda_1 + \lambda_2 + \cdots + \lambda_n$ &emsp;(대각합 = 고유값의 합)</p>
+    <p>&bull; 서로 다른 고유값에 대응하는 고유벡터는 일차독립이다.</p>
+    <p>&bull; $A$가 가역 $\iff$ 모든 고유값이 0이 아니다.</p>
+    <p>&bull; $A^k$의 고유값은 $\lambda^k$ (같은 고유벡터)</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 6.2 &mdash; 대수적/기하적 중복도</div>
+    <p><strong>대수적 중복도 (Algebraic Multiplicity)</strong>: 특성다항식에서 $(\lambda - \lambda_i)$의 거듭제곱 차수</p>
+    <p><strong>기하적 중복도 (Geometric Multiplicity)</strong>: $\dim(E_{\lambda_i}) = \dim(\nul(A - \lambda_i I))$</p>
+    <p>항상: $1 \leq \text{기하적 중복도} \leq \text{대수적 중복도}$</p>
+  </div>
+</section>
+
+<section class="page-section" id="s6-3">
+  <span class="page-num">Section 6.3</span>
+  <h3>대각화 (Diagonalization)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 6.3 &mdash; 대각화</div>
+    <p>$n \times n$ 행렬 $A$가 <strong>대각화 가능(diagonalizable)</strong>이라 함은 가역행렬 $P$와 대각행렬 $D$가 존재하여:</p>
+    <div class="math-display">$$A = PDP^{-1}$$</div>
+    <p>여기서 $D$의 대각 성분은 고유값, $P$의 열은 대응하는 고유벡터이다.</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 6.3 &mdash; 대각화 가능 조건</div>
+    <p>$n \times n$ 행렬 $A$가 대각화 가능하다 $\iff$ $A$가 $n$개의 일차독립인 고유벡터를 가진다.</p>
+    <p>충분조건: $A$가 $n$개의 서로 다른 고유값을 가지면 반드시 대각화 가능.</p>
+    <p>필요충분조건: 모든 고유값에 대해 기하적 중복도 = 대수적 중복도.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 6.4 &mdash; 대각화</div>
+    <p>예제 6.2의 $A = \begin{bmatrix}4&2\\1&3\end{bmatrix}$, 고유값 $\lambda_1=2$, $\lambda_2=5$.</p>
+    <p>고유벡터: $\mathbf{v}_1 = \begin{pmatrix}-1\\1\end{pmatrix}$, $\mathbf{v}_2 = \begin{pmatrix}2\\1\end{pmatrix}$</p>
+    <div class="math-display">$$P = \begin{bmatrix}-1&2\\1&1\end{bmatrix}, \quad D = \begin{bmatrix}2&0\\0&5\end{bmatrix}$$</div>
+    <div class="math-display">$$A = PDP^{-1} = \begin{bmatrix}-1&2\\1&1\end{bmatrix}\begin{bmatrix}2&0\\0&5\end{bmatrix}\begin{bmatrix}-1&2\\1&1\end{bmatrix}^{-1}$$</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">대각화의 위력: $A^k$ 계산</div>
+    <p>$A = PDP^{-1}$이면:</p>
+    <div class="math-display">$$A^k = PD^kP^{-1} = P\begin{bmatrix}\lambda_1^k & & \\ & \ddots & \\ & & \lambda_n^k\end{bmatrix}P^{-1}$$</div>
+    <p>$D^k$는 대각 성분을 $k$제곱하면 되므로 매우 간단하다. 이를 이용해 피보나치 수열, 연립 차분 방정식 등을 효율적으로 풀 수 있다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 6.5 &mdash; 대각화가 불가능한 경우</div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 대각화 가능 $\iff$ $n$개의 일차독립 고유벡터</div>
+    <div class="proof-content">
+      <p><strong>($\Rightarrow$)</strong> $A = PDP^{-1}$이라 하자. $AP = PD$이므로, $P$의 $j$번째 열을 $\mathbf{v}_j$라 하면:</p>
+      <div class="math-display">$$A\mathbf{v}_j = \lambda_j \mathbf{v}_j$$</div>
+      <p>따라서 각 열 $\mathbf{v}_j$는 고유값 $\lambda_j$에 대응하는 고유벡터이다. $P$가 가역이므로 열벡터들이 일차독립이고, $n$개의 일차독립인 고유벡터가 존재한다.</p>
+      <p><strong>($\Leftarrow$)</strong> $n$개의 일차독립인 고유벡터 $\mathbf{v}_1, \ldots, \mathbf{v}_n$이 존재한다고 하자. $P = [\mathbf{v}_1 \cdots \mathbf{v}_n]$으로 놓으면, 열벡터가 일차독립이므로 $P$는 가역이다.</p>
+      <div class="math-display">$$AP = [A\mathbf{v}_1 \cdots A\mathbf{v}_n] = [\lambda_1\mathbf{v}_1 \cdots \lambda_n\mathbf{v}_n] = PD$$</div>
+      <p>따라서 $A = PDP^{-1}$이다.</p>
+      <p><strong>유일성 관점:</strong> $P$의 열이 기저를 이루므로, 모든 $\mathbf{x} \in \R^n$는 유일한 표현 $\mathbf{x} = \mu_1\mathbf{v}_1 + \cdots + \mu_n\mathbf{v}_n$을 가진다. 이때:</p>
+      <div class="math-display">$$A\mathbf{x} = \mu_1\lambda_1\mathbf{v}_1 + \cdots + \mu_n\lambda_n\mathbf{v}_n$$</div>
+      <p>계수 $\mu_i$가 유일하게 결정되므로, 대각화는 $A$의 작용을 각 고유공간 방향으로의 스칼라 곱으로 분해하는 것이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+    <p>$A = \begin{bmatrix}2 & 1 \\ 0 & 2\end{bmatrix}$</p>
+    <p>$\det(A-\lambda I) = (2-\lambda)^2 = 0$이므로 $\lambda = 2$ (대수적 중복도 2)</p>
+    <p>$A - 2I = \begin{bmatrix}0&1\\0&0\end{bmatrix}$, $\nul(A-2I) = \span\{(1,0)^T\}$, 기하적 중복도 = 1.</p>
+    <p>일차독립 고유벡터가 1개뿐이므로 대각화 불가!</p>
+  </div>
+</section>
+
+<section class="page-section" id="s6-4">
+  <span class="page-num">Section 6.4</span>
+  <h3>케일리-해밀턴 정리 (Cayley-Hamilton Theorem)</h3>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 6.4 &mdash; 케일리-해밀턴 정리</div>
+    <p>$n \times n$ 행렬 $A$의 특성다항식을 $p(\lambda) = \det(\lambda I - A)$라 하면:</p>
+    <div class="math-display">$$p(A) = O \quad \text{(영행렬)}$$</div>
+    <p>즉, 모든 정사각행렬은 자기 자신의 특성방정식을 만족한다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 6.6 &mdash; 케일리-해밀턴 확인</div>
+    <p>$A = \begin{bmatrix}1&2\\3&4\end{bmatrix}$, $p(\lambda) = \lambda^2 - 5\lambda - 2$</p>
+    <div class="math-display">$$A^2 - 5A - 2I = \begin{bmatrix}7&10\\15&22\end{bmatrix} - \begin{bmatrix}5&10\\15&20\end{bmatrix} - \begin{bmatrix}2&0\\0&2\end{bmatrix} = \begin{bmatrix}0&0\\0&0\end{bmatrix} \quad \checkmark$$</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">케일리-해밀턴의 활용</div>
+    <p><strong>역행렬 구하기:</strong> $2 \times 2$ 행렬 $A$에서 $A^2 - (\tr A)A + (\det A)I = O$이므로:</p>
+    <div class="math-display">$$A^{-1} = \frac{1}{\det(A)}\left[(\tr A)I - A\right]$$</div>
+    <p><strong>$A^k$ 간소화:</strong> 특성다항식으로 나눈 나머지 다항식을 이용해 고차 거듭제곱을 저차로 환원.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CHAPTER 7: 내적공간                                -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<div class="chapter-header" id="ch7">
+  <div class="ch-num">Chapter 7</div>
+  <h2>내적공간 (Inner Product Spaces)</h2>
+</div>
+
+<section class="page-section" id="s7-1">
+  <span class="page-num">Section 7.1</span>
+  <h3>내적의 정의</h3>
+
+  <div class="card">
+    <div class="card-label">동기</div>
+    <p>벡터공간에는 "길이"나 "각도"의 개념이 없다. 내적(inner product)을 도입하면 이러한 기하학적 개념을 정의할 수 있다.</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 7.1 &mdash; 내적 (Inner Product)</div>
+    <p>실수 벡터공간 $V$ 위의 <strong>내적</strong>은 함수 $\langle \cdot, \cdot \rangle : V \times V \to \R$로, 모든 $\mathbf{u}, \mathbf{v}, \mathbf{w} \in V$와 $c \in \R$에 대해:</p>
+    <p>1. $\langle \mathbf{u}, \mathbf{v} \rangle = \langle \mathbf{v}, \mathbf{u} \rangle$ &emsp;(대칭성)</p>
+    <p>2. $\langle c\mathbf{u}+\mathbf{v}, \mathbf{w} \rangle = c\langle \mathbf{u}, \mathbf{w} \rangle + \langle \mathbf{v}, \mathbf{w} \rangle$ &emsp;(첫째 변수에 대한 선형성)</p>
+    <p>3. $\langle \mathbf{v}, \mathbf{v} \rangle \geq 0$이고, $\langle \mathbf{v}, \mathbf{v} \rangle = 0 \iff \mathbf{v} = \mathbf{0}$ &emsp;(양정치성)</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 7.1 &mdash; 다양한 내적</div>
+    <p><strong>$\R^n$의 표준 내적 (점곱):</strong></p>
+    <div class="math-display">$$\langle \mathbf{u}, \mathbf{v} \rangle = \mathbf{u} \cdot \mathbf{v} = u_1v_1 + u_2v_2 + \cdots + u_nv_n = \mathbf{u}^T\mathbf{v}$$</div>
+    <p><strong>가중 내적:</strong> $\langle \mathbf{u}, \mathbf{v} \rangle = 2u_1v_1 + 3u_2v_2$ (가중치가 양수이면 내적)</p>
+    <p><strong>함수 공간의 내적:</strong> $\langle f, g \rangle = \int_a^b f(x)g(x)\,dx$</p>
+    <p><strong>행렬의 내적:</strong> $\langle A, B \rangle = \tr(A^TB) = \sum_{i,j} a_{ij}b_{ij}$ (프로베니우스 내적)</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 7.2 &mdash; 노름과 거리</div>
+    <p>내적으로부터 <strong>노름(norm, 길이)</strong>과 <strong>거리</strong>를 정의:</p>
+    <div class="math-display">$$\|\mathbf{v}\| = \sqrt{\langle \mathbf{v}, \mathbf{v} \rangle}, \quad d(\mathbf{u}, \mathbf{v}) = \|\mathbf{u} - \mathbf{v}\|$$</div>
+    <p>$\|\mathbf{v}\| = 1$인 벡터를 <strong>단위벡터(unit vector)</strong>라 한다.</p>
+    <p>정규화: $\hat{\mathbf{v}} = \frac{\mathbf{v}}{\|\mathbf{v}\|}$</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 7.1 &mdash; 코시-슈바르츠 부등식</div>
+    <div class="math-display">$$|\langle \mathbf{u}, \mathbf{v} \rangle| \leq \|\mathbf{u}\| \cdot \|\mathbf{v}\|$$</div>
+    <p>등호 조건: $\mathbf{u}$와 $\mathbf{v}$가 일차종속 (한쪽이 다른 쪽의 스칼라배)</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명</div>
+    <div class="proof-content">
+      <p>$\mathbf{v} = \mathbf{0}$이면 양변 모두 0이므로 성립. $\mathbf{v} \neq \mathbf{0}$이라 하자.</p>
+      <p>임의의 실수 $t$에 대해:</p>
+      <div class="math-display">$$0 \leq \langle \mathbf{u} - t\mathbf{v}, \mathbf{u} - t\mathbf{v} \rangle = \|\mathbf{u}\|^2 - 2t\langle\mathbf{u},\mathbf{v}\rangle + t^2\|\mathbf{v}\|^2$$</div>
+      <p>이것은 $t$에 대한 이차식이고 항상 $\geq 0$이므로, 판별식 $\leq 0$:</p>
+      <div class="math-display">$$4\langle\mathbf{u},\mathbf{v}\rangle^2 - 4\|\mathbf{u}\|^2\|\mathbf{v}\|^2 \leq 0$$</div>
+      <div class="math-display">$$\langle\mathbf{u},\mathbf{v}\rangle^2 \leq \|\mathbf{u}\|^2\|\mathbf{v}\|^2$$</div>
+      <p>양변에 제곱근을 취하면 코시-슈바르츠 부등식을 얻는다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 코시-슈바르츠 등호 조건 (일차종속일 때만 등호)</div>
+    <div class="proof-content">
+      <p>위 증명에서 $\mathbf{v} \neq \mathbf{0}$일 때, $t = \frac{\langle\mathbf{u},\mathbf{v}\rangle}{\|\mathbf{v}\|^2}$로 설정하면:</p>
+      <div class="math-display">$$0 \leq \|\mathbf{u}\|^2 - 2\frac{\langle\mathbf{u},\mathbf{v}\rangle}{\|\mathbf{v}\|^2}\langle\mathbf{u},\mathbf{v}\rangle + \frac{\langle\mathbf{u},\mathbf{v}\rangle^2}{\|\mathbf{v}\|^4}\|\mathbf{v}\|^2 = \|\mathbf{u}\|^2 - \frac{\langle\mathbf{u},\mathbf{v}\rangle^2}{\|\mathbf{v}\|^2}$$</div>
+      <p>즉 $\langle\mathbf{u},\mathbf{v}\rangle^2 \leq \|\mathbf{u}\|^2\|\mathbf{v}\|^2$이고, 이것은 곧 $\|\mathbf{u} - t\mathbf{v}\|^2 \geq 0$과 동치이다.</p>
+      <p><strong>등호 조건:</strong> 등호가 성립할 필요충분조건은 $\|\mathbf{u} - t\mathbf{v}\|^2 = 0$, 즉 $\mathbf{u} - t\mathbf{v} = \mathbf{0}$인 것이다.</p>
+      <p>이는 $\mathbf{u} = t\mathbf{v}$, 즉 $\mathbf{u}$와 $\mathbf{v}$가 <strong>일차종속</strong>임을 의미한다.</p>
+      <p>정리하면: $|\langle\mathbf{u},\mathbf{v}\rangle| = \|\mathbf{u}\|\|\mathbf{v}\|$ $\iff$ $\exists\, \lambda \in \R$ such that $\mathbf{u} = \lambda\mathbf{v}$ (또는 $\mathbf{v} = \mathbf{0}$). <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+
+  <div class="thm-box">
+    <div class="thm-title">정리 7.2 &mdash; 삼각 부등식</div>
+    <div class="math-display">$$\|\mathbf{u} + \mathbf{v}\| \leq \|\mathbf{u}\| + \|\mathbf{v}\|$$</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">각도의 정의</div>
+    <p>코시-슈바르츠 부등식에 의해 $-1 \leq \frac{\langle\mathbf{u},\mathbf{v}\rangle}{\|\mathbf{u}\|\|\mathbf{v}\|} \leq 1$이므로 각도를 정의할 수 있다:</p>
+    <div class="math-display">$$\cos\theta = \frac{\langle\mathbf{u},\mathbf{v}\rangle}{\|\mathbf{u}\|\|\mathbf{v}\|}, \quad 0 \leq \theta \leq \pi$$</div>
+    <p>특히 $\langle\mathbf{u},\mathbf{v}\rangle = 0$이면 $\theta = \frac{\pi}{2}$, 즉 <strong>직교(orthogonal)</strong>한다.</p>
+  </div>
+</section>
+
+<section class="page-section" id="s7-2">
+  <span class="page-num">Section 7.2</span>
+  <h3>직교와 정규직교 (Orthogonal and Orthonormal)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 7.3 &mdash; 직교집합과 정규직교집합</div>
+    <p>벡터 집합 $\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$이:</p>
+    <p><strong>직교집합 (Orthogonal Set):</strong> $\langle \mathbf{v}_i, \mathbf{v}_j \rangle = 0$ for all $i \neq j$</p>
+    <p><strong>정규직교집합 (Orthonormal Set):</strong> 직교 + 모든 $\|\mathbf{v}_i\| = 1$</p>
+    <div class="math-display">$$\langle \mathbf{v}_i, \mathbf{v}_j \rangle = \delta_{ij} = \begin{cases} 1 & i=j \\ 0 & i \neq j \end{cases} \quad \text{(크로네커 델타)}$$</div>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 7.3 &mdash; 직교집합은 일차독립</div>
+    <p>영벡터를 포함하지 않는 직교집합은 반드시 일차독립이다.</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명</div>
+    <div class="proof-content">
+      <p>$c_1\mathbf{v}_1 + \cdots + c_k\mathbf{v}_k = \mathbf{0}$이라 하자. 양변에 $\langle \cdot, \mathbf{v}_i \rangle$를 취하면:</p>
+      <div class="math-display">$$0 = \langle \mathbf{0}, \mathbf{v}_i \rangle = c_1\langle\mathbf{v}_1, \mathbf{v}_i\rangle + \cdots + c_k\langle\mathbf{v}_k, \mathbf{v}_i\rangle = c_i\langle\mathbf{v}_i, \mathbf{v}_i\rangle = c_i\|\mathbf{v}_i\|^2$$</div>
+      <p>$\|\mathbf{v}_i\|^2 > 0$이므로 $c_i = 0$. 모든 $i$에 대해 성립하므로 일차독립. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">일차독립 + 직교의 강력한 결합: 좌표 계산의 단순화</div>
+    <p>$\{\mathbf{v}_1,\ldots,\mathbf{v}_k\}$가 부분공간 $W$의 <strong>직교 기저</strong>일 때, 임의의 $\mathbf{w} \in W$는 유일한 표현을 가진다:</p>
+    <div class="math-display">$$\mathbf{w} = \lambda_1\mathbf{v}_1 + \cdots + \lambda_k\mathbf{v}_k$$</div>
+    <p>양변에 $\langle\cdot,\mathbf{v}_i\rangle$를 취하면 (직교성에 의해 교차항 소멸):</p>
+    <div class="math-display">$$\langle\mathbf{w},\mathbf{v}_i\rangle = \lambda_1\langle\mathbf{v}_1,\mathbf{v}_i\rangle + \cdots + \lambda_k\langle\mathbf{v}_k,\mathbf{v}_i\rangle = \lambda_i\|\mathbf{v}_i\|^2$$</div>
+    <p>따라서 계수가 <strong>유일하고 명시적으로</strong> 결정된다:</p>
+    <div class="math-display">$$\lambda_i = \frac{\langle\mathbf{w},\mathbf{v}_i\rangle}{\|\mathbf{v}_i\|^2}$$</div>
+    <p>비교: 일반적인 (비직교) 기저에서는 $\lambda_i$를 구하기 위해 연립방정식을 풀어야 한다. 직교성은 이를 내적 계산 하나로 단순화한다.</p>
+    <p><strong>정규직교 기저</strong>인 경우: $\|\mathbf{v}_i\| = 1$이므로 $\lambda_i = \langle\mathbf{w},\mathbf{v}_i\rangle$ (더욱 간단).</p>
+  </div>
+
+
+  <div class="def-box">
+    <div class="def-title">정의 7.4 &mdash; 직교행렬 (Orthogonal Matrix)</div>
+    <p>$n \times n$ 실수 행렬 $Q$가 <strong>직교행렬</strong>이라 함은:</p>
+    <div class="math-display">$$Q^TQ = QQ^T = I \quad \iff \quad Q^{-1} = Q^T$$</div>
+    <p>즉 열벡터(행벡터)들이 정규직교집합을 이룬다.</p>
+    <p>직교행렬의 성질: $\|Q\mathbf{x}\| = \|\mathbf{x}\|$ (길이 보존), $\det(Q) = \pm 1$.</p>
+  </div>
+</section>
+
+<section class="page-section" id="s7-3">
+  <span class="page-num">Section 7.3</span>
+  <h3>그람-슈미트 과정 (Gram-Schmidt Process)</h3>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 7.4 &mdash; 그람-슈미트 정규직교화</div>
+    <p>일차독립 벡터 $\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$로부터 같은 공간을 생성하는 정규직교 벡터 $\{\mathbf{e}_1, \ldots, \mathbf{e}_k\}$를 구성:</p>
+    <div class="math-display">$$\mathbf{u}_1 = \mathbf{v}_1$$</div>
+    <div class="math-display">$$\mathbf{u}_2 = \mathbf{v}_2 - \frac{\langle\mathbf{v}_2, \mathbf{u}_1\rangle}{\langle\mathbf{u}_1, \mathbf{u}_1\rangle}\mathbf{u}_1$$</div>
+    <div class="math-display">$$\mathbf{u}_3 = \mathbf{v}_3 - \frac{\langle\mathbf{v}_3, \mathbf{u}_1\rangle}{\langle\mathbf{u}_1, \mathbf{u}_1\rangle}\mathbf{u}_1 - \frac{\langle\mathbf{v}_3, \mathbf{u}_2\rangle}{\langle\mathbf{u}_2, \mathbf{u}_2\rangle}\mathbf{u}_2$$</div>
+    <p>일반적으로:</p>
+    <div class="math-display">$$\mathbf{u}_j = \mathbf{v}_j - \sum_{i=1}^{j-1} \frac{\langle\mathbf{v}_j, \mathbf{u}_i\rangle}{\langle\mathbf{u}_i, \mathbf{u}_i\rangle}\mathbf{u}_i$$</div>
+    <p>정규화: $\mathbf{e}_i = \frac{\mathbf{u}_i}{\|\mathbf{u}_i\|}$</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">직관: 빼기의 의미</div>
+    <p>$\frac{\langle\mathbf{v}_j, \mathbf{u}_i\rangle}{\langle\mathbf{u}_i, \mathbf{u}_i\rangle}\mathbf{u}_i$는 $\mathbf{v}_j$를 $\mathbf{u}_i$ 방향으로 <strong>정사영(projection)</strong>한 것이다. 따라서 그람-슈미트는 $\mathbf{v}_j$에서 이전 벡터들 방향의 성분을 모두 빼서, 이전 벡터들과 직교하는 "순수한" 새 방향만 추출하는 과정이다.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 7.2 &mdash; 그람-슈미트 과정</div>
+    <p>$\mathbf{v}_1 = (1, 1, 0)$, $\mathbf{v}_2 = (1, 0, 1)$, $\mathbf{v}_3 = (0, 1, 1)$</p>
+    <p><strong>Step 1.</strong> $\mathbf{u}_1 = (1, 1, 0)$</p>
+    <p><strong>Step 2.</strong> $\langle\mathbf{v}_2, \mathbf{u}_1\rangle = 1$, $\langle\mathbf{u}_1, \mathbf{u}_1\rangle = 2$</p>
+    <div class="math-display">$$\mathbf{u}_2 = (1,0,1) - \frac{1}{2}(1,1,0) = \left(\frac{1}{2}, -\frac{1}{2}, 1\right)$$</div>
+    <p><strong>Step 3.</strong> $\langle\mathbf{v}_3, \mathbf{u}_1\rangle = 1$, $\langle\mathbf{v}_3, \mathbf{u}_2\rangle = \frac{1}{2}$, $\langle\mathbf{u}_2,\mathbf{u}_2\rangle = \frac{3}{2}$</p>
+    <div class="math-display">$$\mathbf{u}_3 = (0,1,1) - \frac{1}{2}(1,1,0) - \frac{1/2}{3/2}\left(\frac{1}{2},-\frac{1}{2},1\right)$$</div>
+    <div class="math-display">$$= (0,1,1) - \left(\frac{1}{2},\frac{1}{2},0\right) - \left(\frac{1}{6},-\frac{1}{6},\frac{1}{3}\right) = \left(-\frac{2}{3}, \frac{2}{3}, \frac{2}{3}\right)$$</div>
+    <p>정규화하면 정규직교 기저를 얻는다. 검증: $\langle\mathbf{u}_1,\mathbf{u}_2\rangle = \frac{1}{2}-\frac{1}{2}+0 = 0$ ✓</p>
+  </div>
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 그람-슈미트가 올바른 정규직교 집합을 생성하는 이유</div>
+    <div class="proof-content">
+      <p>일차독립 집합 $\{\mathbf{v}_1,\ldots,\mathbf{v}_k\}$에 그람-슈미트를 적용하여 얻은 $\{\mathbf{u}_1,\ldots,\mathbf{u}_k\}$가 (i) 모두 영이 아니고, (ii) 쌍마다 직교하며, (iii) 같은 공간을 생성함을 보인다.</p>
+      <p><strong>(i) $\mathbf{u}_j \neq \mathbf{0}$ for all $j$:</strong></p>
+      <p>귀류법. $\mathbf{u}_j = \mathbf{0}$이라 가정하면, 정의에 의해:</p>
+      <div class="math-display">$$\mathbf{v}_j = \sum_{i=1}^{j-1}\frac{\langle\mathbf{v}_j,\mathbf{u}_i\rangle}{\langle\mathbf{u}_i,\mathbf{u}_i\rangle}\mathbf{u}_i \in \span\{\mathbf{u}_1,\ldots,\mathbf{u}_{j-1}\} = \span\{\mathbf{v}_1,\ldots,\mathbf{v}_{j-1}\}$$</div>
+      <p>그런데 $\mathbf{v}_j \in \span\{\mathbf{v}_1,\ldots,\mathbf{v}_{j-1}\}$은 $\{\mathbf{v}_1,\ldots,\mathbf{v}_j\}$의 일차독립에 모순이다. 따라서 $\mathbf{u}_j \neq \mathbf{0}$.</p>
+      <p><strong>(ii) $\langle\mathbf{u}_j,\mathbf{u}_i\rangle = 0$ for $i < j$:</strong></p>
+      <div class="math-display">$$\langle\mathbf{u}_j,\mathbf{u}_i\rangle = \left\langle\mathbf{v}_j - \sum_{m=1}^{j-1}\frac{\langle\mathbf{v}_j,\mathbf{u}_m\rangle}{\|\mathbf{u}_m\|^2}\mathbf{u}_m,\; \mathbf{u}_i\right\rangle = \langle\mathbf{v}_j,\mathbf{u}_i\rangle - \frac{\langle\mathbf{v}_j,\mathbf{u}_i\rangle}{\|\mathbf{u}_i\|^2}\langle\mathbf{u}_i,\mathbf{u}_i\rangle = \langle\mathbf{v}_j,\mathbf{u}_i\rangle - \langle\mathbf{v}_j,\mathbf{u}_i\rangle = 0$$</div>
+      <p>(세 번째 등호에서: $m \neq i$인 항은 귀납 가정 $\langle\mathbf{u}_m,\mathbf{u}_i\rangle = 0$에 의해 소멸)</p>
+      <p><strong>(iii) $\span\{\mathbf{u}_1,\ldots,\mathbf{u}_k\} = \span\{\mathbf{v}_1,\ldots,\mathbf{v}_k\}$:</strong></p>
+      <p>구성에 의해 각 $\mathbf{u}_j \in \span\{\mathbf{v}_1,\ldots,\mathbf{v}_j\}$이고, 역으로 $\mathbf{v}_j = \mathbf{u}_j + \sum_{i=1}^{j-1}\frac{\langle\mathbf{v}_j,\mathbf{u}_i\rangle}{\|\mathbf{u}_i\|^2}\mathbf{u}_i \in \span\{\mathbf{u}_1,\ldots,\mathbf{u}_j\}$. 따라서 두 집합은 같은 공간을 생성한다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+
+  <div class="card">
+    <div class="card-label">QR 분해와의 관계</div>
+    <p>그람-슈미트 과정은 <strong>QR 분해</strong>를 구하는 방법이다: $A = QR$</p>
+    <p>$Q$의 열 = 정규직교 벡터 $\mathbf{e}_1, \ldots, \mathbf{e}_n$</p>
+    <p>$R$은 상삼각행렬: $r_{ij} = \langle\mathbf{v}_j, \mathbf{e}_i\rangle$ ($i \leq j$)</p>
+  </div>
+</section>
+
+<section class="page-section" id="s7-4">
+  <span class="page-num">Section 7.4</span>
+  <h3>직교여공간과 정사영 (Orthogonal Complement and Projection)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 7.5 &mdash; 직교여공간</div>
+    <p>$W$가 내적공간 $V$의 부분공간일 때, $W$의 <strong>직교여공간(orthogonal complement)</strong>은:</p>
+    <div class="math-display">$$W^\perp = \{\mathbf{v} \in V : \langle\mathbf{v}, \mathbf{w}\rangle = 0 \text{ for all } \mathbf{w} \in W\}$$</div>
+    <p>$\dim(W) + \dim(W^\perp) = \dim(V)$, 그리고 $V = W \oplus W^\perp$ (직합)</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 7.5 &mdash; 직교사영 정리 (Orthogonal Projection)</div>
+    <p>$W$의 정규직교 기저를 $\{\mathbf{e}_1, \ldots, \mathbf{e}_k\}$라 하면, $\mathbf{v} \in V$의 $W$ 위로의 <strong>직교사영(orthogonal projection)</strong>은:</p>
+    <div class="math-display">$$\proj_W \mathbf{v} = \langle\mathbf{v}, \mathbf{e}_1\rangle\mathbf{e}_1 + \langle\mathbf{v}, \mathbf{e}_2\rangle\mathbf{e}_2 + \cdots + \langle\mathbf{v}, \mathbf{e}_k\rangle\mathbf{e}_k$$</div>
+    <p>이때 $\mathbf{v} = \proj_W \mathbf{v} + (\mathbf{v} - \proj_W \mathbf{v})$이고, $\mathbf{v} - \proj_W \mathbf{v} \in W^\perp$.</p>
+    <p>$\proj_W \mathbf{v}$는 $W$에서 $\mathbf{v}$에 <strong>가장 가까운 벡터</strong>이다:</p>
+    <div class="math-display">$$\|\mathbf{v} - \proj_W \mathbf{v}\| \leq \|\mathbf{v} - \mathbf{w}\| \quad \text{for all } \mathbf{w} \in W$$</div>
+  </div>
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 직교사영이 최근접점인 이유</div>
+    <div class="proof-content">
+      <p>$\hat{\mathbf{w}} = \proj_W\mathbf{v}$라 하고, $\mathbf{w}$를 $W$의 임의의 벡터라 하자.</p>
+      <div class="math-display">$$\|\mathbf{v}-\mathbf{w}\|^2 = \|(\mathbf{v}-\hat{\mathbf{w}}) + (\hat{\mathbf{w}}-\mathbf{w})\|^2$$</div>
+      <p>핵심 관찰: $\mathbf{v}-\hat{\mathbf{w}} \in W^\perp$이고 $\hat{\mathbf{w}}-\mathbf{w} \in W$이므로, 이 두 벡터는 <strong>직교</strong>한다.</p>
+      <p>피타고라스 정리에 의해:</p>
+      <div class="math-display">$$\|\mathbf{v}-\mathbf{w}\|^2 = \|\mathbf{v}-\hat{\mathbf{w}}\|^2 + \|\hat{\mathbf{w}}-\mathbf{w}\|^2 \geq \|\mathbf{v}-\hat{\mathbf{w}}\|^2$$</div>
+      <p>등호 조건: $\|\hat{\mathbf{w}}-\mathbf{w}\|^2 = 0$, 즉 $\mathbf{w} = \hat{\mathbf{w}}$일 때만 등호가 성립한다.</p>
+      <p>따라서 $\hat{\mathbf{w}} = \proj_W\mathbf{v}$는 $W$에서 $\mathbf{v}$에 가장 가까운 <strong>유일한</strong> 점이다. 유일성의 근원: 정규직교 기저가 유일한 좌표 표현을 제공하기 때문이다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 직교분해의 유일성 ($V = W \oplus W^\perp$)</div>
+    <div class="proof-content">
+      <p><strong>존재:</strong> $\mathbf{v} = \proj_W\mathbf{v} + (\mathbf{v} - \proj_W\mathbf{v})$로 분해하면, 첫째 항은 $W$에, 둘째 항은 $W^\perp$에 속한다.</p>
+      <p><strong>유일성:</strong> 두 가지 분해가 존재한다고 가정하자:</p>
+      <div class="math-display">$$\mathbf{v} = \mathbf{w}_1 + \mathbf{w}_1^\perp = \mathbf{w}_2 + \mathbf{w}_2^\perp \quad (\mathbf{w}_i \in W,\; \mathbf{w}_i^\perp \in W^\perp)$$</div>
+      <p>이로부터:</p>
+      <div class="math-display">$$\mathbf{w}_1 - \mathbf{w}_2 = \mathbf{w}_2^\perp - \mathbf{w}_1^\perp$$</div>
+      <p>좌변은 $W$에 속하고, 우변은 $W^\perp$에 속한다. 그런데 $W \cap W^\perp = \{\mathbf{0}\}$이다:</p>
+      <p>(만약 $\mathbf{u} \in W \cap W^\perp$이면, $\langle\mathbf{u},\mathbf{u}\rangle = 0$이므로 $\mathbf{u} = \mathbf{0}$)</p>
+      <p>따라서 $\mathbf{w}_1 - \mathbf{w}_2 = \mathbf{0}$이고 $\mathbf{w}_2^\perp - \mathbf{w}_1^\perp = \mathbf{0}$, 즉 $\mathbf{w}_1 = \mathbf{w}_2$이고 $\mathbf{w}_1^\perp = \mathbf{w}_2^\perp$. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+
+  <div class="card">
+    <div class="card-label">최소제곱 문제 (Least Squares)</div>
+    <p>$A\mathbf{x} = \mathbf{b}$가 해를 가지지 않을 때, $\|\mathbf{b} - A\mathbf{x}\|$를 최소화하는 $\hat{\mathbf{x}}$는:</p>
+    <div class="math-display">$$A^TA\hat{\mathbf{x}} = A^T\mathbf{b} \quad \text{(정규 방정식, Normal Equation)}$$</div>
+    <p>이것은 $\mathbf{b}$를 $\col(A)$ 위로 사영한 것이다: $A\hat{\mathbf{x}} = \proj_{\col(A)} \mathbf{b}$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 7.3 &mdash; 최소제곱 직선 피팅</div>
+    <p>데이터 $(1,1)$, $(2,3)$, $(3,4)$에 직선 $y = a + bx$를 피팅:</p>
+    <div class="math-display">$$A = \begin{bmatrix}1&1\\1&2\\1&3\end{bmatrix}, \quad \mathbf{b} = \begin{pmatrix}1\\3\\4\end{pmatrix}$$</div>
+    <div class="math-display">$$A^TA = \begin{bmatrix}3&6\\6&14\end{bmatrix}, \quad A^T\mathbf{b} = \begin{pmatrix}8\\19\end{pmatrix}$$</div>
+    <p>$A^TA\hat{\mathbf{x}} = A^T\mathbf{b}$를 풀면:</p>
+    <div class="math-display">$$\begin{bmatrix}3&6\\6&14\end{bmatrix}\begin{pmatrix}a\\b\end{pmatrix} = \begin{pmatrix}8\\19\end{pmatrix} \implies a = \frac{1}{3}, \quad b = \frac{3}{2}$$</div>
+    <p>최소제곱 직선: $y = \frac{1}{3} + \frac{3}{2}x$</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">네 가지 기본 부분공간의 직교 관계</div>
+    <p>$m \times n$ 행렬 $A$에 대해:</p>
+    <div class="math-display">$$\row(A)^\perp = \nul(A), \quad \col(A)^\perp = \nul(A^T)$$</div>
+    <p>즉 $\R^n = \row(A) \oplus \nul(A)$이고 $\R^m = \col(A) \oplus \nul(A^T)$</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CHAPTER 8: 직교 대각화와 SVD                       -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<div class="chapter-header" id="ch8">
+  <div class="ch-num">Chapter 8</div>
+  <h2>직교 대각화와 특이값 분해</h2>
+</div>
+
+<section class="page-section" id="s8-1">
+  <span class="page-num">Section 8.1</span>
+  <h3>대칭행렬의 성질</h3>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 8.1 &mdash; 대칭행렬의 스펙트럼 정리 (Spectral Theorem)</div>
+    <p>실수 대칭행렬 ($A^T = A$)은 다음 성질을 가진다:</p>
+    <p>1. 모든 고유값이 <strong>실수</strong>이다.</p>
+    <p>2. 서로 다른 고유값에 대응하는 고유벡터는 <strong>직교</strong>한다.</p>
+    <p>3. 반드시 <strong>직교 대각화 가능</strong>하다: $A = QDQ^T$ ($Q$는 직교행렬)</p>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 대칭행렬의 고유값은 실수</div>
+    <div class="proof-content">
+      <p>$A\mathbf{v} = \lambda\mathbf{v}$에서 양변의 켤레 전치를 취하면:</p>
+      <div class="math-display">$$\overline{\mathbf{v}}^T A^T = \bar{\lambda}\overline{\mathbf{v}}^T$$</div>
+      <p>$A^T = A$이므로: $\overline{\mathbf{v}}^T A = \bar{\lambda}\overline{\mathbf{v}}^T$</p>
+      <p>양변에 $\mathbf{v}$를 오른쪽에 곱하면:</p>
+      <div class="math-display">$$\overline{\mathbf{v}}^T A\mathbf{v} = \bar{\lambda}\overline{\mathbf{v}}^T\mathbf{v}$$</div>
+      <p>한편 $\overline{\mathbf{v}}^T A\mathbf{v} = \overline{\mathbf{v}}^T(\lambda\mathbf{v}) = \lambda\overline{\mathbf{v}}^T\mathbf{v}$이므로:</p>
+      <div class="math-display">$$\lambda\overline{\mathbf{v}}^T\mathbf{v} = \bar{\lambda}\overline{\mathbf{v}}^T\mathbf{v}$$</div>
+      <p>$\overline{\mathbf{v}}^T\mathbf{v} = \|\mathbf{v}\|^2 > 0$이므로 $\lambda = \bar{\lambda}$, 즉 $\lambda$는 실수. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: 서로 다른 고유값의 고유벡터는 직교</div>
+    <div class="proof-content">
+      <p>$A\mathbf{v}_1 = \lambda_1\mathbf{v}_1$, $A\mathbf{v}_2 = \lambda_2\mathbf{v}_2$, $\lambda_1 \neq \lambda_2$이라 하자.</p>
+      <div class="math-display">$$\lambda_1\langle\mathbf{v}_1, \mathbf{v}_2\rangle = \langle\lambda_1\mathbf{v}_1, \mathbf{v}_2\rangle = \langle A\mathbf{v}_1, \mathbf{v}_2\rangle = \langle\mathbf{v}_1, A^T\mathbf{v}_2\rangle = \langle\mathbf{v}_1, A\mathbf{v}_2\rangle = \lambda_2\langle\mathbf{v}_1, \mathbf{v}_2\rangle$$</div>
+      <p>$(\lambda_1 - \lambda_2)\langle\mathbf{v}_1, \mathbf{v}_2\rangle = 0$이고 $\lambda_1 \neq \lambda_2$이므로 $\langle\mathbf{v}_1, \mathbf{v}_2\rangle = 0$. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 8.1a &mdash; 대칭행렬의 고유벡터로 구성한 정규직교 기저의 유일한 표현</div>
+    <p>실수 대칭행렬 $A$의 정규직교 고유벡터를 $\{\mathbf{q}_1,\ldots,\mathbf{q}_n\}$, 대응하는 고유값을 $\sigma_1,\ldots,\sigma_n$이라 하자. 모든 $\mathbf{x} \in \R^n$은 유일한 표현을 가진다:</p>
+    <div class="math-display">$$\mathbf{x} = \lambda_1\mathbf{q}_1 + \cdots + \lambda_n\mathbf{q}_n, \quad \lambda_i = \langle\mathbf{x},\mathbf{q}_i\rangle = \mathbf{q}_i^T\mathbf{x}$$</div>
+    <p>이 유일한 표현을 이용하면 $A$의 작용을 명시적으로 계산할 수 있다:</p>
+    <div class="math-display">$$A\mathbf{x} = \lambda_1 A\mathbf{q}_1 + \cdots + \lambda_n A\mathbf{q}_n = \sigma_1\lambda_1\mathbf{q}_1 + \cdots + \sigma_n\lambda_n\mathbf{q}_n$$</div>
+    <p>이로부터 <strong>스펙트럼 분해(spectral decomposition)</strong>를 얻는다:</p>
+    <div class="math-display">$$A = \sigma_1\mathbf{q}_1\mathbf{q}_1^T + \sigma_2\mathbf{q}_2\mathbf{q}_2^T + \cdots + \sigma_n\mathbf{q}_n\mathbf{q}_n^T$$</div>
+    <p>각 $\mathbf{q}_i\mathbf{q}_i^T$는 $\mathbf{q}_i$ 방향으로의 정사영 행렬이며, $A$는 이러한 정사영의 고유값-가중합으로 유일하게 분해된다.</p>
+  </div>
+
+</section>
+
+<section class="page-section" id="s8-2">
+  <span class="page-num">Section 8.2</span>
+  <h3>직교 대각화 (Orthogonal Diagonalization)</h3>
+
+  <div class="card">
+    <div class="card-label">직교 대각화 절차</div>
+    <ol class="step-list">
+      <li>특성방정식 $\det(A - \lambda I) = 0$을 풀어 고유값을 구한다.</li>
+      <li>각 고유값에 대해 고유공간의 기저를 구한다.</li>
+      <li>같은 고유공간 내에서 그람-슈미트를 적용하여 정규직교화한다.</li>
+      <li>정규직교 고유벡터를 열로 하여 $Q$를, 고유값으로 $D$를 만든다.</li>
+    </ol>
+    <p>결과: $A = QDQ^T$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 8.1 &mdash; 직교 대각화</div>
+    <p>$A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$ (대칭행렬)</p>
+    <p>$\det(A-\lambda I) = (2-\lambda)^2 - 1 = \lambda^2 - 4\lambda + 3 = (\lambda-1)(\lambda-3) = 0$</p>
+    <p>$\lambda_1 = 1$: $A - I = \begin{bmatrix}1&1\\1&1\end{bmatrix}$, $\mathbf{v}_1 = \frac{1}{\sqrt{2}}\begin{pmatrix}-1\\1\end{pmatrix}$</p>
+    <p>$\lambda_2 = 3$: $A - 3I = \begin{bmatrix}-1&1\\1&-1\end{bmatrix}$, $\mathbf{v}_2 = \frac{1}{\sqrt{2}}\begin{pmatrix}1\\1\end{pmatrix}$</p>
+    <div class="math-display">$$A = \frac{1}{\sqrt{2}}\begin{bmatrix}-1&1\\1&1\end{bmatrix}\begin{bmatrix}1&0\\0&3\end{bmatrix}\frac{1}{\sqrt{2}}\begin{bmatrix}-1&1\\1&1\end{bmatrix}$$</div>
+    <p>검증: $\mathbf{v}_1 \cdot \mathbf{v}_2 = \frac{1}{2}(-1+1) = 0$ ✓ (직교)</p>
+  </div>
+</section>
+
+<section class="page-section" id="s8-3">
+  <span class="page-num">Section 8.3</span>
+  <h3>이차형식 (Quadratic Forms)</h3>
+
+  <div class="def-box">
+    <div class="def-title">정의 8.1 &mdash; 이차형식</div>
+    <p><strong>이차형식(quadratic form)</strong>은 다음과 같은 함수이다:</p>
+    <div class="math-display">$$Q(\mathbf{x}) = \mathbf{x}^T A \mathbf{x} = \sum_{i,j} a_{ij} x_i x_j$$</div>
+    <p>여기서 $A$는 대칭행렬이다. (비대칭이면 $\frac{A+A^T}{2}$로 대칭화 가능)</p>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">예제 8.2 &mdash; 이차형식</div>
+    <p>$Q(x,y) = 3x^2 + 4xy + 5y^2$의 대칭행렬:</p>
+    <div class="math-display">$$A = \begin{bmatrix} 3 & 2 \\ 2 & 5 \end{bmatrix} \quad \left(\text{교차항 } 4xy \text{의 계수를 반씩 나눔}\right)$$</div>
+    <div class="math-display">$$Q = \begin{pmatrix}x & y\end{pmatrix}\begin{bmatrix}3&2\\2&5\end{bmatrix}\begin{pmatrix}x\\y\end{pmatrix} = 3x^2 + 2xy + 2yx + 5y^2 = 3x^2 + 4xy + 5y^2$$</div>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 8.2 &mdash; 양정치/음정치/부정치</div>
+    <p><strong>양정치 (Positive Definite):</strong> $Q(\mathbf{x}) > 0$ for all $\mathbf{x} \neq \mathbf{0}$ $\iff$ 모든 고유값 $> 0$</p>
+    <p><strong>양반정치 (Positive Semidefinite):</strong> $Q(\mathbf{x}) \geq 0$ $\iff$ 모든 고유값 $\geq 0$</p>
+    <p><strong>음정치 (Negative Definite):</strong> $Q(\mathbf{x}) < 0$ for all $\mathbf{x} \neq \mathbf{0}$ $\iff$ 모든 고유값 $< 0$</p>
+    <p><strong>부정치 (Indefinite):</strong> 양의 고유값과 음의 고유값이 모두 존재</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">이차형식의 분류법 (실베스터 판별법)</div>
+    <p>$n \times n$ 대칭행렬 $A$의 <strong>순서 주 소행렬식(leading principal minors)</strong>이 모두 양수이면 양정치:</p>
+    <div class="math-display">$$a_{11} > 0, \quad \det\begin{bmatrix}a_{11}&a_{12}\\a_{21}&a_{22}\end{bmatrix} > 0, \quad \det\begin{bmatrix}a_{11}&a_{12}&a_{13}\\a_{21}&a_{22}&a_{23}\\a_{31}&a_{32}&a_{33}\end{bmatrix} > 0, \quad \ldots$$</div>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 8.2 &mdash; 주축 정리 (Principal Axis Theorem)</div>
+    <p>대칭행렬 $A$에 의한 이차형식 $Q(\mathbf{x}) = \mathbf{x}^TA\mathbf{x}$에서, 변수 변환 $\mathbf{x} = Q\mathbf{y}$ ($Q$는 직교행렬)를 하면:</p>
+    <div class="math-display">$$Q(\mathbf{x}) = \mathbf{y}^T D \mathbf{y} = \lambda_1 y_1^2 + \lambda_2 y_2^2 + \cdots + \lambda_n y_n^2$$</div>
+    <p>교차항이 없어진다! 새 좌표축(주축)은 고유벡터 방향이다.</p>
+  </div>
+</section>
+
+<section class="page-section" id="s8-4">
+  <span class="page-num">Section 8.4</span>
+  <h3>특이값 분해 (Singular Value Decomposition, SVD)</h3>
+
+  <div class="card">
+    <div class="card-label">SVD의 의의</div>
+    <p>SVD는 선형대수학에서 가장 중요한 행렬 분해이다. <strong>모든 행렬</strong>(정사각이 아니어도, 가역이 아니어도)에 대해 존재하며, 데이터 분석, 이미지 압축, 추천 시스템, 자연어 처리 등 수많은 응용이 있다.</p>
+  </div>
+
+  <div class="def-box">
+    <div class="def-title">정의 8.3 &mdash; 특이값</div>
+    <p>$m \times n$ 행렬 $A$의 <strong>특이값(singular values)</strong>은 $A^TA$ (또는 $AA^T$)의 고유값의 양의 제곱근이다:</p>
+    <div class="math-display">$$\sigma_i = \sqrt{\lambda_i(A^TA)}, \quad \sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_r > 0$$</div>
+    <p>여기서 $r = \rank(A)$이다.</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 8.3 &mdash; 특이값 분해 (SVD)</div>
+    <p>임의의 $m \times n$ 행렬 $A$ ($\rank(A) = r$)는 다음과 같이 분해된다:</p>
+    <div class="math-display">$$A = U\Sigma V^T$$</div>
+    <p>&bull; $U$: $m \times m$ 직교행렬 ($AA^T$의 정규직교 고유벡터, <strong>좌특이벡터</strong>)</p>
+    <p>&bull; $\Sigma$: $m \times n$ 행렬 (대각 성분 $\sigma_1 \geq \cdots \geq \sigma_r > 0$, 나머지 0)</p>
+    <p>&bull; $V$: $n \times n$ 직교행렬 ($A^TA$의 정규직교 고유벡터, <strong>우특이벡터</strong>)</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">SVD 계산 절차</div>
+    <ol class="step-list">
+      <li>$A^TA$를 계산하고 고유값 $\lambda_1 \geq \cdots \geq \lambda_n \geq 0$과 정규직교 고유벡터 $\mathbf{v}_1, \ldots, \mathbf{v}_n$을 구한다. → $V$</li>
+      <li>특이값: $\sigma_i = \sqrt{\lambda_i}$ ($i = 1, \ldots, r$). → $\Sigma$</li>
+      <li>$\mathbf{u}_i = \frac{1}{\sigma_i}A\mathbf{v}_i$ ($i = 1, \ldots, r$)로 처음 $r$개의 좌특이벡터를 구하고, 나머지는 정규직교 확장. → $U$</li>
+    </ol>
+  </div>
+  <div class="proof-box" onclick="this.classList.toggle('open')">
+    <div class="proof-title">증명: SVD가 존재하는 이유 (핵심 아이디어)</div>
+    <div class="proof-content">
+      <p>$A^TA$는 대칭 양반정치 행렬이므로, 정규직교 고유벡터 $\mathbf{v}_1,\ldots,\mathbf{v}_n$과 고유값 $\lambda_1 \geq \cdots \geq \lambda_r > \lambda_{r+1} = \cdots = \lambda_n = 0$을 가진다. 특이값을 $\sigma_i = \sqrt{\lambda_i}$로 정의한다.</p>
+      <p><strong>좌특이벡터의 구성:</strong> $i \leq r$에 대해 $\mathbf{u}_i = \frac{1}{\sigma_i}A\mathbf{v}_i$로 정의하면, 이들은 정규직교이다:</p>
+      <div class="math-display">$$\langle\mathbf{u}_i,\mathbf{u}_j\rangle = \frac{1}{\sigma_i\sigma_j}\langle A\mathbf{v}_i, A\mathbf{v}_j\rangle = \frac{1}{\sigma_i\sigma_j}\mathbf{v}_i^T A^T A\mathbf{v}_j = \frac{\lambda_j}{\sigma_i\sigma_j}\mathbf{v}_i^T\mathbf{v}_j = \frac{\sigma_j}{\sigma_i}\delta_{ij}$$</div>
+      <p>$i = j$이면 $\frac{\sigma_i}{\sigma_i} = 1$, $i \neq j$이면 $\mathbf{v}_i^T\mathbf{v}_j = 0$이므로 $\langle\mathbf{u}_i,\mathbf{u}_j\rangle = \delta_{ij}$.</p>
+      <p><strong>SVD 관계:</strong> 구성에 의해 $A\mathbf{v}_i = \sigma_i\mathbf{u}_i$ ($i = 1,\ldots,r$)이고, $i > r$이면 $\|A\mathbf{v}_i\|^2 = \mathbf{v}_i^TA^TA\mathbf{v}_i = \lambda_i\|\mathbf{v}_i\|^2 = 0$이므로 $A\mathbf{v}_i = \mathbf{0}$.</p>
+      <p>따라서 $AV = U\Sigma$이고, $V$가 직교행렬이므로 $A = U\Sigma V^T$.</p>
+      <p><strong>표현의 유일성:</strong> 임의의 $\mathbf{x} \in \R^n$에 대해, $\{\mathbf{v}_1,\ldots,\mathbf{v}_n\}$이 정규직교 기저이므로 유일한 표현 $\mathbf{x} = \mu_1\mathbf{v}_1 + \cdots + \mu_n\mathbf{v}_n$ ($\mu_i = \langle\mathbf{x},\mathbf{v}_i\rangle$)이 존재한다. 이로부터:</p>
+      <div class="math-display">$$A\mathbf{x} = \mu_1\sigma_1\mathbf{u}_1 + \cdots + \mu_r\sigma_r\mathbf{u}_r$$</div>
+      <p>이 표현은 정규직교 기저에 의한 유일한 좌표 분해에 기반하므로 유일하다. <span class="qed">$\blacksquare$</span></p>
+    </div>
+  </div>
+
+
+  <div class="example-box">
+    <div class="ex-title">예제 8.3 &mdash; SVD 계산</div>
+    <p>$A = \begin{bmatrix} 1 & 1 \\ 0 & 1 \\ 1 & 0 \end{bmatrix}$</p>
+    <p><strong>Step 1.</strong> $A^TA = \begin{bmatrix}2&1\\1&2\end{bmatrix}$</p>
+    <p>고유값: $\lambda^2 - 4\lambda + 3 = 0 \implies \lambda_1 = 3, \lambda_2 = 1$</p>
+    <p>$\lambda_1=3$: $\mathbf{v}_1 = \frac{1}{\sqrt{2}}(1,1)^T$. &ensp; $\lambda_2=1$: $\mathbf{v}_2 = \frac{1}{\sqrt{2}}(-1,1)^T$</p>
+    <p><strong>Step 2.</strong> $\sigma_1 = \sqrt{3}$, $\sigma_2 = 1$</p>
+    <p><strong>Step 3.</strong> $\mathbf{u}_1 = \frac{1}{\sqrt{3}}A\mathbf{v}_1 = \frac{1}{\sqrt{3}} \cdot \frac{1}{\sqrt{2}}\begin{pmatrix}2\\1\\1\end{pmatrix} = \frac{1}{\sqrt{6}}\begin{pmatrix}2\\1\\1\end{pmatrix}$</p>
+    <p>$\mathbf{u}_2 = \frac{1}{1}A\mathbf{v}_2 = \frac{1}{\sqrt{2}}\begin{pmatrix}0\\1\\-1\end{pmatrix}$</p>
+    <p>$\mathbf{u}_3$는 $\mathbf{u}_1, \mathbf{u}_2$와 직교하도록: $\mathbf{u}_3 = \frac{1}{\sqrt{3}}\begin{pmatrix}1\\-1\\1\end{pmatrix}$ (외적 등으로 계산)</p>
+    <div class="math-display">$$A = \begin{bmatrix} \frac{2}{\sqrt{6}} & 0 & \frac{1}{\sqrt{3}} \\ \frac{1}{\sqrt{6}} & \frac{1}{\sqrt{2}} & \frac{-1}{\sqrt{3}} \\ \frac{1}{\sqrt{6}} & \frac{-1}{\sqrt{2}} & \frac{1}{\sqrt{3}} \end{bmatrix} \begin{bmatrix} \sqrt{3} & 0 \\ 0 & 1 \\ 0 & 0 \end{bmatrix} \begin{bmatrix} \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} \\ \frac{-1}{\sqrt{2}} & \frac{1}{\sqrt{2}} \end{bmatrix}$$</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">SVD의 핵심 응용: 저랭크 근사</div>
+    <p>SVD를 이용하면 행렬의 <strong>최적 저랭크 근사</strong>를 구할 수 있다 (Eckart-Young 정리):</p>
+    <div class="math-display">$$A_k = \sum_{i=1}^k \sigma_i \mathbf{u}_i \mathbf{v}_i^T \quad (k < r)$$</div>
+    <p>$A_k$는 랭크 $k$ 이하 행렬 중 $\|A - A_k\|$를 최소화한다.</p>
+    <p><strong>응용:</strong> 이미지 압축 (주요 특이값만 보존), 노이즈 제거, 차원 축소 (PCA), 추천 시스템.</p>
+  </div>
+
+  <div class="thm-box">
+    <div class="thm-title">정리 8.4 &mdash; SVD와 네 기본 부분공간</div>
+    <p>$A = U\Sigma V^T$에서:</p>
+    <p>&bull; $\col(A)$의 정규직교 기저: $\mathbf{u}_1, \ldots, \mathbf{u}_r$ ($U$의 처음 $r$열)</p>
+    <p>&bull; $\nul(A^T)$의 정규직교 기저: $\mathbf{u}_{r+1}, \ldots, \mathbf{u}_m$</p>
+    <p>&bull; $\row(A)$의 정규직교 기저: $\mathbf{v}_1, \ldots, \mathbf{v}_r$ ($V$의 처음 $r$열)</p>
+    <p>&bull; $\nul(A)$의 정규직교 기저: $\mathbf{v}_{r+1}, \ldots, \mathbf{v}_n$</p>
+    <p>SVD는 네 기본 부분공간의 정규직교 기저를 한꺼번에 제공한다!</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">SVD를 이용한 의사역행렬 (Pseudoinverse)</div>
+    <p>$A = U\Sigma V^T$에서 <strong>무어-펜로즈 의사역행렬</strong>은:</p>
+    <div class="math-display">$$A^+ = V\Sigma^+ U^T$$</div>
+    <p>$\Sigma^+$는 $\Sigma$의 비영 대각 성분을 역수로 바꾸고 전치한 것.</p>
+    <p>$A^+$는 최소제곱 해를 구하는 데 사용: $\hat{\mathbf{x}} = A^+\mathbf{b}$</p>
+  </div>
+</section>
+
+<!-- Final Summary -->
+<section class="page-section" id="summary" style="margin-top: 60px;">
+  <div class="chapter-header" style="border-bottom-color: var(--accent);">
+    <div class="ch-num">Summary</div>
+    <h2>선형대수학 핵심 정리 요약</h2>
+  </div>
+
+  <div class="card">
+    <table class="matrix-table" style="width:100%;">
+      <tr><th>주제</th><th>핵심 정리/공식</th></tr>
+      <tr><td>가우스 소거법</td><td>REF/RREF로 변환하여 연립방정식 풀기</td></tr>
+      <tr><td>역행렬</td><td>$A^{-1} = \frac{1}{\det A}\text{adj}(A)$, $(AB)^{-1}=B^{-1}A^{-1}$</td></tr>
+      <tr><td>행렬식</td><td>$\det(AB)=\det A \det B$, $\det(A^T)=\det A$, 여인수 전개</td></tr>
+      <tr><td>벡터공간</td><td>8가지 공리, 부분공간 판정 (닫힘 조건 2개)</td></tr>
+      <tr><td>기저/차원</td><td>일차독립 + 생성 = 기저, $\rank+\nullity=n$</td></tr>
+      <tr><td>선형변환</td><td>$T(c\mathbf{u}+d\mathbf{v})=cT(\mathbf{u})+dT(\mathbf{v})$, 행렬표현</td></tr>
+      <tr><td>고유값</td><td>$\det(A-\lambda I)=0$, $\tr A = \sum\lambda_i$, $\det A=\prod\lambda_i$</td></tr>
+      <tr><td>대각화</td><td>$A=PDP^{-1}$, $n$개 독립 고유벡터 필요</td></tr>
+      <tr><td>내적공간</td><td>코시-슈바르츠, 그람-슈미트, 정사영</td></tr>
+      <tr><td>직교 대각화</td><td>대칭행렬: $A=QDQ^T$, 고유값 실수, 고유벡터 직교</td></tr>
+      <tr><td>SVD</td><td>$A=U\Sigma V^T$, 모든 행렬에 적용, 최적 저랭크 근사</td></tr>
+    </table>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+function toggleTheme() {
+  const body = document.body;
+  const btn = document.querySelector('.theme-toggle');
+  if (body.getAttribute('data-theme') === 'dark') {
+    body.removeAttribute('data-theme');
+    btn.textContent = '다크모드';
+  } else {
+    body.setAttribute('data-theme', 'dark');
+    btn.textContent = '라이트모드';
+  }
+}
+
+// Sidebar active state tracking
+const sidebar = document.querySelector('.sidebar');
+const sections = document.querySelectorAll('.page-section, .chapter-header');
+const sideLinks = document.querySelectorAll('.sidebar a');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      sideLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-80px 0px -70% 0px', threshold: 0 });
+
+sections.forEach(s => observer.observe(s));
+
+// Smooth scroll for sidebar links
+sideLinks.forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// Auto dark mode based on system preference
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  document.body.setAttribute('data-theme', 'dark');
+  document.querySelector('.theme-toggle').textContent = '라이트모드';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometric and Photometric Image Formation - 강의노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] }
+};
+</script>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* --- Top Bar --- */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  /* --- Layout --- */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    max-width: 1280px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  /* --- Sidebar --- */
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 16px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar .section-group {
+    margin-bottom: 16px;
+  }
+  .sidebar .section-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 12px;
+    margin-bottom: 2px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  /* --- Main Content --- */
+  .content {
+    padding: 40px 48px 80px;
+  }
+
+  /* --- Page Section --- */
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .page-section h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 24px 0 14px;
+    color: var(--accent);
+  }
+
+  /* --- Cards --- */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  /* --- Summary Box --- */
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  /* --- Term Table --- */
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* --- Tip Box --- */
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .tip::before {
+    content: '\1F4A1';
+    flex-shrink: 0;
+  }
+
+  /* --- Code Block --- */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+
+  /* --- Math --- */
+  .math-block {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+    overflow-x: auto;
+    box-shadow: var(--shadow);
+  }
+
+  /* --- Warning Box --- */
+  .warning {
+    background: #FFF3CD;
+    border-left: 3px solid #FFC107;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  [data-theme="dark"] .warning {
+    background: #3A3520;
+    border-left-color: #FFC107;
+  }
+
+  /* ul/ol inside cards */
+  .card ul, .card ol {
+    padding-left: 20px;
+    margin: 8px 0;
+  }
+  .card li {
+    margin-bottom: 6px;
+  }
+
+  p + p { margin-top: 12px; }
+
+  /* --- Responsive --- */
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .page-section h2 { font-size: 20px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Geometric and Photometric Image Formation</h1>
+      <div class="meta">CSE404 Computer Vision &middot; DGIST &middot; Prof. Sunghoon Im</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">&#127769; &#45796;&#53356;&#47784;&#46300;</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">강의 목차</div>
+      <div class="section-group">
+        <div class="section-group-title">도입</div>
+        <a href="#p1">01 - 표지</a>
+        <a href="#p2">02 - 컴퓨터 비전 정의</a>
+        <a href="#p3">03 - 이미지 형성 개요</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">Photometric Image Formation</div>
+        <a href="#p4">04 - 광도 이미지 형성</a>
+        <a href="#p5">05 - 빛의 반사와 굴절</a>
+        <a href="#p6">06 - 렌더링 방정식</a>
+        <a href="#p7">07 - 확산/정반사 반사</a>
+        <a href="#p8">08 - 확산/정반사 시각화</a>
+        <a href="#p9">09 - BRDF 예시</a>
+        <a href="#p10">10 - 전역 조명</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">Geometric Image Formation</div>
+        <a href="#p11">11 - 기하학적 이미지 형성</a>
+        <a href="#p12">12 - 이미지란 무엇인가</a>
+        <a href="#p13">13 - 이미지 캡처 문제</a>
+        <a href="#p14">14 - 카메라 설계</a>
+        <a href="#p15">15 - 핀홀 카메라</a>
+        <a href="#p16">16 - 카메라 옵스큐라</a>
+        <a href="#p17">17 - 핀홀 카메라 모델</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">렌즈와 광학</div>
+        <a href="#p18">18 - 렌즈의 필요성</a>
+        <a href="#p19">19 - 렌즈 추가</a>
+        <a href="#p20">20 - 초점 거리</a>
+        <a href="#p21">21 - 착란원</a>
+        <a href="#p22">22 - 실제 조리개</a>
+        <a href="#p23">23 - 피사계 심도</a>
+        <a href="#p24">24 - 피사계 심도 예시</a>
+        <a href="#p25">25 - F-Number</a>
+        <a href="#p26">26 - 화각 (FOV)</a>
+        <a href="#p27">27 - 화각과 초점거리</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">렌즈 결함</div>
+        <a href="#p28">28 - 실제 렌즈</a>
+        <a href="#p29">29 - 색수차</a>
+        <a href="#p30">30 - 비네팅</a>
+        <a href="#p31">31 - 렌즈 왜곡</a>
+        <a href="#p32">32 - 방사 왜곡</a>
+        <a href="#p33">33 - 렌즈 글레어</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">기하학적 기초</div>
+        <a href="#p34">34 - 프리미티브와 변환</a>
+        <a href="#p35">35 - 사영 기하학</a>
+        <a href="#p36">36 - 핀홀 모델 복습</a>
+        <a href="#p37">37 - 2D 점 표현</a>
+        <a href="#p38">38 - 동차 좌표 시각화</a>
+        <a href="#p39">39 - 2D 직선</a>
+        <a href="#p40">40 - 2D 직선 연산</a>
+        <a href="#p41">41 - 직선 교차 예제 1</a>
+        <a href="#p42">42 - 직선 교차 예제 2</a>
+        <a href="#p43">43 - 3D 점</a>
+        <a href="#p44">44 - 3D 평면</a>
+        <a href="#p45">45 - 3D 평면 시각화</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">2D/3D 변환</div>
+        <a href="#p46">46 - 이동 변환</a>
+        <a href="#p47">47 - 유클리드 변환</a>
+        <a href="#p48">48 - 닮음 변환</a>
+        <a href="#p49">49 - 아핀 변환</a>
+        <a href="#p50">50 - 사영 변환</a>
+        <a href="#p51">51 - 2D 변환 요약</a>
+        <a href="#p52">52 - 3D 변환 요약</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">부록</div>
+        <a href="#p54">54 - 광원 추정</a>
+        <a href="#p56">56 - 노출</a>
+        <a href="#p57">57 - 상반 법칙</a>
+      </div>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== Page 1 ==================== -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>Geometric and Photometric Image Formation</h2>
+
+        <div class="summary-box">
+          이 강의는 CSE404 컴퓨터 비전 과목의 세 번째 슬라이드로, <strong>이미지가 어떻게 형성되는지</strong>를 기하학적(geometric) 관점과 광도학적(photometric) 관점에서 다룹니다. DGIST EECS 소속 임성훈 교수님의 강의입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">강의 개요</div>
+          <p>우리가 스마트폰이나 카메라로 사진을 찍을 때, 3차원 세계가 2차원 이미지로 변환됩니다. 이 과정은 단순히 "찰칵" 하는 순간에 일어나는 것 같지만, 실제로는 <strong>빛(light)</strong>이 물체에서 반사되어 카메라 센서에 도달하는 복잡한 물리적 과정을 거칩니다.</p>
+          <p>이 강의에서는 그 과정을 크게 두 가지로 나누어 살펴봅니다:</p>
+          <ul>
+            <li><strong>광도학적 이미지 형성 (Photometric Image Formation)</strong>: 빛이 물체 표면에서 어떻게 반사되어 밝기와 색을 만들어내는가?</li>
+            <li><strong>기하학적 이미지 형성 (Geometric Image Formation)</strong>: 3D 공간의 점이 2D 이미지 평면의 어느 위치에 맺히는가?</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 2 ==================== -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>컴퓨터 비전의 정의</h2>
+
+        <div class="summary-box">
+          컴퓨터 비전의 궁극적 목표는 <strong>"빛(light)을 의미(meaning)로 변환하는 것"</strong>입니다. 2D 이미지의 픽셀 행렬로부터 물체, 형상, 의미론적 정보 등을 추출합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>컴퓨터 비전의 전체 파이프라인을 이해하기 위해, 이미지가 만들어지는 과정을 먼저 살펴봅시다.</p>
+          <p><strong>3D 장면(Scene)</strong>에 태양이나 전등 같은 광원이 빛을 비추면, 그 빛은 물체 표면에서 반사됩니다. 반사된 빛 중 일부가 카메라 렌즈를 통과하여 센서에 도달하고, 센서는 빛의 양을 숫자로 변환합니다. 그 결과가 바로 <strong>2D 이미지</strong> -- 즉 <strong>픽셀 행렬(Pixel Matrix)</strong>입니다.</p>
+          <p>예를 들어, 5x6 크기의 작은 이미지 영역을 보면 217, 191, 252, 255, 239 같은 숫자들로 채워져 있습니다. 이 숫자들이 바로 각 픽셀의 밝기값입니다.</p>
+          <p>컴퓨터 비전은 이 숫자 배열에서 다음과 같은 정보를 추출하는 것을 목표로 합니다:</p>
+          <ul>
+            <li><strong>Objects (물체)</strong>: 이미지 안에 어떤 물체가 있는가?</li>
+            <li><strong>Shape/Geometry (형상/기하)</strong>: 물체의 3D 형태는 어떠한가?</li>
+            <li><strong>Semantics (의미론)</strong>: 장면이 어떤 상황을 나타내는가?</li>
+            <li><strong>Material (재질)</strong>: 물체의 재질은 무엇인가?</li>
+            <li><strong>Motion (움직임)</strong>: 물체가 어떻게 움직이는가?</li>
+            <li><strong>3D Pose (3D 자세)</strong>: 물체나 카메라의 공간적 위치와 방향은?</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Computer Vision</td><td>컴퓨터 비전</td><td>이미지/영상으로부터 의미 있는 정보를 자동으로 추출하는 학문</td></tr>
+              <tr><td class="en">Pixel Matrix</td><td>픽셀 행렬</td><td>이미지를 구성하는 숫자(밝기값)들의 2차원 배열</td></tr>
+              <tr><td class="en">3D Scene</td><td>3D 장면</td><td>카메라가 촬영하는 실제 3차원 세계</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">
+          핵심 문장: "Goal of Computer Vision is to convert light into meaning." -- 컴퓨터 비전의 모든 과제(객체 검출, 분할, 깊이 추정 등)는 이 한 문장으로 요약됩니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 3 ==================== -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>이미지 형성 (Image Formation) 개요</h2>
+
+        <div class="summary-box">
+          이미지 형성은 "빛을 픽셀 행렬(이미지)로 변환하는 과정"입니다. 이 과정은 4개의 세부 주제로 나뉩니다: (0) 기하학적 기본 요소와 변환, (1) 광도학적 이미지 형성, (2) 기하학적 이미지 형성, (3) 이미지 센싱 파이프라인.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>이미지가 만들어지는 전체 과정을 한 장의 그림으로 표현하면 다음과 같습니다:</p>
+          <p><strong>1. 빛의 방출과 반사 (Photometric Image Formation)</strong><br>
+          광원(light source)에서 나온 빛이 물체 표면(surface)에 닿으면 여러 방향으로 반사됩니다. 표면의 법선 벡터(\(\hat{n}\))와 빛의 방향에 따라 반사되는 빛의 양이 달라집니다.</p>
+          <p><strong>2. 광학 시스템 (Geometric Image Formation)</strong><br>
+          반사된 빛 중 일부가 렌즈(optics)를 통과하여 센서 평면(sensor plane)에 도달합니다. 이 과정에서 3D 공간의 점이 2D 이미지의 특정 위치에 투영됩니다.</p>
+          <p><strong>3. 센서에서의 변환 (Image Sensing Pipeline)</strong><br>
+          센서가 빛을 전기 신호로 변환하고, 이를 디지털 숫자로 기록합니다.</p>
+          <p><strong>0. 기하학적 기본 요소 (Primitives and Transformations)</strong><br>
+          이 모든 과정을 수학적으로 표현하기 위한 점, 선, 평면과 같은 기본 요소와 회전, 이동 등의 변환을 다룹니다.</p>
+        </div>
+
+        <div class="tip">
+          비유: 이미지 형성은 마치 "연극 무대(3D 장면) -> 카메라 촬영 -> 사진(2D 이미지)"의 과정과 같습니다. 무대의 조명(photometric)이 배우의 모습을 결정하고, 카메라의 위치와 렌즈(geometric)가 사진에 무엇이 담길지를 결정합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 4 ==================== -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>광도학적 이미지 형성 (Photometric Image Formation)</h2>
+
+        <div class="summary-box">
+          <strong>픽셀의 밝기는 해당 표면 패치가 카메라 방향으로 보내는 빛의 양에 비례합니다.</strong> 이를 이해하기 위해 표면 위의 한 점에서 빛이 어떻게 반사되는지를 분석합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>물체 표면의 한 점 \(\mathbf{p}\)를 생각해 봅시다. 이 점 위에 반구(hemisphere) \(\Omega\)를 올려놓으면, 반구의 모든 방향에서 빛이 이 점으로 들어올 수 있습니다.</p>
+          <p>주요 벡터들:</p>
+          <ul>
+            <li>\(\mathbf{n}\): <strong>표면 법선 벡터</strong> -- 표면에 수직인 방향. 빛의 반사를 계산하는 기준이 됩니다.</li>
+            <li>\(\mathbf{s}\): <strong>입사광 방향</strong> -- 광원에서 점 \(\mathbf{p}\)로 향하는 빛의 방향.</li>
+            <li>\(\mathbf{v}\): <strong>관측 방향</strong> -- 점 \(\mathbf{p}\)에서 카메라를 향하는 방향.</li>
+          </ul>
+          <p>핵심 질문은: "광원 방향 \(\mathbf{s}\)에서 들어온 빛 중 얼마만큼이 카메라 방향 \(\mathbf{v}\)로 반사되는가?"입니다. 이 질문에 답하는 것이 바로 <strong>렌더링 방정식(Rendering Equation)</strong>과 <strong>BRDF</strong>입니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Surface Normal (n)</td><td>표면 법선</td><td>표면에 수직인 단위 벡터</td></tr>
+              <tr><td class="en">Viewing Direction (v)</td><td>관측 방향</td><td>표면 점에서 카메라를 향하는 방향</td></tr>
+              <tr><td class="en">Light Direction (s)</td><td>입사광 방향</td><td>광원에서 표면 점으로 향하는 빛의 방향</td></tr>
+              <tr><td class="en">Hemisphere (&Omega;)</td><td>반구</td><td>표면 법선을 중심으로 한 상반구 영역</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 5 ==================== -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>광도학적 이미지 형성 - 빛의 방출과 반사</h2>
+
+        <div class="summary-box">
+          이미지의 픽셀 밝기와 색상이 어떻게 결정되는지를 다룹니다. 빛은 하나 이상의 광원에서 방출되고, 장면 속 물체 표면에서 한 번 또는 여러 번 반사/굴절됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>이미지의 각 픽셀은 결국 특정 표면에서 카메라 방향으로 반사된 빛의 양을 기록한 것입니다. 이 과정을 이해하려면 다음을 알아야 합니다:</p>
+          <ul>
+            <li><strong>광원(Light Source)</strong>: 태양, 전구, 모니터 등 빛을 방출하는 모든 것</li>
+            <li><strong>반사(Reflection)</strong>: 빛이 불투명한 표면에 부딪혀 방향을 바꾸는 현상</li>
+            <li><strong>굴절(Refraction)</strong>: 빛이 투명한 매질(유리, 물)을 통과할 때 방향이 바뀌는 현상</li>
+          </ul>
+          <p>실제 장면에서 빛은 여러 물체 사이를 여러 번 반사(bounce)할 수 있습니다. 예를 들어, 창문으로 들어온 햇빛이 흰 벽에 반사되어 방 전체를 밝게 하는 것처럼요. 이를 <strong>간접 조명(Indirect Illumination)</strong>이라고 합니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 6 ==================== -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>렌더링 방정식 (Rendering Equation)</h2>
+
+        <div class="summary-box">
+          렌더링 방정식은 표면의 한 점에서 특정 방향으로 나가는 빛의 총량을 수학적으로 표현한 것입니다. 컴퓨터 그래픽스와 컴퓨터 비전의 가장 근본적인 수식 중 하나입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <p>표면 위의 점 \(\mathbf{p} \in \mathbb{R}^3\), 관측 방향 \(\mathbf{v} \in \mathbb{R}^3\), 입사광 방향 \(\mathbf{s} \in \mathbb{R}^3\), 파장 \(\lambda\)에 대해:</p>
+          <div class="math-block">
+            \[ L_{\text{out}}(\mathbf{p}, \mathbf{v}, \lambda) = L_{\text{emit}}(\mathbf{p}, \mathbf{v}, \lambda) + \int_{\Omega} \text{BRDF}(\mathbf{p}, \mathbf{s}, \mathbf{v}, \lambda) \cdot L_{\text{in}}(\mathbf{p}, \mathbf{s}, \lambda) \cdot (-\mathbf{n}^\top \mathbf{s}) \, d\mathbf{s} \]
+          </div>
+          <p>이 수식을 하나씩 분해해 봅시다:</p>
+          <ul>
+            <li>\(L_{\text{out}}(\mathbf{p}, \mathbf{v}, \lambda)\): 점 \(\mathbf{p}\)에서 관측 방향 \(\mathbf{v}\)로 나가는 빛의 양 (우리가 알고 싶은 것!)</li>
+            <li>\(L_{\text{emit}}(\mathbf{p}, \mathbf{v}, \lambda)\): 표면 자체가 빛을 방출하는 양. 전구나 모니터 같은 광원이 아니면 0입니다.</li>
+            <li>\(\text{BRDF}(\mathbf{p}, \mathbf{s}, \mathbf{v}, \lambda)\): <strong>양방향 반사 분포 함수</strong>. 방향 \(\mathbf{s}\)에서 들어온 빛이 방향 \(\mathbf{v}\)로 반사되는 비율을 나타냅니다.</li>
+            <li>\(L_{\text{in}}(\mathbf{p}, \mathbf{s}, \lambda)\): 방향 \(\mathbf{s}\)에서 점 \(\mathbf{p}\)로 들어오는 빛의 양</li>
+            <li>\(-\mathbf{n}^\top \mathbf{s}\): 빛의 입사각에 따른 코사인 항. 빛이 표면에 비스듬히 들어올수록 효과가 줄어듭니다.</li>
+            <li>\(\Omega\): 법선 \(\mathbf{n}\)을 중심으로 한 상반구. 모든 가능한 입사 방향에 대해 적분합니다.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Rendering Equation</td><td>렌더링 방정식</td><td>한 점에서 나가는 총 빛의 양을 기술하는 적분 방정식</td></tr>
+              <tr><td class="en">BRDF</td><td>양방향 반사 분포 함수</td><td>표면의 반사 특성을 정의하는 함수. 입사 방향과 출사 방향의 함수</td></tr>
+              <tr><td class="en">L_emit</td><td>방출 광량</td><td>표면 자체가 내는 빛 (광원이 아니면 0)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">
+          비유: BRDF는 표면의 "성격"과 같습니다. 거울은 빛을 한 방향으로만 반사하고(높은 specular), 종이는 모든 방향으로 고르게 반사합니다(높은 diffuse). 같은 빛을 받아도 재질에 따라 보이는 모습이 달라지는 이유가 바로 BRDF 때문입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 7 ==================== -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>확산 반사와 정반사 (Diffuse and Specular Reflection)</h2>
+
+        <div class="summary-box">
+          일반적인 BRDF는 <strong>확산(diffuse)</strong> 성분과 <strong>정반사(specular)</strong> 성분의 합으로 구성됩니다. 확산 성분은 빛을 모든 방향으로 균일하게 산란시키고, 정반사 성분은 특정 방향으로 강하게 반사합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">확산 반사 (Diffuse Reflection)</div>
+          <p>확산 반사는 빛이 표면에 닿아 <strong>모든 방향으로 균일하게</strong> 산란되는 현상입니다. 이를 <strong>Lambertian 반사</strong>라고도 부릅니다.</p>
+          <p>확산 반사의 BRDF는 상수입니다:</p>
+          <div class="math-block">
+            \[ f_r = \frac{\rho}{\pi} \]
+          </div>
+          <p>여기서 \(\rho\)는 <strong>알베도(Albedo)</strong>로, 0과 1 사이의 값입니다. 입사된 에너지 중 표면이 반사하는 비율을 나타냅니다.</p>
+          <ul>
+            <li>\(\rho = 0\): 완전히 검은 표면 (모든 빛을 흡수)</li>
+            <li>\(\rho = 1\): 완전히 흰 표면 (모든 빛을 반사)</li>
+          </ul>
+          <p>확산 반사는 표면 법선 방향에 따라 밝기가 부드럽게 변합니다. 이것이 바로 <strong>셰이딩(shading)</strong>의 원인입니다. 분필, 종이, 매트한 벽 등이 대표적인 확산 반사 표면입니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">정반사 (Specular Reflection)</div>
+          <p>정반사는 빛이 <strong>특정 방향(반사 방향)</strong>으로 강하게 반사되는 현상입니다. 관측 방향이 반사 방향과 일치할 때 밝은 하이라이트(highlight)가 보입니다.</p>
+          <ul>
+            <li><strong>거울(Mirror)</strong>: 극단적인 정반사. 반사 방향으로만 빛이 나감</li>
+            <li><strong>광택 표면(Glossy)</strong>: 반사 방향 근처에 넓게 퍼진 하이라이트</li>
+          </ul>
+          <p>정반사 성분은 <strong>관측 방향에 크게 의존</strong>합니다. 각도를 조금만 바꿔도 하이라이트가 사라질 수 있습니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Diffuse</td><td>확산 반사</td><td>모든 방향으로 균일하게 빛을 산란 (Lambertian)</td></tr>
+              <tr><td class="en">Specular</td><td>정반사</td><td>특정 반사 방향으로 강하게 빛을 반사</td></tr>
+              <tr><td class="en">Albedo (&rho;)</td><td>알베도</td><td>입사광 대비 반사광의 비율 (0~1)</td></tr>
+              <tr><td class="en">Mirror</td><td>거울 반사</td><td>완전한 정반사, 반사 방향으로만 빛이 나감</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 8 ==================== -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>확산/정반사 반사의 시각적 효과</h2>
+
+        <div class="summary-box">
+          파란색 구를 예로 들어, 확산 반사만 있을 때, 정반사만 있을 때, 그리고 둘을 합쳤을 때의 시각적 차이를 보여줍니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>Diffuse Only (확산만)</strong>: 구가 매트하게 보입니다. 광원 방향을 향한 면이 가장 밝고, 반대편은 어둡습니다. 부드러운 명암(shading)이 나타나지만 반짝임은 없습니다.</p>
+          <p><strong>Specular Only (정반사만)</strong>: 거의 검은 배경에 밝은 하이라이트 하나만 보입니다. 이 하이라이트는 광원이 반사되어 보이는 지점입니다.</p>
+          <p><strong>Combined (합성)</strong>: 실제 물체처럼 보입니다! 매트한 파란색 위에 밝은 하이라이트가 추가되어 광택이 있는 플라스틱이나 도자기 같은 느낌을 줍니다.</p>
+          <p>실제 세계의 대부분의 물체는 확산 + 정반사의 조합입니다. 그 비율이 재질의 "느낌"을 결정합니다.</p>
+        </div>
+
+        <div class="tip">
+          일상 속 비유: 볼링공을 생각해 보세요. 전체적으로 어두운 색(확산 반사)이지만, 조명이 비치는 부분에 밝은 반짝임(정반사)이 있습니다. 반면 분필은 확산 반사만 있어서 반짝이지 않습니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 9 ==================== -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>BRDF 예시들</h2>
+
+        <div class="summary-box">
+          BRDF는 매우 복잡하고 공간적으로 변할(spatially varying) 수 있습니다. 같은 물체라도 위치에 따라 다른 반사 특성을 가질 수 있습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>슬라이드에 보이는 체스판 위의 구들은 각각 다른 BRDF를 가집니다:</p>
+          <ul>
+            <li><strong>완전 확산(매트) 구</strong>: 부드러운 명암만 있는 흰 구</li>
+            <li><strong>광택 금속 구</strong>: 주변 환경이 반사되어 보이는 구</li>
+            <li><strong>유리 구</strong>: 빛이 투과하면서 굴절되는 투명한 구</li>
+            <li><strong>반광택 구</strong>: 약간의 하이라이트가 있는 회색 구</li>
+          </ul>
+          <p>현실 세계의 재질은 매우 다양합니다: 빨간 장미꽃잎, 과일, 옷감, 공작새 깃털, 사람 피부 등. 이들 각각이 고유한 BRDF를 가지며, 때로는 위치에 따라 BRDF가 변합니다(예: 무늬가 있는 천).</p>
+        </div>
+
+        <div class="tip">
+          공작새 깃털처럼 보는 각도에 따라 색이 변하는 현상을 구조색(structural color) 또는 iridescence라고 합니다. 이는 BRDF가 파장에 따라서도 복잡하게 변할 수 있음을 보여주는 좋은 예시입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 10 ==================== -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>전역 조명 (Global Illumination)</h2>
+
+        <div class="summary-box">
+          빛의 한 번 반사(direct lighting)만으로는 복잡한 장면을 사실적으로 렌더링할 수 없습니다. <strong>전역 조명</strong>은 간접 조명(빛의 다중 반사)까지 고려합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">직접 조명 vs 전역 조명</div>
+          <p><strong>직접 조명 (Direct Lighting)</strong>: 광원 -> 표면 -> 카메라. 빛이 딱 한 번만 반사된 경우만 계산합니다. 이 방식의 문제점은:</p>
+          <ul>
+            <li>광원이 직접 비추지 않는 곳이 완전히 까맣게 됩니다 (실제로는 간접광으로 약간 밝음)</li>
+            <li>그림자가 지나치게 딱딱합니다</li>
+            <li>색 번짐(color bleeding) 현상이 표현되지 않습니다</li>
+          </ul>
+          <p><strong>전역 조명 (Global Illumination)</strong>: 광원 -> 표면A -> 표면B -> ... -> 카메라. 빛이 여러 번 반사되는 것까지 계산합니다.</p>
+          <ul>
+            <li>그림자 영역도 주변 반사광으로 부드럽게 밝아집니다</li>
+            <li>빨간 벽 옆의 흰 물체에 붉은 빛이 번지는 효과가 나타납니다</li>
+            <li>훨씬 사실적이지만, 계산 비용이 크게 증가합니다</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Direct Lighting</td><td>직접 조명</td><td>광원에서 표면으로 직접 도달하는 빛만 고려</td></tr>
+              <tr><td class="en">Global Illumination</td><td>전역 조명</td><td>간접 조명(다중 반사)까지 포함한 조명 모델</td></tr>
+              <tr><td class="en">Indirect Illumination</td><td>간접 조명</td><td>다른 표면에서 반사되어 들어오는 빛</td></tr>
+              <tr><td class="en">Occluder</td><td>차폐물</td><td>빛의 경로를 막아 그림자를 만드는 물체</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 11 ==================== -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>기하학적 이미지 형성 (Geometric Image Formation)</h2>
+
+        <div class="summary-box">
+          기하학적 이미지 형성은 <strong>3D 장면을 2D 이미지 평면에 투영하는 과정</strong>입니다. 핀홀 카메라 모델이 가장 기본적인 모델입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>앞서 photometric image formation이 "각 점의 밝기가 얼마인가?"를 다뤘다면, geometric image formation은 <strong>"3D 공간의 점이 이미지의 어디에 찍히는가?"</strong>를 다룹니다.</p>
+          <p>그림에서 오른쪽에 있는 촛불(3D 물체)이 핀홀(pinhole)을 통해 왼쪽의 이미지 평면(image plane)에 <strong>뒤집힌 상</strong>으로 맺힙니다. 이것이 핀홀 카메라의 기본 원리입니다.</p>
+          <p>주요 매개변수:</p>
+          <ul>
+            <li>\(f\): <strong>초점 거리(focal length)</strong> -- 핀홀에서 이미지 평면까지의 거리</li>
+            <li>\(c\): <strong>카메라 중심(center of camera)</strong> -- 핀홀의 위치</li>
+            <li>\(Z\): 물체까지의 거리</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 12 ==================== -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>이미지란 무엇인가? (What is an Image?)</h2>
+
+        <div class="summary-box">
+          이미지는 <strong>3D 세계를 2D 이미지 평면에 투영하여 형성된 2차원 패턴</strong>입니다. 구체적으로는 밝기(brightness)와 색도(chrominance) 값의 2차원 배열입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>스마트폰으로 사진을 찍는 것을 생각해 봅시다. 에펠탑 앞에서 셀카를 찍으면:</p>
+          <ul>
+            <li>실제 에펠탑은 300m 높이의 3D 구조물</li>
+            <li>스마트폰 화면에는 높이 수백 픽셀의 2D 이미지로 변환됨</li>
+            <li>이 과정에서 깊이(depth) 정보가 사라짐 -- 에펠탑이 100m 뒤에 있든 200m 뒤에 있든 이미지에서는 구분하기 어려움</li>
+          </ul>
+          <p>이미지의 각 픽셀은 특정 방향에서 센서로 들어온 빛의 밝기와 색을 기록한 숫자입니다. 수백만 개의 이런 숫자들이 모여 하나의 이미지를 구성합니다.</p>
+        </div>
+
+        <div class="tip">
+          3D에서 2D로의 투영은 본질적으로 정보 손실을 동반합니다. 깊이 정보가 사라지기 때문에, 하나의 2D 이미지에서 원래의 3D 구조를 완벽하게 복원하는 것은 매우 어려운 문제(ill-posed problem)입니다. 이것이 컴퓨터 비전이 도전적인 이유 중 하나입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 13 ==================== -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>이미지를 어떻게 캡처하는가?</h2>
+
+        <div class="summary-box">
+          센서를 그냥 물체 앞에 놓으면, 센서의 모든 점이 물체의 모든 점에서 오는 빛을 받아 <strong>흐릿한 이미지</strong>가 됩니다. 선명한 이미지를 얻으려면 빛의 경로를 제한해야 합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>센서(필름)를 물체 앞에 아무런 장치 없이 그냥 놓으면 어떻게 될까요?</p>
+          <p>물체의 각 점에서 나온 빛은 모든 방향으로 퍼져나갑니다. 따라서 센서의 한 점에는 물체의 <strong>모든 점</strong>에서 오는 빛이 동시에 도달합니다. 결과적으로:</p>
+          <ul>
+            <li>센서의 모든 점이 비슷한 색을 기록하게 됩니다</li>
+            <li>물체의 형태를 구분할 수 없는 균일하고 흐릿한 이미지가 됩니다</li>
+            <li>이것은 "적분된 빛(integral of light)"이므로, 공간적 정보가 섞여버립니다</li>
+          </ul>
+          <p>해결책은? <strong>빛의 경로를 제한</strong>하여 센서의 각 점이 장면의 특정 방향에서 오는 빛만 받도록 해야 합니다. 이것이 바로 <strong>핀홀(pinhole)</strong>이나 <strong>렌즈(lens)</strong>의 역할입니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 14 ==================== -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>카메라 설계 - 첫 번째 시도</h2>
+
+        <div class="summary-box">
+          <strong>아이디어 1</strong>: 물체 앞에 필름을 놓는다. 결과는? 물체의 각 점에서 빛이 사방으로 퍼져 필름 전체에 도달하므로, 선명한 이미지를 얻을 수 없습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>나무(object) 앞에 필름(film)을 놓은 상황을 생각해 봅시다. 나무 꼭대기의 빨간 점에서 나온 빛은 필름 전체에 퍼집니다. 나무 중간의 보라색 점에서 나온 빛도 필름 전체에 퍼집니다.</p>
+          <p>결과적으로 필름의 모든 위치에 나무의 모든 부분에서 온 빛이 섞여서 도달합니다. 이것은 이미지가 아니라 그냥 "빛의 평균"입니다.</p>
+          <p>필름이 사진이 되려면, <strong>필름의 각 점이 장면의 한 점에서만 오는 빛을 받아야</strong> 합니다. 이를 위해 빛의 경로를 제한하는 장치가 필요합니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 15 ==================== -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>핀홀 카메라 (Pinhole Camera)</h2>
+
+        <div class="summary-box">
+          물체와 필름 사이에 <strong>작은 구멍(aperture)이 있는 차단벽(barrier)</strong>을 놓으면, 각 점에서 오는 빛이 하나의 경로로만 필름에 도달하여 선명한 이미지가 형성됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>차단벽(barrier)에 작은 구멍 하나를 뚫으면:</p>
+          <ul>
+            <li>나무 꼭대기에서 오는 빛은 구멍을 통과해 필름의 <strong>아래쪽</strong>에 도달</li>
+            <li>나무 바닥에서 오는 빛은 구멍을 통과해 필름의 <strong>위쪽</strong>에 도달</li>
+            <li>결과: <strong>상하가 뒤집힌(inverted) 선명한 이미지</strong>가 형성!</li>
+          </ul>
+          <p>이 작은 구멍을 <strong>조리개(aperture)</strong>라고 합니다. 핀홀 카메라의 핵심 아이디어는 빛의 경로를 극도로 제한하여, 필름의 각 점이 장면의 한 점에서 온 빛만 받도록 하는 것입니다.</p>
+          <p>장점: 단순하면서도 선명한 이미지를 만들 수 있음<br>
+          단점: 구멍이 너무 작으면 빛이 적게 들어와 이미지가 어두움</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Pinhole</td><td>핀홀</td><td>차단벽에 뚫린 매우 작은 구멍</td></tr>
+              <tr><td class="en">Aperture</td><td>조리개</td><td>빛이 통과하는 개구부, 그 크기가 빛의 양을 조절</td></tr>
+              <tr><td class="en">Barrier</td><td>차단벽</td><td>빛을 차단하는 불투명한 판</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 16 ==================== -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>카메라 옵스큐라 (Camera Obscura)</h2>
+
+        <div class="summary-box">
+          핀홀 카메라의 원리는 수백 년 전부터 <strong>"카메라 옵스큐라(Camera Obscura)"</strong>라는 장치로 알려져 있었습니다. 라틴어로 "어두운 방"이라는 뜻입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>카메라 옵스큐라는 핀홀 카메라의 초기 형태로, 어두운 방이나 상자에 작은 구멍을 하나 뚫어 외부 풍경이 반대편 벽에 투영되도록 한 장치입니다.</p>
+          <ul>
+            <li>르네상스 시대의 화가들이 정확한 원근법을 그리기 위해 사용했습니다</li>
+            <li>상은 <strong>뒤집혀서</strong> 맺히지만, 원근법과 비율은 정확합니다</li>
+            <li>현대 카메라의 기본 원리와 동일합니다</li>
+          </ul>
+          <p>"Camera"라는 단어 자체가 카메라 옵스큐라에서 유래했습니다!</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 17 ==================== -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>핀홀 카메라 모델 (Pinhole Camera Model)</h2>
+
+        <div class="summary-box">
+          핀홀 카메라 모델은 <strong>모든 빛이 단일 점(Center of Projection)을 통과</strong>하여 이미지 평면(Image Plane)에 맺힌다고 가정하는 수학적 모델입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>핀홀 카메라의 수학적 모델의 핵심 요소:</p>
+          <ul>
+            <li><strong>Pencil of rays (광선속)</strong>: 하나의 점을 통과하는 모든 광선의 집합. 핀홀은 이 점 역할을 합니다.</li>
+            <li><strong>Center of Projection (투영 중심)</strong> = focal point (초점): 모든 광선이 통과하는 단일 점. 핀홀의 위치입니다.</li>
+            <li><strong>Image Plane (이미지 평면)</strong>: 실제 이미지가 맺히는 평면. 핀홀에서 거리 \(f\)만큼 떨어져 있습니다.</li>
+          </ul>
+          <p>핀홀 카메라 모델에서:</p>
+          <ul>
+            <li>\(f\) = <strong>초점 거리(focal length)</strong>: 핀홀에서 이미지 평면까지의 거리</li>
+            <li>\(c\) = <strong>카메라 중심</strong>: 핀홀의 위치 (= Center of Projection)</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          핀홀 카메라 모델은 컴퓨터 비전에서 가장 많이 사용되는 카메라 모델입니다. 렌즈의 복잡한 광학 효과를 무시하고, 빛이 한 점을 통과한다는 단순한 가정만으로도 많은 문제를 풀 수 있습니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 18 ==================== -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>렌즈의 필요성 (Lens)</h2>
+
+        <div class="summary-box">
+          핀홀 카메라의 근본적 한계는 <strong>빛이 너무 적게 들어온다</strong>는 것입니다. 실용적인 카메라를 만들려면 더 많은 빛을 모을 수 있는 <strong>렌즈(Lens)</strong>가 필요합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>핀홀의 문제점:</p>
+          <ul>
+            <li>구멍이 너무 작으면: 빛이 적게 들어와 이미지가 매우 어둡고, 회절(diffraction) 현상으로 오히려 흐려짐</li>
+            <li>구멍을 키우면: 빛은 많이 들어오지만, 여러 경로의 빛이 섞여서 흐릿해짐</li>
+          </ul>
+          <p>해결책: <strong>렌즈</strong>를 사용하면 큰 구멍으로 많은 빛을 받으면서도, 빛을 한 점으로 모아(focusing) 선명한 이미지를 얻을 수 있습니다.</p>
+          <p>실제 카메라 렌즈는 단일 렌즈가 아니라 여러 장의 렌즈를 조합한 <strong>복합 렌즈(compound lens)</strong>입니다. 이를 통해 다양한 광학적 결함을 보정합니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 19 ==================== -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 19</span>
+        <h2>렌즈 추가하기 (Adding a Lens)</h2>
+
+        <div class="summary-box">
+          렌즈는 빛을 필름 위의 한 점으로 모아(focus) 줍니다. 렌즈의 중심을 통과하는 광선은 방향이 바뀌지 않습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>볼록 렌즈(convex lens)의 기본 원리:</p>
+          <ul>
+            <li>물체의 한 점에서 나온 빛은 여러 방향으로 퍼지지만, 렌즈가 이 빛들을 모아서 필름의 한 점에 집중시킵니다</li>
+            <li><strong>렌즈 중심을 통과하는 광선</strong>은 굴절되지 않고 직진합니다 -- 이것이 핀홀 카메라와의 연결 고리!</li>
+            <li>렌즈 가장자리를 통과하는 광선일수록 더 많이 굴절됩니다</li>
+          </ul>
+          <p>핵심: 렌즈는 핀홀의 원리를 유지하면서(중심 광선은 직진), 주변의 빛도 함께 모아서 밝고 선명한 이미지를 만듭니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 20 ==================== -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 20</span>
+        <h2>초점 거리와 평행 광선 (Focal Length)</h2>
+
+        <div class="summary-box">
+          렌즈에 <strong>평행하게 들어오는 모든 광선</strong>은 렌즈 뒤 <strong>초점 거리 \(f\)</strong> 위치의 한 점(focal point)으로 수렴합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>렌즈의 초점 거리 \(f\)는 렌즈의 가장 중요한 특성입니다:</p>
+          <ul>
+            <li><strong>무한히 먼 물체</strong>에서 오는 빛은 거의 평행합니다 (예: 별빛, 먼 산)</li>
+            <li>이 평행 광선들이 렌즈를 통과하면 렌즈 뒤 거리 \(f\)에 있는 <strong>초점(focal point)</strong>에 모입니다</li>
+            <li>따라서 무한히 먼 물체에 초점을 맞추려면, 필름을 렌즈에서 정확히 \(f\)만큼 떨어진 곳에 놓아야 합니다</li>
+          </ul>
+          <p>렌즈 중심을 통과하는 광선은 굴절되지 않고 직진하며, 이는 핀홀 카메라 모델과 동일한 기하학적 관계를 유지합니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Focal Length (f)</td><td>초점 거리</td><td>렌즈 중심에서 초점까지의 거리</td></tr>
+              <tr><td class="en">Focal Point</td><td>초점</td><td>평행 광선이 렌즈를 통과한 후 모이는 점</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 21 ==================== -->
+      <section class="page-section" id="p21">
+        <span class="page-num">Page 21</span>
+        <h2>착란원 (Circle of Confusion)</h2>
+
+        <div class="summary-box">
+          렌즈에는 특정 거리의 물체만 정확히 초점이 맞습니다. 그 외 거리의 물체는 필름 위에 점이 아닌 <strong>"착란원(Circle of Confusion)"</strong>으로 맺혀 흐릿하게 보입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>핀홀 카메라와 달리, 렌즈 카메라에는 <strong>"초점이 맞는 거리"</strong>가 있습니다:</p>
+          <ul>
+            <li><strong>초점 거리에 있는 물체</strong> (빨간색): 빛이 필름 위의 정확히 한 점에 모임 -> 선명한 이미지</li>
+            <li><strong>초점 거리보다 가까운 물체</strong> (녹색): 빛이 필름 뒤에서 모이려고 함 -> 필름 위에서는 원형으로 퍼짐</li>
+          </ul>
+          <p>이렇게 점이 아닌 원으로 퍼지는 것을 <strong>착란원(Circle of Confusion)</strong>이라고 합니다. 착란원이 클수록 이미지가 더 흐릿합니다.</p>
+          <p>착란원의 크기에 영향을 주는 요인:</p>
+          <ul>
+            <li>물체와 초점 거리 사이의 차이가 클수록 -> 착란원이 커짐</li>
+            <li>조리개가 클수록 -> 착란원이 커짐 (더 많은 각도의 빛이 들어오므로)</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          착란원은 사진의 "아웃포커스(out-of-focus)" 효과의 원인입니다. 인물 사진에서 배경이 뿌옇게 보이는 것은 배경에 해당하는 빛이 필름 위에서 큰 착란원을 만들기 때문입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 22 ==================== -->
+      <section class="page-section" id="p22">
+        <span class="page-num">Page 22</span>
+        <h2>실제 조리개와 보케 (Real Apertures & Bokeh)</h2>
+
+        <div class="summary-box">
+          실제 카메라의 조리개는 여러 개의 금속 날개(blade)로 구성되어 크기를 조절할 수 있습니다. 초점이 맞지 않는 영역의 아름다운 흐림 효과를 <strong>보케(Bokeh)</strong>라고 합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>실제 카메라의 조리개 시스템:</p>
+          <ul>
+            <li>여러 장의 금속 날개가 겹쳐서 구멍을 만듦</li>
+            <li>날개를 회전시켜 구멍 크기를 연속적으로 조절 가능</li>
+            <li>날개 수에 따라 구멍 모양이 달라짐 (원형에 가까울수록 고급 렌즈)</li>
+          </ul>
+          <p>조리개 크기에 따른 사진 변화 (꽃 사진 예시):</p>
+          <ul>
+            <li><strong>큰 조리개</strong>: 빛이 많이 들어옴, 배경이 크게 흐려짐 (얕은 피사계 심도)</li>
+            <li><strong>작은 조리개</strong>: 빛이 적게 들어옴, 배경까지 선명 (깊은 피사계 심도)</li>
+          </ul>
+          <p><strong>보케(Bokeh)</strong>: 일본어에서 유래한 용어로, 초점이 맞지 않는 영역의 심미적인 흐림 효과를 말합니다. 크리스마스 트리 조명이 동글동글한 빛 원으로 보이는 것이 대표적 예시입니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 23-24 ==================== -->
+      <section class="page-section" id="p23">
+        <span class="page-num">Pages 23-24</span>
+        <h2>피사계 심도 (Depth of Field)</h2>
+
+        <div class="summary-box">
+          <strong>피사계 심도(DOF)</strong>는 이미지에서 선명하게 보이는 깊이 범위입니다. 조리개 크기를 변경하면 피사계 심도가 달라집니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>피사계 심도의 핵심 원리:</p>
+          <ul>
+            <li><strong>작은 조리개 (높은 f-number)</strong>: 빛의 경로가 좁아져 착란원이 작아짐 -> 넓은 범위가 선명하게 보임 -> <strong>깊은 피사계 심도</strong></li>
+            <li><strong>큰 조리개 (낮은 f-number)</strong>: 빛의 경로가 넓어져 초점 평면에서 벗어난 물체의 착란원이 커짐 -> 좁은 범위만 선명 -> <strong>얕은 피사계 심도</strong></li>
+          </ul>
+          <p>실제 예시 (긴 식탁 사진):</p>
+          <ul>
+            <li>큰 조리개: 가까운 냅킨만 선명하고, 멀리 있는 냅킨은 흐림</li>
+            <li>작은 조리개: 식탁 전체가 비교적 선명</li>
+          </ul>
+          <p>텍스트 예시에서도 "DEPTH OF FIELD" 글자가 특정 거리에서만 선명하고 나머지는 흐릿한 것을 볼 수 있습니다.</p>
+        </div>
+
+        <div class="tip">
+          인물 사진에서는 보통 큰 조리개(얕은 DOF)를 사용하여 배경을 흐리게 만들어 인물을 돋보이게 합니다. 반면 풍경 사진에서는 작은 조리개(깊은 DOF)를 사용하여 전경부터 원경까지 모두 선명하게 담습니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 24 ==================== -->
+      <section class="page-section" id="p24">
+        <span class="page-num">Page 24</span>
+        <h2>피사계 심도 - 시각적 예시</h2>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>긴 식탁 사진에서 피사계 심도의 효과를 명확히 볼 수 있습니다:</p>
+          <ul>
+            <li>카메라에 가까운 물체(접시, 냅킨)는 선명합니다</li>
+            <li>"Depth of Field" 표시가 있는 특정 범위만 초점이 맞습니다</li>
+            <li>그 범위를 벗어난 먼 곳의 물체들은 점점 흐려집니다</li>
+          </ul>
+          <p>오른쪽의 텍스트 예시에서도 동일한 원리를 확인할 수 있습니다. "DEPTH OF FIELD" 글자가 특정 거리에서만 읽을 수 있을 만큼 선명하고, 그 앞뒤로는 갈수록 흐릿해집니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 25 ==================== -->
+      <section class="page-section" id="p25">
+        <span class="page-num">Page 25</span>
+        <h2>F-Number (조리개 값)</h2>
+
+        <div class="summary-box">
+          F-number(f/#)는 초점 거리를 조리개 직경으로 나눈 값으로, 카메라에 들어오는 빛의 양과 피사계 심도를 결정하는 핵심 매개변수입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <div class="math-block">
+            \[ f/\# = N = \frac{f}{D} \]
+          </div>
+          <p>여기서:</p>
+          <ul>
+            <li>\(f\): 초점 거리 (focal length)</li>
+            <li>\(D\): 조리개의 직경 (diameter of the aperture)</li>
+            <li>\(N\): F-number</li>
+          </ul>
+          <p>F-number의 효과:</p>
+          <table class="terms-table">
+            <thead><tr><th>F-number</th><th>조리개 크기</th><th>빛의 양</th><th>피사계 심도</th><th>보케</th></tr></thead>
+            <tbody>
+              <tr><td class="en">f/2.8</td><td>큼</td><td>많음</td><td>얕음</td><td>많음</td></tr>
+              <tr><td class="en">f/8</td><td>중간</td><td>중간</td><td>중간</td><td>중간</td></tr>
+              <tr><td class="en">f/22</td><td>작음</td><td>적음</td><td>깊음</td><td>적음</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">
+          주의: F-number가 클수록 조리개가 작습니다! f/2.8은 큰 구멍, f/22는 작은 구멍입니다. 이는 f-number가 "초점거리 / 직경"이기 때문입니다. 직경이 작아지면 분모가 작아져 값이 커집니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 26-27 ==================== -->
+      <section class="page-section" id="p26">
+        <span class="page-num">Page 26</span>
+        <h2>화각 (Field of View)</h2>
+
+        <div class="summary-box">
+          화각(FOV)은 카메라가 볼 수 있는 장면의 범위를 각도로 나타낸 것입니다. 초점 거리가 짧을수록 화각이 넓고, 초점 거리가 길수록 화각이 좁습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <div class="math-block">
+            \[ \text{AFOV}[^\circ] = 2 \times \tan^{-1}\left(\frac{h}{2f}\right) \]
+          </div>
+          <p>여기서:</p>
+          <ul>
+            <li>\(f\): 초점 거리 (focal length)</li>
+            <li>\(h\): 센서 크기 (sensor size)</li>
+            <li>AFOV: 각도 화각 (Angular Field of View)</li>
+          </ul>
+          <p><strong>초점 거리와 화각의 관계:</strong></p>
+          <ul>
+            <li><strong>짧은 초점 거리</strong> (광각 렌즈, 예: 17mm): 넓은 화각 (~104도), 넓은 범위를 담지만 물체가 작게 보임</li>
+            <li><strong>긴 초점 거리</strong> (망원 렌즈, 예: 1000mm): 좁은 화각 (~2.5도), 먼 물체를 크게 담을 수 있음</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="page-section" id="p27">
+        <span class="page-num">Page 27</span>
+        <h2>화각과 초점 거리 - 실제 예시</h2>
+
+        <div class="card">
+          <div class="card-label">초점 거리별 화각 비교</div>
+          <table class="terms-table">
+            <thead><tr><th>초점 거리</th><th>화각</th><th>용도</th></tr></thead>
+            <tbody>
+              <tr><td class="en">17mm</td><td>104도</td><td>초광각 - 건축, 풍경</td></tr>
+              <tr><td class="en">28mm</td><td>75도</td><td>광각 - 풍경, 스냅</td></tr>
+              <tr><td class="en">50mm</td><td>47도</td><td>표준 - 인간 시야와 유사</td></tr>
+              <tr><td class="en">85mm</td><td>28도</td><td>중망원 - 인물</td></tr>
+              <tr><td class="en">135mm</td><td>18도</td><td>망원 - 인물, 스포츠</td></tr>
+              <tr><td class="en">300mm</td><td>8도</td><td>초망원 - 야생동물, 스포츠</td></tr>
+              <tr><td class="en">500mm</td><td>5도</td><td>초망원 - 천체</td></tr>
+              <tr><td class="en">1000mm</td><td>2.5도</td><td>극초망원 - 특수 용도</td></tr>
+            </tbody>
+          </table>
+          <p>같은 위치에서 다른 초점 거리의 렌즈로 군함을 촬영한 예시에서, 초점 거리가 길어질수록 군함의 특정 부분이 확대되어 보이는 것을 확인할 수 있습니다.</p>
+        </div>
+
+        <div class="tip">
+          "화각은 무엇에 의존하는가?" -- 두 가지: (1) 초점 거리 f와 (2) 센서 크기 h. 같은 초점 거리라도 센서가 크면 화각이 넓어집니다. 이것이 풀프레임과 크롭 센서 카메라의 차이입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 28 ==================== -->
+      <section class="page-section" id="p28">
+        <span class="page-num">Page 28</span>
+        <h2>실제 렌즈 (Real Lens)</h2>
+
+        <div class="summary-box">
+          실제 렌즈는 이상적인 얇은 렌즈 모델과 달리 여러 가지 <strong>광학적 결함(lens flaws)</strong>을 가집니다: 색수차, 구면수차, 방사 왜곡, 비네팅 등.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>복합 렌즈 (Compound/Thick Lens)</strong>: 실제 카메라 렌즈는 여러 장의 렌즈를 조합하여 만듭니다. Principal planes (주평면)과 nodal points (절점) 개념이 사용됩니다.</p>
+          <p>주요 렌즈 결함:</p>
+          <ul>
+            <li><strong>색수차 (Chromatic Aberration)</strong>: 파장(색)에 따라 굴절률이 달라서 색이 정확히 한 점에 모이지 않음</li>
+            <li><strong>구면수차 (Spherical Aberration)</strong>: 렌즈의 가장자리를 통과하는 빛이 중심을 통과하는 빛과 다른 점에 모임</li>
+            <li><strong>비네팅 (Vignetting)</strong>: 이미지 가장자리가 중앙보다 어둡게 나타남</li>
+            <li><strong>방사/접선 왜곡 (Radial/Tangential Distortion)</strong>: 직선이 곡선으로 왜곡됨</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 29 ==================== -->
+      <section class="page-section" id="p29">
+        <span class="page-num">Page 29</span>
+        <h2>색수차 (Chromatic Aberration)</h2>
+
+        <div class="summary-box">
+          색수차(CA)는 렌즈가 <strong>모든 색(파장)의 빛을 같은 점에 모으지 못하는</strong> 현상입니다. 빨간색, 초록색, 파란색 빛이 각각 다른 위치에 초점을 맞추게 됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>렌즈는 유리로 만들어지는데, 유리의 <strong>굴절률(refractive index)</strong>은 빛의 파장에 따라 다릅니다:</p>
+          <ul>
+            <li><strong>파란색 빛</strong> (짧은 파장): 더 많이 굴절 -> 렌즈에 가까운 곳에 초점</li>
+            <li><strong>빨간색 빛</strong> (긴 파장): 덜 굴절 -> 렌즈에서 먼 곳에 초점</li>
+          </ul>
+          <p>결과적으로 사진에서 밝은 물체의 가장자리에 보라색이나 초록색 테두리가 나타납니다. 건물 사진의 지붕 모서리에서 이런 색 번짐을 관찰할 수 있습니다.</p>
+          <p>보정 방법:</p>
+          <ul>
+            <li>서로 다른 굴절률의 유리를 조합한 <strong>아크로매틱 렌즈(achromatic lens)</strong> 사용</li>
+            <li>소프트웨어를 통한 후보정</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 30 ==================== -->
+      <section class="page-section" id="p30">
+        <span class="page-num">Page 30</span>
+        <h2>비네팅 (Vignetting)</h2>
+
+        <div class="summary-box">
+          비네팅은 <strong>이미지 가장자리가 중앙보다 어둡게</strong> 나타나는 현상입니다. 비스듬한 각도로 들어오는 빛이 렌즈 시스템에 의해 차단되기 때문에 발생합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>여러 장의 렌즈(L1, L2, L3)로 구성된 실제 렌즈 시스템에서:</p>
+          <ul>
+            <li><strong>장면 점 A</strong> (광축 위): 빛이 모든 렌즈를 직선으로 통과 -> 최대 밝기</li>
+            <li><strong>장면 점 B</strong> (가장자리): 비스듬한 각도로 들어오는 빛 중 일부가 렌즈 테두리에 의해 차단됨 -> 더 적은 빛이 센서에 도달 -> 어두워짐</li>
+          </ul>
+          <p>결과: 이미지의 네 모서리가 중앙보다 눈에 띄게 어두워집니다. 도시 야경 사진에서 하늘의 모서리 부분이 더 어두운 것이 비네팅의 예입니다.</p>
+          <p>비네팅은 때로 예술적 효과로 의도적으로 사용되기도 합니다 (인물 사진에서 주의를 중앙으로 끌기 위해).</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 31 ==================== -->
+      <section class="page-section" id="p31">
+        <span class="page-num">Page 31</span>
+        <h2>렌즈 왜곡 (Lens Distortion)</h2>
+
+        <div class="summary-box">
+          렌즈 왜곡은 직선이 곡선으로 변형되는 현상입니다. 특히 광각 렌즈에서 두드러지며, 갤럭시 S7 카메라의 왜곡 문제가 대표적 사례입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>이상적인 렌즈는 직선을 직선으로 투영해야 하지만, 실제 렌즈는 그렇지 못합니다:</p>
+          <ul>
+            <li>집 사진에서 벽의 직선이 약간 휘어져 보이는 것이 렌즈 왜곡입니다</li>
+            <li>등대 안의 광각 렌즈 사진에서는 왜곡이 매우 크게 나타납니다</li>
+            <li>격자 종이를 촬영하면 왜곡의 패턴을 명확히 볼 수 있습니다 -- 가장자리로 갈수록 격자가 휘어짐</li>
+          </ul>
+          <p>갤럭시 S7 엣지의 카메라 왜곡 문제: 광각 렌즈를 채택하면서 이미지 가장자리에서 눈에 띄는 왜곡이 발생했습니다. f/1.7의 밝은 렌즈로 더 많은 빛을 받을 수 있었지만, 왜곡이라는 대가를 치렀습니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 32 ==================== -->
+      <section class="page-section" id="p32">
+        <span class="page-num">Page 32</span>
+        <h2>방사 왜곡 (Radial Distortion)</h2>
+
+        <div class="summary-box">
+          방사 왜곡은 불완전한 렌즈로 인해 발생하며, <strong>렌즈 가장자리를 통과하는 빛일수록 더 크게 왜곡</strong>됩니다. 두 가지 주요 유형이 있습니다: 핀쿠션(pin cushion)과 배럴(barrel).
+        </div>
+
+        <div class="card">
+          <div class="card-label">왜곡 유형</div>
+          <ul>
+            <li><strong>왜곡 없음 (No distortion)</strong>: 격자가 완벽한 정사각형으로 유지</li>
+            <li><strong>핀쿠션 왜곡 (Pin cushion)</strong>: 이미지가 중심으로 오므라드는 형태. 직선이 안쪽으로 휘어짐. 주로 망원 렌즈에서 나타남</li>
+            <li><strong>배럴 왜곡 (Barrel)</strong>: 이미지가 바깥으로 볼록해지는 형태. 직선이 바깥쪽으로 휘어짐. 주로 광각 렌즈에서 나타남</li>
+          </ul>
+          <p>건물 사진 비교에서 왜곡 보정 전후의 차이를 볼 수 있습니다. 보정 후에는 건물의 직선이 정확하게 직선으로 표현됩니다.</p>
+        </div>
+
+        <div class="tip">
+          컴퓨터 비전에서 정확한 기하학적 계산을 하려면 먼저 렌즈 왜곡을 보정(undistortion)해야 합니다. 이를 위해 체커보드 패턴을 여러 각도에서 촬영하여 왜곡 매개변수를 추정하는 "카메라 캘리브레이션(camera calibration)"을 수행합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 33 ==================== -->
+      <section class="page-section" id="p33">
+        <span class="page-num">Page 33</span>
+        <h2>렌즈 글레어 (Lens Glare)</h2>
+
+        <div class="summary-box">
+          렌즈 글레어는 렌즈 내부에서 빛이 <strong>내부 반사(inter-reflection)</strong>되면서 발생하는 현상입니다. 매우 밝은 광원이 장면에 있을 때 나타납니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>렌즈 글레어가 발생하는 원리:</p>
+          <ul>
+            <li>렌즈 표면은 완벽하게 투명하지 않아, 일부 빛이 렌즈 내부에서 반사됨</li>
+            <li>이 반사된 빛이 다른 렌즈 표면에서 다시 반사되어 센서에 도달</li>
+            <li>결과: 이미지에 밝은 줄무늬, 원형 패턴, 또는 전체적인 안개(haze)가 나타남</li>
+          </ul>
+          <p>태양을 직접 향해 촬영할 때 자주 발생하며, 야간 촬영에서 밝은 가로등이나 조명에 의해서도 나타납니다. 렌즈 후드(lens hood)를 사용하거나 반사 방지 코팅으로 줄일 수 있습니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 34 ==================== -->
+      <section class="page-section" id="p34">
+        <span class="page-num">Page 34</span>
+        <h2>기하학적 기본 요소와 변환 (Primitives and Transformations)</h2>
+
+        <div class="summary-box">
+          컴퓨터 비전의 수학적 기초를 이루는 두 가지 핵심 요소: <strong>기하학적 기본 요소</strong>(점, 선, 평면)와 <strong>변환</strong>(이동, 회전, 아핀, 사영)을 다룹니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>기하학적 기본 요소 (Geometric Primitives)</strong>: 점(Points), 선(Lines), 평면(Planes) 등</p>
+          <p><strong>변환 (Transformations)</strong>: 이러한 기본 요소들을 공간에서 이동/변형시키는 연산</p>
+          <ul>
+            <li><strong>Translation (이동)</strong>: 위치만 바꿈, 모양/크기 유지</li>
+            <li><strong>Euclidean (유클리드)</strong>: 이동 + 회전, 길이 보존</li>
+            <li><strong>Similarity (닮음)</strong>: 이동 + 회전 + 스케일, 각도 보존</li>
+            <li><strong>Affine (아핀)</strong>: 평행성 보존, 직사각형이 평행사변형이 될 수 있음</li>
+            <li><strong>Projective (사영)</strong>: 직선만 보존, 가장 일반적인 변환</li>
+          </ul>
+          <p>이 변환들은 계층적 관계를 가집니다: Translation ⊂ Euclidean ⊂ Similarity ⊂ Affine ⊂ Projective</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 35 ==================== -->
+      <section class="page-section" id="p35">
+        <span class="page-num">Page 35</span>
+        <h2>사영 기하학 (Projective Geometry)</h2>
+
+        <div class="summary-box">
+          사영 기하학은 <strong>기하학적 도형과 그 투영(projection) 사이의 관계</strong>를 연구하는 수학 분야입니다. 핵심 가정: <strong>평행선은 무한 원점에서 만난다.</strong>
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>일상에서 사영 기하학을 경험하는 대표적 예시: 철도 선로를 바라보면 두 레일이 멀리서 한 점에서 만나는 것처럼 보입니다. 실제로 레일은 평행하지만, 우리 눈(카메라)에 투영되면 만나는 것처럼 보입니다.</p>
+          <p>이 "만나는 점"을 <strong>소실점(vanishing point)</strong>이라고 하며, 사영 기하학에서는 이를 "무한 원점(point at infinity)"이라고 합니다.</p>
+          <p>유클리드 기하학에서 "평행선은 만나지 않는다"는 공리를 포기하고, "평행선은 무한히 먼 점에서 만난다"고 가정하면 사영 기하학이 됩니다. 이 가정은 카메라 투영을 수학적으로 우아하게 다룰 수 있게 해줍니다.</p>
+        </div>
+
+        <div class="tip">
+          화가가 캔버스에 원근법으로 풍경을 그리는 모습이 바로 사영 변환입니다. 3D 공간의 나무, 산, 길이 2D 캔버스 위에 특정 규칙(원근법)에 따라 그려지는 것이죠.
+        </div>
+      </section>
+
+      <!-- ==================== Page 36 ==================== -->
+      <section class="page-section" id="p36">
+        <span class="page-num">Page 36</span>
+        <h2>핀홀 카메라 모델 복습</h2>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>기하학적 기본 요소와 변환을 배우기 전에, 핀홀 카메라 모델을 다시 한번 상기합니다:</p>
+          <ul>
+            <li><strong>Pencil of rays</strong>: 단일 점(핀홀)을 통과하는 모든 광선</li>
+            <li><strong>Center of Projection</strong> (= focal point): 핀홀의 위치, 모든 빛이 이 점을 통과</li>
+            <li><strong>Image Plane</strong>: 초점 거리 \(f\) 만큼 떨어진 곳에 이미지가 형성</li>
+          </ul>
+          <p>이 모델을 수학적으로 정확하게 표현하기 위해, 지금부터 동차 좌표(homogeneous coordinates)와 사영 기하학을 학습합니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 37 ==================== -->
+      <section class="page-section" id="p37">
+        <span class="page-num">Page 37</span>
+        <h2>2D 점의 표현 (Primitives: 2D Points)</h2>
+
+        <div class="summary-box">
+          2D 점은 <strong>비동차 좌표(heterogeneous/inhomogeneous)</strong>와 <strong>동차 좌표(homogeneous)</strong> 두 가지 방식으로 표현할 수 있습니다. 동차 좌표는 사영 변환을 행렬 곱으로 표현할 수 있게 해주는 강력한 도구입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <p><strong>비동차 좌표 (Inhomogeneous Coordinates)</strong>:</p>
+          <div class="math-block">
+            \[ \mathbf{x} = \begin{bmatrix} x \\ y \end{bmatrix} \in \mathbb{R}^2 \]
+          </div>
+          <p>일반적으로 우리가 사용하는 (x, y) 좌표입니다.</p>
+
+          <p><strong>동차 좌표 (Homogeneous Coordinates)</strong>:</p>
+          <div class="math-block">
+            \[ \tilde{\mathbf{x}} = \begin{bmatrix} s \cdot x \\ s \cdot y \\ s \end{bmatrix} = \begin{bmatrix} x \\ y \\ 1 \end{bmatrix} = \begin{bmatrix} \mathbf{x} \\ 1 \end{bmatrix} \]
+          </div>
+          <p>여기서 \(\mathbb{P}^2 = \mathbb{R}^3 \setminus \{(0,0,0)\}\)은 <strong>사영 공간(projective space)</strong>이라 합니다.</p>
+
+          <p><strong>핵심 성질</strong>: 동차 벡터는 <strong>스케일에 대해 동치(equivalent up to scale)</strong>입니다. 즉, \((x, y, 1)\)과 \((2x, 2y, 2)\)와 \((3x, 3y, 3)\)은 모두 같은 2D 점을 나타냅니다. 동차 벡터는 동치류(equivalence class)를 정의합니다.</p>
+        </div>
+
+        <div class="tip">
+          동차 좌표를 비동차 좌표로 변환하려면: 마지막 성분으로 나누면 됩니다. (sx, sy, s) -> (x, y). 이를 "정규화(normalization)"라고 합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 38 ==================== -->
+      <section class="page-section" id="p38">
+        <span class="page-num">Page 38</span>
+        <h2>동차 좌표의 기하학적 의미</h2>
+
+        <div class="summary-box">
+          동차 좌표는 3차원 공간에서 원점을 지나는 광선(ray)으로 해석할 수 있습니다. \(z=1\) 평면과의 교점이 비동차 좌표에 해당합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>3D 공간에서 동차 좌표를 시각화해 봅시다:</p>
+          <ul>
+            <li>\(z = 1\) 평면에서 점 \(\tilde{\mathbf{x}} = [x, y, 1]^\top\)은 비동차 좌표 \((x, y)\)에 해당</li>
+            <li>같은 2D 점을 나타내는 동차 벡터 \(\tilde{\mathbf{x}} = [s \cdot x, s \cdot y, s]^\top\)은 원점에서 \((x, y, 1)\)을 지나는 직선(ray) 위의 모든 점에 해당</li>
+          </ul>
+          <p>즉, <strong>하나의 2D 점은 3D 공간에서 원점을 통과하는 하나의 광선</strong>에 대응됩니다. 이것이 "up to scale"의 기하학적 의미입니다.</p>
+          <p>비동차 좌표(inhomogeneous coordinates)는 \(z = 1\) 평면 위의 실제 점이고, 동차 좌표(homogeneous coordinates)는 원점을 통과하는 광선입니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 39 ==================== -->
+      <section class="page-section" id="p39">
+        <span class="page-num">Page 39</span>
+        <h2>2D 직선의 표현 (Primitives: 2D Lines)</h2>
+
+        <div class="summary-box">
+          2D 직선도 동차 좌표로 표현할 수 있습니다. 직선 \(\tilde{\mathbf{l}} = [a, b, c]^\top\)에 대해, 점 \(\tilde{\mathbf{x}}\)가 직선 위에 있을 조건은 \(\tilde{\mathbf{l}}^\top \tilde{\mathbf{x}} = 0\)입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <p>2D 직선을 동차 좌표로 표현:</p>
+          <div class="math-block">
+            \[ \tilde{\mathbf{l}} = [a, b, c]^\top \]
+          </div>
+          <p>점 \(\tilde{\mathbf{x}}\)가 직선 위에 있을 조건:</p>
+          <div class="math-block">
+            \[ \{\tilde{\mathbf{x}} \mid \tilde{\mathbf{l}}^\top \tilde{\mathbf{x}} = 0\} \iff \{x, y \mid ax + by + c = 0\} \]
+          </div>
+          <p>직선을 정규화하면: \(\tilde{\mathbf{l}} = [n_x, n_y, d]^\top = [\mathbf{n}, d]^\top\) (단, \(\|\mathbf{n}\|_2 = 1\))</p>
+          <ul>
+            <li>\(\mathbf{n} = [n_x, n_y]^\top\): 직선에 <strong>수직인 단위 법선 벡터</strong></li>
+            <li>\(d\): 원점에서 직선까지의 <strong>부호 거리(signed distance)</strong></li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          동차 좌표의 장점: 점과 직선의 관계를 단순한 내적(dot product)으로 표현할 수 있습니다. 점이 직선 위에 있는지 확인하려면 단순히 내적이 0인지만 확인하면 됩니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 40-42 ==================== -->
+      <section class="page-section" id="p40">
+        <span class="page-num">Page 40</span>
+        <h2>2D 직선 연산 (2D Line Arithmetic)</h2>
+
+        <div class="summary-box">
+          동차 좌표에서 <strong>두 직선의 교점</strong>은 외적(cross product)으로 구할 수 있습니다: \(\tilde{\mathbf{x}} = \tilde{\mathbf{l}}_1 \times \tilde{\mathbf{l}}_2\)
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <p><strong>두 직선의 교점</strong>:</p>
+          <div class="math-block">
+            \[ \tilde{\mathbf{x}} = \tilde{\mathbf{l}}_1 \times \tilde{\mathbf{l}}_2 \]
+          </div>
+          <p>외적을 반대칭 행렬(skew-symmetric matrix)과 벡터의 곱으로 표현할 수 있습니다:</p>
+          <div class="math-block">
+            \[ \mathbf{a} \times \mathbf{b} = [\mathbf{a}]_\times \mathbf{b} = \begin{bmatrix} 0 & -a_3 & a_2 \\ a_3 & 0 & -a_1 \\ -a_2 & a_1 & 0 \end{bmatrix} \begin{pmatrix} b_1 \\ b_2 \\ b_3 \end{pmatrix} \]
+          </div>
+          <p>이 성질은 매우 우아합니다: 2D에서 두 직선의 교점을 구하는 것이 단순한 외적 연산으로 환원됩니다.</p>
+        </div>
+      </section>
+
+      <section class="page-section" id="p41">
+        <span class="page-num">Page 41</span>
+        <h2>직선 교차 예제 1 - 유한 교점</h2>
+
+        <div class="card">
+          <div class="card-label">구체적 계산 예시</div>
+          <p>직선 \(\tilde{\mathbf{l}}_1 = (0, 1, -1)^\top\)은 \(y = 1\)을 의미합니다.</p>
+          <p>직선 \(\tilde{\mathbf{l}}_2 = (1, 0, -2)^\top\)은 \(x = 2\)를 의미합니다.</p>
+          <p>교점을 외적으로 구합니다:</p>
+          <div class="math-block">
+            \[ \tilde{\mathbf{l}}_1 \times \tilde{\mathbf{l}}_2 = [\tilde{\mathbf{l}}_1]_\times \tilde{\mathbf{l}}_2 = \begin{bmatrix} 0 & 1 & 1 \\ -1 & 0 & 0 \\ -1 & 0 & 0 \end{bmatrix} \begin{pmatrix} 1 \\ 0 \\ -2 \end{pmatrix} = \begin{pmatrix} -2 \\ -1 \\ -1 \end{pmatrix} = \begin{pmatrix} 2 \\ 1 \\ 1 \end{pmatrix} \]
+          </div>
+          <p>마지막 성분으로 나누면 비동차 좌표 \((2, 1)\)을 얻습니다. 확인: \(x = 2\)와 \(y = 1\)이 만나는 점은 당연히 \((2, 1)\)입니다!</p>
+        </div>
+      </section>
+
+      <section class="page-section" id="p42">
+        <span class="page-num">Page 42</span>
+        <h2>직선 교차 예제 2 - 무한 원점 (평행선의 교점)</h2>
+
+        <div class="card">
+          <div class="card-label">평행선의 교점</div>
+          <p>직선 \(\tilde{\mathbf{l}}_1 = (1, 0, -1)^\top\)은 \(x = 1\)을 의미합니다.</p>
+          <p>직선 \(\tilde{\mathbf{l}}_2 = (1, 0, -2)^\top\)은 \(x = 2\)를 의미합니다.</p>
+          <p>두 수직선은 <strong>평행</strong>합니다! 교점을 구하면:</p>
+          <div class="math-block">
+            \[ \tilde{\mathbf{l}}_1 \times \tilde{\mathbf{l}}_2 = \begin{bmatrix} 0 & 1 & 0 \\ -1 & 0 & -1 \\ 0 & 1 & 0 \end{bmatrix} \begin{pmatrix} 1 \\ 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix} \]
+          </div>
+          <p>결과: \((0, 1, 0)^\top\). 마지막 성분이 <strong>0</strong>입니다! 이는 비동차 좌표로 변환할 수 없으며, <strong>무한 원점(point at infinity)</strong>을 의미합니다.</p>
+          <p>검증: \(\tilde{\mathbf{l}}_\infty = (0, 0, 1)^\top\) (무한 원선)에 대해 \((0, 0, 1)^\top \cdot (0, 1, 0) = 0\)이므로, 무한 원점은 무한 원선 위에 있습니다.</p>
+        </div>
+
+        <div class="tip">
+          이것이 동차 좌표의 핵심적인 장점입니다! 유클리드 기하에서는 "평행선은 만나지 않는다"고 하지만, 동차 좌표에서는 평행선도 무한 원점에서 만나는 것으로 통일적으로 처리할 수 있습니다. 예외 없이 항상 "두 직선의 교점 = 외적"이 성립합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 43 ==================== -->
+      <section class="page-section" id="p43">
+        <span class="page-num">Page 43</span>
+        <h2>3D 점의 표현 (Primitives: 3D Points)</h2>
+
+        <div class="summary-box">
+          3D 점도 2D와 마찬가지로 비동차 좌표와 동차 좌표로 표현됩니다. 3D 동차 좌표는 4차원 벡터입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <p><strong>비동차 좌표</strong>:</p>
+          <div class="math-block">
+            \[ \mathbf{x} = \begin{bmatrix} x \\ y \\ z \end{bmatrix} \in \mathbb{R}^3 \]
+          </div>
+          <p><strong>동차 좌표</strong>:</p>
+          <div class="math-block">
+            \[ \tilde{\mathbf{x}} = \begin{bmatrix} s \cdot x \\ s \cdot y \\ s \cdot z \\ s \end{bmatrix} = \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} = \begin{bmatrix} \mathbf{x} \\ 1 \end{bmatrix} \in \mathbb{P}^3 \]
+          </div>
+          <p>여기서 \(\mathbb{P}^3 = \mathbb{R}^4 \setminus \{(0,0,0,0)\}\)는 3D 사영 공간입니다.</p>
+          <p>2D의 경우와 동일한 원리: 동차 벡터는 스케일에 무관하며, 마지막 성분으로 나누면 비동차 좌표를 얻습니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 44-45 ==================== -->
+      <section class="page-section" id="p44">
+        <span class="page-num">Pages 44-45</span>
+        <h2>3D 평면의 표현 (Primitives: 3D Planes)</h2>
+
+        <div class="summary-box">
+          3D 평면도 동차 좌표를 사용하여 표현할 수 있으며, 2D 직선의 확장입니다. 평면 \(\tilde{\mathbf{m}} = (a, b, c, d)^\top\)에 대해 점이 평면 위에 있을 조건은 \(\tilde{\mathbf{m}}^\top \tilde{\mathbf{x}} = 0\)입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <div class="math-block">
+            \[ \tilde{\mathbf{m}} = (a, b, c, d)^\top \]
+            \[ \{\tilde{\mathbf{x}} \mid \tilde{\mathbf{m}}^\top \tilde{\mathbf{x}} = 0\} \iff \{x, y, z \mid ax + by + cz + d = 0\} \]
+          </div>
+          <p>정규화하면: \(\tilde{\mathbf{m}} = [n_x, n_y, n_z, d]^\top = [\mathbf{n}, d]^\top\) (단, \(\|\mathbf{n}\|_2 = 1\))</p>
+          <ul>
+            <li>\(\mathbf{n} = [n_x, n_y, n_z]^\top\): 평면에 <strong>수직인 단위 법선 벡터</strong></li>
+            <li>\(d\): 원점에서 평면까지의 <strong>부호 거리</strong></li>
+          </ul>
+          <p>기하학적으로: 원점에서 법선 방향으로 거리 \(d\)만큼 떨어진 곳에, 법선에 수직인 평면이 있습니다.</p>
+        </div>
+
+        <div class="tip">
+          2D와 3D의 패턴에 주목: 2D 점 \(\in \mathbb{R}^2\)은 동차 좌표 \(\in \mathbb{P}^2\) (3D 벡터), 2D 직선도 \(\in \mathbb{P}^2\). 3D 점 \(\in \mathbb{R}^3\)은 동차 좌표 \(\in \mathbb{P}^3\) (4D 벡터), 3D 평면도 \(\in \mathbb{P}^3\). 점과 직선/평면이 같은 사영 공간에 존재하는 이 대칭성이 사영 기하학의 아름다움입니다.
+        </div>
+      </section>
+
+      <section class="page-section" id="p45">
+        <span class="page-num">Page 45</span>
+        <h2>3D 평면의 기하학적 시각화</h2>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>3D 공간에서 평면 \(\tilde{\mathbf{m}}\)을 시각화하면:</p>
+          <ul>
+            <li>파란색 벡터 \(\mathbf{n}\)이 평면에 수직인 법선 벡터</li>
+            <li>원점에서 평면까지의 거리가 \(d\)</li>
+            <li>평면 위의 임의의 점 \(\tilde{\mathbf{x}} = [x, y, z, 1]^\top\)에 대해 \([n_x, n_y, n_z, d] \cdot [x, y, z, 1]^\top = 0\) 성립</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 46 ==================== -->
+      <section class="page-section" id="p46">
+        <span class="page-num">Page 46</span>
+        <h2>2D 변환 - 이동 (Translation)</h2>
+
+        <div class="summary-box">
+          이동(Translation)은 가장 단순한 변환으로, <strong>자유도(DoF) 2</strong>입니다. 동차 좌표를 사용하면 이동도 행렬 곱으로 표현할 수 있습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <div class="math-block">
+            \[ \mathbf{x}' = \mathbf{x} + \mathbf{t} \iff \bar{\mathbf{x}}' = \begin{bmatrix} \mathbf{I} & \mathbf{t} \\ \mathbf{0}^\top & 1 \end{bmatrix} \bar{\mathbf{x}} \]
+          </div>
+          <ul>
+            <li>\(\mathbf{t} = [t_x, t_y]^\top\): 이동 벡터 (x 방향, y 방향)</li>
+            <li>자유도: 2 (이동량 \(t_x, t_y\))</li>
+            <li>보존되는 성질: <strong>방향(orientation)</strong> -- 물체의 모양, 크기, 기울기 모두 유지</li>
+          </ul>
+          <p>동차 좌표의 장점이 여기서 드러납니다: 일반 좌표에서 이동은 "덧셈"이라 행렬 곱으로 표현하기 어렵지만, 동차 좌표에서는 행렬 곱으로 깔끔하게 표현됩니다. 이를 통해 여러 변환을 <strong>연쇄(chain)</strong>하거나 <strong>역변환(invert)</strong>하기가 쉬워집니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 47 ==================== -->
+      <section class="page-section" id="p47">
+        <span class="page-num">Page 47</span>
+        <h2>2D 변환 - 유클리드 (Euclidean/Rigid)</h2>
+
+        <div class="summary-box">
+          유클리드 변환 = 이동 + 회전. <strong>자유도 3</strong> (이동 2 + 회전 1). 유클리드 거리(길이)를 보존합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <div class="math-block">
+            \[ \mathbf{x}' = \mathbf{R}\mathbf{x} + \mathbf{t} \iff \bar{\mathbf{x}}' = \begin{bmatrix} \mathbf{R} & \mathbf{t} \\ \mathbf{0}^\top & 1 \end{bmatrix} \bar{\mathbf{x}} \]
+          </div>
+          <ul>
+            <li>\(\mathbf{R} \in SO(2)\): 2D 회전 행렬. \(\mathbf{R}\mathbf{R}^\top = \mathbf{I}\)이고 \(\det(\mathbf{R}) = 1\)</li>
+            <li>자유도: 3 (\(t_x, t_y\)와 회전각 \(\theta\))</li>
+            <li>보존되는 성질: <strong>유클리드 거리(lengths)</strong> -- 두 점 사이의 거리가 변하지 않음</li>
+          </ul>
+          <p>유클리드 변환은 <strong>강체 변환(rigid body transformation)</strong>이라고도 합니다. 물체가 딱딱한 경우(변형되지 않는 경우) 물체의 움직임은 항상 유클리드 변환으로 표현됩니다.</p>
+        </div>
+
+        <div class="tip">
+          비유: 책을 책상 위에서 밀거나 돌려도 책의 크기와 모양은 변하지 않습니다. 이것이 유클리드 변환입니다. "길이가 보존된다"는 것이 핵심!
+        </div>
+      </section>
+
+      <!-- ==================== Page 48 ==================== -->
+      <section class="page-section" id="p48">
+        <span class="page-num">Page 48</span>
+        <h2>2D 변환 - 닮음 (Similarity)</h2>
+
+        <div class="summary-box">
+          닮음 변환 = 이동 + 회전 + <strong>균일 스케일링</strong>. <strong>자유도 4</strong>. 각도(angles)를 보존합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <div class="math-block">
+            \[ \mathbf{x}' = s\mathbf{R}\mathbf{x} + \mathbf{t} \iff \bar{\mathbf{x}}' = \begin{bmatrix} s\mathbf{R} & \mathbf{t} \\ \mathbf{0}^\top & 1 \end{bmatrix} \bar{\mathbf{x}} \]
+          </div>
+          <ul>
+            <li>\(\mathbf{R} \in SO(2)\): 2D 회전 행렬</li>
+            <li>\(s\): <strong>균일 스케일 팩터</strong> (모든 방향으로 같은 비율로 확대/축소)</li>
+            <li>자유도: 4 (\(t_x, t_y, \theta, s\))</li>
+            <li>보존되는 성질: <strong>각도(angles)</strong> -- 두 직선이 이루는 각도가 변하지 않음</li>
+          </ul>
+          <p>닮음 변환에서는 길이는 변할 수 있지만(스케일이 바뀌므로), 길이의 <strong>비율</strong>과 <strong>각도</strong>는 보존됩니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 49 ==================== -->
+      <section class="page-section" id="p49">
+        <span class="page-num">Page 49</span>
+        <h2>2D 변환 - 아핀 (Affine)</h2>
+
+        <div class="summary-box">
+          아핀 변환 = 임의의 2D 선형 변환 + 이동. <strong>자유도 6</strong>. 평행성(parallelism)을 보존합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <div class="math-block">
+            \[ \mathbf{x}' = \mathbf{A}\mathbf{x} + \mathbf{t} \iff \bar{\mathbf{x}}' = \begin{bmatrix} \mathbf{A} & \mathbf{t} \\ \mathbf{0}^\top & 1 \end{bmatrix} \bar{\mathbf{x}} \]
+          </div>
+          <ul>
+            <li>\(\mathbf{A} \in \mathbb{R}^{2 \times 2}\): <strong>임의의 2x2 행렬</strong> (회전+스케일+전단 포함)</li>
+            <li>자유도: 6 (\(\mathbf{A}\)의 4개 원소 + \(t_x, t_y\))</li>
+            <li>보존되는 성질: <strong>평행성(parallelism)</strong> -- 평행한 직선은 변환 후에도 평행</li>
+          </ul>
+          <p>아핀 변환은 닮음 변환보다 일반적입니다. 정사각형이 평행사변형으로 변할 수 있지만, 평행한 변은 여전히 평행합니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 50 ==================== -->
+      <section class="page-section" id="p50">
+        <span class="page-num">Page 50</span>
+        <h2>2D 변환 - 사영 (Projective/Homography)</h2>
+
+        <div class="summary-box">
+          사영 변환(호모그래피)은 가장 일반적인 2D 변환으로, <strong>자유도 8</strong>입니다. 직선(straight lines)만을 보존합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수식 해설</div>
+          <div class="math-block">
+            \[ \tilde{\mathbf{x}}' = \widetilde{\mathbf{H}} \tilde{\mathbf{x}} \quad \left(\bar{\mathbf{x}} = \frac{1}{\tilde{w}} \tilde{\mathbf{x}}\right) \]
+          </div>
+          <ul>
+            <li>\(\widetilde{\mathbf{H}} \in \mathbb{R}^{3 \times 3}\): 임의의 3x3 동차 행렬 (스케일까지 포함하면 up to scale)</li>
+            <li>자유도: 8 (3x3 = 9개 원소에서 스케일 1을 빼면 8)</li>
+            <li>보존되는 성질: <strong>직선(straight lines)</strong> -- 직선은 변환 후에도 직선. 하지만 평행성은 보존되지 않음!</li>
+          </ul>
+          <p>사영 변환은 카메라가 평면을 촬영할 때의 변환과 동일합니다. 예를 들어, 비스듬히 촬영한 건물 정면을 정면에서 본 것처럼 변환하는 것이 호모그래피입니다.</p>
+        </div>
+
+        <div class="tip">
+          호모그래피는 컴퓨터 비전에서 매우 자주 사용됩니다: 이미지 스티칭(파노라마), AR 마커 인식, 문서 스캐닝, 카메라 캘리브레이션 등. "평면 대 평면" 변환은 항상 호모그래피입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 51 ==================== -->
+      <section class="page-section" id="p51">
+        <span class="page-num">Page 51</span>
+        <h2>2D 변환 총정리</h2>
+
+        <div class="summary-box">
+          2D 변환들은 계층적 구조를 이루며, 자유도가 증가할수록 보존되는 성질이 줄어듭니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">2D 변환 비교표</div>
+          <table class="terms-table">
+            <thead><tr><th>변환</th><th>행렬</th><th>DoF</th><th>보존 성질</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Translation</td><td>\([\mathbf{I} \; \mathbf{t}]_{2 \times 3}\)</td><td>2</td><td>방향 (orientation)</td></tr>
+              <tr><td class="en">Rigid (Euclidean)</td><td>\([\mathbf{R} \; \mathbf{t}]_{2 \times 3}\)</td><td>3</td><td>길이 (lengths)</td></tr>
+              <tr><td class="en">Similarity</td><td>\([s\mathbf{R} \; \mathbf{t}]_{2 \times 3}\)</td><td>4</td><td>각도 (angles)</td></tr>
+              <tr><td class="en">Affine</td><td>\([\mathbf{A}]_{2 \times 3}\)</td><td>6</td><td>평행성 (parallelism)</td></tr>
+              <tr><td class="en">Projective</td><td>\([\widetilde{\mathbf{H}}]_{3 \times 3}\)</td><td>8</td><td>직선 (straight lines)</td></tr>
+            </tbody>
+          </table>
+          <p>핵심 포인트:</p>
+          <ul>
+            <li>변환들은 <strong>중첩 집합(nested set of groups)</strong>을 형성: Translation ⊂ Euclidean ⊂ Similarity ⊂ Affine ⊂ Projective</li>
+            <li>모든 변환은 \(3 \times 3\) 행렬로 통일적으로 표현 가능 (2D 동차 좌표)</li>
+            <li>상위 변환은 하위 변환의 성질도 함께 보존 (similarity는 직선도 보존하고 평행성도 보존)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 52 ==================== -->
+      <section class="page-section" id="p52">
+        <span class="page-num">Page 52</span>
+        <h2>3D 변환 총정리</h2>
+
+        <div class="summary-box">
+          3D 변환은 2D와 동일한 구조를 가지되, 차원이 하나 더 높습니다. \(3 \times 4\) 행렬에 \([\mathbf{0}^\top \; 1]\) 행을 추가하여 \(4 \times 4\) 동차 행렬로 표현합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">3D 변환 비교표</div>
+          <table class="terms-table">
+            <thead><tr><th>변환</th><th>행렬</th><th>DoF</th><th>보존 성질</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Translation</td><td>\([\mathbf{I} \; \mathbf{t}]_{3 \times 4}\)</td><td>3</td><td>방향</td></tr>
+              <tr><td class="en">Rigid (Euclidean)</td><td>\([\mathbf{R} \; \mathbf{t}]_{3 \times 4}\)</td><td>6</td><td>길이</td></tr>
+              <tr><td class="en">Similarity</td><td>\([s\mathbf{R} \; \mathbf{t}]_{3 \times 4}\)</td><td>7</td><td>각도</td></tr>
+              <tr><td class="en">Affine</td><td>\([\mathbf{A}]_{3 \times 4}\)</td><td>12</td><td>평행성</td></tr>
+              <tr><td class="en">Projective</td><td>\([\widetilde{\mathbf{H}}]_{4 \times 4}\)</td><td>15</td><td>직선</td></tr>
+            </tbody>
+          </table>
+          <p>2D와의 차이점:</p>
+          <ul>
+            <li>Translation: DoF 2 -> 3 (x, y, z 방향)</li>
+            <li>Euclidean: DoF 3 -> 6 (이동 3 + 회전 3)</li>
+            <li>Similarity: DoF 4 -> 7 (이동 3 + 회전 3 + 스케일 1)</li>
+            <li>Affine: DoF 6 -> 12 (3x3 행렬 9 + 이동 3)</li>
+            <li>Projective: DoF 8 -> 15 (4x4 행렬 16 - 스케일 1)</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          3D Euclidean 변환(DoF 6)은 로봇 공학, 자율 주행 등에서 카메라나 물체의 pose를 표현할 때 가장 많이 사용됩니다. 3개의 이동 매개변수(x, y, z)와 3개의 회전 매개변수(roll, pitch, yaw)로 공간에서의 위치와 방향을 완전히 기술합니다.
+        </div>
+      </section>
+
+      <!-- ==================== 부록: Page 54 ==================== -->
+      <section class="page-section" id="p54">
+        <span class="page-num">Pages 54-55 (부록)</span>
+        <h2>광원 추정 (Light Source Estimation)</h2>
+
+        <div class="summary-box">
+          점 광원(point source)의 방향을 추정하는 문제입니다. 물체의 형상(shape)과 셰이딩(shading) 정보로부터 광원의 방향을 역추정할 수 있습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>Lambertian 표면에서, 셰이딩은 다음과 같이 표현됩니다:</p>
+          <div class="math-block">
+            \[ \mathbf{N} \cdot \mathbf{L} = \mathbf{I} \]
+          </div>
+          <ul>
+            <li>\(\mathbf{N}\): \(p \times 3\) 행렬. 각 픽셀의 표면 법선 벡터 (p개의 픽셀)</li>
+            <li>\(\mathbf{L}\): \(3 \times 1\) 벡터. 광원 방향</li>
+            <li>\(\mathbf{I}\): \(p \times 1\) 벡터. 각 픽셀의 밝기값</li>
+          </ul>
+          <p>만약 법선 \(\mathbf{N}\)을 알고 있다면 (예: 3D 스캔 데이터), 밝기 \(\mathbf{I}\)를 관측하여 광원 방향 \(\mathbf{L}\)을 추정할 수 있습니다:</p>
+          <div class="math-block">
+            \[ \mathbf{N} \cdot \mathbf{L} = \mathbf{I} \implies \mathbf{L} = \mathbf{N}^{\dagger} \mathbf{I} \]
+          </div>
+          <p>여기서 \(\mathbf{N}^{\dagger}\)는 의사 역행렬(pseudo-inverse)입니다. 이것은 과결정(overdetermined) 문제이므로 최소제곱법으로 풀 수 있습니다.</p>
+          <p>응용 예시: 셔츠의 사진에서 주름의 3D 형상을 복원할 수 있습니다. 밝기 패턴으로부터 표면의 미세한 굴곡을 추정하는 것이 가능합니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== 부록: Page 56-60 ==================== -->
+      <section class="page-section" id="p56">
+        <span class="page-num">Pages 56-57 (부록)</span>
+        <h2>노출 (Exposure)</h2>
+
+        <div class="summary-box">
+          노출(Exposure)은 센서에 도달하는 총 빛의 양으로, <strong>조리개(aperture)</strong>와 <strong>셔터 속도(shutter speed)</strong> 두 가지 매개변수로 결정됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>카메라에서 적절한 밝기의 사진을 얻으려면 센서에 적절한 양의 빛이 도달해야 합니다.</p>
+          <ul>
+            <li><strong>조리개 (Aperture, f-stop)</strong>: 빛이 들어오는 구멍의 크기. 수도꼭지의 개방 정도와 같음</li>
+            <li><strong>셔터 속도 (Shutter Speed)</strong>: 센서가 빛에 노출되는 시간. 수도꼭지를 열어놓는 시간과 같음</li>
+          </ul>
+          <p><strong>상반 법칙 (Reciprocity)</strong>: 같은 노출량은 여러 조리개/셔터 속도 조합으로 얻을 수 있습니다. 노출 시간을 2배로 늘리고 조리개 면적을 절반으로 줄이면 같은 노출이 됩니다.</p>
+        </div>
+      </section>
+
+      <section class="page-section" id="p57">
+        <span class="page-num">Pages 57-60 (부록)</span>
+        <h2>상반 법칙 - 조리개와 셔터 속도의 트레이드오프</h2>
+
+        <div class="card">
+          <div class="card-label">셔터 속도 선택 기준</div>
+          <ul>
+            <li><strong>빠른 셔터 속도</strong> (예: 1/500초): 움직이는 피사체를 정지시킴 (비둘기 날개가 선명)</li>
+            <li><strong>느린 셔터 속도</strong> (예: 1/8초): 움직임이 흐릿하게 표현됨 (모션 블러), 카메라 흔들림에 취약</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">조리개 선택 기준</div>
+          <ul>
+            <li><strong>큰 조리개</strong> (f/2): 얕은 피사계 심도, 배경 흐림 (인물 사진)</li>
+            <li><strong>작은 조리개</strong> (f/16): 깊은 피사계 심도, 전체 선명 (풍경 사진), 회절 한계 주의</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">실제 예시: 비둘기 사진</div>
+          <p>같은 장면(공원의 비둘기)을 다른 설정으로 촬영한 비교:</p>
+          <table class="terms-table">
+            <thead><tr><th>설정</th><th>조리개</th><th>셔터</th><th>결과</th></tr></thead>
+            <tbody>
+              <tr><td>설정 1</td><td class="en">f/16</td><td class="en">1/8초</td><td>배경 선명 + 비둘기 흐릿 (모션 블러)</td></tr>
+              <tr><td>설정 2</td><td class="en">f/4</td><td class="en">1/125초</td><td>적당한 DOF + 비둘기 약간 선명</td></tr>
+              <tr><td>설정 3</td><td class="en">f/2</td><td class="en">1/500초</td><td>얕은 DOF + 비둘기 완전 정지</td></tr>
+            </tbody>
+          </table>
+          <p>세 설정 모두 같은 노출량(같은 밝기)이지만, 피사계 심도와 모션 블러가 다릅니다. 이것이 상반 법칙의 실제 적용입니다.</p>
+        </div>
+
+        <div class="tip">
+          사진가들은 상황에 따라 트레이드오프를 결정합니다: 스포츠/동물 촬영에서는 빠른 셔터가 우선이라 조리개를 크게 열고, 풍경 촬영에서는 깊은 DOF가 우선이라 조리개를 줄이고 셔터 속도를 늦춥니다.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.innerHTML = '&#127769; 다크모드';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.innerHTML = '&#9728;&#65039; 라이트모드';
+      }
+    }
+
+    // Smooth scrolling
+    document.querySelectorAll('.sidebar a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Active sidebar link
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>

@@ -1,0 +1,2711 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine Learning - Linear Regression 강의</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap');
+
+:root {
+  --bg: #0a0e17;
+  --card: #111827;
+  --card-border: #1e293b;
+  --accent: #3b82f6;
+  --accent2: #f59e0b;
+  --accent3: #10b981;
+  --text: #e2e8f0;
+  --text-dim: #94a3b8;
+  --text-bright: #f8fafc;
+  --danger: #ef4444;
+  --purple: #a78bfa;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+.app {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  padding: 60px 20px 40px;
+  position: relative;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 200px; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8em;
+  font-weight: 900;
+  background: linear-gradient(135deg, #60a5fa, #a78bfa, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+
+.header .subtitle {
+  font-size: 1.1em;
+  color: var(--text-dim);
+  font-weight: 300;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 30px 0;
+  padding: 16px;
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid var(--card-border);
+  position: sticky;
+  top: 10px;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+}
+
+.nav button {
+  background: none;
+  border: 2px solid var(--card-border);
+  color: var(--text);
+  padding: 8px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.95em;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.nav button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(59,130,246,0.1);
+}
+
+.nav button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.nav .slide-num {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent);
+  font-size: 1em;
+  min-width: 80px;
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 3px;
+  background: var(--card-border);
+  border-radius: 2px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.slide {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 20px 0;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-title {
+  font-size: 1.6em;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slide-title .num {
+  background: var(--accent);
+  color: white;
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8em;
+  flex-shrink: 0;
+}
+
+.explanation {
+  font-size: 1.02em;
+  line-height: 2;
+  color: var(--text);
+}
+
+.explanation p {
+  margin-bottom: 16px;
+}
+
+.math-block {
+  background: rgba(59,130,246,0.08);
+  border-left: 3px solid var(--accent);
+  padding: 20px 24px;
+  margin: 20px 0;
+  border-radius: 0 12px 12px 0;
+  overflow-x: auto;
+  font-size: 1.1em;
+}
+
+.highlight-box {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.3);
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+
+.key-point {
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.3);
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+
+.key-point::before {
+  content: '💡 ';
+}
+
+.warning-box {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+
+.warning-box::before {
+  content: '⚠️ ';
+}
+
+canvas {
+  display: block;
+  margin: 20px auto;
+  background: #0f172a;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  max-width: 100%;
+}
+
+.graph-container {
+  margin: 24px 0;
+}
+
+.graph-label {
+  text-align: center;
+  font-size: 0.9em;
+  color: var(--text-dim);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.dual-graph {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dual-graph > div {
+  flex: 1;
+  min-width: 280px;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 16px 0;
+  padding: 12px 16px;
+  background: rgba(59,130,246,0.05);
+  border-radius: 10px;
+}
+
+.controls label {
+  font-size: 0.9em;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.controls input[type="range"] {
+  -webkit-appearance: none;
+  height: 6px;
+  background: var(--card-border);
+  border-radius: 3px;
+  outline: none;
+}
+
+.controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.controls .value {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent2);
+  font-size: 0.95em;
+  min-width: 50px;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 20px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+}
+
+.comparison-table th {
+  background: rgba(59,130,246,0.2);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.comparison-table td {
+  padding: 10px 16px;
+  border-top: 1px solid var(--card-border);
+}
+
+.comparison-table tr:hover td {
+  background: rgba(59,130,246,0.05);
+}
+
+.toc {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.toc-item {
+  background: rgba(59,130,246,0.05);
+  border: 1px solid var(--card-border);
+  padding: 12px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.9em;
+}
+
+.toc-item:hover {
+  border-color: var(--accent);
+  background: rgba(59,130,246,0.1);
+  transform: translateY(-2px);
+}
+
+.toc-item .toc-num {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent);
+  font-size: 0.8em;
+}
+
+strong { color: var(--accent2); }
+em { color: var(--accent3); font-style: normal; }
+
+@media (max-width: 700px) {
+  .slide { padding: 24px 18px; }
+  .header h1 { font-size: 2em; }
+  .dual-graph { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <h1>Linear Regression</h1>
+    <div class="subtitle">Machine Learning — DGIST 로봇공학과</div>
+  </div>
+  <div id="content"></div>
+</div>
+
+<script>
+const slides = [
+  // Slide 0: TOC
+  {
+    title: "강의 개요",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>안녕하세요, 오늘은 <strong>Linear Regression (선형 회귀)</strong>에 대해 배우겠습니다. 이것은 머신러닝의 가장 기본이 되는 알고리즘입니다.</p>
+          <p>오늘 다룰 내용은 다음과 같습니다:</p>
+          <div class="toc">
+            <div class="toc-item" onclick="goSlide(1)"><span class="toc-num">01</span> Model Representation</div>
+            <div class="toc-item" onclick="goSlide(3)"><span class="toc-num">02</span> Cost Function</div>
+            <div class="toc-item" onclick="goSlide(5)"><span class="toc-num">03</span> Cost Function Intuition</div>
+            <div class="toc-item" onclick="goSlide(7)"><span class="toc-num">04</span> Gradient Descent</div>
+            <div class="toc-item" onclick="goSlide(9)"><span class="toc-num">05</span> Gradient Descent Intuition</div>
+            <div class="toc-item" onclick="goSlide(11)"><span class="toc-num">06</span> GD for Linear Regression</div>
+            <div class="toc-item" onclick="goSlide(13)"><span class="toc-num">07</span> Multiple Features</div>
+            <div class="toc-item" onclick="goSlide(15)"><span class="toc-num">08</span> Feature Scaling</div>
+            <div class="toc-item" onclick="goSlide(16)"><span class="toc-num">09</span> Polynomial Regression</div>
+            <div class="toc-item" onclick="goSlide(17)"><span class="toc-num">10</span> Normal Equation</div>
+          </div>
+        </div>`;
+    }
+  },
+  // Slide 1: Model Representation - scatter plot
+  {
+    title: "Model Representation (1) — 문제 정의",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>머신러닝에서 <strong>Supervised Learning (지도 학습)</strong>이란, 입력(x)과 그에 대응하는 정답(y)이 주어진 데이터로부터 학습하는 것입니다.</p>
+          <p>그 중에서 <strong>Regression (회귀)</strong>은 출력값이 <em>연속적인 실수값</em>인 문제를 말합니다. 예를 들어, 집의 크기(면적)로부터 집 가격을 예측하는 것이죠.</p>
+          <div class="highlight-box">
+            <strong>Supervised Learning</strong>: 각 데이터에 "정답"이 있음<br>
+            <strong>Regression Problem</strong>: 연속적인 실수값(real-valued) 출력을 예측
+          </div>
+          <p>아래 그래프는 실제 주택 가격 데이터를 보여줍니다. x축은 집의 크기(feet²), y축은 가격($1000 단위)입니다.</p>
+        </div>
+        <div class="graph-container">
+          <canvas id="chart1" width="700" height="400"></canvas>
+          <div class="graph-label">Housing Prices — 집 크기 vs 가격 산점도</div>
+        </div>
+        <div class="explanation">
+          <div class="key-point">데이터를 보면, 집이 클수록 가격이 높아지는 <strong>양의 상관관계</strong>가 보입니다. 우리의 목표는 이 관계를 수학적으로 모델링하는 것입니다.</div>
+        </div>`;
+      
+      const ctx = document.getElementById('chart1').getContext('2d');
+      drawHousingScatter(ctx, 700, 400);
+    }
+  },
+  // Slide 2: Model Representation - hypothesis
+  {
+    title: "Model Representation (2) — 가설 함수",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>먼저 <strong>표기법(Notation)</strong>을 정리합시다:</p>
+          <div class="math-block">
+            \\( m \\) = 훈련 데이터의 개수 (Number of training examples)<br>
+            \\( x \\) = 입력 변수 / 특징 (input variable / features)<br>
+            \\( y \\) = 출력 변수 / 목표 (output variable / target)<br>
+            \\( (x^{(i)}, y^{(i)}) \\) = \\(i\\)번째 훈련 데이터
+          </div>
+          <p>예를 들어 주택 데이터에서:</p>
+          <table class="comparison-table">
+            <tr><th>Size in feet² (x)</th><th>Price in $1000 (y)</th></tr>
+            <tr><td>2104</td><td>460</td></tr>
+            <tr><td>1416</td><td>232</td></tr>
+            <tr><td>1534</td><td>315</td></tr>
+            <tr><td>852</td><td>178</td></tr>
+          </table>
+          <p>여기서 \\( x^{(1)} = 2104 \\), \\( y^{(1)} = 460 \\) 이 됩니다.</p>
+          <p>우리는 데이터에 가장 잘 맞는 <strong>가설 함수(Hypothesis)</strong>를 찾고 싶습니다:</p>
+          <div class="math-block">
+            \\[ h_\\theta(x) = \\theta_0 + \\theta_1 x \\]
+          </div>
+          <p>이것은 <strong>1차 함수(직선)</strong>입니다. \\(\\theta_0\\)는 <em>y절편(intercept)</em>, \\(\\theta_1\\)은 <em>기울기(slope)</em>입니다.</p>
+          <div class="key-point">우리의 목표: 데이터에 가장 잘 맞는 \\(\\theta_0\\)와 \\(\\theta_1\\) 값을 찾는 것!</div>
+        </div>
+        <div class="graph-container">
+          <canvas id="chart2" width="700" height="380"></canvas>
+          <div class="controls">
+            <label>θ₀:</label>
+            <input type="range" id="theta0_1" min="-1" max="3" step="0.1" value="1.5">
+            <span class="value" id="t0val1">1.5</span>
+            <label>θ₁:</label>
+            <input type="range" id="theta1_1" min="-0.5" max="1.5" step="0.1" value="0">
+            <span class="value" id="t1val1">0.0</span>
+          </div>
+          <div class="graph-label">θ₀와 θ₁을 조절하여 직선을 맞춰보세요</div>
+        </div>`;
+      
+      const canvas = document.getElementById('chart2');
+      const ctx = canvas.getContext('2d');
+      const data = [[1,1],[2,2],[3,3]];
+      
+      function draw() {
+        const t0 = parseFloat(document.getElementById('theta0_1').value);
+        const t1 = parseFloat(document.getElementById('theta1_1').value);
+        document.getElementById('t0val1').textContent = t0.toFixed(1);
+        document.getElementById('t1val1').textContent = t1.toFixed(1);
+        drawLineWithPoints(ctx, 700, 380, data, t0, t1, 0, 3, 0, 3, false);
+      }
+      draw();
+      document.getElementById('theta0_1').addEventListener('input', draw);
+      document.getElementById('theta1_1').addEventListener('input', draw);
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 3: Cost Function definition
+  {
+    title: "Cost Function (1) — 비용 함수 정의",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>"가장 잘 맞는 직선"을 어떻게 정량적으로 정의할까요? 바로 <strong>Cost Function (비용 함수)</strong>을 사용합니다.</p>
+          <p>아이디어는 간단합니다: 모든 훈련 데이터에 대해, 예측값 \\(h_\\theta(x^{(i)})\\)와 실제값 \\(y^{(i)}\\)의 차이를 최소화하면 됩니다.</p>
+          <div class="math-block">
+            \\[ J(\\theta_0, \\theta_1) = \\frac{1}{2m} \\sum_{i=1}^{m} \\left( h_\\theta(x^{(i)}) - y^{(i)} \\right)^2 \\]
+          </div>
+          <p>이것을 <strong>Mean Squared Error (MSE, 평균 제곱 오차)</strong>라고 합니다. 하나씩 뜯어보면:</p>
+          <p>① \\( h_\\theta(x^{(i)}) - y^{(i)} \\) → 예측값과 실제값의 <em>차이(오차)</em><br>
+          ② \\( (\\cdots)^2 \\) → 오차를 <em>제곱</em> (양수/음수 구분 없애고, 큰 오차에 더 큰 벌점)<br>
+          ③ \\( \\sum_{i=1}^{m} \\) → 모든 데이터에 대해 <em>합산</em><br>
+          ④ \\( \\frac{1}{2m} \\) → <em>평균</em>을 내고 2로 나눔 (미분할 때 편리하도록)</p>
+          <div class="key-point">
+            <strong>Goal (목표):</strong> \\( J(\\theta_0, \\theta_1) \\)를 최소화하는 \\(\\theta_0, \\theta_1\\)을 찾는 것!<br>
+            \\[ \\min_{\\theta_0, \\theta_1} J(\\theta_0, \\theta_1) \\]
+          </div>
+        </div>
+        <div class="explanation">
+          <p>직관적으로 이해하면: <strong>비용이 작을수록 = 직선이 데이터에 잘 맞을수록</strong> 좋은 모델입니다.</p>
+        </div>`;
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 4: Cost function simplified (1 parameter)
+  {
+    title: "Cost Function (2) — 단순화된 예제",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>이해를 쉽게 하기 위해, \\(\\theta_0 = 0\\)으로 고정하고 <strong>\\(\\theta_1\\) 하나만</strong> 생각해봅시다.</p>
+          <div class="math-block">
+            \\[ h_\\theta(x) = \\theta_1 x \\quad \\Rightarrow \\quad J(\\theta_1) = \\frac{1}{2m} \\sum_{i=1}^{m} (\\theta_1 x^{(i)} - y^{(i)})^2 \\]
+          </div>
+          <p>훈련 데이터가 (1,1), (2,2), (3,3) 세 개라고 합시다. \\(\\theta_1\\)에 따라 J의 값이 어떻게 바뀌는지 봅시다.</p>
+          <p>예를 들어 <strong>\\(\\theta_1 = 1\\)</strong>이면: 예측값이 정확히 실제값과 같으므로 \\(J = 0\\) (완벽!)<br>
+          <strong>\\(\\theta_1 = 0.5\\)</strong>이면: 예측값이 0.5, 1, 1.5이므로 오차가 발생하고 \\(J > 0\\)</p>
+        </div>
+        <div class="dual-graph">
+          <div>
+            <canvas id="chart3a" width="340" height="300"></canvas>
+            <div class="graph-label">h(x) = θ₁·x (가설 함수)</div>
+          </div>
+          <div>
+            <canvas id="chart3b" width="340" height="300"></canvas>
+            <div class="graph-label">J(θ₁) (비용 함수)</div>
+          </div>
+        </div>
+        <div class="controls">
+          <label>θ₁:</label>
+          <input type="range" id="theta1_2" min="-0.5" max="2.5" step="0.05" value="1">
+          <span class="value" id="t1val2">1.00</span>
+          <label>J(θ₁) =</label>
+          <span class="value" id="jval2">0.00</span>
+        </div>
+        <div class="explanation">
+          <div class="key-point">슬라이더를 움직여보세요! θ₁ = 1일 때 J가 0(최소)이 되는 것을 확인할 수 있습니다. 비용 함수는 아래로 볼록한 <strong>포물선(parabola)</strong> 모양입니다.</div>
+        </div>`;
+      
+      const data = [[1,1],[2,2],[3,3]];
+      
+      function draw3() {
+        const t1 = parseFloat(document.getElementById('theta1_2').value);
+        document.getElementById('t1val2').textContent = t1.toFixed(2);
+        
+        // Compute J
+        let J = 0;
+        for(let d of data) { J += (t1*d[0] - d[1])**2; }
+        J /= (2*data.length);
+        document.getElementById('jval2').textContent = J.toFixed(3);
+        
+        // Left: hypothesis
+        const ctx1 = document.getElementById('chart3a').getContext('2d');
+        drawLineWithPoints(ctx1, 340, 300, data, 0, t1, 0, 3.5, 0, 3.5, false);
+        
+        // Right: cost function curve
+        const ctx2 = document.getElementById('chart3b').getContext('2d');
+        drawCostCurve(ctx2, 340, 300, data, t1);
+      }
+      draw3();
+      document.getElementById('theta1_2').addEventListener('input', draw3);
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 5: Cost function intuition - 2 parameters
+  {
+    title: "Cost Function Intuition — 2개 파라미터",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>이제 \\(\\theta_0\\)와 \\(\\theta_1\\) <strong>두 개의 파라미터</strong>를 모두 고려하면, 비용 함수 \\(J(\\theta_0, \\theta_1)\\)는 <em>3차원 곡면(surface)</em>이 됩니다.</p>
+          <p>이 곡면은 아래로 볼록한 <strong>그릇(bowl)</strong> 모양이며, 가장 아래 지점이 최소값입니다.</p>
+          <div class="highlight-box">
+            3D 곡면을 위에서 내려다보면 <strong>등고선(contour plot)</strong>이 됩니다.<br>
+            등고선의 중심이 J의 최솟값 → 최적의 θ₀, θ₁ 조합
+          </div>
+        </div>
+        <div class="graph-container">
+          <canvas id="chart5" width="700" height="450"></canvas>
+          <div class="controls">
+            <label>θ₀:</label>
+            <input type="range" id="theta0_5" min="-200" max="500" step="10" value="50">
+            <span class="value" id="t0val5">50</span>
+            <label>θ₁:</label>
+            <input type="range" id="theta1_5" min="-0.2" max="0.4" step="0.01" value="0.06">
+            <span class="value" id="t1val5">0.06</span>
+            <label>J =</label>
+            <span class="value" id="jval5">—</span>
+          </div>
+          <div class="graph-label">등고선 위의 빨간 점 = 현재 θ₀, θ₁ 위치 / 파란 선 = 현재 가설</div>
+        </div>
+        <div class="explanation">
+          <p>왼쪽은 현재 \\(\\theta_0, \\theta_1\\)에 해당하는 직선이 데이터와 얼마나 맞는지, 오른쪽은 등고선 위에서의 위치를 보여줍니다.</p>
+          <div class="key-point">등고선의 <strong>중심</strong>으로 갈수록 J가 작아지고, 직선이 데이터에 더 잘 맞게 됩니다. θ₀ ≈ 50~100, θ₁ ≈ 0.1~0.15 근처가 최적입니다.</div>
+        </div>`;
+      
+      const canvas = document.getElementById('chart5');
+      const ctx = canvas.getContext('2d');
+      
+      function draw5() {
+        const t0 = parseFloat(document.getElementById('theta0_5').value);
+        const t1 = parseFloat(document.getElementById('theta1_5').value);
+        document.getElementById('t0val5').textContent = t0;
+        document.getElementById('t1val5').textContent = t1.toFixed(2);
+        drawContourWithFit(ctx, 700, 450, t0, t1);
+      }
+      draw5();
+      document.getElementById('theta0_5').addEventListener('input', draw5);
+      document.getElementById('theta1_5').addEventListener('input', draw5);
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 6: What is Gradient Descent visual
+  {
+    title: "Cost Function Intuition — 서로 다른 직선 비교",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>서로 다른 \\(\\theta_0, \\theta_1\\) 조합이 어떤 직선을 만드는지 비교해봅시다.</p>
+        </div>
+        <div class="graph-container">
+          <canvas id="chart6" width="700" height="420"></canvas>
+          <div class="graph-label">여러 가설 함수 비교 — 색상별로 다른 파라미터</div>
+        </div>
+        <div class="explanation">
+          <p>위 그래프에서:</p>
+          <p><span style="color:#ef4444">● 빨간 직선</span>: θ₀=400, θ₁=-0.1 → 기울기가 음수, 데이터와 반대 방향<br>
+          <span style="color:#3b82f6">● 파란 직선</span>: θ₀=50, θ₁=0.06 → 어느 정도 맞지만 기울기가 작음<br>
+          <span style="color:#10b981">● 초록 직선</span>: θ₀=70, θ₁=0.13 → 데이터에 가장 잘 맞음!</p>
+          <div class="key-point">초록 직선이 가장 낮은 J 값을 가집니다. 우리의 목표는 이런 최적의 파라미터를 <strong>자동으로</strong> 찾는 것이고, 그 방법이 바로 <strong>Gradient Descent</strong>입니다.</div>
+        </div>`;
+      
+      const ctx = document.getElementById('chart6').getContext('2d');
+      drawMultipleHypotheses(ctx, 700, 420);
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 7: Gradient Descent overview
+  {
+    title: "Gradient Descent — 경사 하강법",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p><strong>Gradient Descent (경사 하강법)</strong>는 비용 함수 J를 최소화하기 위한 최적화 알고리즘입니다.</p>
+          <p>비유를 들자면: <em>안개 낀 산에서 내려오는 것</em>과 같습니다. 발밑의 경사(기울기)를 느끼고, 가장 가파른 내리막 방향으로 한 발씩 내딛는 거죠.</p>
+          <div class="math-block">
+            <strong>알고리즘:</strong><br><br>
+            수렴할 때까지 반복 {<br>
+            &emsp;&emsp; \\( \\theta_j := \\theta_j - \\alpha \\frac{\\partial}{\\partial \\theta_j} J(\\theta_0, \\theta_1) \\) &emsp; (j = 0, 1을 <strong>동시에</strong> 업데이트)<br>
+            }
+          </div>
+          <p>여기서:</p>
+          <p>• \\( := \\) 는 "대입" 연산자 (왼쪽에 오른쪽 값을 넣음)<br>
+          • \\( \\alpha \\) 는 <strong>학습률 (learning rate)</strong> — 한 발자국의 크기<br>
+          • \\( \\frac{\\partial}{\\partial \\theta_j} J \\) 는 <strong>편미분</strong> — 경사(기울기)의 방향과 크기</p>
+          <div class="warning-box">
+            <strong>동시 업데이트(Simultaneous Update)</strong>가 중요합니다!<br>
+            θ₀와 θ₁을 동시에 계산한 후 함께 업데이트해야 합니다. 순차적으로 하면 잘못된 결과가 나옵니다.
+          </div>
+        </div>`;
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 8: Gradient Descent 3D visualization
+  {
+    title: "Gradient Descent — 시각적 이해",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>경사 하강법이 어떻게 작동하는지 등고선 위에서 확인해봅시다.</p>
+          <p>시작점에서 출발하여 매 반복마다 기울기 방향으로 이동하며, 점점 J의 최솟값(등고선의 중심)에 가까워집니다.</p>
+          <div class="highlight-box">여기서는 데이터를 <strong>Feature Scaling</strong>하여 x, y 모두 0~1 범위로 정규화했습니다. 덕분에 α를 0.01~1.0 같은 직관적인 범위로 설정할 수 있습니다.</div>
+        </div>
+        <div class="graph-container">
+          <canvas id="chart8" width="700" height="500"></canvas>
+          <div class="controls">
+            <button id="btn_start" style="background:var(--accent);color:white;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-family:inherit">▶ 경사 하강 시작</button>
+            <button id="btn_reset" style="background:var(--card-border);color:var(--text);border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-family:inherit">↻ 초기화</button>
+            <label>학습률 α:</label>
+            <input type="range" id="alpha8" min="0.01" max="2.0" step="0.01" value="0.1">
+            <span class="value" id="aval8">0.10</span>
+          </div>
+          <div id="gd_info" style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim); padding:10px 16px;">
+            <div id="gd_stats"></div>
+            <div id="gd_grad_row" style="display:none; margin-top:8px; align-items:center; gap:10px;">
+              <span style="color:#a78bfa; font-size:11px; min-width:90px;">‖∇J‖ = <span id="gd_grad_val">0</span></span>
+              <div style="flex:1; height:14px; background:#1e293b; border-radius:7px; overflow:hidden; position:relative;">
+                <div id="gd_grad_bar" style="height:100%; border-radius:7px; transition:width 0.15s ease; width:0%;"></div>
+              </div>
+              <span id="gd_grad_label" style="font-size:10px; min-width:50px; text-align:right;"></span>
+            </div>
+          </div>
+          <div class="graph-label">등고선 위에서의 Gradient Descent 경로 (정규화된 데이터)</div>
+        </div>
+        <div class="explanation">
+          <div class="key-point">α = 0.1 정도면 안정적으로 수렴합니다. α > 1.5이면 발산하는 것을 직접 확인해보세요!<br><br>
+            아래 <strong style="color:#a78bfa">‖∇J‖ 바</strong>를 주목하세요: 처음엔 gradient가 크지만(큰 스텝), 최솟값에 가까워질수록 gradient가 자동으로 줄어들어(작은 스텝) 결국 0에 수렴합니다. 이것이 바로 <strong>고정된 α를 써도 자동으로 step이 줄어드는 이유</strong>입니다!</div>
+        </div>`;
+      
+      const canvas = document.getElementById('chart8');
+      const ctx = canvas.getContext('2d');
+      
+      // Normalize housing data to 0~1 range
+      const rawData = generateHousingData();
+      const xVals = rawData.map(d => d[0]);
+      const yVals = rawData.map(d => d[1]);
+      const xMin = Math.min(...xVals), xMax = Math.max(...xVals);
+      const yMin = Math.min(...yVals), yMax = Math.max(...yVals);
+      const hdata = rawData.map(d => [
+        (d[0] - xMin) / (xMax - xMin),
+        (d[1] - yMin) / (yMax - yMin)
+      ]);
+      
+      let path = [];
+      let t0 = -0.5, t1 = 1.5;  // start away from optimum
+      let running = false;
+      let animId = null;
+      let diverged8 = false;
+      
+      function drawGD() {
+        drawGDContourNorm(ctx, 700, 500, hdata, path, t0, t1, diverged8);
+      }
+      drawGD();
+      
+      document.getElementById('alpha8').addEventListener('input', function() {
+        document.getElementById('aval8').textContent = parseFloat(this.value).toFixed(2);
+      });
+      
+      document.getElementById('btn_reset').addEventListener('click', function() {
+        running = false;
+        diverged8 = false;
+        if(animId) clearTimeout(animId);
+        path = [];
+        t0 = -0.5; t1 = 1.5;
+        document.getElementById('gd_stats').textContent = '';
+        document.getElementById('gd_grad_row').style.display = 'none';
+        drawGD();
+      });
+      
+      document.getElementById('btn_start').addEventListener('click', function() {
+        if(running) return;
+        running = true;
+        diverged8 = false;
+        path = [{t0, t1}];
+        const alpha = parseFloat(document.getElementById('alpha8').value);
+        let step = 0;
+        
+        let maxGradNorm = 0;  // track initial gradient for bar scaling
+        
+        function updateInfo(stepNum, t0v, t1v, Jv, g0v, g1v, status) {
+          const gradNorm = Math.sqrt(g0v*g0v + g1v*g1v);
+          if(stepNum <= 1 && gradNorm > maxGradNorm) maxGradNorm = gradNorm;
+          
+          const statsEl = document.getElementById('gd_stats');
+          const gradRow = document.getElementById('gd_grad_row');
+          const gradBar = document.getElementById('gd_grad_bar');
+          const gradVal = document.getElementById('gd_grad_val');
+          const gradLabel = document.getElementById('gd_grad_label');
+          
+          let prefix = '';
+          if(status === 'converged') prefix = '<span style="color:#10b981">✓ 수렴 완료!</span>  ';
+          if(status === 'diverged') prefix = '<span style="color:#ef4444">⚠ 발산!</span>  ';
+          
+          statsEl.innerHTML = prefix + 
+            'Step: <span style="color:#f8fafc">' + stepNum + '</span>' +
+            '  |  θ₀ = <span style="color:#60a5fa">' + t0v.toFixed(4) + '</span>' +
+            '  |  θ₁ = <span style="color:#60a5fa">' + t1v.toFixed(4) + '</span>' +
+            '  |  J = <span style="color:#fbbf24">' + Jv.toFixed(6) + '</span>' +
+            '  |  ∂J/∂θ₀ = <span style="color:#a78bfa">' + g0v.toFixed(4) + '</span>' +
+            '  |  ∂J/∂θ₁ = <span style="color:#a78bfa">' + g1v.toFixed(4) + '</span>';
+          
+          gradRow.style.display = 'flex';
+          gradVal.textContent = gradNorm.toFixed(5);
+          
+          // Bar width relative to initial gradient
+          const barPct = maxGradNorm > 0 ? Math.min((gradNorm / maxGradNorm) * 100, 100) : 0;
+          gradBar.style.width = barPct + '%';
+          
+          // Color: big = red/orange, small = green
+          if(barPct > 60) {
+            gradBar.style.background = 'linear-gradient(90deg, #f59e0b, #ef4444)';
+            gradLabel.textContent = '큰 스텝';
+            gradLabel.style.color = '#ef4444';
+          } else if(barPct > 20) {
+            gradBar.style.background = 'linear-gradient(90deg, #10b981, #f59e0b)';
+            gradLabel.textContent = '중간';
+            gradLabel.style.color = '#f59e0b';
+          } else {
+            gradBar.style.background = 'linear-gradient(90deg, #3b82f6, #10b981)';
+            gradLabel.textContent = '수렴 중';
+            gradLabel.style.color = '#10b981';
+          }
+          if(barPct < 1) {
+            gradLabel.textContent = '≈ 0';
+            gradLabel.style.color = '#10b981';
+          }
+        }
+        
+        function iterate() {
+          if(!running || step > 300) { running = false; return; }
+          const m = hdata.length;
+          let g0 = 0, g1 = 0;
+          for(let d of hdata) {
+            const err = (t0 + t1*d[0]) - d[1];
+            g0 += err;
+            g1 += err * d[0];
+          }
+          g0 /= m; g1 /= m;
+          
+          const newT0 = t0 - alpha * g0;
+          const newT1 = t1 - alpha * g1;
+          
+          // Divergence detection
+          if(!isFinite(newT0) || !isFinite(newT1) || Math.abs(newT0) > 100 || Math.abs(newT1) > 100) {
+            diverged8 = true;
+            running = false;
+            drawGD();
+            updateInfo(path.length, t0, t1, 999, g0, g1, 'diverged');
+            return;
+          }
+          
+          t0 = newT0;
+          t1 = newT1;
+          path.push({t0, t1});
+          
+          // Compute J
+          let J = 0;
+          for(let d of hdata) J += ((t0 + t1*d[0]) - d[1])**2;
+          J /= (2*m);
+          
+          updateInfo(path.length, t0, t1, J, g0, g1, null);
+          
+          drawGD();
+          step++;
+          
+          // Check convergence
+          if(path.length > 2) {
+            const prev = path[path.length-2];
+            if(Math.abs(t0-prev.t0) < 1e-6 && Math.abs(t1-prev.t1) < 1e-6) {
+              running = false;
+              updateInfo(path.length, t0, t1, J, g0, g1, 'converged');
+              return;
+            }
+          }
+          
+          animId = setTimeout(iterate, 40);
+        }
+        iterate();
+      });
+    }
+  },
+  // Slide 9: Learning rate intuition
+  {
+    title: "Gradient Descent Intuition — 학습률 α",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>학습률 \\(\\alpha\\)는 한 번의 업데이트에서 얼마나 크게 이동할지를 결정합니다.</p>
+          <div class="math-block">
+            \\[ \\theta_1 := \\theta_1 - \\alpha \\frac{\\partial}{\\partial \\theta_1} J(\\theta_1) \\]
+          </div>
+          <p><strong>α가 너무 작으면:</strong> 수렴이 매우 느립니다 (개미걸음)<br>
+          <strong>α가 너무 크면:</strong> 최솟값을 지나칠수(overshoot) 있습니다!</p>
+        </div>
+        <div class="graph-container">
+          <canvas id="chart9" width="700" height="350"></canvas>
+          <div class="controls">
+            <label>α =</label>
+            <input type="range" id="alpha9" min="0.01" max="1.2" step="0.01" value="0.3">
+            <span class="value" id="aval9">0.30</span>
+            <button id="btn9" style="background:var(--accent);color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-family:inherit">▶ 실행</button>
+            <button id="btn9r" style="background:var(--card-border);color:var(--text);border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-family:inherit">↻</button>
+          </div>
+          <div class="graph-label">1D Gradient Descent: α가 결과에 미치는 영향</div>
+        </div>
+        <div class="explanation">
+          <div class="highlight-box">
+            <strong>또 하나 중요한 성질:</strong> 최솟값에 가까워지면 기울기 자체가 작아지므로, 고정된 α를 써도 자동으로 스텝이 줄어듭니다. 따라서 α를 점점 줄일 필요가 없습니다!
+          </div>
+          <p>또한 만약 현재 위치가 이미 극소점(local minimum)이라면, 기울기가 0이므로 \\(\\theta\\)가 변하지 않습니다 — 극소점에 "고정"됩니다.</p>
+        </div>`;
+      
+      const canvas = document.getElementById('chart9');
+      const ctx = canvas.getContext('2d');
+      let points9 = [];
+      let theta9 = 3.5;
+      let running9 = false;
+      let diverged9 = false;
+      
+      function J9(t) { return (t-1.5)**2 + 0.3; }
+      function dJ9(t) { return 2*(t-1.5); }
+      
+      function draw9() {
+        // Dynamically adjust view range based on points
+        let xmin = -0.5, xmax = 4, ymax = 5;
+        if(points9.length > 0) {
+          let pxmin = Infinity, pxmax = -Infinity, pymax = 0;
+          for(let p of points9) {
+            if(isFinite(p.x)) { pxmin = Math.min(pxmin, p.x); pxmax = Math.max(pxmax, p.x); }
+            if(isFinite(p.y)) { pymax = Math.max(pymax, p.y); }
+          }
+          if(isFinite(pxmin) && isFinite(pxmax)) {
+            xmin = Math.min(-0.5, pxmin - 0.5);
+            xmax = Math.max(4, pxmax + 0.5);
+          }
+          if(isFinite(pymax)) {
+            ymax = Math.max(5, pymax * 1.2);
+          }
+          // Cap to reasonable range for display
+          xmin = Math.max(xmin, -15);
+          xmax = Math.min(xmax, 18);
+          ymax = Math.min(ymax, 80);
+        }
+        draw1DCost(ctx, 700, 350, J9, points9, xmin, xmax, 0, ymax, diverged9);
+      }
+      draw9();
+      
+      document.getElementById('alpha9').addEventListener('input', function() {
+        document.getElementById('aval9').textContent = parseFloat(this.value).toFixed(2);
+      });
+      
+      document.getElementById('btn9r').addEventListener('click', function() {
+        running9 = false;
+        diverged9 = false;
+        points9 = [];
+        theta9 = 3.5;
+        draw9();
+      });
+      
+      document.getElementById('btn9').addEventListener('click', function() {
+        if(running9) return;
+        running9 = true;
+        diverged9 = false;
+        const alpha = parseFloat(document.getElementById('alpha9').value);
+        theta9 = 3.5;
+        points9 = [{x: theta9, y: J9(theta9)}];
+        let step = 0;
+        
+        function iter() {
+          if(!running9 || step > 30) { running9 = false; return; }
+          theta9 -= alpha * dJ9(theta9);
+          
+          // Detect divergence
+          if(!isFinite(theta9) || Math.abs(theta9) > 1e6) {
+            diverged9 = true;
+            running9 = false;
+            draw9();
+            return;
+          }
+          
+          points9.push({x: theta9, y: J9(theta9)});
+          draw9();
+          step++;
+          
+          // If J is growing very large, also mark as diverged
+          if(J9(theta9) > 200) {
+            diverged9 = true;
+            running9 = false;
+            draw9();
+            return;
+          }
+          
+          setTimeout(iter, 200);
+        }
+        iter();
+      });
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 10: Local minimum
+  {
+    title: "Gradient Descent — Local Minimum 문제",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>일반적인 함수에서 경사 하강법은 <strong>local minimum (극소점)</strong>에 빠질 수 있습니다.</p>
+          <p>시작점이 달라지면 도달하는 극소점도 달라질 수 있죠.</p>
+        </div>
+        <div class="graph-container">
+          <canvas id="chart10" width="700" height="350"></canvas>
+          <div class="graph-label">여러 극소점이 있는 함수 — 시작점에 따라 다른 결과</div>
+        </div>
+        <div class="explanation">
+          <p>하지만 걱정하지 마세요!</p>
+          <div class="key-point">
+            <strong>선형 회귀의 MSE 비용 함수는 볼록 함수(convex function)</strong>입니다!<br>
+            볼록 함수는 극소점이 하나(= 전역 최소점)뿐이므로, 어디서 시작하든 <strong>항상 같은 최적해</strong>에 도달합니다.
+          </div>
+          <p>일반적인 non-convex 함수(왼쪽)와 linear regression의 convex 함수(오른쪽)를 비교해보세요.</p>
+        </div>`;
+      
+      const ctx = document.getElementById('chart10').getContext('2d');
+      drawMultiMinima(ctx, 700, 350);
+    }
+  },
+  // Slide 11: GD for linear regression - with derivation
+  {
+    title: "Gradient Descent for Linear Regression — Gradient 유도",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>이제 경사 하강법을 선형 회귀에 적용하기 위해, 비용 함수의 <strong>편미분(gradient)을 직접 유도</strong>해봅시다.</p>
+
+          <p style="font-size:1.1em; color:var(--accent2)"><strong>Step 1. 가설 함수의 편미분을 먼저 구합니다</strong></p>
+          <div class="math-block">
+            \\[ h_\\theta(x) = \\theta_0 + \\theta_1 x \\]
+          </div>
+          <div class="math-block">
+            \\[ \\frac{\\partial h_\\theta(x^{(i)})}{\\partial \\theta_0} = 1 \\qquad \\frac{\\partial h_\\theta(x^{(i)})}{\\partial \\theta_1} = x^{(i)} \\]
+          </div>
+          <div class="key-point">
+            \\(h_\\theta\\)는 \\(\\theta_0\\)와 \\(\\theta_1\\)에 대해 각각 1차식이므로, 미분 결과가 매우 간단합니다.<br>
+            \\(\\theta_0\\)으로 미분하면 <strong>1</strong>, \\(\\theta_1\\)으로 미분하면 계수인 <strong>\\(x^{(i)}\\)</strong>가 나옵니다.
+          </div>
+
+          <p style="font-size:1.1em; color:var(--accent2)"><strong>Step 2. 비용 함수에 Chain Rule을 적용합니다</strong></p>
+          <div class="math-block">
+            \\[ J(\\theta_0, \\theta_1) = \\frac{1}{2m} \\sum_{i=1}^{m} \\left( h_\\theta(x^{(i)}) - y^{(i)} \\right)^2 \\]
+          </div>
+          <p>\\(\\theta_0\\)에 대해 편미분하면 (chain rule: 밖 미분 × 안 미분):</p>
+          <div class="math-block">
+            \\[ \\frac{\\partial J(\\theta_0,\\theta_1)}{\\partial \\theta_0} = \\frac{1}{2m} \\sum_{i=1}^{m} 2\\left( h_\\theta(x^{(i)}) - y^{(i)} \\right) \\cdot \\frac{\\partial h_\\theta(x^{(i)})}{\\partial \\theta_0} \\]
+          </div>
+
+          <p style="font-size:1.1em; color:var(--accent2)"><strong>Step 3. Step 1의 결과를 대입합니다</strong></p>
+          <p><strong>\\(\\theta_0\\)</strong>의 경우: \\(\\frac{\\partial h_\\theta}{\\partial \\theta_0} = 1\\) 을 대입하고, 2와 2m을 약분:</p>
+          <div class="math-block" style="background:rgba(16,185,129,0.12); border-color:var(--accent3)">
+            \\[ \\boxed{ \\frac{\\partial J(\\theta_0,\\theta_1)}{\\partial \\theta_0} = \\frac{1}{m} \\sum_{i=1}^{m} \\left( h_\\theta(x^{(i)}) - y^{(i)} \\right) } \\]
+          </div>
+          <p><strong>\\(\\theta_1\\)</strong>의 경우: \\(\\frac{\\partial h_\\theta}{\\partial \\theta_1} = x^{(i)}\\) 를 대입하고, 2와 2m을 약분:</p>
+          <div class="math-block" style="background:rgba(16,185,129,0.12); border-color:var(--accent3)">
+            \\[ \\boxed{ \\frac{\\partial J(\\theta_0,\\theta_1)}{\\partial \\theta_1} = \\frac{1}{m} \\sum_{i=1}^{m} \\left( h_\\theta(x^{(i)}) - y^{(i)} \\right) \\cdot x^{(i)} } \\]
+          </div>
+
+          <hr style="border-color:#1e293b; margin:24px 0">
+
+          <p style="font-size:1.1em; color:var(--accent2)"><strong>Step 4. Gradient Descent 업데이트 규칙</strong></p>
+          <p>위의 gradient를 \\( \\theta_j := \\theta_j - \\alpha \\frac{\\partial J}{\\partial \\theta_j} \\)에 대입하면:</p>
+          <div class="math-block">
+            \\[ \\theta_0 := \\theta_0 - \\alpha \\frac{1}{m} \\sum_{i=1}^{m} \\left( h_\\theta(x^{(i)}) - y^{(i)} \\right) \\]
+            \\[ \\theta_1 := \\theta_1 - \\alpha \\frac{1}{m} \\sum_{i=1}^{m} \\left( h_\\theta(x^{(i)}) - y^{(i)} \\right) \\cdot x^{(i)} \\]
+          </div>
+
+          <hr style="border-color:#1e293b; margin:24px 0">
+
+          <p style="font-size:1.1em; color:var(--accent2)"><strong>🔢 숫자 예제로 확인</strong></p>
+          <p>훈련 데이터: \\((1,1), (2,2), (3,3)\\), 현재 \\(\\theta_0 = 0, \\theta_1 = 0.5\\)라고 합시다.</p>
+          <table class="comparison-table">
+            <tr><th>i</th><th>x⁽ⁱ⁾</th><th>y⁽ⁱ⁾</th><th>h(x⁽ⁱ⁾) = 0 + 0.5·x</th><th>h - y (error)</th><th>(h-y)·x⁽ⁱ⁾</th></tr>
+            <tr><td>1</td><td>1</td><td>1</td><td>0.5</td><td>-0.5</td><td>-0.5</td></tr>
+            <tr><td>2</td><td>2</td><td>2</td><td>1.0</td><td>-1.0</td><td>-2.0</td></tr>
+            <tr><td>3</td><td>3</td><td>3</td><td>1.5</td><td>-1.5</td><td>-4.5</td></tr>
+            <tr><th colspan="4">합계</th><td>-3.0</td><td>-7.0</td></tr>
+          </table>
+          <div class="math-block">
+            \\( \\frac{\\partial J}{\\partial \\theta_0} = \\frac{1}{3}(-3.0) = -1.0 \\)<br><br>
+            \\( \\frac{\\partial J}{\\partial \\theta_1} = \\frac{1}{3}(-7.0) \\approx -2.333 \\)
+          </div>
+          <p>gradient가 <strong>음수</strong>이므로, \\(\\theta_j := \\theta_j - \\alpha \\cdot (\\text{음수})\\)에 의해 θ₀와 θ₁ 모두 <strong>증가</strong>합니다. 직관과 일치하죠 — 현재 예측값이 실제값보다 작으니까 절편과 기울기를 높여야 합니다!</p>
+
+          <div class="warning-box">
+            <strong>동시 업데이트 (Correct: Simultaneous update):</strong><br>
+            temp0 := θ₀ - α·∂J/∂θ₀<br>
+            temp1 := θ₁ - α·∂J/∂θ₁<br>
+            θ₀ := temp0<br>
+            θ₁ := temp1<br><br>
+            θ₀를 먼저 업데이트하고 그 값으로 θ₁을 계산하면 <strong>틀린 결과</strong>가 나옵니다!
+          </div>
+        </div>`;
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 12: Batch vs Stochastic vs Mini-batch
+  {
+    title: "Batch / Stochastic / Mini-batch GD",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>Gradient Descent는 매 업데이트에서 <strong>몇 개의 데이터를 사용하느냐</strong>에 따라 세 가지로 나뉩니다:</p>
+          <table class="comparison-table">
+            <tr><th>종류</th><th>매 스텝에서 사용하는 데이터</th><th>특징</th></tr>
+            <tr>
+              <td><strong>Batch GD</strong></td>
+              <td>전체 훈련 데이터 (<em>m</em>개 전부)</td>
+              <td>gradient가 정확. 안정적이지만 <strong>매우 느림</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Stochastic GD (SGD)</strong></td>
+              <td><strong>1개</strong> (랜덤으로 선택)</td>
+              <td>매우 빠르지만 gradient 노이즈가 큼. 진동하며 수렴</td>
+            </tr>
+            <tr>
+              <td><strong>Mini-batch GD</strong></td>
+              <td><strong>B개</strong> (보통 32, 64, 128 등)</td>
+              <td>Batch와 SGD의 절충. <strong>실무에서 가장 많이 사용</strong></td>
+            </tr>
+          </table>
+
+          <p><strong>Batch GD</strong>는 매 반복마다 \\(\\sum_{i=1}^{m}\\)을 전부 계산합니다. gradient 방향이 정확하지만, 데이터가 수백만 개면 한 번 업데이트하는 데도 매우 오래 걸립니다.</p>
+
+          <p><strong>Stochastic GD</strong>는 원래 정의대로 <em>데이터 1개</em>만 랜덤으로 골라서 gradient를 계산합니다:</p>
+          <div class="math-block">
+            \\[ \\theta_j := \\theta_j - \\alpha \\left( h_\\theta(x^{(i)}) - y^{(i)} \\right) x_j^{(i)} \\quad \\text{(랜덤한 } i \\text{ 하나)} \\]
+          </div>
+          <p>1개의 데이터로 추정한 gradient는 당연히 부정확합니다. 그래서 최솟값 주변에서 깔끔하게 수렴하지 못하고 <strong>진동(oscillation)</strong>합니다. 하지만 기댓값으로는 올바른 방향이므로, 평균적으로는 수렴합니다.</p>
+
+          <p><strong>Mini-batch GD</strong>는 이 둘의 절충입니다. B개의 데이터를 묶어서(mini-batch) gradient를 계산합니다:</p>
+          <div class="math-block">
+            \\[ \\theta_j := \\theta_j - \\alpha \\frac{1}{B} \\sum_{i \\in \\text{batch}} \\left( h_\\theta(x^{(i)}) - y^{(i)} \\right) x_j^{(i)} \\]
+          </div>
+
+          <div class="highlight-box">
+            <strong>왜 Mini-batch가 실무 표준인가?</strong><br>
+            ① B개를 평균내므로 SGD보다 gradient 노이즈가 줄어듦<br>
+            ② 전체 m개를 쓰지 않으므로 Batch GD보다 훨씬 빠름<br>
+            ③ GPU의 <strong>병렬 처리</strong>에 최적화 — 32개를 1개씩 처리하나 한 번에 처리하나 GPU 시간은 비슷
+          </div>
+
+          <div class="key-point">
+            참고로 실무에서 "SGD"라고 하면 엄밀한 의미의 Stochastic GD(1개)가 아니라 <strong>Mini-batch GD를 통칭</strong>하는 경우가 많습니다. 논문이나 프레임워크(PyTorch의 <code>optim.SGD</code> 등)에서도 이렇게 혼용합니다. 맥락에 따라 구분해서 이해하시면 됩니다.
+          </div>
+        </div>`;
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 13.5: Non-convex and Saddle Points
+  {
+    title: "Non-convex Functions & Saddle Points",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>Gradient Descent를 일반적인 함수에 적용할 때 주의해야 할 두 가지 문제가 있습니다: <strong>Local Minimum</strong>과 <strong>Saddle Point</strong>입니다.</p>
+        </div>
+
+        <div class="dual-graph">
+          <div>
+            <canvas id="chart_nonconvex" width="330" height="280"></canvas>
+            <div class="graph-label">Non-convex: 여러 local minima 존재</div>
+          </div>
+          <div>
+            <canvas id="chart_convex" width="330" height="280"></canvas>
+            <div class="graph-label">Convex (Linear Regression): global minimum 하나</div>
+          </div>
+        </div>
+
+        <div class="explanation">
+          <p>왼쪽은 <strong>non-convex</strong> 함수로, 여러 개의 골짜기(local minimum)가 있습니다. Gradient descent의 시작점에 따라 서로 다른 local minimum에 빠질 수 있습니다. Neural Network의 loss function이 이런 형태입니다.</p>
+          <p>오른쪽은 <strong>convex</strong> 함수로, 그릇(bowl) 모양이고 global minimum이 하나뿐입니다. <em>Linear Regression의 MSE cost function은 항상 이 형태</em>입니다.</p>
+        </div>
+
+        <hr style="border-color:#1e293b; margin:24px 0">
+
+        <div class="explanation">
+          <p style="font-size:1.15em; color:var(--accent2)"><strong>Saddle Point (안장점)</strong></p>
+          <p>Local minimum 외에도 gradient descent를 방해하는 것이 <strong>saddle point</strong>입니다.</p>
+        </div>
+
+        <div class="graph-container">
+          <canvas id="chart_saddle" width="700" height="320"></canvas>
+          <div class="graph-label">Saddle Point: 한 방향으로는 minimum, 다른 방향으로는 maximum</div>
+        </div>
+
+        <div class="explanation">
+          <p>Saddle point는 말 안장(saddle) 모양입니다. 한 축 방향에서 보면 극소(minimum)처럼 보이지만, 다른 축 방향에서 보면 극대(maximum)입니다.</p>
+          <p>이 지점에서 gradient가 0이 되어 gradient descent가 <strong>멈출 수 있습니다</strong>. 특히 고차원 공간에서는 local minimum보다 saddle point가 훨씬 더 많이 존재합니다.</p>
+
+          <div class="highlight-box">
+            <strong>고차원에서 왜 saddle point가 더 많은가?</strong><br>
+            예를 들어 파라미터가 1000개일 때, 어떤 critical point가 local minimum이 되려면 <strong>1000개 방향 모두</strong>에서 위로 볼록해야 합니다. 반면 saddle point는 일부 방향만 위로 볼록하면 됩니다. 확률적으로 모든 방향이 같은 부호일 가능성은 극히 낮습니다.
+          </div>
+
+          <table class="comparison-table">
+            <tr><th></th><th>Local Minimum</th><th>Saddle Point</th><th>Global Minimum</th></tr>
+            <tr><td><strong>Gradient</strong></td><td>= 0</td><td>= 0</td><td>= 0</td></tr>
+            <tr><td><strong>Hessian</strong></td><td>Positive definite (모든 방향 ↑)</td><td>Indefinite (방향마다 다름)</td><td>Positive definite</td></tr>
+            <tr><td><strong>GD 동작</strong></td><td>빠져나오기 어려움</td><td>느리게 통과 가능</td><td>최종 목표</td></tr>
+          </table>
+
+        </div>`;
+
+      // Draw non-convex 3D surface
+      const ctx1 = document.getElementById('chart_nonconvex').getContext('2d');
+      draw3DSurface(ctx1, 330, 280, 'nonconvex');
+
+      // Draw convex 3D surface
+      const ctx2 = document.getElementById('chart_convex').getContext('2d');
+      draw3DSurface(ctx2, 330, 280, 'convex');
+
+      // Draw saddle point
+      const ctx3 = document.getElementById('chart_saddle').getContext('2d');
+      drawSaddlePoint(ctx3, 700, 320);
+
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 13: Multiple Features
+  {
+    title: "Multiple Features — 다중 특징",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>지금까지는 특징(feature)이 하나뿐이었지만, 실제 문제에서는 <strong>여러 개의 특징</strong>을 사용합니다.</p>
+          <table class="comparison-table">
+            <tr><th>Size (x₁)</th><th># Bedrooms (x₂)</th><th># Floors (x₃)</th><th>Age (x₄)</th><th>Price (y)</th></tr>
+            <tr><td>2104</td><td>5</td><td>1</td><td>45</td><td>460</td></tr>
+            <tr><td>1416</td><td>3</td><td>2</td><td>40</td><td>232</td></tr>
+            <tr><td>1534</td><td>3</td><td>2</td><td>30</td><td>315</td></tr>
+            <tr><td>852</td><td>2</td><td>1</td><td>36</td><td>178</td></tr>
+          </table>
+          <p>새로운 표기법:</p>
+          <div class="math-block">
+            \\( n \\) = 특징의 개수 (여기서는 4)<br>
+            \\( x^{(i)} \\) = \\(i\\)번째 데이터의 특징 벡터<br>
+            \\( x_j^{(i)} \\) = \\(i\\)번째 데이터의 \\(j\\)번째 특징 값
+          </div>
+          <p>가설 함수가 확장됩니다:</p>
+          <div class="math-block">
+            \\[ h_\\theta(x) = \\theta_0 + \\theta_1 x_1 + \\theta_2 x_2 + \\cdots + \\theta_n x_n = \\theta^T x \\]
+          </div>
+          <p>여기서 \\( x_0 = 1 \\)로 정의하면 벡터 내적으로 깔끔하게 표현할 수 있습니다. 이것을 <strong>Multivariate Linear Regression (다변량 선형 회귀)</strong>라고 합니다.</p>
+        </div>`;
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 14: GD for multiple features
+  {
+    title: "Gradient Descent — 다중 특징 확장",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>다중 특징에서의 경사 하강법은 자연스럽게 확장됩니다:</p>
+          <div class="math-block">
+            <strong>비용 함수:</strong><br>
+            \\[ J(\\theta_0, \\theta_1, \\ldots, \\theta_n) = \\frac{1}{2m} \\sum_{i=1}^{m} \\left( h_\\theta(x^{(i)}) - y^{(i)} \\right)^2 \\]
+          </div>
+          <div class="math-block">
+            <strong>업데이트 규칙 (모든 j = 0, 1, ..., n에 대해 동시 업데이트):</strong><br>
+            \\[ \\theta_j := \\theta_j - \\alpha \\frac{1}{m} \\sum_{i=1}^{m} \\left( h_\\theta(x^{(i)}) - y^{(i)} \\right) x_j^{(i)} \\]
+          </div>
+          <p>n=1일 때와 비교하면:</p>
+          <table class="comparison-table">
+            <tr><th>n=1 (단일 특징)</th><th>n≥1 (다중 특징)</th></tr>
+            <tr>
+              <td>θ₀, θ₁ 두 개만 업데이트</td>
+              <td>θ₀, θ₁, ..., θₙ 모두 업데이트</td>
+            </tr>
+            <tr>
+              <td>θ₁ 업데이트에 x⁽ⁱ⁾ 곱함</td>
+              <td>θⱼ 업데이트에 xⱼ⁽ⁱ⁾ 곱함</td>
+            </tr>
+          </table>
+          <div class="key-point">구조는 완전히 동일합니다! j=0일 때는 x₀=1이므로 기존의 θ₀ 업데이트와 같아집니다.</div>
+        </div>`;
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 15: Feature Scaling
+  {
+    title: "Feature Scaling — 특징 스케일링",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>특징들의 <strong>범위(scale)가 크게 다르면</strong> 경사 하강법이 비효율적으로 작동합니다.</p>
+          <p>예를 들어 x₁ = 집 크기 (0~2000), x₂ = 침실 수 (1~5)이면, 등고선이 매우 길쭉한 타원이 되어 수렴이 느립니다.</p>
+        </div>
+        <div class="dual-graph">
+          <div>
+            <canvas id="chart15a" width="320" height="280"></canvas>
+            <div class="graph-label">스케일링 전: 길쭉한 타원</div>
+          </div>
+          <div>
+            <canvas id="chart15b" width="320" height="280"></canvas>
+            <div class="graph-label">스케일링 후: 원형에 가까움</div>
+          </div>
+        </div>
+        <div class="explanation">
+          <p><strong>해결책: Feature Scaling + Mean Normalization</strong></p>
+          <div class="math-block">
+            \\[ x_i \\leftarrow \\frac{x_i - \\mu_i}{s_i} \\]
+            <br>여기서 \\(\\mu_i\\)는 평균, \\(s_i\\)는 범위(max-min) 또는 표준편차
+          </div>
+          <p>예시:</p>
+          <p>\\( x_1 = \\frac{\\text{size} - 1000}{2000} \\) → 범위가 약 -0.5 ~ 0.5<br>
+          \\( x_2 = \\frac{\\text{bedrooms} - 2}{5} \\) → 범위가 약 -0.5 ~ 0.5</p>
+          <div class="key-point">
+            스케일링 후에는 모든 특징이 비슷한 범위를 가지므로, 등고선이 원형에 가까워지고 경사 하강법이 <strong>훨씬 빠르게</strong> 수렴합니다.
+          </div>
+
+          <hr style="border-color:#1e293b; margin:24px 0">
+
+          <p style="font-size:1.1em; color:var(--accent2)"><strong>Normalization의 다양한 형태</strong></p>
+          <p>"Feature Scaling"은 전통적인 ML 교과서 용어이고, 딥러닝에서는 이런 전처리를 통칭해서 <strong>Normalization</strong>이라고 부릅니다. 형태만 다를 뿐 핵심 아이디어는 같습니다: <em>값의 범위를 맞춰서 학습을 안정적이고 빠르게 만들자.</em></p>
+
+          <table class="comparison-table">
+            <tr><th>이름</th><th>수식</th><th>결과 범위</th><th>사용처</th></tr>
+            <tr>
+              <td><strong>Min-Max Normalization</strong></td>
+              <td>\\( \\frac{x - x_{\\min}}{x_{\\max} - x_{\\min}} \\)</td>
+              <td>[0, 1]</td>
+              <td>이미지 픽셀값 등</td>
+            </tr>
+            <tr>
+              <td><strong>Z-score (Standardization)</strong></td>
+              <td>\\( \\frac{x - \\mu}{\\sigma} \\)</td>
+              <td>평균=0, 표준편차=1</td>
+              <td>가장 범용적, tabular 데이터</td>
+            </tr>
+            <tr>
+              <td><strong>Batch Normalization</strong></td>
+              <td>미니배치 단위로 Z-score</td>
+              <td>평균≈0, 분산≈1</td>
+              <td>CNN, MLP 중간 레이어</td>
+            </tr>
+            <tr>
+              <td><strong>Layer Normalization</strong></td>
+              <td>한 샘플의 feature 전체로 정규화</td>
+              <td>평균≈0, 분산≈1</td>
+              <td>Transformer, RNN</td>
+            </tr>
+          </table>
+
+          <div class="highlight-box">
+            <strong>요약:</strong> 이름과 적용 위치만 다를 뿐, 본질은 모두 같습니다 — "값의 분포를 일정하게 맞춰서 gradient가 한쪽으로 치우치지 않게 하자." 오늘 배우는 Feature Scaling은 <strong>입력 데이터</strong>에 적용하는 가장 기본 형태이고, Batch/Layer Normalization은 <strong>네트워크 중간 레이어</strong>에도 같은 원리를 적용한 것입니다.
+          </div>
+        </div>`;
+      
+      // Draw ellipses
+      const ctx1 = document.getElementById('chart15a').getContext('2d');
+      const ctx2 = document.getElementById('chart15b').getContext('2d');
+      drawEllipse(ctx1, 320, 280, 0.15, 1, 'Before Scaling');
+      drawEllipse(ctx2, 320, 280, 0.8, 1, 'After Scaling');
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 16: Polynomial Regression
+  {
+    title: "Polynomial Regression — 다항 회귀",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>데이터가 직선이 아닌 <strong>곡선</strong>을 따를 때는 어떻게 할까요? 다항 회귀를 사용합니다!</p>
+          <div class="math-block">
+            \\[ h_\\theta(x) = \\theta_0 + \\theta_1 x + \\theta_2 x^2 \\quad \\text{(2차)} \\]
+            \\[ h_\\theta(x) = \\theta_0 + \\theta_1 x + \\theta_2 x^2 + \\theta_3 x^3 \\quad \\text{(3차)} \\]
+          </div>
+          <p>핵심 아이디어: \\( x_1 = x \\), \\( x_2 = x^2 \\), \\( x_3 = x^3 \\)으로 놓으면, <strong>기존의 다중 선형 회귀와 똑같은 형태</strong>가 됩니다!</p>
+        </div>
+        <div class="graph-container">
+          <canvas id="chart16" width="700" height="400"></canvas>
+          <div class="controls">
+            <label>차수:</label>
+            <input type="range" id="degree16" min="1" max="4" step="1" value="1">
+            <span class="value" id="dval16">1</span>
+          </div>
+          <div class="graph-label">차수를 높이면 더 복잡한 곡선을 표현할 수 있습니다</div>
+        </div>
+        <div class="explanation">
+          <div class="warning-box">
+            다항 회귀에서 Feature Scaling이 특히 중요합니다! x가 1000이면 x² = 1,000,000, x³ = 10⁹ 처럼 범위가 급격히 달라지기 때문입니다.
+          </div>
+          <p>또한 \\( \\sqrt{x} \\)를 특징으로 사용하면 saturation(포화) 효과를 모델링할 수 있습니다 — 집이 커져도 가격 상승이 점점 둔화되는 경우에 유용합니다.</p>
+        </div>`;
+      
+      const canvas = document.getElementById('chart16');
+      const ctx = canvas.getContext('2d');
+      
+      function draw16() {
+        const deg = parseInt(document.getElementById('degree16').value);
+        document.getElementById('dval16').textContent = deg;
+        drawPolynomialFit(ctx, 700, 400, deg);
+      }
+      draw16();
+      document.getElementById('degree16').addEventListener('input', draw16);
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 17: Normal Equation
+  {
+    title: "Normal Equation — 정규 방정식",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>경사 하강법은 "조금씩 이동하면서 최솟값을 찾는" <strong>반복적(iterative)</strong> 방법이었습니다.</p>
+          <p>Normal Equation은 전혀 다른 접근입니다: <strong>"미분해서 0인 지점을 바로 계산하는"</strong> 방법입니다.</p>
+
+          <div class="highlight-box">
+            <strong>비유:</strong> 고등학교 때 이차함수 \\(f(x) = ax^2 + bx + c\\)의 최솟값을 구할 때 \\(f'(x) = 0\\)으로 놓고 풀었던 것과 똑같은 원리입니다. 반복할 필요 없이 한 방에 답이 나오죠.<br><br>
+            <strong>Gradient Descent</strong> = 시행착오로 답에 점점 가까이 가는 것<br>
+            <strong>Normal Equation</strong> = 방정식을 풀어서 정확한 답을 바로 구하는 것
+          </div>
+
+          <hr style="border-color:#1e293b; margin:24px 0">
+
+          <p style="font-size:1.1em; color:var(--accent2)"><strong>유도 과정</strong></p>
+
+          <p><strong>Step 1.</strong> 비용 함수를 행렬로 표현합니다.</p>
+          <div class="math-block">
+            \\[ J(\\theta) = \\frac{1}{2m}(X\\theta - y)^T(X\\theta - y) \\]
+          </div>
+          <p>여기서 \\(X\\)는 \\(m \\times (n+1)\\) 설계 행렬(각 행 = 데이터, 첫 열 = 1), \\(\\theta\\)는 \\((n+1) \\times 1\\) 파라미터 벡터, \\(y\\)는 \\(m \\times 1\\) 타겟 벡터입니다.</p>
+
+          <p><strong>Step 2.</strong> 전개합니다. \\(a = X\\theta - y\\)로 놓으면 \\(J = \\frac{1}{2m} a^T a\\) 입니다.</p>
+
+          <p>먼저 <strong>전치(transpose) 규칙</strong>을 적용합니다: \\((AB)^T = B^T A^T\\) (순서 뒤집힘)</p>
+          <div class="math-block">
+            \\[ (X\\theta - y)^T = (X\\theta)^T - y^T = \\theta^T X^T - y^T \\]
+          </div>
+
+          <p>이제 <strong>분배법칙</strong>으로 곱합니다:</p>
+          <div class="math-block">
+            \\[ (\\theta^T X^T - y^T)(X\\theta - y) \\]
+          </div>
+          <p>(A − B)(C − D) = AC − AD − BC + BD 와 같은 분배법칙을 적용하면:</p>
+          <div class="math-block">
+            \\[ = \\theta^T X^T X\\theta \\;-\\; \\theta^T X^T y \\;-\\; y^T X\\theta \\;+\\; y^T y \\]
+          </div>
+
+          <p>가운데 두 항을 봅시다. \\(\\theta^T X^T y\\)와 \\(y^T X\\theta\\)는 둘 다 <strong>스칼라(1×1 행렬)</strong>입니다.</p>
+          <p>스칼라는 전치해도 값이 같으므로:</p>
+          <div class="math-block">
+            \\[ y^T X\\theta = (y^T X\\theta)^T = \\theta^T X^T y \\]
+          </div>
+
+          <p>따라서 가운데 두 항이 합쳐져서:</p>
+          <div class="math-block" style="background:rgba(59,130,246,0.1); border-color:var(--accent)">
+            \\[ J(\\theta) = \\frac{1}{2m}\\left( \\theta^T X^T X \\theta - 2\\theta^T X^T y + y^T y \\right) \\]
+          </div>
+
+          <div class="key-point">
+            행렬 전개에 필요한 규칙 세 가지:<br>
+            ① \\((AB)^T = B^T A^T\\) — 전치하면 순서가 뒤집힌다<br>
+            ② 분배법칙 — 스칼라 곱셈과 동일하게 적용<br>
+            ③ 스칼라는 전치해도 같다 — \\(c = c^T\\) (1×1 행렬)
+          </div>
+
+          <p><strong>Step 3.</strong> \\(\\theta\\)로 미분합니다. 세 항을 각각 미분해봅시다.</p>
+
+          <p style="color:var(--accent3)"><strong>③-1. \\(\\theta^T X^T X \\theta\\)의 미분</strong></p>
+          <p>\\(A = X^TX\\)로 놓으면 \\(\\theta^T A \\theta\\)를 미분하는 문제입니다. 인덱스로 풀어쓰면:</p>
+          <div class="math-block">
+            \\[ \\theta^T A \\theta = \\sum_i \\sum_j \\theta_i \\, A_{ij} \\, \\theta_j \\]
+          </div>
+          <p>\\(\\theta_k\\)로 편미분하면, \\(\\theta_k\\)가 들어있는 항만 살아남습니다:</p>
+          <div class="math-block">
+            \\[ \\frac{\\partial}{\\partial \\theta_k} = \\sum_j A_{kj}\\theta_j + \\sum_i \\theta_i A_{ik} = (A\\theta)_k + (A^T\\theta)_k \\]
+          </div>
+          <p>첫째 항 \\(\\sum_j A_{kj}\\theta_j\\)는 행렬곱의 정의에 의해 \\((A\\theta)_k\\)입니다 (\\(A\\)의 \\(k\\)번째 행과 \\(\\theta\\)의 내적).</p>
+          <p>둘째 항 \\(\\sum_i \\theta_i A_{ik}\\)는 \\(k\\)가 <strong>열</strong> 인덱스에 있으므로, 전치의 정의 \\(A_{ik} = (A^T)_{ki}\\)를 쓰면:</p>
+          <div class="math-block">
+            \\[ \\sum_i \\theta_i A_{ik} = \\sum_i (A^T)_{ki}\\,\\theta_i = (A^T\\theta)_k \\]
+          </div>
+          <p>벡터로 합치면:</p>
+          <div class="math-block">
+            \\[ \\frac{\\partial}{\\partial \\theta}(\\theta^T A \\theta) = (A + A^T)\\theta \\]
+          </div>
+          <p>그런데 \\(A = X^TX\\)는 <strong>대칭행렬</strong>입니다: \\((X^TX)^T = X^T(X^T)^T = X^TX\\). 따라서 \\(A = A^T\\)이고:</p>
+          <div class="math-block" style="background:rgba(16,185,129,0.12); border-color:var(--accent3)">
+            \\[ \\frac{\\partial}{\\partial \\theta}(\\theta^T X^T X \\theta) = 2X^TX\\theta \\]
+          </div>
+
+          <p style="color:var(--accent3)"><strong>③-2. \\(2\\theta^T X^T y\\)의 미분</strong></p>
+          <p>이것은 \\(\\theta^T b\\) 꼴입니다 (\\(b = 2X^Ty\\)). 풀어쓰면 \\(\\theta^T b = \\sum_i \\theta_i b_i\\)이고, \\(\\theta_k\\)로 미분하면 \\(b_k\\)만 남으므로:</p>
+          <div class="math-block" style="background:rgba(16,185,129,0.12); border-color:var(--accent3)">
+            \\[ \\frac{\\partial}{\\partial \\theta}(2\\theta^T X^T y) = 2X^Ty \\]
+          </div>
+
+          <p style="color:var(--accent3)"><strong>③-3. \\(y^Ty\\)의 미분</strong></p>
+          <p>\\(\\theta\\)가 없으므로 상수 → 미분하면 <strong>0</strong></p>
+
+          <p><strong>모두 합치면:</strong></p>
+          <div class="math-block">
+            \\[ \\frac{\\partial J}{\\partial \\theta} = \\frac{1}{2m}(2X^TX\\theta - 2X^Ty + 0) = \\frac{1}{m}(X^TX\\theta - X^Ty) \\]
+          </div>
+          <p>이것을 0으로 놓으면:</p>
+          <div class="math-block">
+            \\[ \\frac{1}{m}(X^T X \\theta - X^T y) = 0 \\]
+          </div>
+
+          <p><strong>Step 4.</strong> \\(\\theta\\)에 대해 정리합니다.</p>
+          <div class="math-block">
+            \\[ X^T X \\theta = X^T y \\]
+          </div>
+          <p>양변에 \\((X^TX)^{-1}\\)을 곱하면:</p>
+          <div class="math-block" style="background:rgba(16,185,129,0.12); border-color:var(--accent3)">
+            \\[ \\boxed{ \\theta = (X^T X)^{-1} X^T y } \\]
+          </div>
+          <p>이것이 <strong>Normal Equation</strong>입니다. \\(X\\)(데이터)와 \\(y\\)(정답)만 넣으면 최적의 \\(\\theta\\)가 바로 나옵니다. 반복도, 학습률도, Feature Scaling도 필요 없습니다.</p>
+
+          <hr style="border-color:#1e293b; margin:24px 0">
+
+          <p style="font-size:1.1em; color:var(--accent2)"><strong>그러면 왜 항상 Normal Equation을 쓰지 않는가?</strong></p>
+          <p>(\\(m\\) = 데이터 수, \\(n\\) = feature 수, \\(k\\) = 반복 횟수)</p>
+          <p><strong>Normal Equation</strong>의 병목은 \\((X^TX)^{-1}\\) 계산입니다. \\(X^TX\\)는 \\(n \\times n\\) 행렬이고, 이 역행렬을 구하는 데 \\(O(n^3)\\)이 걸립니다. feature가 만 개만 넘어가도 \\(10^{12}\\) 연산이라 현실적으로 매우 느려집니다.</p>
+          <p><strong>Gradient Descent</strong>는 매 iteration마다 \\(X\\theta\\) (\\(O(mn)\\))와 \\(X^T(\\text{error})\\) (\\(O(mn)\\))만 계산하면 됩니다. 역행렬이 필요 없으므로 매 반복 = \\(O(mn)\\), \\(k\\)번 반복하면 총 \\(O(kmn)\\)입니다.</p>
+
+          <table class="comparison-table">
+            <tr><th>항목</th><th>Gradient Descent</th><th>Normal Equation</th></tr>
+            <tr><td>학습률 α 선택</td><td>필요함</td><td>필요 없음</td></tr>
+            <tr><td>반복(iteration)</td><td>많이 필요</td><td>불필요 (한 번에 계산)</td></tr>
+            <tr><td>Feature Scaling</td><td>필요함</td><td>불필요</td></tr>
+            <tr><td>계산 복잡도</td><td>\\(O(kmn)\\) — 역행렬 불필요</td><td>\\(O(mn^2 + n^3)\\) — 역행렬 필요</td></tr>
+            <tr><td>적용 가능 범위</td><td>모든 모델 (NN, etc.)</td><td><strong>선형 회귀에만</strong></td></tr>
+          </table>
+
+          <hr style="border-color:#1e293b; margin:24px 0">
+        </div>`;
+      if(window.MathJax) MathJax.typeset();
+    }
+  },
+  // Slide 18: Summary
+  {
+    title: "Summary — 정리",
+    render: function(container) {
+      container.innerHTML = `
+        <div class="explanation">
+          <p>오늘 배운 내용을 정리하겠습니다:</p>
+          <div class="math-block">
+            <strong>1. 가설 함수:</strong> \\( h_\\theta(x) = \\theta_0 + \\theta_1 x_1 + \\cdots + \\theta_n x_n = \\theta^T x \\)
+          </div>
+          <div class="math-block">
+            <strong>2. 비용 함수 (MSE):</strong> \\( J(\\theta) = \\frac{1}{2m} \\sum_{i=1}^{m} (h_\\theta(x^{(i)}) - y^{(i)})^2 \\)
+          </div>
+          <div class="math-block">
+            <strong>3. Gradient Descent:</strong> \\( \\theta_j := \\theta_j - \\alpha \\frac{1}{m} \\sum_{i=1}^{m} (h_\\theta(x^{(i)}) - y^{(i)}) x_j^{(i)} \\)
+          </div>
+          <div class="math-block">
+            <strong>4. Normal Equation:</strong> \\( \\theta = (X^T X)^{-1} X^T y \\)
+          </div>
+          <table class="comparison-table">
+            <tr><th>Topic</th><th>핵심 포인트</th></tr>
+            <tr><td>Linear Regression</td><td>연속값 예측, 가설 = 직선(또는 초평면)</td></tr>
+            <tr><td>Cost Function</td><td>MSE로 예측 오차 측정, 최소화가 목표</td></tr>
+            <tr><td>Gradient Descent</td><td>반복적으로 기울기 방향으로 파라미터 업데이트</td></tr>
+            <tr><td>Learning Rate</td><td>너무 작으면 느림, 너무 크면 발산</td></tr>
+            <tr><td>Feature Scaling</td><td>특징 범위를 맞춰 수렴 속도 향상</td></tr>
+            <tr><td>Polynomial Regression</td><td>비선형 관계를 선형 회귀 프레임워크로 모델링</td></tr>
+            <tr><td>Normal Equation</td><td>해석적 해법, n이 작을 때 유용</td></tr>
+            <tr><td>Batch vs SGD</td><td>전체 데이터 vs 미니배치, 속도-안정성 트레이드오프</td></tr>
+          </table>
+          <div class="key-point">
+            선형 회귀는 머신러닝의 <strong>가장 기초</strong>이지만, 여기서 배운 개념들 — 비용 함수, 경사 하강법, 특징 엔지니어링 — 은 <strong>딥러닝을 포함한 거의 모든 ML 알고리즘</strong>에서 동일하게 사용됩니다!
+          </div>
+        </div>`;
+      if(window.MathJax) MathJax.typeset();
+    }
+  }
+];
+
+// ============= DRAWING FUNCTIONS =============
+
+function generateHousingData() {
+  const raw = [
+    [800, 180],[850, 178],[900, 200],[950, 195],[1000, 210],[1050, 220],[1100, 240],
+    [1150, 260],[1200, 250],[1200, 270],[1250, 280],[1300, 290],[1300, 265],
+    [1350, 300],[1350, 280],[1400, 310],[1400, 290],[1450, 320],[1450, 300],
+    [1500, 330],[1500, 315],[1550, 340],[1550, 320],[1600, 350],[1600, 330],
+    [1650, 340],[1700, 350],[1700, 370],[1750, 360],[1800, 380],[1850, 370],
+    [1900, 340],[1950, 380],[2000, 390],[2000, 350],[2050, 400],[2100, 410],
+    [2100, 380],[2150, 400],[2200, 420],[2300, 390],[2350, 450],[2400, 460],
+    [2400, 440],[2500, 470],[2500, 430],[2600, 490],[2700, 500],[2700, 320]
+  ];
+  return raw;
+}
+
+function drawHousingScatter(ctx, w, h) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  const pad = {l:70, r:30, t:30, b:50};
+  const pw = w-pad.l-pad.r, ph = h-pad.t-pad.b;
+  const data = generateHousingData();
+  
+  // Axes
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.l, pad.t);
+  ctx.lineTo(pad.l, h-pad.b);
+  ctx.lineTo(w-pad.r, h-pad.b);
+  ctx.stroke();
+  
+  // Labels
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '12px "Noto Sans KR"';
+  ctx.textAlign = 'center';
+  for(let x=0; x<=3000; x+=500) {
+    const px = pad.l + (x/3000)*pw;
+    ctx.fillText(x, px, h-pad.b+20);
+    ctx.strokeStyle = '#1e293b';
+    ctx.beginPath(); ctx.moveTo(px, pad.t); ctx.lineTo(px, h-pad.b); ctx.stroke();
+  }
+  ctx.textAlign = 'right';
+  for(let y=0; y<=500; y+=100) {
+    const py = h-pad.b - (y/500)*ph;
+    ctx.fillText(y, pad.l-8, py+4);
+    ctx.strokeStyle = '#1e293b';
+    ctx.beginPath(); ctx.moveTo(pad.l, py); ctx.lineTo(w-pad.r, py); ctx.stroke();
+  }
+  
+  ctx.fillStyle = '#94a3b8';
+  ctx.textAlign = 'center';
+  ctx.fillText('Size (feet²)', w/2, h-5);
+  ctx.save();
+  ctx.translate(15, h/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Price ($1000)', 0, 0);
+  ctx.restore();
+  
+  // Data points
+  for(let d of data) {
+    const px = pad.l + (d[0]/3000)*pw;
+    const py = h-pad.b - (d[1]/500)*ph;
+    ctx.fillStyle = 'rgba(239,68,68,0.8)';
+    ctx.beginPath();
+    ctx.moveTo(px-5, py-5); ctx.lineTo(px+5, py+5);
+    ctx.moveTo(px+5, py-5); ctx.lineTo(px-5, py+5);
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+}
+
+function drawLineWithPoints(ctx, w, h, data, t0, t1, xmin, xmax, ymin, ymax, showResiduals) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  const pad = {l:50, r:20, t:20, b:40};
+  const pw = w-pad.l-pad.r, ph = h-pad.t-pad.b;
+  
+  function tx(x) { return pad.l + ((x-xmin)/(xmax-xmin))*pw; }
+  function ty(y) { return h-pad.b - ((y-ymin)/(ymax-ymin))*ph; }
+  
+  // Grid
+  ctx.strokeStyle = '#1e293b';
+  ctx.lineWidth = 1;
+  for(let x=Math.ceil(xmin); x<=xmax; x++) {
+    ctx.beginPath(); ctx.moveTo(tx(x), pad.t); ctx.lineTo(tx(x), h-pad.b); ctx.stroke();
+    ctx.fillStyle = '#64748b'; ctx.font = '11px monospace'; ctx.textAlign = 'center';
+    ctx.fillText(x, tx(x), h-pad.b+15);
+  }
+  for(let y=Math.ceil(ymin); y<=ymax; y++) {
+    ctx.beginPath(); ctx.moveTo(pad.l, ty(y)); ctx.lineTo(w-pad.r, ty(y)); ctx.stroke();
+    ctx.fillStyle = '#64748b'; ctx.textAlign = 'right';
+    ctx.fillText(y, pad.l-6, ty(y)+4);
+  }
+  
+  // Axes
+  ctx.strokeStyle = '#475569';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h-pad.b); ctx.lineTo(w-pad.r, h-pad.b); ctx.stroke();
+  
+  // Residual lines + squared error boxes (only if enabled)
+  if(showResiduals) {
+  for(let d of data) {
+    const xi = d[0], yi = d[1];
+    const pred = t0 + t1 * xi;
+    const err = pred - yi;
+    
+    const pxData = tx(xi);
+    const pyData = ty(yi);
+    const pyPred = ty(pred);
+    
+    // Squared error box (semi-transparent)
+    const errPx = Math.abs(pyData - pyPred);
+    if(errPx > 2) {
+      ctx.fillStyle = 'rgba(167,139,250,0.12)';
+      const boxTop = Math.min(pyData, pyPred);
+      ctx.fillRect(pxData, boxTop, errPx, errPx);
+      ctx.strokeStyle = 'rgba(167,139,250,0.25)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(pxData, boxTop, errPx, errPx);
+    }
+    
+    // Dashed residual line
+    ctx.strokeStyle = 'rgba(167,139,250,0.7)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(pxData, pyData);
+    ctx.lineTo(pxData, pyPred);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Prediction point on line
+    ctx.fillStyle = 'rgba(96,165,250,0.6)';
+    ctx.beginPath();
+    ctx.arc(pxData, pyPred, 3, 0, Math.PI*2);
+    ctx.fill();
+  }
+  }
+  
+  // Hypothesis line
+  ctx.strokeStyle = '#ef4444';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(tx(xmin), ty(t0 + t1*xmin));
+  ctx.lineTo(tx(xmax), ty(t0 + t1*xmax));
+  ctx.stroke();
+  
+  // Data points (on top)
+  for(let d of data) {
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(tx(d[0]), ty(d[1]), 5, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1; ctx.stroke();
+  }
+  
+  // Legend (only if residuals shown)
+  if(showResiduals) {
+  ctx.font = '10px "Noto Sans KR"'; ctx.textAlign = 'left';
+  ctx.setLineDash([4,3]);
+  ctx.strokeStyle = 'rgba(167,139,250,0.7)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(pw-60, pad.t+10); ctx.lineTo(pw-35, pad.t+10); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#a78bfa';
+  ctx.fillText('오차', pw-30, pad.t+14);
+  
+  ctx.fillStyle = 'rgba(167,139,250,0.2)';
+  ctx.fillRect(pw-60, pad.t+22, 12, 12);
+  ctx.strokeStyle = 'rgba(167,139,250,0.4)'; ctx.lineWidth = 1;
+  ctx.strokeRect(pw-60, pad.t+22, 12, 12);
+  ctx.fillStyle = '#a78bfa';
+  ctx.fillText('오차²', pw-44, pad.t+33);
+  }
+}
+
+function drawCostCurve(ctx, w, h, data, currentT1) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  const pad = {l:50, r:20, t:20, b:40};
+  const pw = w-pad.l-pad.r, ph = h-pad.t-pad.b;
+  
+  const tmin = -0.5, tmax = 2.5;
+  
+  function computeJ(t1) {
+    let J = 0;
+    for(let d of data) J += (t1*d[0] - d[1])**2;
+    return J / (2*data.length);
+  }
+  
+  const Jmax = 3;
+  
+  function tx(x) { return pad.l + ((x-tmin)/(tmax-tmin))*pw; }
+  function ty(y) { return h-pad.b - (y/Jmax)*ph; }
+  
+  // Grid
+  ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
+  ctx.fillStyle = '#64748b'; ctx.font = '11px monospace';
+  for(let x=-0.5; x<=2.5; x+=0.5) {
+    ctx.beginPath(); ctx.moveTo(tx(x), pad.t); ctx.lineTo(tx(x), h-pad.b); ctx.stroke();
+    ctx.textAlign = 'center'; ctx.fillText(x.toFixed(1), tx(x), h-pad.b+15);
+  }
+  
+  ctx.strokeStyle = '#475569'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h-pad.b); ctx.lineTo(w-pad.r, h-pad.b); ctx.stroke();
+  
+  // Curve
+  ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for(let i=0; i<=200; i++) {
+    const t = tmin + (tmax-tmin)*i/200;
+    const J = computeJ(t);
+    const px = tx(t), py = ty(Math.min(J, Jmax));
+    if(i===0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  
+  // Current point
+  const cJ = computeJ(currentT1);
+  ctx.fillStyle = '#ef4444';
+  ctx.beginPath();
+  ctx.arc(tx(currentT1), ty(Math.min(cJ, Jmax)), 7, 0, Math.PI*2);
+  ctx.fill();
+  
+  // Label
+  ctx.fillStyle = '#94a3b8'; ctx.font = '12px "Noto Sans KR"'; ctx.textAlign = 'center';
+  ctx.fillText('θ₁', w/2, h-3);
+  ctx.save(); ctx.translate(12, h/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('J(θ₁)', 0, 0); ctx.restore();
+}
+
+function drawContourWithFit(ctx, w, h, t0, t1) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  const data = generateHousingData();
+  const hw = w/2 - 20;
+  
+  // Left: data with line
+  const padL = {l:60, r:10, t:20, b:40};
+  const plw = hw-padL.l-padL.r, plh = h-padL.t-padL.b;
+  
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(padL.l, padL.t); ctx.lineTo(padL.l, h-padL.b); ctx.lineTo(padL.l+plw, h-padL.b); ctx.stroke();
+  
+  ctx.fillStyle = '#64748b'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+  for(let x=0; x<=3000; x+=1000) {
+    ctx.fillText(x, padL.l + (x/3000)*plw, h-padL.b+15);
+  }
+  ctx.textAlign = 'right';
+  for(let y=0; y<=700; y+=200) {
+    ctx.fillText(y, padL.l-5, h-padL.b-(y/700)*plh+4);
+  }
+  
+  // Residual lines (before hypothesis line and data points for layering)
+  for(let d of data) {
+    const xi = d[0], yi = d[1];
+    const pred = t0 + t1 * xi;
+    const pxD = padL.l + (xi/3000)*plw;
+    const pyD = h-padL.b - (yi/700)*plh;
+    const pyP = h-padL.b - (pred/700)*plh;
+    
+    if(Math.abs(pyD - pyP) > 2) {
+      ctx.strokeStyle = 'rgba(167,139,250,0.5)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 2]);
+      ctx.beginPath();
+      ctx.moveTo(pxD, pyD);
+      ctx.lineTo(pxD, pyP);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+  
+  // Data points
+  for(let d of data) {
+    const px = padL.l + (d[0]/3000)*plw;
+    const py = h-padL.b - (d[1]/700)*plh;
+    ctx.strokeStyle = 'rgba(239,68,68,0.6)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(px-3,py-3); ctx.lineTo(px+3,py+3); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(px+3,py-3); ctx.lineTo(px-3,py+3); ctx.stroke();
+  }
+  
+  // Hypothesis line
+  ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  const y0 = t0 + t1*0, y3000 = t0 + t1*3000;
+  ctx.moveTo(padL.l, h-padL.b-(y0/700)*plh);
+  ctx.lineTo(padL.l+plw, h-padL.b-(y3000/700)*plh);
+  ctx.stroke();
+  
+  // Compute J
+  let J = 0;
+  for(let d of data) J += ((t0 + t1*d[0]) - d[1])**2;
+  J /= (2*data.length);
+  document.getElementById('jval5').textContent = J.toFixed(1);
+  
+  // Right: contour
+  const offx = hw + 40;
+  const padR = {l:50, r:20, t:20, b:40};
+  const prw = hw-padR.l-padR.r, prh = h-padR.t-padR.b;
+  
+  // Draw contour as image
+  const t0min=-200, t0max=500, t1min=-0.2, t1max=0.4;
+  const res = 80;
+  
+  for(let i=0; i<res; i++) {
+    for(let j=0; j<res; j++) {
+      const ct0 = t0min + (t0max-t0min)*i/res;
+      const ct1 = t1min + (t1max-t1min)*j/res;
+      let cJ = 0;
+      for(let d of data) cJ += ((ct0 + ct1*d[0]) - d[1])**2;
+      cJ /= (2*data.length);
+      
+      const logJ = Math.log(cJ+1);
+      const maxLog = 12;
+      const norm = Math.min(logJ/maxLog, 1);
+      
+      const r = Math.floor(norm * 200 + 30);
+      const g = Math.floor((1-norm) * 180 + 40);
+      const b = Math.floor((1-norm) * 220 + 30);
+      
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      const px = offx + padR.l + (i/res)*prw;
+      const py = padR.t + ((res-1-j)/res)*prh;
+      ctx.fillRect(px, py, prw/res+1, prh/res+1);
+    }
+  }
+  
+  // Axes for contour
+  ctx.strokeStyle = '#475569'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(offx+padR.l, padR.t); ctx.lineTo(offx+padR.l, h-padR.b); ctx.lineTo(offx+padR.l+prw, h-padR.b); ctx.stroke();
+  
+  ctx.fillStyle = '#94a3b8'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+  ctx.fillText('θ₀', offx + padR.l + prw/2, h-padR.b+20);
+  ctx.save(); ctx.translate(offx+12, h/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('θ₁', 0, 0); ctx.restore();
+  
+  // Current point on contour
+  const cpx = offx + padR.l + ((t0-t0min)/(t0max-t0min))*prw;
+  const cpy = padR.t + ((t1max-t1)/(t1max-t1min))*prh;
+  ctx.fillStyle = '#ef4444';
+  ctx.beginPath(); ctx.arc(cpx, cpy, 6, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+}
+
+function drawMultipleHypotheses(ctx, w, h) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  const data = generateHousingData();
+  const pad = {l:70, r:30, t:30, b:50};
+  const pw = w-pad.l-pad.r, ph = h-pad.t-pad.b;
+  
+  function tx(x) { return pad.l + (x/3000)*pw; }
+  function ty(y) { return h-pad.b - (y/700)*ph; }
+  
+  // Grid & axes
+  ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h-pad.b); ctx.lineTo(w-pad.r, h-pad.b); ctx.stroke();
+  
+  ctx.fillStyle = '#64748b'; ctx.font = '11px monospace'; ctx.textAlign = 'center';
+  for(let x=0; x<=3000; x+=1000) ctx.fillText(x, tx(x), h-pad.b+18);
+  
+  // Data
+  for(let d of data) {
+    ctx.strokeStyle = 'rgba(239,68,68,0.5)'; ctx.lineWidth = 1.5;
+    const px = tx(d[0]), py = ty(d[1]);
+    ctx.beginPath(); ctx.moveTo(px-3,py-3); ctx.lineTo(px+3,py+3); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(px+3,py-3); ctx.lineTo(px-3,py+3); ctx.stroke();
+  }
+  
+  // Lines
+  const lines = [
+    {t0: 400, t1: -0.1, color: '#ef4444', label: 'θ₀=400, θ₁=-0.1'},
+    {t0: 50, t1: 0.06, color: '#3b82f6', label: 'θ₀=50, θ₁=0.06'},
+    {t0: 70, t1: 0.13, color: '#10b981', label: 'θ₀=70, θ₁=0.13 (best!)'}
+  ];
+  
+  for(let line of lines) {
+    ctx.strokeStyle = line.color; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(tx(0), ty(line.t0));
+    ctx.lineTo(tx(3000), ty(line.t0 + line.t1*3000));
+    ctx.stroke();
+  }
+  
+  // Legend
+  let ly = 40;
+  for(let line of lines) {
+    ctx.fillStyle = line.color;
+    ctx.fillRect(w-220, ly, 20, 3);
+    ctx.font = '12px "Noto Sans KR"';
+    ctx.textAlign = 'left';
+    ctx.fillText(line.label, w-195, ly+5);
+    ly += 22;
+  }
+}
+
+function drawGDContour(ctx, w, h, data, path, t0, t1) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  const pad = {l:60, r:30, t:30, b:50};
+  const pw = w-pad.l-pad.r, ph = h-pad.t-pad.b;
+  
+  const t0min=-300, t0max=500, t1min=-0.3, t1max=0.5;
+  const res = 100;
+  
+  // Contour
+  for(let i=0; i<res; i++) {
+    for(let j=0; j<res; j++) {
+      const ct0 = t0min + (t0max-t0min)*i/res;
+      const ct1 = t1min + (t1max-t1min)*j/res;
+      let cJ = 0;
+      for(let d of data) cJ += ((ct0 + ct1*d[0]) - d[1])**2;
+      cJ /= (2*data.length);
+      const logJ = Math.log(cJ+1);
+      const norm = Math.min(logJ/13, 1);
+      const r = Math.floor(20 + norm*180);
+      const g = Math.floor(40 + (1-norm)*160);
+      const b = Math.floor(60 + (1-norm)*180);
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(pad.l+(i/res)*pw, pad.t+((res-1-j)/res)*ph, pw/res+1, ph/res+1);
+    }
+  }
+  
+  function tx(v) { return pad.l + ((v-t0min)/(t0max-t0min))*pw; }
+  function ty(v) { return pad.t + ((t1max-v)/(t1max-t1min))*ph; }
+  
+  // Path
+  if(path.length > 1) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(tx(path[0].t0), ty(path[0].t1));
+    for(let i=1; i<path.length; i++) {
+      ctx.lineTo(tx(path[i].t0), ty(path[i].t1));
+    }
+    ctx.stroke();
+    
+    for(let p of path) {
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(tx(p.t0), ty(p.t1), 3, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+  
+  // Current point
+  if(path.length > 0) {
+    const last = path[path.length-1];
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath();
+    ctx.arc(tx(last.t0), ty(last.t1), 6, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+  }
+  
+  // Labels
+  ctx.fillStyle = '#94a3b8'; ctx.font = '12px "Noto Sans KR"';
+  ctx.textAlign = 'center';
+  ctx.fillText('θ₀', w/2, h-8);
+  ctx.save(); ctx.translate(15, h/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('θ₁', 0, 0); ctx.restore();
+  
+  // Info
+  if(path.length > 0) {
+    const last = path[path.length-1];
+    let J = 0;
+    for(let d of data) J += ((last.t0 + last.t1*d[0])-d[1])**2;
+    J /= (2*data.length);
+    ctx.fillStyle = '#e2e8f0'; ctx.font = '13px "JetBrains Mono"';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Step: ${path.length-1}  θ₀=${last.t0.toFixed(1)}  θ₁=${last.t1.toFixed(4)}  J=${J.toFixed(1)}`, pad.l+10, h-pad.b+35);
+  }
+}
+
+function drawGDContourNorm(ctx, w, h, data, path, t0, t1, diverged) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  const pad = {l:60, r:30, t:30, b:50};
+  const pw = w-pad.l-pad.r, ph = h-pad.t-pad.b;
+  
+  // Parameter ranges for normalized data
+  const t0min = -1.0, t0max = 1.5, t1min = -0.5, t1max = 2.0;
+  const res = 90;
+  
+  // Contour heatmap
+  let maxLogJ = 0;
+  for(let i=0; i<res; i++) {
+    for(let j=0; j<res; j++) {
+      const ct0 = t0min + (t0max-t0min)*i/res;
+      const ct1 = t1min + (t1max-t1min)*j/res;
+      let cJ = 0;
+      for(let d of data) cJ += ((ct0 + ct1*d[0]) - d[1])**2;
+      cJ /= (2*data.length);
+      const logJ = Math.log(cJ + 0.001);
+      if(logJ > maxLogJ) maxLogJ = logJ;
+    }
+  }
+  
+  for(let i=0; i<res; i++) {
+    for(let j=0; j<res; j++) {
+      const ct0 = t0min + (t0max-t0min)*i/res;
+      const ct1 = t1min + (t1max-t1min)*j/res;
+      let cJ = 0;
+      for(let d of data) cJ += ((ct0 + ct1*d[0]) - d[1])**2;
+      cJ /= (2*data.length);
+      const logJ = Math.log(cJ + 0.001);
+      const norm = Math.min(logJ / Math.max(maxLogJ, 1), 1);
+      
+      const r = Math.floor(20 + norm*180);
+      const g = Math.floor(50 + (1-norm)*150);
+      const b = Math.floor(80 + (1-norm)*160);
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(pad.l+(i/res)*pw, pad.t+((res-1-j)/res)*ph, pw/res+1, ph/res+1);
+    }
+  }
+  
+  function tx(v) { return pad.l + ((v-t0min)/(t0max-t0min))*pw; }
+  function ty(v) { return pad.t + ((t1max-v)/(t1max-t1min))*ph; }
+  function clampPx(px) { return Math.max(pad.l, Math.min(pad.l+pw, px)); }
+  function clampPy(py) { return Math.max(pad.t, Math.min(pad.t+ph, py)); }
+  
+  // Axis ticks
+  ctx.fillStyle = '#94a3b8'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+  for(let v=Math.ceil(t0min*2)/2; v<=t0max; v+=0.5) {
+    ctx.fillText(v.toFixed(1), tx(v), h-pad.b+15);
+  }
+  ctx.textAlign = 'right';
+  for(let v=Math.ceil(t1min*2)/2; v<=t1max; v+=0.5) {
+    ctx.fillText(v.toFixed(1), pad.l-5, ty(v)+4);
+  }
+  
+  // Path
+  if(path.length > 1) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    let px0 = clampPx(tx(path[0].t0)), py0 = clampPy(ty(path[0].t1));
+    ctx.moveTo(px0, py0);
+    for(let i=1; i<path.length; i++) {
+      let px = clampPx(tx(path[i].t0)), py = clampPy(ty(path[i].t1));
+      ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    
+    // Step dots
+    for(let i=0; i<path.length; i++) {
+      let px = clampPx(tx(path[i].t0)), py = clampPy(ty(path[i].t1));
+      ctx.fillStyle = i === path.length-1 ? '#ef4444' : '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(px, py, i === path.length-1 ? 6 : 2.5, 0, Math.PI*2);
+      ctx.fill();
+      if(i === path.length-1) {
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+      }
+    }
+  } else {
+    // Starting point
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath();
+    ctx.arc(clampPx(tx(t0)), clampPy(ty(t1)), 6, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+  }
+  
+  // Axis labels
+  ctx.fillStyle = '#e2e8f0'; ctx.font = '13px "Noto Sans KR"';
+  ctx.textAlign = 'center';
+  ctx.fillText('θ₀', w/2, h-8);
+  ctx.save(); ctx.translate(15, h/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('θ₁', 0, 0); ctx.restore();
+  
+  // Diverged overlay
+  if(diverged) {
+    ctx.fillStyle = 'rgba(239,68,68,0.15)';
+    ctx.fillRect(pad.l, pad.t, pw, ph);
+    ctx.fillStyle = '#ef4444';
+    ctx.font = 'bold 22px "Noto Sans KR"';
+    ctx.textAlign = 'center';
+    ctx.fillText('⚠ 발산! (Diverged)', w/2, h/2 - 10);
+    ctx.font = '14px "Noto Sans KR"';
+    ctx.fillStyle = '#f87171';
+    ctx.fillText('α를 줄이고 ↻ 초기화 후 다시 시도해보세요', w/2, h/2 + 20);
+  }
+}
+
+function draw1DCost(ctx, w, h, Jfn, points, xmin, xmax, ymin, ymax, diverged) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  const pad = {l:50, r:30, t:20, b:40};
+  const pw = w-pad.l-pad.r, ph = h-pad.t-pad.b;
+  
+  function tx(x) { return pad.l + ((x-xmin)/(xmax-xmin))*pw; }
+  function ty(y) { return h-pad.b - ((y-ymin)/(ymax-ymin))*ph; }
+  // Clamp pixel coords to canvas
+  function clampX(px) { return Math.max(pad.l-10, Math.min(w-pad.r+10, px)); }
+  function clampY(py) { return Math.max(pad.t-10, Math.min(h-pad.b+10, py)); }
+  
+  // Axes
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h-pad.b); ctx.lineTo(w-pad.r, h-pad.b); ctx.stroke();
+  
+  // Axis labels
+  ctx.fillStyle = '#475569'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+  const xStep = Math.max(1, Math.round((xmax-xmin)/6));
+  for(let x=Math.ceil(xmin); x<=xmax; x+=xStep) {
+    ctx.fillText(x, tx(x), h-pad.b+15);
+  }
+  ctx.textAlign = 'right';
+  const yStep = Math.max(1, Math.round((ymax-ymin)/5));
+  for(let y=Math.ceil(ymin/yStep)*yStep; y<=ymax; y+=yStep) {
+    ctx.fillText(y.toFixed(0), pad.l-6, ty(y)+4);
+  }
+  
+  // Curve
+  ctx.strokeStyle = '#60a5fa'; ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  let started = false;
+  for(let i=0; i<=300; i++) {
+    const x = xmin + (xmax-xmin)*i/300;
+    const y = Jfn(x);
+    if(isFinite(y) && y >= ymin && y <= ymax) {
+      const px = tx(x), py = ty(y);
+      if(!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+    }
+  }
+  ctx.stroke();
+  
+  // Points & path - with clamping
+  const validPoints = points.filter(p => isFinite(p.x) && isFinite(p.y));
+  
+  if(validPoints.length > 1) {
+    ctx.strokeStyle = 'rgba(245,158,11,0.6)'; ctx.lineWidth = 2;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    let px0 = clampX(tx(validPoints[0].x));
+    let py0 = clampY(ty(Math.min(validPoints[0].y, ymax)));
+    ctx.moveTo(px0, py0);
+    for(let i=1; i<validPoints.length; i++) {
+      const p = validPoints[i];
+      let px = clampX(tx(p.x));
+      let py = clampY(ty(Math.min(p.y, ymax)));
+      ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+  
+  for(let i=0; i<validPoints.length; i++) {
+    const p = validPoints[i];
+    const isLast = i === validPoints.length-1;
+    const px = clampX(tx(p.x));
+    const py = clampY(ty(Math.min(p.y, ymax)));
+    ctx.fillStyle = isLast ? '#ef4444' : '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(px, py, isLast ? 7 : 4, 0, Math.PI*2);
+    ctx.fill();
+    if(isLast) {
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    }
+  }
+  
+  // Axis title labels
+  ctx.fillStyle = '#94a3b8'; ctx.font = '12px "Noto Sans KR"';
+  ctx.textAlign = 'center';
+  ctx.fillText('θ₁', w/2, h-5);
+  ctx.save(); ctx.translate(14, h/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('J(θ₁)', 0, 0); ctx.restore();
+  
+  // Step info
+  if(validPoints.length > 0) {
+    const last = validPoints[validPoints.length-1];
+    ctx.fillStyle = '#94a3b8'; ctx.font = '12px "JetBrains Mono"';
+    ctx.textAlign = 'right';
+    ctx.fillText('Step ' + (validPoints.length-1) + '  θ₁=' + last.x.toFixed(3) + '  J=' + last.y.toFixed(3), w-pad.r, pad.t+15);
+  }
+  
+  // Divergence warning
+  if(diverged) {
+    // Red overlay
+    ctx.fillStyle = 'rgba(239,68,68,0.08)';
+    ctx.fillRect(pad.l, pad.t, pw, ph);
+    
+    // Warning text
+    ctx.fillStyle = '#ef4444';
+    ctx.font = 'bold 22px "Noto Sans KR"';
+    ctx.textAlign = 'center';
+    ctx.fillText('⚠ 발산! (Diverged)', w/2, h/2 - 20);
+    ctx.font = '14px "Noto Sans KR"';
+    ctx.fillStyle = '#f87171';
+    ctx.fillText('α가 너무 커서 최솟값을 지나쳐 발산했습니다', w/2, h/2 + 10);
+    ctx.fillText('α를 줄이고 ↻ 초기화 후 다시 시도해보세요', w/2, h/2 + 35);
+  }
+  
+  // Converged indicator
+  if(!diverged && validPoints.length > 2) {
+    const last = validPoints[validPoints.length-1];
+    const prev = validPoints[validPoints.length-2];
+    if(Math.abs(last.y - prev.y) < 0.001) {
+      ctx.fillStyle = '#10b981';
+      ctx.font = 'bold 16px "Noto Sans KR"';
+      ctx.textAlign = 'center';
+      ctx.fillText('✓ 수렴 완료! (Converged)', w/2, pad.t + 20);
+    }
+  }
+}
+
+function draw3DSurface(ctx, w, h, type) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+
+  const cx = w/2, cy = h/2 + 10;
+  const scaleX = w * 0.38, scaleY = h * 0.32;
+  const res = 40;
+  const tilt = 0.55;  // perspective tilt
+  
+  function getZ(x, y) {
+    if(type === 'nonconvex') {
+      // Multiple bumps
+      return 0.6*Math.sin(x*3.5)*Math.cos(y*3.5) + 0.3*Math.cos(x*2+y) + 0.15*Math.sin(x*5)*Math.sin(y*4) - 0.4*(x*x+y*y)*0.15;
+    } else {
+      // Simple convex bowl
+      return x*x + y*y;
+    }
+  }
+  
+  function project(x, y, z) {
+    const px = cx + (x - y*0.5) * scaleX * 0.5;
+    const py = cy - z * scaleY * 0.35 + (x + y) * scaleY * tilt * 0.25;
+    return {x: px, y: py};
+  }
+  
+  // Collect and sort faces for painter's algorithm
+  const faces = [];
+  const range = type === 'nonconvex' ? 1.8 : 1.5;
+  
+  for(let i=0; i<res; i++) {
+    for(let j=0; j<res; j++) {
+      const x0 = -range + (2*range)*i/res;
+      const y0 = -range + (2*range)*j/res;
+      const x1 = x0 + 2*range/res;
+      const y1 = y0 + 2*range/res;
+      
+      const xm = (x0+x1)/2, ym = (y0+y1)/2;
+      const z = getZ(xm, ym);
+      
+      faces.push({
+        x0, y0, x1, y1, z,
+        depth: xm + ym  // sort by depth for painter's algo
+      });
+    }
+  }
+  faces.sort((a,b) => a.depth - b.depth);
+  
+  for(let f of faces) {
+    const z00 = getZ(f.x0, f.y0);
+    const z10 = getZ(f.x1, f.y0);
+    const z11 = getZ(f.x1, f.y1);
+    const z01 = getZ(f.x0, f.y1);
+    
+    const p00 = project(f.x0, f.y0, z00);
+    const p10 = project(f.x1, f.y0, z10);
+    const p11 = project(f.x1, f.y1, z11);
+    const p01 = project(f.x0, f.y1, z01);
+    
+    // Color based on height
+    let norm;
+    if(type === 'nonconvex') {
+      norm = (f.z + 1.2) / 2.4;
+    } else {
+      norm = f.z / (range*range*2);
+    }
+    norm = Math.max(0, Math.min(1, norm));
+    
+    // HSL color map: blue(low) -> green -> yellow -> red(high)
+    const hue = (1 - norm) * 240;
+    const light = 35 + norm * 25;
+    ctx.fillStyle = 'hsl(' + hue + ', 70%, ' + light + '%)';
+    ctx.strokeStyle = 'hsl(' + hue + ', 50%, ' + (light-8) + '%)';
+    ctx.lineWidth = 0.5;
+    
+    ctx.beginPath();
+    ctx.moveTo(p00.x, p00.y);
+    ctx.lineTo(p10.x, p10.y);
+    ctx.lineTo(p11.x, p11.y);
+    ctx.lineTo(p01.x, p01.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+  
+  // Labels
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '11px "Noto Sans KR"';
+  ctx.textAlign = 'center';
+  if(type === 'nonconvex') {
+    // Mark local minima
+    ctx.fillStyle = '#ef4444';
+    ctx.font = '10px "Noto Sans KR"';
+    ctx.fillText('local min', w*0.25, h-12);
+    ctx.fillText('local min', w*0.7, h-18);
+  } else {
+    ctx.fillStyle = '#10b981';
+    ctx.font = '10px "Noto Sans KR"';
+    ctx.fillText('global min', w*0.5, h-10);
+  }
+  
+  // Axis labels
+  ctx.fillStyle = '#64748b';
+  ctx.font = '10px monospace';
+  ctx.fillText('θ₀', w-15, cy+20);
+  ctx.fillText('θ₁', 15, cy-30);
+}
+
+function drawSaddlePoint(ctx, w, h) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  // Draw saddle from two perspectives
+  const hw = w/2 - 30;
+  
+  // Left: 3D saddle surface
+  const cx1 = hw/2 + 20, cy1 = h/2 + 10;
+  const scX = hw*0.35, scY = h*0.3;
+  const res = 35;
+  const range = 1.5;
+  
+  function saddleZ(x, y) { return x*x - y*y; }
+  
+  function project(x, y, z) {
+    return {
+      x: cx1 + (x - y*0.45) * scX * 0.5,
+      y: cy1 - z * scY * 0.3 + (x + y) * scY * 0.22
+    };
+  }
+  
+  const faces = [];
+  for(let i=0; i<res; i++) {
+    for(let j=0; j<res; j++) {
+      const x0 = -range + 2*range*i/res;
+      const y0 = -range + 2*range*j/res;
+      const x1 = x0 + 2*range/res;
+      const y1 = y0 + 2*range/res;
+      const xm = (x0+x1)/2, ym = (y0+y1)/2;
+      faces.push({x0,y0,x1,y1, z: saddleZ(xm,ym), depth: xm+ym});
+    }
+  }
+  faces.sort((a,b) => a.depth - b.depth);
+  
+  for(let f of faces) {
+    const z00 = saddleZ(f.x0,f.y0), z10 = saddleZ(f.x1,f.y0);
+    const z11 = saddleZ(f.x1,f.y1), z01 = saddleZ(f.x0,f.y1);
+    const p00 = project(f.x0,f.y0,z00), p10 = project(f.x1,f.y0,z10);
+    const p11 = project(f.x1,f.y1,z11), p01 = project(f.x0,f.y1,z01);
+    
+    const norm = (f.z + range*range) / (2*range*range);
+    const hue = (1-norm)*240;
+    const light = 30 + norm*30;
+    
+    ctx.fillStyle = 'hsl('+hue+',65%,'+light+'%)';
+    ctx.strokeStyle = 'hsl('+hue+',45%,'+(light-8)+'%)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(p00.x,p00.y); ctx.lineTo(p10.x,p10.y);
+    ctx.lineTo(p11.x,p11.y); ctx.lineTo(p01.x,p01.y);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  
+  // Saddle point marker
+  const sp = project(0,0,0);
+  ctx.fillStyle = '#ef4444';
+  ctx.beginPath(); ctx.arc(sp.x, sp.y, 5, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = '#ef4444'; ctx.font = '11px "Noto Sans KR"'; ctx.textAlign = 'left';
+  ctx.fillText('saddle point', sp.x+10, sp.y-5);
+  
+  ctx.fillStyle = '#64748b'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+  ctx.fillText('θ₀', hw-5, cy1+15);
+  ctx.fillText('θ₁', 25, cy1-35);
+  ctx.fillText('f(θ₀, θ₁) = θ₀² − θ₁²', hw/2+20, 18);
+  
+  // Right: 2D cross-sections
+  const offx = hw + 60;
+  const pad = {l:40, r:15, t:25, b:35};
+  const pw = hw - pad.l - pad.r, ph = (h - pad.t - pad.b - 20)/2;
+  
+  // Top: θ₀ direction (parabola up - minimum)
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(offx+pad.l, pad.t); ctx.lineTo(offx+pad.l, pad.t+ph);
+  ctx.lineTo(offx+pad.l+pw, pad.t+ph); ctx.stroke();
+  
+  ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for(let i=0; i<=100; i++) {
+    const x = -1.5 + 3*i/100;
+    const y = x*x;
+    const px = offx + pad.l + (i/100)*pw;
+    const py = pad.t + ph - (y/2.5)*ph;
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  
+  ctx.fillStyle = '#10b981'; ctx.font = '11px "Noto Sans KR"'; ctx.textAlign = 'center';
+  ctx.fillText('θ₀ 방향: 위로 볼록 → minimum ✓', offx+pad.l+pw/2, pad.t+12);
+  
+  ctx.fillStyle = '#64748b'; ctx.font = '10px monospace';
+  ctx.fillText('θ₀', offx+pad.l+pw/2, pad.t+ph+15);
+  
+  // Arrow
+  ctx.fillStyle = '#10b981'; ctx.font = '13px sans-serif';
+  ctx.fillText('↑', offx+pad.l+pw/2, pad.t+ph-(0/2.5)*ph+15);
+  
+  // Bottom: θ₁ direction (parabola down - maximum)
+  const offy2 = pad.t + ph + 30;
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(offx+pad.l, offy2); ctx.lineTo(offx+pad.l, offy2+ph);
+  ctx.lineTo(offx+pad.l+pw, offy2+ph); ctx.stroke();
+  
+  ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for(let i=0; i<=100; i++) {
+    const x = -1.5 + 3*i/100;
+    const y = -x*x;
+    const px = offx + pad.l + (i/100)*pw;
+    const py = offy2 + ph/2 - (y/2.5)*ph;
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  
+  ctx.fillStyle = '#ef4444'; ctx.font = '11px "Noto Sans KR"'; ctx.textAlign = 'center';
+  ctx.fillText('θ₁ 방향: 아래로 볼록 → maximum ✗', offx+pad.l+pw/2, offy2+12);
+  
+  ctx.fillStyle = '#64748b'; ctx.font = '10px monospace';
+  ctx.fillText('θ₁', offx+pad.l+pw/2, offy2+ph+15);
+}
+
+function drawMultiMinima(ctx, w, h) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  const hw = w/2 - 20;
+  
+  // Left: non-convex
+  const pad = {l:30, r:10, t:30, b:40};
+  
+  function drawCurve(offx, fn, label, color) {
+    const pw = hw-pad.l-pad.r, ph = h-pad.t-pad.b;
+    ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(offx+pad.l, pad.t); ctx.lineTo(offx+pad.l, h-pad.b); ctx.lineTo(offx+pad.l+pw, h-pad.b); ctx.stroke();
+    
+    ctx.strokeStyle = color; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for(let i=0; i<=200; i++) {
+      const x = i/200;
+      const y = fn(x);
+      const px = offx + pad.l + x*pw;
+      const py = h - pad.b - y*ph;
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    
+    ctx.fillStyle = '#94a3b8'; ctx.font = '13px "Noto Sans KR"';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, offx + hw/2, h-5);
+  }
+  
+  drawCurve(0, (x) => {
+    return 0.3 + 0.3*Math.sin(x*12) + 0.15*Math.cos(x*7) - 0.2*x + 0.3*x*x;
+  }, 'Non-convex (multiple local minima)', '#a78bfa');
+  
+  drawCurve(hw + 40, (x) => {
+    return 2*(x-0.5)**2 + 0.05;
+  }, 'Convex (single global minimum)', '#10b981');
+}
+
+function drawEllipse(ctx, w, h, rx, ry, label) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  const cx = w/2, cy = h/2 - 10;
+  const scale = 80;
+  
+  // Axes
+  ctx.strokeStyle = '#475569'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(30, cy); ctx.lineTo(w-10, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, 20); ctx.lineTo(cx, h-30); ctx.stroke();
+  
+  // Contour ellipses
+  const colors = ['#ef4444','#f59e0b','#10b981','#3b82f6','#a78bfa'];
+  for(let i=1; i<=5; i++) {
+    ctx.strokeStyle = colors[i-1];
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for(let a=0; a<=360; a+=2) {
+      const rad = a*Math.PI/180;
+      const ex = cx + Math.cos(rad)*i*scale*rx/5;
+      const ey = cy + Math.sin(rad)*i*scale*ry/5;
+      if(a===0) ctx.moveTo(ex,ey); else ctx.lineTo(ex,ey);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+  
+  // Center point
+  ctx.fillStyle = '#ef4444';
+  ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI*2); ctx.fill();
+  
+  ctx.fillStyle = '#94a3b8'; ctx.font = '11px "Noto Sans KR"';
+  ctx.textAlign = 'center';
+  ctx.fillText('θ₁', w-15, cy-5);
+  ctx.fillText('θ₂', cx+5, 18);
+}
+
+function drawPolynomialFit(ctx, w, h, degree) {
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+  
+  // Generate some curved data
+  const data = [];
+  for(let i=0; i<25; i++) {
+    const x = 1 + Math.random() * 5;
+    const y = 2 + 3*Math.sqrt(x) + (Math.random()-0.5)*2;
+    data.push([x, y]);
+  }
+  data.sort((a,b) => a[0]-b[0]);
+  
+  const pad = {l:50, r:30, t:30, b:50};
+  const pw = w-pad.l-pad.r, ph = h-pad.t-pad.b;
+  const xmin = 0, xmax = 7, ymin = 0, ymax = 12;
+  
+  function tx(x) { return pad.l + ((x-xmin)/(xmax-xmin))*pw; }
+  function ty(y) { return h-pad.b - ((y-ymin)/(ymax-ymin))*ph; }
+  
+  // Axes
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,h-pad.b); ctx.lineTo(w-pad.r,h-pad.b); ctx.stroke();
+  
+  ctx.fillStyle = '#64748b'; ctx.font = '11px monospace'; ctx.textAlign = 'center';
+  ctx.fillText('Size (x)', w/2, h-8);
+  ctx.save(); ctx.translate(14, h/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('Price (y)', 0, 0); ctx.restore();
+  
+  // Points
+  for(let d of data) {
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 1.5;
+    const px = tx(d[0]), py = ty(d[1]);
+    ctx.beginPath(); ctx.moveTo(px-4,py-4); ctx.lineTo(px+4,py+4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(px+4,py-4); ctx.lineTo(px-4,py+4); ctx.stroke();
+  }
+  
+  // Polynomial fit (simple least squares)
+  function polyFit(data, deg) {
+    // Simple polynomial using predefined nice-looking curves
+    if(deg === 1) return (x) => 2 + 1.0*x;
+    if(deg === 2) return (x) => 0.5 + 2.5*x - 0.18*x*x;
+    if(deg === 3) return (x) => -0.5 + 3.5*x - 0.6*x*x + 0.04*x*x*x;
+    return (x) => 1 + 2.8*Math.sqrt(x) + 0.1*x;
+  }
+  
+  const fn = polyFit(data, degree);
+  
+  ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 3;
+  ctx.beginPath();
+  for(let i=0; i<=200; i++) {
+    const x = xmin + (xmax-xmin)*i/200;
+    const y = fn(x);
+    if(i===0) ctx.moveTo(tx(x), ty(y)); else ctx.lineTo(tx(x), ty(y));
+  }
+  ctx.stroke();
+  
+  // Label
+  const labels = {1: 'θ₀ + θ₁x (직선)', 2: 'θ₀ + θ₁x + θ₂x²', 3: 'θ₀ + θ₁x + θ₂x² + θ₃x³', 4: 'θ₀ + θ₁x + θ₂√x'};
+  ctx.fillStyle = '#fbbf24'; ctx.font = '14px "JetBrains Mono"';
+  ctx.textAlign = 'left';
+  ctx.fillText(labels[degree] || '', pad.l + 20, pad.t + 25);
+}
+
+// ============= NAVIGATION =============
+
+let currentSlide = 0;
+
+function goSlide(n) {
+  currentSlide = Math.max(0, Math.min(n, slides.length-1));
+  renderSlide();
+}
+
+function renderSlide() {
+  const slide = slides[currentSlide];
+  const content = document.getElementById('content');
+  
+  content.innerHTML = `
+    <div class="nav">
+      <button id="prev" ${currentSlide===0?'disabled':''}>◀ 이전</button>
+      <div class="slide-num">${currentSlide + 1} / ${slides.length}</div>
+      <button id="next" ${currentSlide===slides.length-1?'disabled':''}>다음 ▶</button>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" style="width:${((currentSlide+1)/slides.length)*100}%"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-title">
+        <div class="num">${currentSlide + 1}</div>
+        ${slide.title}
+      </div>
+      <div id="slide-content"></div>
+    </div>
+  `;
+  
+  document.getElementById('prev').addEventListener('click', () => goSlide(currentSlide-1));
+  document.getElementById('next').addEventListener('click', () => goSlide(currentSlide+1));
+  
+  slide.render(document.getElementById('slide-content'));
+  
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  
+  if(window.MathJax && window.MathJax.typeset) {
+    setTimeout(() => MathJax.typeset(), 100);
+  }
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'ArrowRight' || e.key === 'ArrowDown') goSlide(currentSlide+1);
+  if(e.key === 'ArrowLeft' || e.key === 'ArrowUp') goSlide(currentSlide-1);
+});
+
+// Start
+window.addEventListener('load', () => {
+  setTimeout(renderSlide, 300);
+});
+</script>
+</body>
+</html>

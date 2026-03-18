@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Style A — Warm Minimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* --- Top Bar --- */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  /* --- Layout --- */
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  /* --- Sidebar --- */
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar a {
+    display: block;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  /* --- Main Content --- */
+  .content {
+    padding: 40px 48px 80px;
+  }
+
+  /* --- Page Section --- */
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  /* --- Cards --- */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  /* --- Summary Box --- */
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  /* --- Term Table --- */
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* --- Tip Box --- */
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .tip::before {
+    content: '💡';
+    flex-shrink: 0;
+  }
+
+  /* --- Code Block --- */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .page-section h2 { font-size: 20px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Computer Architecture — Chapter 3</h1>
+      <div class="meta">2025 Spring · DGIST · Prof. Park</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">페이지 목록</div>
+      <a href="#p1" class="active">01 — 파이프라이닝 개요</a>
+      <a href="#p2">02 — 5단계 파이프라인</a>
+      <a href="#p3">03 — 해저드와 해결법</a>
+    </nav>
+
+    <main class="content">
+      <!-- Page 1 -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>파이프라이닝 (Pipelining) 개요</h2>
+
+        <div class="summary-box">
+          파이프라이닝은 여러 명령어를 동시에 실행하는 기법으로, 각 명령어는 서로 다른 실행 단계에 있으면서 동시에 처리된다. 세탁기-건조기 비유로 이해하면 쉽다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>파이프라이닝의 핵심 아이디어는 <strong>겹침(overlap)</strong>이다. 한 명령어가 실행 단계에 있을 때, 다음 명령어는 해독 단계에, 그 다음 명령어는 인출 단계에 있을 수 있다.</p>
+          <br>
+          <p>세탁에 비유하면: 첫 번째 빨래가 건조기에 들어간 순간 두 번째 빨래를 세탁기에 넣을 수 있다. 이렇게 하면 전체 시간이 크게 단축된다.</p>
+          <br>
+          <p>중요한 점은 <strong>개별 명령어의 실행 시간은 줄어들지 않는다</strong>는 것이다. 줄어드는 것은 <strong>단위 시간당 처리량(throughput)</strong>이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">Pipelining</td>
+                <td>파이프라이닝</td>
+                <td>명령어 실행 단계를 겹쳐서 처리하는 기법</td>
+              </tr>
+              <tr>
+                <td class="en">Throughput</td>
+                <td>처리량</td>
+                <td>단위 시간당 완료되는 명령어 수</td>
+              </tr>
+              <tr>
+                <td class="en">Latency</td>
+                <td>지연 시간</td>
+                <td>하나의 명령어가 시작부터 끝까지 걸리는 시간</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">
+          시험 포인트: "파이프라이닝은 latency를 줄이는 것이 아니라 throughput을 높이는 것이다"는 거의 매년 출제된다.
+        </div>
+      </section>
+
+      <!-- Page 2 -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>5단계 RISC 파이프라인</h2>
+
+        <div class="summary-box">
+          MIPS 프로세서의 고전적인 5단계: IF(명령어 인출) → ID(해독) → EX(실행) → MEM(메모리 접근) → WB(레지스터 쓰기)
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>각 단계는 한 클럭 사이클을 차지한다. 이상적인 경우 5개의 명령어가 동시에 각기 다른 단계에서 실행되므로, <strong>CPI(Cycles Per Instruction)</strong>가 이론적으로 1에 수렴한다.</p>
+          <br>
+          <p>실제로는 해저드(hazard) 때문에 스톨(stall)이 발생하여 CPI가 1보다 커진다.</p>
+          <pre>클럭: |  1  |  2  |  3  |  4  |  5  |  6  |  7  |
+I1:   | IF  | ID  | EX  | MEM | WB  |     |     |
+I2:   |     | IF  | ID  | EX  | MEM | WB  |     |
+I3:   |     |     | IF  | ID  | EX  | MEM | WB  |</pre>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">IF (Instruction Fetch)</td>
+                <td>명령어 인출</td>
+                <td>메모리에서 다음 명령어를 가져오는 단계</td>
+              </tr>
+              <tr>
+                <td class="en">ID (Instruction Decode)</td>
+                <td>명령어 해독</td>
+                <td>명령어를 분석하고 레지스터 값을 읽는 단계</td>
+              </tr>
+              <tr>
+                <td class="en">EX (Execute)</td>
+                <td>실행</td>
+                <td>ALU 연산 수행 단계</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Page 3 -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>파이프라인 해저드와 해결법</h2>
+
+        <div class="summary-box">
+          해저드는 다음 명령어를 예정대로 실행할 수 없게 만드는 상황이다. 구조적(Structural), 데이터(Data), 제어(Control) 해저드 3종류가 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>1. 구조적 해저드 (Structural Hazard)</strong><br>
+          하드웨어 자원이 부족해서 발생한다. 예: 메모리가 하나뿐인데 IF와 MEM이 동시에 접근하려 할 때.</p>
+          <br>
+          <p><strong>2. 데이터 해저드 (Data Hazard)</strong><br>
+          이전 명령어의 결과를 다음 명령어가 필요로 할 때 발생한다. <strong>포워딩(forwarding)</strong>으로 대부분 해결 가능하다.</p>
+          <br>
+          <p><strong>3. 제어 해저드 (Control Hazard)</strong><br>
+          분기(branch) 명령어 때문에 다음에 실행할 명령어가 불확실할 때 발생한다. <strong>분기 예측(branch prediction)</strong>으로 완화한다.</p>
+        </div>
+
+        <div class="tip">
+          포워딩(바이패싱)은 데이터 해저드의 가장 대표적인 해결책이다. EX 단계의 결과를 다음 명령어의 EX 입력으로 바로 넘기는 것. 그림으로 그릴 수 있어야 한다.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '🌙 다크모드';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '☀️ 라이트모드';
+      }
+    }
+
+    // Active sidebar link
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>

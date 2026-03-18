@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Sensing Pipeline — CSE404 Computer Vision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1280px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 16px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar a {
+    display: block;
+    padding: 5px 10px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.15s;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+  .sidebar .sep {
+    height: 1px;
+    background: var(--border);
+    margin: 10px 0;
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+    max-width: 860px;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .page-section h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 24px 0 12px;
+    color: var(--accent);
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .tip::before {
+    content: '\01F4A1';
+    flex-shrink: 0;
+  }
+
+  .warning {
+    background: #FFF3CD;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  [data-theme="dark"] .warning {
+    background: #3A3020;
+  }
+  .warning::before {
+    content: '\026A0\0FE0F';
+    flex-shrink: 0;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+
+  .pipeline-flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .pipeline-step {
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-weight: 500;
+    text-align: center;
+    min-width: 100px;
+  }
+  .pipeline-step.highlight {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+  .pipeline-arrow {
+    color: var(--text-muted);
+    font-size: 18px;
+  }
+
+  ul, ol {
+    margin: 8px 0 8px 20px;
+  }
+  li {
+    margin-bottom: 4px;
+  }
+
+  strong {
+    font-weight: 700;
+  }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .page-section h2 { font-size: 20px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Image Sensing Pipeline</h1>
+      <div class="meta">CSE404 Introduction to Computer Vision &middot; DGIST &middot; Prof. Sunghoon Im</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">&#127769; &#45796;&#53356;&#47784;&#46300;</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">목차</div>
+      <a href="#p1">01 — 강의 소개</a>
+      <a href="#p2">02 — 컴퓨터 비전 정의</a>
+      <a href="#p3">03 — 이미지 형성 개요</a>
+      <a href="#p4">04 — 이미지 센싱 파이프라인</a>
+      <a href="#p5">05 — 이미지 처리 전체 흐름</a>
+      <div class="sep"></div>
+      <a href="#p6">06 — 컬러 필터 배열 (CFA)</a>
+      <a href="#p7">07 — 베이어 패턴 디모자이킹</a>
+      <a href="#p8">08 — 왜 녹색이 더 많은가?</a>
+      <a href="#p9">09 — 디모자이킹 시각화</a>
+      <a href="#p10">10 — RGB+모노크롬 스테레오</a>
+      <div class="sep"></div>
+      <a href="#p11">11 — 고체 상태 센서 원리</a>
+      <a href="#p12">12 — 디지털 카메라 (CCD/CMOS)</a>
+      <a href="#p13">13 — 롤링 셔터 왜곡</a>
+      <a href="#p14">14 — A/D 변환</a>
+      <div class="sep"></div>
+      <a href="#p15">15 — 화이트 밸런싱 개념</a>
+      <a href="#p16">16 — 색순응과 화이트 밸런스</a>
+      <a href="#p17">17 — 화이트 밸런스 프리셋</a>
+      <a href="#p18">18 — 수동 vs 자동 화이트 밸런스</a>
+      <a href="#p19">19 — 자동 화이트 밸런싱 수식</a>
+      <div class="sep"></div>
+      <a href="#p20">20 — CFA 디모자이킹 상세</a>
+      <a href="#p21">21 — 쌍선형 보간 디모자이킹</a>
+      <a href="#p22">22 — 에지 고려 (양방향 필터)</a>
+      <div class="sep"></div>
+      <a href="#p23">23 — 이미지 노이즈</a>
+      <a href="#p24">24 — 디노이징 방법</a>
+      <a href="#p25">25 — 양방향 필터 디노이징</a>
+      <a href="#p26">26 — 비국소 평균 (NLM)</a>
+      <div class="sep"></div>
+      <a href="#p27">27 — 색 공간 변환</a>
+      <a href="#p28">28 — 톤 재현 (감마)</a>
+      <a href="#p29">29 — 톤 재현 곡선</a>
+      <div class="sep"></div>
+      <a href="#p30">30 — JPEG 압축</a>
+      <a href="#p31">31 — 대안 압축 포맷</a>
+      <div class="sep"></div>
+      <a href="#p32">32 — 디지털 이미지란</a>
+      <a href="#p33">33 — CV vs. CG vs. IP</a>
+      <a href="#p34">34 — 세 분야의 관계</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ============ Section 1: Title ============ -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>강의 소개: Image Sensing Pipeline</h2>
+
+        <div class="summary-box">
+          이 강의는 DGIST CSE404 "컴퓨터 비전 입문" 과목의 두 번째 슬라이드로, <strong>빛(photon)이 디지털 이미지(pixel)로 변환되는 전 과정</strong>을 다룹니다. 담당 교수는 임성훈 교수(EECS, DGIST)입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">이 강의에서 배울 것</div>
+          <p>우리가 스마트폰이나 카메라의 셔터 버튼을 누르는 그 짧은 순간, 내부에서는 매우 복잡한 일련의 처리 과정이 진행됩니다. 빛이 렌즈를 통과하고, 센서가 이를 전기 신호로 바꾸고, 디지털 숫자로 변환한 뒤, 화이트 밸런스, 디모자이킹, 노이즈 제거, 색 보정, 감마 보정, 압축 등을 거쳐 최종 JPEG 파일이 만들어집니다.</p>
+          <br>
+          <p>이 전체 과정을 <strong>Image Sensing Pipeline(이미지 센싱 파이프라인)</strong>이라고 부릅니다. 컴퓨터 비전을 제대로 이해하려면, 입력 데이터인 이미지가 어떻게 만들어지는지를 먼저 이해해야 합니다.</p>
+        </div>
+      </section>
+
+      <!-- ============ Section 2: CV Definition ============ -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>컴퓨터 비전의 정의</h2>
+
+        <div class="summary-box">
+          컴퓨터 비전의 목표는 <strong>"빛을 의미로 변환(convert light into meaning)"</strong>하는 것입니다. 3D 장면에서 반사된 빛이 카메라를 통해 2D 이미지(픽셀 행렬)가 되고, 컴퓨터 비전은 이 숫자 배열에서 물체, 형태, 의미, 움직임, 3D 구조 등을 추출합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>현실 세계의 3D 장면(Scene)에 태양이나 조명 같은 <strong>광원(light source)</strong>이 빛을 비추면, 물체 표면에서 빛이 반사됩니다. 카메라 렌즈는 이 반사광을 모아서 센서 위에 2D 이미지를 형성합니다.</p>
+          <br>
+          <p>이렇게 만들어진 2D 이미지는 본질적으로 <strong>숫자들의 행렬(Pixel Matrix)</strong>입니다. 예를 들어 한 픽셀의 값이 217이면 그 위치에서 센서가 감지한 빛의 밝기가 217이라는 뜻입니다.</p>
+          <br>
+          <p>컴퓨터 비전은 이 숫자 배열로부터 다음과 같은 정보를 추출하고자 합니다:</p>
+          <ul>
+            <li><strong>Objects</strong> - 어떤 물체가 있는가?</li>
+            <li><strong>Shape/Geometry</strong> - 물체의 3차원 형태는?</li>
+            <li><strong>Material</strong> - 어떤 재질인가?</li>
+            <li><strong>Motion</strong> - 무엇이 어떻게 움직이는가?</li>
+            <li><strong>Semantics</strong> - 장면의 의미는 무엇인가?</li>
+            <li><strong>3D Pose</strong> - 물체의 위치와 자세는?</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          비유: 우리 눈도 결국 빛의 신호를 받아 뇌에서 의미를 해석합니다. 컴퓨터 비전은 "인공적인 눈과 뇌"를 만드는 것이라고 생각하면 됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Computer Vision</td><td>컴퓨터 비전</td><td>이미지/영상에서 의미 있는 정보를 추출하는 학문</td></tr>
+              <tr><td class="en">Pixel Matrix</td><td>픽셀 행렬</td><td>이미지를 구성하는 숫자들의 2차원 배열</td></tr>
+              <tr><td class="en">3D Scene</td><td>3D 장면</td><td>실제 세계의 3차원 공간과 물체들</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ Section 3: Image Formation ============ -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>이미지 형성(Image Formation) 개요</h2>
+
+        <div class="summary-box">
+          이미지 형성은 "빛을 픽셀 행렬(이미지)로 변환하는 과정"입니다. 이 과정은 크게 4가지 하위 주제로 나뉩니다: (0) 기본 요소와 변환, (1) 광도적 이미지 형성, (2) 기하학적 이미지 형성, (3) 이미지 센싱 파이프라인.
+        </div>
+
+        <div class="card">
+          <div class="card-label">4가지 하위 주제</div>
+          <p><strong>(0) Primitives and Transformations (기본 요소와 변환)</strong></p>
+          <p>점, 선, 평면 같은 기본 기하학적 요소와 이들을 변환(회전, 이동 등)하는 수학적 도구를 다룹니다.</p>
+          <br>
+          <p><strong>(1) Photometric Image Formation (광도적 이미지 형성)</strong></p>
+          <p>광원에서 나온 빛이 물체 표면에서 어떻게 반사되고, 그 반사된 빛의 양이 어떻게 결정되는지를 다룹니다. 표면의 법선 벡터(\(\hat{n}\))와 광원 방향의 관계가 핵심입니다.</p>
+          <br>
+          <p><strong>(2) Geometric Image Formation (기하학적 이미지 형성)</strong></p>
+          <p>3D 세계의 점이 카메라 렌즈(optics)를 통해 2D 센서 평면(sensor plane)의 어느 위치에 맺히는지를 다룹니다. 핀홀 카메라 모델, 투영 변환 등이 여기에 해당합니다.</p>
+          <br>
+          <p><strong>(3) Image Sensing Pipeline (이미지 센싱 파이프라인)</strong></p>
+          <p>센서에 맺힌 빛이 최종 디지털 이미지 파일로 변환되는 과정입니다. <strong>이번 강의의 핵심 주제</strong>입니다.</p>
+        </div>
+
+        <div class="tip">
+          이 네 가지를 순서대로 이해하면, "세상의 빛 &rarr; 디지털 이미지"라는 전체 과정을 완전히 이해할 수 있습니다. 오늘은 그 중 마지막 단계인 (3)에 집중합니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 4: Pipeline Overview ============ -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>이미지 센싱 파이프라인: Photon to Digital Signal</h2>
+
+        <div class="summary-box">
+          이미지 센싱 파이프라인은 <strong>빛(photon)이 최종 디지털 신호(digital signal)로 변환되는 전체 과정</strong>을 말합니다. 카메라 내부에서 셔터가 눌린 후 JPEG 파일이 저장되기까지의 모든 단계를 포함합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">파이프라인 전체 흐름</div>
+          <div class="pipeline-flow">
+            <div class="pipeline-step">렌즈</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">센서 (CCD/CMOS)<br><small>Color Filter Array</small></div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">Gain Control<br>A/D 변환<br><small>AFE</small></div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">White Balance</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">CFA Demosaicing</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">Noise Reduction<br>Sharpening</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">Color Space<br>Transform</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">Tone<br>Reproduction</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">JPEG 압축</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">Exif 정보<br>저장</div>
+          </div>
+          <br>
+          <p>각 단계를 하나씩 자세히 살펴보겠습니다. 여기서 <strong>AFE(Analog Front End)</strong>는 센서 관련 아날로그 처리를 담당하는 부분으로, 게인 제어와 A/D 변환 등이 포함됩니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">AFE</td><td>아날로그 프론트 엔드</td><td>센서의 아날로그 신호를 처리하는 초기 단계</td></tr>
+              <tr><td class="en">Gain Control</td><td>게인 제어</td><td>신호의 증폭 정도를 조절 (ISO와 관련)</td></tr>
+              <tr><td class="en">A/D Converter</td><td>아날로그-디지털 변환기</td><td>연속적인 전압을 디지털 숫자로 변환</td></tr>
+              <tr><td class="en">LUT</td><td>룩업 테이블</td><td>미리 계산된 값의 참조 표</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ Section 5: Overview highlight ============ -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>이미지 처리 전체 흐름 상세</h2>
+
+        <div class="summary-box">
+          파이프라인의 각 단계는 서로 순차적으로 연결되어 있으며, 각 단계의 출력이 다음 단계의 입력이 됩니다. 앞으로 각 단계를 하나씩 강조하면서 자세히 배워가겠습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">파이프라인 단계별 요약</div>
+          <ol>
+            <li><strong>센서 + Color Filter Array (CFA)</strong>: 빛을 전기 신호로 변환하되, 색 정보를 얻기 위해 컬러 필터를 사용</li>
+            <li><strong>Gain Control / A/D 변환</strong>: 아날로그 전기 신호를 디지털 값으로 변환</li>
+            <li><strong>White Balance</strong>: 조명 색상의 영향을 보정하여 자연스러운 색을 재현</li>
+            <li><strong>CFA Demosaicing</strong>: 각 픽셀에 누락된 색 정보를 보간하여 완전한 RGB 이미지 생성</li>
+            <li><strong>Noise Reduction / Sharpening</strong>: 노이즈 제거 및 선명도 향상</li>
+            <li><strong>Color Space Transform</strong>: 카메라 고유 색 공간을 표준 색 공간으로 변환</li>
+            <li><strong>Tone Reproduction</strong>: 감마 보정 등을 통해 디스플레이에 적합한 밝기 매핑</li>
+            <li><strong>JPEG Compression</strong>: 파일 크기를 줄이기 위한 손실 압축</li>
+            <li><strong>Exif + 저장</strong>: 메타데이터를 추가하고 스토리지에 저장</li>
+          </ol>
+        </div>
+
+        <div class="tip">
+          이 파이프라인은 스마트폰 카메라든 전문 DSLR이든 기본 구조가 동일합니다. 차이는 각 단계의 알고리즘 품질과 센서 성능에 있습니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 6: Color Filter Array ============ -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>카메라의 색 감지: 컬러 필터 배열 (CFA)</h2>
+
+        <div class="summary-box">
+          카메라 센서의 각 픽셀은 본래 빛의 <strong>밝기(intensity)만</strong> 측정할 수 있습니다. 색 정보를 얻기 위해 각 픽셀 위에 빨강(R), 초록(G), 파랑(B) 중 하나의 <strong>컬러 필터</strong>를 올려놓는데, 이 배열을 <strong>Bayer Pattern(베이어 패턴)</strong>이라고 합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">베이어 패턴의 원리</div>
+          <p>일반적인 이미지 센서의 각 셀(photodiode)은 색을 구분하지 못합니다. 들어오는 빛의 양(세기)만 측정할 수 있죠. 그렇다면 어떻게 컬러 사진을 찍을 수 있을까요?</p>
+          <br>
+          <p>해답은 <strong>컬러 필터 배열(Color Filter Array, CFA)</strong>입니다. 센서 위에 아주 작은 색 필터를 격자 형태로 배치합니다. 가장 널리 사용되는 패턴이 <strong>Bayer Grid(베이어 격자)</strong>입니다.</p>
+          <br>
+          <p>베이어 격자의 구성:</p>
+          <pre>G R G R G R ...
+B G B G B G ...
+G R G R G R ...
+B G B G B G ...</pre>
+          <p>2x2 블록 기준으로 녹색(G) 2개, 빨간색(R) 1개, 파란색(B) 1개로 구성됩니다.</p>
+          <br>
+          <p>작동 방식: 들어오는 빛(Incoming Light)이 필터 레이어(Filter Layer)를 통과하면, 해당 색상의 빛만 아래 센서 배열(Sensor Array)에 도달합니다. 빨간 필터가 있는 곳은 빨간 빛만, 녹색 필터가 있는 곳은 녹색 빛만 통과시킵니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">양자 효율 (Quantum Efficiency)</div>
+          <p>센서의 <strong>양자 효율(Quantum Efficiency, QE)</strong>은 파장별로 입사된 광자 중 실제로 전자로 변환되는 비율입니다. 그래프를 보면:</p>
+          <ul>
+            <li><strong>Gray(필터 없음)</strong>: 약 500nm 부근에서 최대 ~60% 효율</li>
+            <li><strong>Green 필터</strong>: ~50% 피크</li>
+            <li><strong>Blue 필터</strong>: ~45% 피크</li>
+            <li><strong>Red 필터</strong>: ~35% 피크</li>
+          </ul>
+          <p>필터를 씌우면 그만큼 빛의 양이 줄어들기 때문에, 컬러 카메라는 모노크롬 카메라보다 항상 <strong>더 적은 빛</strong>으로 작동합니다.</p>
+        </div>
+
+        <div class="tip">
+          <strong>하나의 센서로 3채널 컬러 이미지를 만든다</strong>는 것이 핵심입니다. 3개의 센서를 쓰면 비용이 3배이고 정렬도 어렵습니다. 베이어 패턴은 이를 하나의 센서로 해결하는 영리한 방법입니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 7: Bayer Pattern Demosaicing ============ -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>베이어 패턴과 디모자이킹 개념</h2>
+
+        <div class="summary-box">
+          베이어 패턴에서는 각 픽셀이 R, G, B 중 <strong>하나의 색 정보만</strong> 가지고 있습니다. 나머지 두 색의 정보는 주변 픽셀값으로부터 <strong>보간(interpolation)</strong>하여 추정해야 합니다. 이 과정을 <strong>디모자이킹(Demosaicing)</strong>이라고 합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">디모자이킹 3단계</div>
+          <ol>
+            <li><strong>채널 분리</strong>: Raw 이미지에서 R, G, B 각각의 채널을 분리합니다. 이때 값이 없는 위치(null pixels)는 비어 있습니다.</li>
+            <li><strong>보간</strong>: 비어있는 위치의 값을 주변 이웃 픽셀의 값으로부터 추정(interpolation)합니다.</li>
+            <li><strong>결합</strong>: 세 채널을 합쳐서 완전한 RGB 이미지를 만듭니다.</li>
+          </ol>
+          <br>
+          <p>베이어 패턴에서의 샘플링 비율:</p>
+          <ul>
+            <li><strong>Red</strong>: 전체 픽셀의 1/4만 빨간 값을 가짐</li>
+            <li><strong>Green</strong>: 전체 픽셀의 1/2이 녹색 값을 가짐</li>
+            <li><strong>Blue</strong>: 전체 픽셀의 1/4만 파란 값을 가짐</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          원본 장면과 베이어 배열을 통해 본 장면을 비교해 보면, 베이어 이미지는 녹색빛의 격자 무늬처럼 보입니다. 확대하면 R, G, B 점들이 모자이크처럼 보이는데, 이것을 "풀어낸다"는 의미에서 de-mosaicing이라 부릅니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 8: Why More Green ============ -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>왜 녹색이 더 많은가? (Why More Green?)</h2>
+
+        <div class="summary-box">
+          베이어 패턴에서 녹색 픽셀이 빨강, 파랑의 2배인 이유는 <strong>인간의 시각 체계가 녹색 파장 대역에 가장 민감</strong>하기 때문입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">인간의 스펙트럼 감도</div>
+          <p>인간의 눈이 감지할 수 있는 빛을 <strong>가시광선</strong>이라 하며, 약 <strong>400nm ~ 700nm</strong> 범위의 전자기파입니다.</p>
+          <br>
+          <p>파장 대역별 분류:</p>
+          <ul>
+            <li><strong>~400nm 이하 ~ 10nm</strong>: 자외선(UV) - 눈에 보이지 않음</li>
+            <li><strong>400nm ~ 700nm</strong>: 가시광선 - 인간이 볼 수 있는 범위</li>
+            <li><strong>~700nm 이상 ~ 1mm</strong>: 적외선(IR) - 눈에 보이지 않음</li>
+          </ul>
+          <br>
+          <p>인간의 눈은 약 <strong>555nm(녹색-노란색 부근)</strong>에서 상대 감도(Relative Sensitivity)가 최대입니다. 이는 인간의 밝기 인식이 녹색 영역에 가장 크게 의존한다는 뜻입니다.</p>
+          <br>
+          <p>따라서 베이어 패턴에서 녹색 샘플을 2배로 배치하면:</p>
+          <ul>
+            <li>인간 시각에 가장 중요한 <strong>밝기(luminance) 정보</strong>를 더 정밀하게 캡처</li>
+            <li>디모자이킹 시 녹색 채널의 보간 품질이 높아짐</li>
+            <li>전체 이미지의 <strong>해상감(perceived sharpness)</strong>이 향상됨</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          쉽게 말하면, 우리 눈이 녹색에 가장 민감하니까 녹색 데이터를 더 많이 모아야 더 자연스러운 사진이 만들어집니다. 카메라 설계자들이 인간 시각의 특성을 반영한 영리한 선택입니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 9: Demosaicing Visualization ============ -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>디모자이킹 시각적 이해</h2>
+
+        <div class="summary-box">
+          실제 장면(Original Scene)과 베이어 배열을 통해 카메라가 보는 이미지를 비교하면, 카메라의 RAW 이미지는 모자이크 형태의 격자 패턴으로 보입니다. 확대하면 R, G, B 색점들이 뒤섞여 있는 것을 확인할 수 있습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">원본 vs 베이어 이미지</div>
+          <p>슬라이드의 건축물 사진 예시를 보면:</p>
+          <ul>
+            <li><strong>왼쪽 (Original Scene, 200% 확대)</strong>: 우리 눈에 자연스러운 풀 컬러 이미지</li>
+            <li><strong>오른쪽 (Bayer array 통과 후)</strong>: 녹색 격자가 두드러지고, 확대하면 개별 R/G/B 점들이 모자이크처럼 나타남</li>
+          </ul>
+          <br>
+          <p>오른쪽 위 확대 영역을 보면, 빨간/녹색/파란 점들이 체계적인 패턴으로 배열된 것을 볼 수 있습니다. 이것이 바로 센서가 실제로 "보는" RAW 데이터입니다. 디모자이킹은 이 모자이크를 완전한 컬러 이미지로 복원하는 핵심 과정입니다.</p>
+        </div>
+      </section>
+
+      <!-- ============ Section 10: RGB + Monochrome Stereo ============ -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>RGB + 모노크롬 스테레오 (연구 사례)</h2>
+
+        <div class="summary-box">
+          컬러 카메라는 색 정보를 얻는 대가로 선명도와 노이즈 내성을 잃습니다. 모노크롬 카메라는 그 반대입니다. 이 두 카메라를 결합하면 양쪽의 장점을 모두 취할 수 있다는 연구(CVPR 2016)를 소개합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">컬러 vs 모노크롬 카메라</div>
+          <table class="terms-table">
+            <thead><tr><th>특성</th><th>Color Camera (RGB)</th><th>Monochrome Camera (W)</th></tr></thead>
+            <tbody>
+              <tr><td>색 정보</td><td style="color:green;">있음</td><td style="color:red;">없음</td></tr>
+              <tr><td>선명도</td><td style="color:red;">감소 (필터가 빛을 차단)</td><td style="color:green;">선명함</td></tr>
+              <tr><td>노이즈 내성</td><td style="color:red;">취약 (빛 양 감소)</td><td style="color:green;">강건함</td></tr>
+            </tbody>
+          </table>
+          <br>
+          <p>이 연구의 핵심 아이디어:</p>
+          <ol>
+            <li>RGB 카메라와 모노크롬 카메라를 쌍으로 배치 (스테레오)</li>
+            <li>Gain map을 생성하여 두 이미지 간의 관계를 파악</li>
+            <li>Decolorization(탈색)을 통해 두 이미지를 비교 가능하게 만듦</li>
+            <li>Disparity map(시차 맵)을 반복적 게인 조정으로 계산</li>
+            <li>Tree-based filtering으로 정제</li>
+            <li>최종적으로 고품질 컬러 이미지를 생성</li>
+          </ol>
+        </div>
+
+        <div class="tip">
+          이 연구가 중요한 이유: 컬러 필터가 이미지 품질에 미치는 영향을 구체적으로 보여줍니다. 최근 일부 스마트폰에도 컬러+모노 듀얼 카메라 구성이 사용됩니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 11: Solid-State Sensor ============ -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11-12</span>
+        <h2>고체 상태 센서의 원리</h2>
+
+        <div class="summary-box">
+          이미지 센서는 넓은 면적에 걸쳐 빛(photon)을 수집하는 장치입니다. 비유하면, <strong>비를 양동이로 모으는 것</strong>과 같습니다. 각 양동이(cell)가 특정 영역의 빗물(photon)을 모으고, 이를 전자(electron) 형태로 저장합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">양동이 비유 (Bucket Analogy)</div>
+          <p>넓은 들판에 비가 내린다고 상상해 봅시다. 각 지역별 강수량을 측정하려면 어떻게 할까요?</p>
+          <br>
+          <p>고정 크기의 양동이(bucket)를 격자 형태로 배치합니다:</p>
+          <ul>
+            <li><strong>Photons(광자) = 빗방울</strong>: 센서에 들어오는 빛의 입자</li>
+            <li><strong>Cells(셀) = 양동이</strong>: 각 픽셀에 해당하는 광감지 소자</li>
+            <li><strong>Electrons(전자) = 모인 물</strong>: 광자가 변환된 전기 신호</li>
+          </ul>
+          <br>
+          <p>빗물이 양동이에 모이듯, 광자가 센서 셀에 부딪히면 <strong>광전 효과(photoelectric effect)</strong>에 의해 전자가 생성됩니다. 셀에 모인 전자의 양이 곧 그 픽셀의 밝기 값이 됩니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">디지털 카메라의 센서</div>
+          <p>디지털 카메라는 필름 대신 <strong>센서 배열(sensor array)</strong>을 사용합니다. 배열의 각 셀은 광감응 다이오드(light-sensitive diode)로, 광자를 전자로 변환합니다.</p>
+          <br>
+          <p>두 가지 주요 센서 기술:</p>
+          <table class="terms-table">
+            <thead><tr><th>특성</th><th>CCD</th><th>CMOS</th></tr></thead>
+            <tbody>
+              <tr><td class="en">정식 명칭</td><td>Charge Coupled Device</td><td>Complementary Metal Oxide Semiconductor</td></tr>
+              <tr><td>전하 변환 방식</td><td>전하를 픽셀 간 이동시켜 출력 노드에서 전압으로 변환</td><td>각 픽셀 내부에서 전하를 전압으로 변환</td></tr>
+              <tr><td>장점</td><td>균일한 화질, 낮은 노이즈</td><td>저전력, 고속 읽기, 저비용</td></tr>
+              <tr><td>용도</td><td>과학/의료 카메라</td><td>스마트폰, DSLR 등 대부분의 현대 카메라</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">
+          CCD는 "물을 양동이째 옆으로 전달하는" 방식이고, CMOS는 "각 양동이에 수위 측정기를 달아놓은" 방식이라고 생각하면 됩니다. 오늘날 거의 모든 카메라가 CMOS 방식을 사용합니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 12: CCD vs CMOS details ============ -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 13</span>
+        <h2>CCD vs CMOS 상세 비교</h2>
+
+        <div class="summary-box">
+          CCD와 CMOS는 모두 광자(photon)를 전자(electron)로 변환하는 공통점이 있지만, <strong>전하를 전압으로 변환하는 위치와 방식</strong>이 근본적으로 다릅니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 차이점</div>
+          <p><strong>공통 단계</strong>: Photon &rarr; Electron conversion (광전 변환)</p>
+          <br>
+          <p><strong>CCD 방식</strong>:</p>
+          <ul>
+            <li>각 픽셀에서 생성된 전하(charge)를 인접 픽셀로 <strong>순차적으로 이동</strong></li>
+            <li>모든 전하가 하나의 <strong>출력 노드(output node)</strong>에 도달</li>
+            <li>출력 노드에서 전하를 전압(voltage)으로 변환</li>
+            <li>장점: 균일한 변환 특성, 높은 화질</li>
+          </ul>
+          <br>
+          <p><strong>CMOS 방식</strong>:</p>
+          <ul>
+            <li>각 픽셀 <strong>내부</strong>에 트랜지스터가 있어 전하를 즉시 전압으로 변환</li>
+            <li>각 픽셀을 <strong>개별적으로(row by row)</strong> 읽을 수 있음</li>
+            <li>장점: 빠른 읽기 속도, 낮은 전력 소비, 대량 생산 용이</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ Section 13: Rolling Shutter ============ -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 14</span>
+        <h2>롤링 셔터 왜곡 (Rolling Shutter Distortion)</h2>
+
+        <div class="summary-box">
+          CMOS 센서의 행별 순차 읽기 방식은 <strong>롤링 셔터(Rolling Shutter)</strong>라 불리며, 빠르게 움직이는 물체를 촬영할 때 <strong>기하학적 왜곡</strong>을 발생시킵니다. CCD의 글로벌 셔터와 대비됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">롤링 셔터 vs 글로벌 셔터</div>
+          <p><strong>글로벌 셔터 (CCD)</strong>: 모든 픽셀이 <strong>동시에</strong> 노출됩니다. 빠르게 움직이는 물체도 정확한 형태로 촬영됩니다.</p>
+          <br>
+          <p><strong>롤링 셔터 (CMOS)</strong>: 센서의 행(row)이 <strong>위에서 아래로 순차적으로</strong> 노출됩니다. 첫 번째 행과 마지막 행의 노출 시점이 다르기 때문에:</p>
+          <ul>
+            <li>빠르게 회전하는 물체가 <strong>기울어져</strong> 보임</li>
+            <li>프로펠러가 <strong>휘어져</strong> 보임</li>
+            <li>빠르게 지나가는 자동차가 <strong>비스듬하게</strong> 보임</li>
+          </ul>
+          <br>
+          <p>슬라이드의 900 RPM 프로펠러 예시에서:</p>
+          <ul>
+            <li><strong>CMOS (왼쪽)</strong>: 프로펠러 날개가 심하게 왜곡됨</li>
+            <li><strong>CCD (오른쪽)</strong>: 프로펠러가 정확한 형태로 보임</li>
+          </ul>
+        </div>
+
+        <div class="warning">
+          롤링 셔터 왜곡은 SfM(Structure from Motion) 등 3D 복원 알고리즘에서 심각한 문제를 야기할 수 있습니다. 기하학적 정확성이 중요한 컴퓨터 비전 응용에서는 반드시 고려해야 합니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 14: AD Conversion ============ -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 15</span>
+        <h2>A/D 변환 (Analog-to-Digital Conversion)</h2>
+
+        <div class="summary-box">
+          센서가 만들어낸 <strong>연속적인(analog) 전기 신호</strong>를 컴퓨터가 처리할 수 있는 <strong>불연속적인(digital) 숫자</strong>로 변환하는 과정입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">변환 과정 상세</div>
+          <p><strong>1단계: 연속 빛 &rarr; 연속 전기 신호</strong></p>
+          <p>센서가 빛의 세기에 비례하는 연속적인 전압(voltage)을 출력합니다.</p>
+          <br>
+          <p><strong>2단계: 연속 전기 신호 &rarr; 디지털 값</strong></p>
+          <p>A/D 변환기(ADC)가 이 연속 전압을 디지털 숫자로 변환합니다.</p>
+          <br>
+          <p><strong>비트 깊이(Bit Depth)</strong>:</p>
+          <ul>
+            <li>최소 <strong>10비트</strong> (심지어 스마트폰에서도)</li>
+            <li>일반적으로 <strong>12비트 이상</strong></li>
+            <li>전문 카메라는 14비트 또는 16비트</li>
+          </ul>
+          <p>10비트 = \(2^{10} = 1024\) 단계로 밝기를 표현</p>
+          <p>12비트 = \(2^{12} = 4096\) 단계로 밝기를 표현</p>
+          <br>
+          <p>센서의 응답은 대략 <strong>선형(linear)</strong>입니다. 즉, 빛의 양이 2배가 되면 출력 값도 대략 2배가 됩니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">주요 개념: Shot Noise</div>
+          <p>광자는 무작위(random)로 도착하므로, 같은 밝기의 빛이라도 매번 약간씩 다른 수의 광자가 센서에 도달합니다. 이것이 <strong>Shot Noise(포톤 노이즈)</strong>입니다.</p>
+          <p>수식으로 표현하면: \(\text{Shot Noise} = \sqrt{\text{Number of photons}}\)</p>
+          <br>
+          <p>추가 개념:</p>
+          <ul>
+            <li><strong>Quantum Efficiency (%)</strong>: 입사 광자 중 전자로 변환되는 비율</li>
+            <li><strong>Saturation Capacity</strong>: 한 픽셀이 저장할 수 있는 최대 전자 수</li>
+            <li><strong>Pixel Size (\(\mu m\))</strong>: 픽셀의 물리적 크기. 클수록 더 많은 빛을 모음</li>
+            <li><strong>Well</strong>: 전자를 저장하는 공간 (양동이 비유의 양동이)</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          비트 깊이가 높을수록 밝기의 미세한 차이를 더 정밀하게 기록할 수 있습니다. RAW 파일이 JPEG보다 후보정에 유리한 이유 중 하나가 바로 12~14비트의 높은 비트 깊이 때문입니다 (JPEG는 8비트).
+        </div>
+      </section>
+
+      <!-- ============ Section 15: White Balancing ============ -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 16-17</span>
+        <h2>화이트 밸런싱 (White Balancing)</h2>
+
+        <div class="summary-box">
+          화이트 밸런싱은 조명에 의한 <strong>색 편향(color cast)을 제거</strong>하여, 인간이 흰색으로 인식하는 물체가 이미지에서도 흰색으로 렌더링되도록 하는 과정입니다. 이는 인간 시각의 <strong>색순응(chromatic adaptation)</strong>을 모방합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">왜 화이트 밸런스가 필요한가?</div>
+          <p>우리 눈은 놀라운 능력을 가지고 있습니다. 형광등 아래에서든, 촛불 아래에서든, 태양광 아래에서든 흰 종이를 보면 "흰색"으로 인식합니다. 이것이 <strong>색순응(chromatic adaptation)</strong>입니다.</p>
+          <br>
+          <p>하지만 카메라는 이런 능력이 없습니다. 카메라는 실제로 센서에 도달하는 빛을 그대로 기록할 뿐입니다.</p>
+          <ul>
+            <li>백열등(incandescent) 아래: 모든 것이 <strong>노란빛/주황빛</strong>으로 기록됨</li>
+            <li>형광등 아래: <strong>녹색빛</strong>이 돌 수 있음</li>
+            <li>그늘에서: <strong>파란빛</strong>이 강해짐</li>
+          </ul>
+          <br>
+          <p>화이트 밸런싱은 이러한 색 편향을 보정하여 자연스러운 색을 재현합니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">화이트 밸런스 매트릭스</div>
+          <p>화이트 밸런스는 기본적으로 <strong>대각 행렬(diagonal matrix)</strong>을 곱하는 연산입니다:</p>
+          <p>$$\begin{bmatrix} R' \\ G' \\ B' \end{bmatrix} = \begin{bmatrix} k_R & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & k_B \end{bmatrix} \begin{bmatrix} R \\ G \\ B \end{bmatrix}$$</p>
+          <p>여기서 \(k_R\)과 \(k_B\)는 카메라 제조사별, 조명 조건별로 다른 값을 가집니다. Green 채널을 기준(1.0)으로 정규화하는 것이 일반적입니다.</p>
+          <br>
+          <p>예시 (Nikon D7000):</p>
+          <ul>
+            <li><strong>Sunny</strong>: \(k_R \approx 2.03\), \(k_B \approx 1.39\)</li>
+            <li><strong>Incandescent</strong>: \(k_R \approx 1.30\), \(k_B \approx 2.21\)</li>
+            <li><strong>Shade</strong>: \(k_R \approx 2.49\), \(k_B \approx 1.14\)</li>
+          </ul>
+          <p>백열등 조건에서 블루 게인이 높은 이유: 백열등 빛은 붉은색이 강하므로, 파란색을 더 증폭시켜 균형을 맞춰야 합니다.</p>
+        </div>
+      </section>
+
+      <!-- ============ Section 16: Chromatic Adaptation ============ -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 18</span>
+        <h2>색순응과 카메라의 한계</h2>
+
+        <div class="summary-box">
+          인간의 시각 체계는 <strong>색순응(chromatic adaptation)</strong>을 통해 다양한 조명 환경에서도 물체의 색을 일관되게 인식합니다. 하지만 카메라에는 이런 "인식(perception)" 능력이 없으므로, 소프트웨어로 이를 보상해야 합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Retinal vs Perceived Color</div>
+          <p>같은 장면을 다른 조명 아래에서 촬영한 두 사진을 비교하면:</p>
+          <ul>
+            <li><strong>따뜻한 조명 아래</strong>: 전체적으로 주황/노란빛. 하지만 인간은 여전히 물체의 원래 색을 인식함</li>
+            <li><strong>차가운 조명 아래</strong>: 전체적으로 파란빛. 하지만 인간은 여전히 물체의 원래 색을 인식함</li>
+          </ul>
+          <br>
+          <p>카메라가 기록하는 색(retinal color)과 우리가 인식하는 색(perceived color)은 다릅니다. 화이트 밸런스는 카메라의 기록(retinal)을 인간의 인식(perceived)에 가깝게 만드는 과정입니다.</p>
+        </div>
+      </section>
+
+      <!-- ============ Section 17: WB Presets ============ -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 19</span>
+        <h2>화이트 밸런스 프리셋</h2>
+
+        <div class="summary-box">
+          대부분의 카메라는 다양한 조명 환경에 맞는 <strong>화이트 밸런스 프리셋</strong>을 제공합니다. 각 프리셋은 해당 조명의 <strong>색온도(Color Temperature, 단위: Kelvin)</strong>에 맞춘 보정 값을 사용합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">색온도별 프리셋</div>
+          <table class="terms-table">
+            <thead><tr><th>프리셋</th><th>색온도 (K)</th><th>특징</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Incandescent</td><td>~2700K</td><td>백열등, 따뜻한 노란빛 조명</td></tr>
+              <tr><td class="en">Fluorescent</td><td>~3500-4200K</td><td>형광등, 다양한 종류 있음</td></tr>
+              <tr><td class="en">Direct Sunlight</td><td>~5200K</td><td>정오의 직사광선</td></tr>
+              <tr><td class="en">Flash</td><td>~5400K</td><td>카메라 플래시</td></tr>
+              <tr><td class="en">Cloudy</td><td>~6000K</td><td>흐린 날, 약간 따뜻하게 보정</td></tr>
+              <tr><td class="en">Shade</td><td>~8000K</td><td>그늘, 파란빛이 강함</td></tr>
+            </tbody>
+          </table>
+          <br>
+          <p><strong>색온도가 낮을수록</strong> 붉은빛(따뜻한 톤), <strong>높을수록</strong> 파란빛(차가운 톤)입니다. 프리셋은 이를 반대 방향으로 보정합니다.</p>
+          <br>
+          <p>AUTO 모드에서는 카메라가 자동으로 장면을 분석하여 적절한 화이트 밸런스를 결정합니다. K 모드에서는 사용자가 직접 색온도 값을 입력할 수도 있습니다.</p>
+        </div>
+      </section>
+
+      <!-- ============ Section 18: Manual vs Auto WB ============ -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 20</span>
+        <h2>수동 vs 자동 화이트 밸런싱</h2>
+
+        <div class="summary-box">
+          화이트 밸런싱 방법은 크게 <strong>수동(Manual)</strong>과 <strong>자동(Automatic, AWB)</strong>으로 나뉩니다. 수동 방법은 사용자가 개입하고, 자동 방법은 알고리즘이 스스로 판단합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수동 화이트 밸런싱</div>
+          <ul>
+            <li>조명에 맞는 <strong>카메라 프리셋</strong>을 선택 (Sunny, Cloudy, Tungsten 등)</li>
+            <li>사진 속에서 <strong>무채색(color-neutral) 물체</strong>를 선택하여 기준점으로 사용</li>
+            <li>그레이 카드(18% gray card)를 촬영하여 기준으로 삼는 것이 프로 사진작가의 일반적인 방법</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">자동 화이트 밸런싱 (AWB)</div>
+          <p>자동 화이트 밸런싱에는 대표적으로 세 가지 접근법이 있습니다:</p>
+          <br>
+          <p><strong>1. Grey World Assumption (회색 세계 가정)</strong></p>
+          <p>장면의 평균 색이 회색이라고 가정합니다. 즉, 충분히 다양한 색이 장면에 존재하면 평균이 중성(neutral)이 될 것이라는 가정입니다.</p>
+          <br>
+          <p><strong>2. White World Assumption (흰색 세계 가정)</strong></p>
+          <p>장면에서 가장 밝은 물체가 흰색이라고 가정합니다.</p>
+          <br>
+          <p><strong>3. Histogram-based Algorithms (히스토그램 기반 알고리즘)</strong></p>
+          <p>대부분의 현대 카메라가 사용하는 방법으로, 이미지의 색 히스토그램을 분석하여 더 정교한 화이트 밸런스를 수행합니다.</p>
+        </div>
+      </section>
+
+      <!-- ============ Section 19: Auto WB Math ============ -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 21</span>
+        <h2>자동 화이트 밸런싱 수식</h2>
+
+        <div class="summary-box">
+          Grey World와 White World 가정을 수학적으로 표현하면, 모두 <strong>대각 행렬 곱셈</strong>으로 귀결됩니다. 핵심은 Green 채널을 기준으로 R과 B 채널의 스케일을 조정하는 것입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">1. Grey World Assumption</div>
+          <p>각 채널의 평균을 구한 후, Green 채널 평균으로 정규화합니다:</p>
+          <p>$$\begin{bmatrix} R' \\ G' \\ B' \end{bmatrix} = \begin{bmatrix} G_{avg}/R_{avg} & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & G_{avg}/B_{avg} \end{bmatrix} \begin{bmatrix} R \\ G \\ B \end{bmatrix}$$</p>
+          <p>직관적 설명: Red 채널의 평균이 Green보다 높으면 \(G_{avg}/R_{avg} < 1\)이 되어 Red를 줄이고, 낮으면 Red를 증폭시킵니다. 결과적으로 세 채널의 평균이 같아집니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">2. White World Assumption</div>
+          <p>각 채널의 최대값을 구한 후, Green 채널 최대값으로 정규화합니다:</p>
+          <p>$$\begin{bmatrix} R' \\ G' \\ B' \end{bmatrix} = \begin{bmatrix} G_{max}/R_{max} & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & G_{max}/B_{max} \end{bmatrix} \begin{bmatrix} R \\ G \\ B \end{bmatrix}$$</p>
+          <p>직관적 설명: 가장 밝은 부분(흰색으로 가정)의 R, G, B 값이 동일해지도록 스케일을 조정합니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">3. 히스토그램 기반 방법</div>
+          <p>현대 카메라의 주류 방법입니다. 단순히 평균이나 최대값만 사용하는 것이 아니라, 색 분포의 통계적 특성을 종합적으로 분석하여 더 정확한 화이트 밸런스를 수행합니다.</p>
+        </div>
+
+        <div class="tip">
+          Grey World 가정은 장면에 특정 색이 지배적인 경우(예: 녹색 잔디밭, 파란 바다) 실패할 수 있습니다. White World 가정은 장면에 흰색 물체가 없으면 실패합니다. 따라서 실제로는 더 정교한 알고리즘이 필요합니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 20: CFA Demosaicing Detail ============ -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 22-23</span>
+        <h2>CFA 디모자이킹 상세</h2>
+
+        <div class="summary-box">
+          디모자이킹은 모자이크 형태의 센서 출력에서 <strong>완전한 RGB 이미지를 복원</strong>하는 과정입니다. 핵심 질문: "빈 곳의 색 값을 어떻게 채울 것인가?"
+        </div>
+
+        <div class="card">
+          <div class="card-label">보간 방법들</div>
+          <p>비어있는 픽셀의 값을 이웃 픽셀로부터 추정하는 대표적인 방법들:</p>
+          <br>
+          <p><strong>1. Bilinear Interpolation (쌍선형 보간)</strong></p>
+          <ul>
+            <li>4개의 이웃 값을 평균</li>
+            <li>단순하고 빠르지만, 경계에서 블러가 발생할 수 있음</li>
+          </ul>
+          <br>
+          <p><strong>2. Bicubic Interpolation (쌍삼차 보간)</strong></p>
+          <ul>
+            <li>더 많은 이웃 값을 사용 (16개 등)</li>
+            <li>더 부드러운 결과, 하지만 과도한 블러 가능성</li>
+          </ul>
+          <br>
+          <p><strong>3. Edge-aware Interpolation (에지 인식 보간)</strong></p>
+          <ul>
+            <li>경계(edge)를 고려하여 보간</li>
+            <li>경계를 넘어서 보간하지 않음으로써 선명도 유지</li>
+            <li>더 복잡하지만 최고 품질</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ Section 21: Bilinear Demosaicing ============ -->
+      <section class="page-section" id="p21">
+        <span class="page-num">Page 24</span>
+        <h2>쌍선형 보간에 의한 디모자이킹</h2>
+
+        <div class="summary-box">
+          가장 단순한 디모자이킹 방법은 <strong>쌍선형 보간(Bilinear Interpolation)</strong>으로, 빈 픽셀 주변의 4개 이웃 값을 단순 평균하는 것입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Green 채널 보간 예시</div>
+          <p>빨간 필터가 있는 위치에서 Green 값을 구하려면:</p>
+          <p>$$G_? = \frac{G_1 + G_2 + G_3 + G_4}{4}$$</p>
+          <p>여기서 \(G_1, G_2, G_3, G_4\)는 상하좌우에 있는 4개의 Green 이웃 픽셀입니다.</p>
+          <br>
+          <p><strong>채널별로 이웃 관계가 다릅니다:</strong></p>
+          <ul>
+            <li><strong>Red 위치에서 Green 보간</strong>: 상하좌우 4개의 Green 이웃 사용</li>
+            <li><strong>Red 위치에서 Blue 보간</strong>: 대각선 방향 4개의 Blue 이웃 사용</li>
+            <li><strong>Blue 위치에서 Red 보간</strong>: 대각선 방향 4개의 Red 이웃 사용</li>
+          </ul>
+        </div>
+
+        <div class="warning">
+          쌍선형 보간의 한계: 경계(edge) 부근에서 서로 다른 영역의 값을 섞게 되어 <strong>색 번짐(color bleeding)</strong>이나 <strong>블러(blur)</strong>가 발생합니다. 이것이 더 정교한 보간 방법이 필요한 이유입니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 22: Bilateral Filter ============ -->
+      <section class="page-section" id="p22">
+        <span class="page-num">Page 25</span>
+        <h2>에지를 고려한 디모자이킹: 양방향 필터</h2>
+
+        <div class="summary-box">
+          에지를 넘어 보간하면 색 번짐이 발생합니다. <strong>양방향 필터(Bilateral Filter)</strong>는 공간적 거리뿐만 아니라 <strong>값의 유사도</strong>도 고려하여 에지를 보존하면서 보간합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">양방향 필터 수식</div>
+          <p>$$BF[I]_\mathbf{p} = \frac{1}{W_\mathbf{p}} \sum_{\mathbf{q} \in S} G_{\sigma_s}(\|\mathbf{p} - \mathbf{q}\|) \cdot G_{\sigma_r}(I_\mathbf{p} - I_\mathbf{q}) \cdot I_\mathbf{q}$$</p>
+          <p>여기서:</p>
+          <ul>
+            <li>\(G_{\sigma_s}(\|\mathbf{p} - \mathbf{q}\|)\): <strong>공간 가중치(Spatial Weight)</strong> - 거리가 가까울수록 높은 가중치</li>
+            <li>\(G_{\sigma_r}(I_\mathbf{p} - I_\mathbf{q})\): <strong>범위 가중치(Range Weight)</strong> - 값이 비슷할수록 높은 가중치</li>
+            <li>\(W_\mathbf{p} = \sum_{\mathbf{q} \in S} G_{\sigma_s}(\|\mathbf{p} - \mathbf{q}\|) \cdot G_{\sigma_r}(I_\mathbf{p} - I_\mathbf{q})\): 정규화 상수</li>
+          </ul>
+          <br>
+          <p><strong>핵심 아이디어</strong>: 일반 평균 필터는 모든 이웃에 같은 가중치를 주지만, 양방향 필터는 "거리가 가깝고 AND 값이 비슷한" 이웃에게만 높은 가중치를 줍니다.</p>
+          <br>
+          <p>에지 근처에서: 에지 반대편 픽셀은 값이 크게 다르므로 \(G_{\sigma_r}\)가 매우 작아져 가중치가 거의 0이 됩니다. 결과적으로 에지를 넘어서 보간하지 않게 됩니다.</p>
+        </div>
+
+        <div class="tip">
+          양방향 필터는 디모자이킹뿐 아니라 노이즈 제거, 이미지 스무딩 등 다양한 곳에서 사용됩니다. "가까이 있으면서 비슷한 값을 가진 이웃만 평균에 참여시킨다"라고 기억하면 됩니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 23: Noise ============ -->
+      <section class="page-section" id="p23">
+        <span class="page-num">Page 26-27</span>
+        <h2>이미지 노이즈</h2>
+
+        <div class="summary-box">
+          이미지 노이즈는 원래 장면에 없는 <strong>원치 않는 랜덤한 밝기/색 변동</strong>입니다. 특히 저조도(low-light) 환경에서 심하게 나타납니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">노이즈의 3가지 유형</div>
+          <p><strong>1. 포톤 샷 노이즈 (Photon Shot Noise)</strong></p>
+          <p>가장 근본적인 노이즈입니다. 광자(photon)의 도착이 <strong>확률적 과정(random process)</strong>이기 때문에 발생합니다.</p>
+          <ul>
+            <li>같은 밝기라도 매번 약간 다른 수의 광자가 도달</li>
+            <li>장면이 밝을수록(광자가 많을수록) 상대적 분산이 작아짐</li>
+            <li>포아송 분포를 따름: \(\sigma = \sqrt{N}\) (N은 광자 수)</li>
+          </ul>
+          <br>
+          <p><strong>2. 다크 샷 노이즈 (Dark-Shot Noise)</strong></p>
+          <p>빛이 없어도 센서의 <strong>열(thermal) 활동</strong>에 의해 전자가 생성됩니다.</p>
+          <ul>
+            <li>센서 온도가 올라갈수록 악화</li>
+            <li>장시간 노출(long exposure)에서 특히 문제</li>
+            <li>천체 사진 등에서 센서를 냉각시키는 이유</li>
+          </ul>
+          <br>
+          <p><strong>3. 읽기 노이즈 (Read Noise)</strong></p>
+          <p>센서에서 값을 읽어내는 과정(read-out)과 <strong>AFE 전자 회로</strong>(게인, A/D 변환기)에서 발생하는 노이즈입니다.</p>
+          <ul>
+            <li>게인(ISO)을 높이면 신호와 함께 노이즈도 증폭</li>
+            <li>회로 설계의 품질에 따라 차이</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          "고ISO에서 노이즈가 심하다"는 말의 본질: ISO를 높이면 게인(증폭)이 올라가는데, 이때 원래 신호뿐 아니라 모든 종류의 노이즈도 함께 증폭됩니다. 근본적인 해결책은 더 많은 빛을 모으는 것(큰 센서, 밝은 렌즈, 긴 노출)입니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 24: Denoising ============ -->
+      <section class="page-section" id="p24">
+        <span class="page-num">Page 28</span>
+        <h2>디노이징(Denoising) 방법</h2>
+
+        <div class="summary-box">
+          노이즈를 제거하는 기본 아이디어는 <strong>주변 이웃 픽셀의 값을 활용</strong>하는 것입니다. 노이즈는 랜덤하므로 여러 값을 평균하면 노이즈가 상쇄됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">기본 디노이징 방법</div>
+          <p><strong>1. 평균 필터 (Mean Filtering)</strong></p>
+          <p>3x3 윈도우 내의 9개 값을 단순 평균합니다:</p>
+          <p>$$I'_5 = \frac{I_1 + I_2 + I_3 + I_4 + I_5 + I_6 + I_7 + I_8 + I_9}{9}$$</p>
+          <p>장점: 단순하고 효과적. 단점: <strong>에지가 흐려짐(블러)</strong>.</p>
+          <br>
+          <p><strong>2. 미디언 필터 (Median Filtering)</strong></p>
+          <p>9개 값을 크기순으로 정렬한 후 <strong>중앙값</strong>을 취합니다:</p>
+          <p>$$I'_5 = \text{median}(I_1, I_2, I_3, I_4, I_5, I_6, I_7, I_8, I_9)$$</p>
+          <p>장점: 에지 보존이 평균 필터보다 우수, <strong>salt-and-pepper 노이즈</strong>에 특히 효과적. 단점: 세밀한 디테일이 손실될 수 있음.</p>
+        </div>
+
+        <div class="tip">
+          필터링과 디노이징은 별도의 큰 연구 분야입니다. 여기서는 기본 개념만 소개하고, 더 자세한 필터링 기법은 추후 강의에서 다룹니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 25: Bilateral Denoising ============ -->
+      <section class="page-section" id="p25">
+        <span class="page-num">Page 29</span>
+        <h2>양방향 필터를 이용한 디노이징</h2>
+
+        <div class="summary-box">
+          평균 필터의 블러 문제를 해결하기 위해, 디모자이킹에서도 소개한 <strong>양방향 필터(Bilateral Filter)</strong>를 디노이징에도 적용할 수 있습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">평균 필터 vs 양방향 필터</div>
+          <p><strong>평균 필터</strong>: 모든 이웃에 동일한 가중치 &rarr; 에지가 흐려짐</p>
+          <br>
+          <p><strong>양방향 필터</strong>: 공간 가중치 x 범위 가중치 &rarr; 에지 보존</p>
+          <ul>
+            <li><strong>Spatial weight</strong>: 가까운 픽셀일수록 가중치 높음 (가우시안)</li>
+            <li><strong>Range weight</strong>: 값이 비슷한 픽셀일수록 가중치 높음 (가우시안)</li>
+            <li>두 가중치를 <strong>곱(multiplication)</strong>하여 최종 가중치 결정</li>
+          </ul>
+          <br>
+          <p>결과: 평탄한 영역에서는 노이즈가 효과적으로 제거되면서, 에지 근처에서는 경계가 선명하게 유지됩니다.</p>
+        </div>
+      </section>
+
+      <!-- ============ Section 26: Non-Local Means ============ -->
+      <section class="page-section" id="p26">
+        <span class="page-num">Page 30</span>
+        <h2>비국소 평균 (Non-Local Means, NLM)</h2>
+
+        <div class="summary-box">
+          이미지 내에서 <strong>유사한 패턴이 반복적으로 나타난다</strong>는 관찰에 기반한 디노이징 방법입니다. 물리적으로 가까운 이웃뿐만 아니라, 이미지 전체에서 비슷한 패턴을 가진 영역의 값을 함께 평균합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 아이디어: 이미지 자기유사성</div>
+          <p><strong>관찰</strong>: 대부분의 이미지에서 디테일은 반복됩니다. 건물의 창문, 벽돌 패턴, 나뭇잎 등은 이미지 내 여러 위치에서 비슷한 형태로 나타납니다.</p>
+          <br>
+          <p><strong>아이디어</strong>: 비슷한 패치(patch)들을 이미지 전체에서 찾아 평균하면, 노이즈는 상쇄되고 원래 신호만 남습니다.</p>
+          <br>
+          <p><strong>동작 원리</strong>:</p>
+          <ol>
+            <li>현재 픽셀 주변의 작은 패치를 기준으로 삼음</li>
+            <li>이미지 전체에서 비슷한 패치를 탐색</li>
+            <li>유사도가 높은 패치들의 중심 픽셀을 가중 평균</li>
+          </ol>
+          <br>
+          <p>이 방법은 Buades, Coll, Morel (IJCV 2006)에 의해 제안되었으며, 당시 최고 수준의 디노이징 성능을 달성했습니다.</p>
+        </div>
+
+        <div class="tip">
+          양방향 필터가 "가까이 있고 값이 비슷한 이웃"만 사용하는 것에 비해, NLM은 "멀리 떨어져 있어도 패턴이 비슷하면 활용"합니다. 더 많은 유사 샘플을 활용하므로 디노이징 품질이 우수합니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 27: Color Transformation ============ -->
+      <section class="page-section" id="p27">
+        <span class="page-num">Page 31-32</span>
+        <h2>색 공간 변환 (Color Space Transform)</h2>
+
+        <div class="summary-box">
+          카메라가 포착한 스펙트럼 \(s\)를 디스플레이에서 재현하려면, 디스플레이가 만들 수 있는 스펙트럼 \(s_a\)로 변환해야 합니다. 물리적으로 동일한 스펙트럼은 불가능하지만, 인간에게 <strong>같은 색으로 보이는(metamer)</strong> 스펙트럼을 찾을 수 있습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">색 변환의 필요성</div>
+          <p>카메라 센서와 디스플레이는 본질적으로 <strong>다른 매체(different media)</strong>입니다:</p>
+          <ul>
+            <li><strong>카메라</strong>: 빛을 흡수하여 전기 신호로 변환 (수동적)</li>
+            <li><strong>디스플레이</strong>: 전기 신호를 빛으로 방출 (능동적)</li>
+          </ul>
+          <br>
+          <p>따라서 카메라가 기록한 색의 스펙트럼을 디스플레이가 물리적으로 동일하게 재현하는 것은 불가능합니다.</p>
+          <br>
+          <p>하지만 <strong>메타머(metamer)</strong> 개념을 활용할 수 있습니다:</p>
+          <p>물리적으로 다른 두 스펙트럼이 인간의 눈에는 같은 색으로 보이는 현상을 메타메리즘(metamerism)이라 합니다. 디스플레이가 카메라 스펙트럼의 메타머를 만들어내면, 인간 관찰자에게는 원래와 같은 색으로 보입니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Color Space</td><td>색 공간</td><td>색을 수학적으로 표현하는 좌표계 (sRGB, Adobe RGB, ProPhoto RGB 등)</td></tr>
+              <tr><td class="en">Metamer</td><td>메타머</td><td>스펙트럼은 다르지만 같은 색으로 인식되는 빛</td></tr>
+              <tr><td class="en">Color Gamut</td><td>색역</td><td>특정 장치가 재현할 수 있는 색의 범위</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ Section 28: Tone Reproduction ============ -->
+      <section class="page-section" id="p28">
+        <span class="page-num">Page 33</span>
+        <h2>톤 재현 (Tone Reproduction / Gamma Encoding)</h2>
+
+        <div class="summary-box">
+          톤 재현은 <strong>감마 인코딩(gamma encoding)</strong>이라고도 불리며, 센서의 선형(linear) 응답을 디스플레이 특성에 맞게 비선형으로 변환하는 과정입니다. 이 과정 없이는 이미지가 <strong>매우 어둡게</strong> 보입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">왜 톤 재현이 필요한가?</div>
+          <p>센서는 빛의 양에 <strong>비례하는(linear)</strong> 값을 출력합니다. 하지만 디스플레이는 입력값과 출력 밝기의 관계가 <strong>비선형(nonlinear)</strong>입니다.</p>
+          <br>
+          <p>디스플레이의 응답 곡선:</p>
+          <p>$$L_{display} = V^{\gamma}$$</p>
+          <p>여기서 \(V\)는 입력 값, \(\gamma\)는 보통 2.2 정도입니다.</p>
+          <br>
+          <p>즉 디스플레이는 입력값을 2.2승 해서 밝기로 표시하므로, 중간 밝기의 값들이 실제보다 <strong>훨씬 어둡게</strong> 표시됩니다.</p>
+          <br>
+          <p><strong>해결책</strong>: 카메라에서 미리 디스플레이의 응답 곡선의 <strong>역변환(inverse)</strong>을 적용합니다:</p>
+          <p>$$V_{stored} = L_{scene}^{1/\gamma}$$</p>
+          <p>이렇게 하면 디스플레이에서: \(L_{display} = (L_{scene}^{1/\gamma})^{\gamma} = L_{scene}\) 가 되어 원래 밝기가 복원됩니다.</p>
+        </div>
+
+        <div class="tip">
+          이것이 바로 "감마 보정(gamma correction)"입니다. 카메라가 1/gamma를 적용하고, 디스플레이가 gamma를 적용하여 서로 상쇄됩니다. gamma = 2.2가 표준(sRGB)입니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 29: Tone Curves ============ -->
+      <section class="page-section" id="p29">
+        <span class="page-num">Page 34</span>
+        <h2>톤 재현 곡선 (Tone Reproduction Curves)</h2>
+
+        <div class="summary-box">
+          실제 카메라의 톤 재현 곡선은 제조사마다 다르지만, 대부분 \(L^{\gamma}\) 형태의 거듭제곱 함수로 근사할 수 있습니다. 기본값은 \(\gamma = 2.2\)이며, 감마 보정 후 픽셀 값은 <strong>더 이상 장면 밝기에 대해 선형이 아닙니다</strong>.
+        </div>
+
+        <div class="card">
+          <div class="card-label">감마 값에 따른 변화</div>
+          <p>다양한 \(\gamma\) 값이 이미지에 미치는 영향:</p>
+          <ul>
+            <li>\(\gamma = 0.6\): 이미지가 <strong>밝아짐</strong> (어두운 부분이 많이 밝아짐)</li>
+            <li>\(\gamma = 1.0\): <strong>선형</strong> (변환 없음)</li>
+            <li>\(\gamma = 1.4\): 약간 어두워짐</li>
+            <li>\(\gamma = 1.8\): Mac 전통 감마</li>
+            <li>\(\gamma = 2.2\): <strong>sRGB 표준</strong>, Windows/웹 표준</li>
+          </ul>
+          <br>
+          <p>실제 카메라 예시(Kodak, Fuji, Canon 등)를 보면 각각 고유한 톤 커브를 가지고 있습니다. 이것이 "카메라 브랜드별 색감" 차이의 원인 중 하나입니다.</p>
+        </div>
+
+        <div class="warning">
+          <strong>중요한 경고</strong>: 감마 보정 이후 픽셀 값은 장면의 실제 밝기(radiance)와 선형 관계가 아닙니다! 컴퓨터 비전 알고리즘 중 선형성을 가정하는 것들(예: photometric stereo)을 적용하려면 먼저 <strong>감마 역변환(linearization)</strong>을 해야 합니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 30: JPEG Compression ============ -->
+      <section class="page-section" id="p30">
+        <span class="page-num">Page 35-36</span>
+        <h2>JPEG 압축</h2>
+
+        <div class="summary-box">
+          JPEG은 이미지를 효율적으로 저장하기 위한 <strong>손실 압축(lossy compression)</strong> 방법입니다. 인간이 잘 인식하지 못하는 정보를 제거하여 파일 크기를 크게 줄입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">JPEG 압축 5단계</div>
+          <p><strong>1. 색 공간 변환 + 서브샘플링</strong></p>
+          <p>RGB를 YUV(또는 YIQ)로 변환합니다. Y는 밝기(luminance), U/V는 색차(chrominance)입니다. 인간은 밝기 변화에 민감하지만 색 변화에는 덜 민감하므로, 색차 채널을 절반 해상도로 줄입니다(4:2:0 서브샘플링).</p>
+          <br>
+          <p><strong>2. DCT (이산 코사인 변환)</strong></p>
+          <p>이미지를 8x8 블록으로 나누고 각 블록에 DCT를 적용합니다. 이는 공간 영역의 정보를 주파수 영역으로 변환합니다. 대부분의 에너지가 저주파 계수에 집중됩니다.</p>
+          <br>
+          <p><strong>3. 양자화 (Quantization)</strong></p>
+          <p>DCT 계수를 양자화 테이블로 나누고 반올림합니다. 고주파 성분(미세한 디테일)이 0이 되면서 정보가 손실되지만, 이것이 JPEG의 압축률을 결정하는 핵심 단계입니다.</p>
+          <br>
+          <p><strong>4. 지그재그 순서 + 런렝스 인코딩</strong></p>
+          <p>양자화된 8x8 블록을 지그재그 순서로 1차원 배열로 변환합니다. 뒤쪽에 0이 연속되므로 런렝스 인코딩(RLC)으로 효율적으로 표현합니다. DC 계수는 이전 블록과의 차이(DPCM)로 저장합니다.</p>
+          <br>
+          <p><strong>5. 엔트로피 코딩</strong></p>
+          <p>허프만 코딩 등을 사용하여 최종적으로 무손실 압축을 적용합니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">DCT</td><td>이산 코사인 변환</td><td>공간 영역 &rarr; 주파수 영역 변환</td></tr>
+              <tr><td class="en">Quantization</td><td>양자화</td><td>값을 이산적 단계로 근사하는 과정 (정보 손실 발생)</td></tr>
+              <tr><td class="en">Zig-zag scan</td><td>지그재그 스캔</td><td>2D 블록을 1D로 변환하는 순서</td></tr>
+              <tr><td class="en">RLC</td><td>런렝스 코딩</td><td>연속된 같은 값을 효율적으로 표현</td></tr>
+              <tr><td class="en">DPCM</td><td>차분 펄스 코드 변조</td><td>이전 값과의 차이만 저장</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ Section 31: Alternative Compression ============ -->
+      <section class="page-section" id="p31">
+        <span class="page-num">Page 37</span>
+        <h2>대안 압축 포맷</h2>
+
+        <div class="summary-box">
+          JPEG 이후 더 우수한 압축 포맷들이 등장했지만, JPEG의 압도적인 보급률 때문에 여전히 JPEG이 표준으로 사용되고 있습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">JPEG 2000</div>
+          <ul>
+            <li>ISO 표준 (2000년)</li>
+            <li>DCT 대신 <strong>웨이블릿(wavelet) 변환</strong> 사용</li>
+            <li>더 높은 압축률, 계층적(hierarchical) 구조, 랜덤 접근 가능</li>
+            <li>단점: JPEG보다 <strong>훨씬 복잡</strong>, 처리 속도 느림</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">JPEG XR</div>
+          <ul>
+            <li>Microsoft 개발 (2006), ISO/ITU-T 표준 (2010)</li>
+            <li>장점: 좋은 압축률, <strong>타일링(tiling)</strong> 지원 (전체 이미지 디코딩 불필요)</li>
+            <li>더 나은 색 정확도 (HDR 포함), 투명도 지원</li>
+            <li>압축 도메인 편집 가능</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">JPEG이 살아남는 이유</div>
+          <p><strong>설치 기반(install base)이 너무 방대합니다.</strong> 웹 브라우저, 운영체제, 이미지 편집 소프트웨어, 카메라 등 거의 모든 곳에서 JPEG을 지원합니다. 새로운 포맷이 기술적으로 우수하더라도 호환성 문제 때문에 JPEG을 완전히 대체하기 어렵습니다.</p>
+          <br>
+          <p>다만 최근에는 WebP, AVIF, HEIF 등 차세대 포맷이 서서히 보급되고 있습니다.</p>
+        </div>
+      </section>
+
+      <!-- ============ Section 32: Digital Image ============ -->
+      <section class="page-section" id="p32">
+        <span class="page-num">Page 39-40</span>
+        <h2>디지털 이미지란 무엇인가?</h2>
+
+        <div class="summary-box">
+          디지털 이미지는 <strong>숫자들의 배열</strong>입니다. 컴퓨터가 보는 것은 숫자뿐이며, 여기서 의미를 추출하는 것이 컴퓨터 비전의 도전 과제입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">이미지 = 숫자 행렬</div>
+          <p>디지털 카메라는 필름 대신 센서 배열을 사용합니다. 연속적인 이미지가 센서에 투영되면, <strong>샘플링(sampling)</strong>과 <strong>양자화(quantization)</strong>를 거쳐 불연속적인 숫자 행렬이 됩니다.</p>
+          <br>
+          <p>예시 (8x8 패치):</p>
+          <pre>183  160   94  153  194  163  132  165
+183  153  116  176  187  166  130  169
+179  168  171  182  179  170  131  167
+177  177  179  177  179  165  131  167
+178  178  179  176  182  164  130  171
+179  180  180  179  183  169  132  169
+179  179  180  182  183  170  129  173
+180  179  181  179  181  170  130  169</pre>
+          <p>이 숫자들은 해당 위치의 <strong>밝기 값(intensity)</strong>을 나타냅니다. 0(검정)부터 255(흰색, 8비트 기준)까지의 범위를 가집니다.</p>
+          <br>
+          <p>컬러 이미지의 경우 각 픽셀이 R, G, B <strong>세 개의 값</strong>을 가지므로, 실제로는 <strong>3차원 배열(H x W x 3)</strong>입니다.</p>
+        </div>
+
+        <div class="tip">
+          컴퓨터 비전의 근본적 도전: 인간은 숫자 행렬을 보면 즉시 "기차" "건물" 등을 인식하지만, 컴퓨터에게는 그저 숫자일 뿐입니다. 이 "의미의 간극(semantic gap)"을 메우는 것이 컴퓨터 비전 연구의 핵심입니다.
+        </div>
+      </section>
+
+      <!-- ============ Section 33: CV vs CG vs IP ============ -->
+      <section class="page-section" id="p33">
+        <span class="page-num">Page 41-44</span>
+        <h2>Computer Vision vs. Computer Graphics vs. Image Processing</h2>
+
+        <div class="summary-box">
+          세 분야는 모두 이미지를 다루지만, <strong>입력과 출력의 형태</strong>가 다릅니다. 컴퓨터 비전은 이미지에서 의미를, 컴퓨터 그래픽스는 모델에서 이미지를, 이미지 처리는 이미지에서 향상된 이미지를 만듭니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">입출력 관계 비교표</div>
+          <table class="terms-table">
+            <thead><tr><th>입력 \(\backslash\) 출력</th><th>Image (이미지)</th><th>Symbol (기호/의미)</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Image</strong></td><td>Image Processing (IP)<br><small>이미지 &rarr; 이미지</small></td><td>Computer Vision (CV)<br><small>이미지 &rarr; 의미</small></td></tr>
+              <tr><td><strong>Symbol</strong></td><td>Computer Graphics (CG)<br><small>모델 &rarr; 이미지</small></td><td>-</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-label">각 분야의 정의</div>
+          <p><strong>Computer Vision (CV)</strong>: 획득한 이미지의 "내용(content)"을 이해하는 것. 보통 장면의 "모델"을 만들어서 이해합니다.</p>
+          <br>
+          <p><strong>Computer Graphics (CG)</strong>: 컴퓨터 모델(수학적 표현)로부터 이미지를 생성하는 것. 3D 모델링, 렌더링, 애니메이션, 조명, 텍스처링 등을 포함합니다.</p>
+          <br>
+          <p><strong>Image Processing (IP)</strong>: 이미지를 다른 형태의 이미지나 특징(feature)으로 변환하는 것. 이미지 향상, 초해상도, 복원, 압축, 융합 등을 포함합니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">키워드로 정리</div>
+          <ul>
+            <li><strong>Image Processing</strong>: Pixel to Pixel (이미지 향상, 초해상도, 복원, 압축, 융합 등)</li>
+            <li><strong>Computer Vision</strong>: Pixel to Symbol (패턴 인식, 깊이 추정, 옵티컬 플로, 3D 복원, 위치 추정, 특징 기술자 등)</li>
+            <li><strong>Computer Graphics</strong>: Symbol to Pixel (3D 모델링, 렌더링, 애니메이션, 조명, 텍스처링 등)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ Section 34: Venn Diagram ============ -->
+      <section class="page-section" id="p34">
+        <span class="page-num">Page 45-46</span>
+        <h2>세 분야의 관계와 교차 영역</h2>
+
+        <div class="summary-box">
+          CV, IP, CG는 독립적인 분야가 아니라 서로 <strong>겹치는 영역</strong>이 많습니다. 특히 최근에는 딥러닝의 발전으로 이 경계가 점점 흐려지고 있습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">교차 영역 예시</div>
+          <p><strong>IP와 CV의 교집합</strong>:</p>
+          <ul>
+            <li>Image Feature (이미지 특징 추출)</li>
+            <li>Computational Imaging (계산 이미징)</li>
+          </ul>
+          <br>
+          <p><strong>CV와 CG의 교집합</strong>:</p>
+          <ul>
+            <li>3D Reconstruction (3D 재구성)</li>
+            <li>Recognition (인식)</li>
+          </ul>
+          <br>
+          <p><strong>IP와 CG의 교집합</strong>:</p>
+          <ul>
+            <li>Image Generation (이미지 생성)</li>
+          </ul>
+          <br>
+          <p><strong>세 분야 공통</strong>:</p>
+          <ul>
+            <li>Computational Photography (계산 사진학)</li>
+            <li>Neural Rendering (신경 렌더링)</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          최근 트렌드: NeRF(Neural Radiance Fields), Diffusion Models 등은 CV, CG, IP의 경계를 넘나드는 기술입니다. 세 분야를 모두 이해하는 것이 현대 시각 AI 연구에서 중요합니다.
+        </div>
+      </section>
+
+      <!-- ============ Summary ============ -->
+      <section class="page-section" id="summary">
+        <span class="page-num">정리</span>
+        <h2>강의 요약</h2>
+
+        <div class="card">
+          <div class="card-label">Image Sensing Pipeline 전체 요약</div>
+          <div class="pipeline-flow">
+            <div class="pipeline-step highlight">Photon</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">Sensor + CFA</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">A/D 변환</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">White Balance</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">Demosaicing</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">Denoising</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">Color Transform</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">Gamma</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step">JPEG</div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step highlight">Digital Image</div>
+          </div>
+          <br>
+          <ol>
+            <li><strong>센서 + CFA</strong>: 광자를 전자로 변환, 베이어 패턴으로 색 정보 획득</li>
+            <li><strong>A/D 변환</strong>: 아날로그 전압을 10~14비트 디지털 값으로 변환</li>
+            <li><strong>화이트 밸런스</strong>: 조명에 의한 색 편향 보정 (Grey/White World, AWB)</li>
+            <li><strong>디모자이킹</strong>: 누락된 색 채널을 보간 (bilinear, bilateral 등)</li>
+            <li><strong>노이즈 제거</strong>: shot/dark/read 노이즈 제거 (mean, median, bilateral, NLM)</li>
+            <li><strong>색 공간 변환</strong>: 카메라 RGB를 표준 색 공간으로 매핑 (메타머 활용)</li>
+            <li><strong>톤 재현</strong>: 감마 인코딩으로 디스플레이 특성 보상 (\(\gamma \approx 2.2\))</li>
+            <li><strong>JPEG 압축</strong>: DCT + 양자화 + 엔트로피 코딩으로 손실 압축</li>
+          </ol>
+        </div>
+
+        <div class="warning">
+          컴퓨터 비전 알고리즘을 적용할 때는, 입력 이미지가 이 파이프라인의 어느 단계까지 처리된 것인지를 항상 인식해야 합니다. 특히 <strong>감마 보정</strong>과 <strong>화이트 밸런스</strong>는 많은 알고리즘의 가정(선형성 등)에 영향을 미칩니다.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '\u{1F319} \uB2E4\uD06C\uBAA8\uB4DC';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '\u2600\uFE0F \uB77C\uC774\uD2B8\uBAA8\uB4DC';
+      }
+    }
+
+    // Active sidebar link tracking
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+
+    // Smooth scrolling for sidebar links
+    document.querySelectorAll('.sidebar a').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

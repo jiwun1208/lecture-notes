@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floating Point 강의</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']], processEscapes: false },
+  startup: { ready: function() { MathJax.startup.defaultReady(); window.mathJaxReady = true; } }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{--bg:#0f1117;--card:#1a1d27;--card-border:#2a2d3a;--accent:#6c8cff;--accent2:#fbbf24;--accent3:#34d399;--text:#e0e4ef;--text-dim:#8b92a8;--text-bright:#f4f5f9;--danger:#f87171;--purple:#a78bfa;--pink:#f472b6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.85;overflow-x:hidden}
+.app{max-width:860px;margin:0 auto;padding:20px}
+.header{text-align:center;padding:50px 20px 35px;position:relative}
+.header::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.header h1{font-size:2.4em;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--purple),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;letter-spacing:-0.02em}
+.header .subtitle{font-size:1em;color:var(--text-dim);font-weight:300}
+.nav{display:flex;align-items:center;justify-content:center;gap:12px;margin:24px 0;padding:12px 16px;background:rgba(26,29,39,0.9);border-radius:14px;border:1px solid var(--card-border);position:sticky;top:10px;z-index:100;backdrop-filter:blur(20px);flex-wrap:wrap}
+.nav button{background:none;border:1.5px solid var(--card-border);color:var(--text);padding:7px 18px;border-radius:8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:0.88em;font-weight:500;transition:all 0.2s}
+.nav button:hover{border-color:var(--accent);color:var(--accent);background:rgba(108,140,255,0.08)}
+.nav button:disabled{opacity:0.3;cursor:not-allowed}
+.nav .slide-num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:0.9em;min-width:80px;text-align:center}
+.progress-bar{width:100%;height:2px;background:var(--card-border);border-radius:1px;margin-top:8px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:1px;transition:width 0.4s ease}
+.slide{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:36px 32px;margin:16px 0;animation:fadeIn 0.4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.slide-title{font-size:1.4em;font-weight:700;color:var(--accent);margin-bottom:20px;padding-bottom:10px;border-bottom:1.5px solid var(--card-border);display:flex;align-items:center;gap:10px}
+.slide-title .num{background:var(--accent);color:white;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75em;flex-shrink:0}
+.explanation{font-size:0.98em;line-height:1.9;color:var(--text)}
+.explanation p{margin-bottom:14px}
+.math-block{background:rgba(108,140,255,0.06);border-left:3px solid var(--accent);padding:18px 22px;margin:18px 0;border-radius:0 10px 10px 0;overflow-x:auto;font-size:1.05em}
+.highlight-box{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);padding:14px 18px;border-radius:10px;margin:14px 0;font-size:0.95em}
+.key-point{background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.25);padding:14px 18px;border-radius:10px;margin:14px 0;font-size:0.95em}
+.warning-box{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);padding:14px 18px;border-radius:10px;margin:14px 0;font-size:0.95em}
+.code-block{background:#12141c;border:1px solid var(--card-border);border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'JetBrains Mono',monospace;font-size:0.85em;overflow-x:auto;line-height:1.7;color:#c9d1d9;white-space:pre}
+.info-table{width:100%;border-collapse:separate;border-spacing:0;margin:18px 0;border-radius:10px;overflow:hidden;border:1px solid var(--card-border);font-size:0.93em}
+.info-table th{background:rgba(108,140,255,0.12);padding:10px 14px;text-align:left;font-weight:600;color:var(--accent)}
+.info-table td{padding:9px 14px;border-top:1px solid var(--card-border)}
+.info-table tr:hover td{background:rgba(108,140,255,0.04)}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin:18px 0}
+.toc-item{background:rgba(108,140,255,0.04);border:1px solid var(--card-border);padding:10px 14px;border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.88em}
+.toc-item:hover{border-color:var(--accent);background:rgba(108,140,255,0.08);transform:translateY(-1px)}
+.toc-item .toc-num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:0.78em;margin-right:6px}
+strong{color:var(--accent2)}em{color:var(--accent3);font-style:normal}
+.section-divider{text-align:center;padding:10px;color:var(--purple);font-weight:700;font-size:0.85em;letter-spacing:2px;text-transform:uppercase;margin:10px 0}
+@media(max-width:700px){.slide{padding:22px 16px}.header h1{font-size:1.8em}.app{padding:12px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <h1>Floating Point</h1>
+    <div class="subtitle">System Programming CSE306 — DGIST</div>
+  </div>
+  <div id="content"></div>
+</div>
+<script>
+const slides = [
+// ===== 0: 목차 =====
+{title:"강의 개요",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>이 강의는 컴퓨터가 실수(소수점이 있는 수)를 어떻게 표현하는지, 그 과정에서 발생하는 <strong>정밀도 한계와 함정</strong>을 다룹니다.</p>
+<div class="toc">
+<div class="toc-item" onclick="goSlide(1)"><span class="toc-num">01</span> 강의 소개</div>
+<div class="toc-item" onclick="goSlide(2)"><span class="toc-num">02</span> 정수와 실수의 함정 (복습)</div>
+<div class="toc-item" onclick="goSlide(4)"><span class="toc-num">04</span> 이진 소수 표현</div>
+<div class="toc-item" onclick="goSlide(9)"><span class="toc-num">09</span> IEEE 754 표준</div>
+<div class="toc-item" onclick="goSlide(12)"><span class="toc-num">12</span> Normalized / Denormalized / Special</div>
+<div class="toc-item" onclick="goSlide(18)"><span class="toc-num">18</span> Tiny FP 예제 & 분포</div>
+<div class="toc-item" onclick="goSlide(23)"><span class="toc-num">23</span> Rounding</div>
+<div class="toc-item" onclick="goSlide(27)"><span class="toc-num">27</span> FP 덧셈 & 곱셈</div>
+<div class="toc-item" onclick="goSlide(32)"><span class="toc-num">32</span> C에서의 Floating Point</div>
+<div class="toc-item" onclick="goSlide(35)"><span class="toc-num">35</span> Ariane 5 사고 & 요약</div>
+</div>
+</div>`}},
+// ===== 1: 표지 (p1) =====
+{title:"강의 소개 — Floating Point",render:function(c){c.innerHTML=`
+<div class="explanation">
+<div class="highlight-box">
+<strong>과목:</strong> System Programming (CSE306) · DGIST<br>
+<strong>주제:</strong> Chapter 3 — Floating Point<br>
+<strong>담당:</strong> Prof. Yongwoo Lee
+</div>
+<p>이전 챕터에서 정수의 비트 표현을 배웠습니다. 이번에는 <strong>실수(소수점이 있는 수)</strong>를 비트로 표현하는 방법인 <em>부동소수점(Floating Point)</em>을 다룹니다.</p>
+</div>`}},
+// ===== 2: Great Reality #1 복습 (p2) =====
+{title:"Great Reality #1 — 복습",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>이전 챕터에서 본 핵심 메시지를 다시 확인합니다:</p>
+<p><strong>예제 1:</strong> \\(x^2 \\geq 0\\)? — Int에서는 오버플로우로 음수 가능, Float에서는 항상 참</p>
+<p><strong>예제 2:</strong> \\((x+y)+z = x+(y+z)\\)? — Int에서는 참, <em>Float에서는 거짓!</em></p>
+<div class="code-block">(1e20 + -1e20) + 3.14 = 3.14   ✅
+ 1e20 + (-1e20 + 3.14) = 0.0    ❌  ← 3.14가 정밀도 한계로 사라짐</div>
+<div class="warning-box">이번 챕터를 통해 Float에서 <strong>왜</strong> 결합법칙이 성립하지 않는지를 완벽히 이해하게 됩니다.</div>
+</div>`}},
+// ===== 3: 로드맵 (p3) =====
+{title:"로드맵",render:function(c){c.innerHTML=`
+<div class="explanation">
+<table class="info-table">
+<tr><th>파트</th><th>내용</th></tr>
+<tr><td><strong>1. 이진 소수</strong></td><td>소수점 이하를 이진수로 표현하는 방법</td></tr>
+<tr><td><strong>2. IEEE 754</strong></td><td>부동소수점 표준의 정의 — sign, exponent, fraction</td></tr>
+<tr><td><strong>3. 예제와 성질</strong></td><td>Normalized, Denormalized, Special Values, 수의 분포</td></tr>
+<tr><td><strong>4. Rounding</strong></td><td>반올림 방식과 Round-to-Even</td></tr>
+<tr><td><strong>5. 연산</strong></td><td>덧셈, 곱셈의 수학적 성질</td></tr>
+<tr><td><strong>6. C에서의 FP</strong></td><td>float/double 변환, 퍼즐</td></tr>
+</table>
+</div>`}},
+// ===== 4: Fractional binary quiz (p4) =====
+{title:"이진 소수 — 퀴즈",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>먼저 질문: <strong>\\(1011.101_2\\)</strong>는 십진수로 얼마일까요?</p>
+<div class="math-block">
+\\(1 \\times 2^3 + 0 \\times 2^2 + 1 \\times 2^1 + 1 \\times 2^0 + 1 \\times 2^{-1} + 0 \\times 2^{-2} + 1 \\times 2^{-3}\\)
+\\(= 8 + 0 + 2 + 1 + 0.5 + 0 + 0.125 = 11.625\\)
+</div>
+<p>소수점 왼쪽은 \\(2^0, 2^1, 2^2, \\ldots\\) (정수 부분), 오른쪽은 \\(2^{-1}, 2^{-2}, 2^{-3}, \\ldots\\) (소수 부분)입니다.</p>
+</div>`}},
+// ===== 5: Fractional Binary Numbers (p5) =====
+{title:"이진 소수 표현 — Fractional Binary Numbers",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>이진수에서 <strong>"binary point"</strong>(소수점) 오른쪽의 비트는 2의 음의 거듭제곱을 나타냅니다:</p>
+<div class="math-block">
+\\(b_i b_{i-1} \\cdots b_1 b_0 \\;.\\; b_{-1} b_{-2} b_{-3} \\cdots b_{-j}\\)
+\\(= \\sum_{k=-j}^{i} b_k \\times 2^k\\)
+</div>
+<p>소수점 오른쪽: \\(b_{-1} = 1/2\\), \\(b_{-2} = 1/4\\), \\(b_{-3} = 1/8\\), ...</p>
+</div>`}},
+// ===== 6: Fractional Examples (p6) =====
+{title:"이진 소수 예제",render:function(c){c.innerHTML=`
+<div class="explanation">
+<table class="info-table">
+<tr><th>십진수</th><th>이진수</th><th>계산</th></tr>
+<tr><td>5 3/4</td><td>\\(101.11_2\\)</td><td>4+1+0.5+0.25</td></tr>
+<tr><td>2 7/8</td><td>\\(010.111_2\\)</td><td>2+0.5+0.25+0.125</td></tr>
+<tr><td>1 7/16</td><td>\\(001.0111_2\\)</td><td>1+0.25+0.125+0.0625</td></tr>
+</table>
+<div class="highlight-box">
+<strong>관찰:</strong><br>
+• 오른쪽 시프트(>>1) = 2로 나누기 (정수와 동일)<br>
+• 왼쪽 시프트(<<1) = 2 곱하기<br>
+• \\(0.111\\ldots_2 = 1/2 + 1/4 + 1/8 + \\cdots \\to 1.0\\) (무한급수). 이를 \\(1.0 - \\varepsilon\\)으로 표기
+</div>
+</div>`}},
+// ===== 7: Representable Numbers (p7) =====
+{title:"표현 가능한 수의 한계",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p><strong>한계 1: 정확히 표현 가능한 수가 제한적</strong></p>
+<p>\\(x / 2^k\\) 형태만 정확히 표현됩니다. 그 외는 <em>무한 순환소수</em>가 됩니다:</p>
+<div class="code-block">1/3  = 0.0101010101[01]...₂   ← 무한 반복
+1/5  = 0.001100110011[0011]...₂
+1/10 = 0.0001100110011[0011]...₂</div>
+<div class="warning-box"><strong>0.1</strong>을 이진수로 정확히 표현할 수 없습니다! 이것이 <span style="color:var(--purple)">0.1 + 0.2 ≠ 0.3</span> 문제의 근본 원인입니다.</div>
+<p><strong>한계 2: 고정된 소수점 위치</strong></p>
+<p>w비트 내에서 소수점 위치가 고정되면, 표현 가능한 수의 범위가 매우 제한됩니다. 아주 작은 수나 아주 큰 수를 동시에 표현할 수 없습니다. → 이것이 <strong>부동(floating) 소수점</strong>이 필요한 이유!</p>
+</div>`}},
+// ===== 8: 로드맵 - IEEE (p8) =====
+{title:"로드맵 — IEEE 표준",render:function(c){c.innerHTML=`
+<div class="explanation">
+<div class="section-divider">— IEEE Floating Point Standard —</div>
+<p>고정 소수점의 한계를 극복하기 위해 <strong>소수점 위치를 "떠다니게"</strong> 하는 표현 방식을 배웁니다.</p>
+</div>`}},
+// ===== 9: IEEE Floating Point (p9) =====
+{title:"IEEE 754 — 부동소수점 표준",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p><strong>IEEE Standard 754</strong> (1985년 제정)는 부동소수점 산술의 <em>통일 표준</em>입니다. 이전에는 제조사마다 다른 형식을 사용해 혼란이 있었습니다.</p>
+<div class="key-point">모든 주요 CPU가 이 표준을 지원합니다. 반올림, 오버플로우, 언더플로우에 대한 명확한 규칙을 제공합니다.</div>
+<p>하드웨어에서 빠르게 구현하기 어렵지만, 수치 해석학자들의 요구가 반영된 표준입니다.</p>
+</div>`}},
+// ===== 10: FP Representation (p10) =====
+{title:"부동소수점 표현 — 구조",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>부동소수점 수의 수학적 형태:</p>
+<div class="math-block">
+\\(v = (-1)^s \\times M \\times 2^E\\)
+</div>
+<table class="info-table">
+<tr><th>구성 요소</th><th>의미</th><th>비트 필드</th></tr>
+<tr><td><strong>s</strong> (Sign)</td><td>부호: 0=양수, 1=음수</td><td>최상위 1비트</td></tr>
+<tr><td><strong>M</strong> (Significand)</td><td>유효숫자, 보통 \\([1.0, 2.0)\\) 범위</td><td>frac 필드로 인코딩 (M ≠ frac)</td></tr>
+<tr><td><strong>E</strong> (Exponent)</td><td>2의 지수, 스케일 결정</td><td>exp 필드로 인코딩 (E ≠ exp)</td></tr>
+</table>
+<div class="code-block">  [s] [  exp  ] [       frac        ]
+   1    k bits        n bits</div>
+<div class="warning-box"><strong>주의:</strong> exp 필드의 값이 직접 E가 아니고, frac 필드의 값이 직접 M이 아닙니다. 인코딩 규칙이 따로 있습니다.</div>
+</div>`}},
+// ===== 11: Precision options (p11) =====
+{title:"정밀도 옵션 — Single / Double / Extended",render:function(c){c.innerHTML=`
+<div class="explanation">
+<table class="info-table">
+<tr><th>정밀도</th><th>총 비트</th><th>s</th><th>exp</th><th>frac</th></tr>
+<tr><td><strong>Single (float)</strong></td><td>32</td><td>1</td><td>8</td><td>23</td></tr>
+<tr><td><strong>Double (double)</strong></td><td>64</td><td>1</td><td>11</td><td>52</td></tr>
+<tr><td><strong>Extended</strong></td><td>80</td><td>1</td><td>15</td><td>63/64</td></tr>
+</table>
+<div class="key-point">
+<strong>Single (float):</strong> 약 7자리 십진수 정밀도<br>
+<strong>Double (double):</strong> 약 15~16자리 십진수 정밀도<br>
+Extended는 Intel 전용이며 long double에 해당합니다.
+</div>
+</div>`}},
+// ===== 12: Normalized Values (p12) =====
+{title:"Normalized Values — 정규화된 값",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p><strong>조건:</strong> exp ≠ 000...0 이고 exp ≠ 111...1 일 때 (대부분의 수)</p>
+<p><strong>Exponent 인코딩:</strong></p>
+<div class="math-block">
+\\(E = Exp - Bias\\)<br>
+\\(Bias = 2^{k-1} - 1\\) (k = exp 비트 수)
+</div>
+<table class="info-table">
+<tr><th></th><th>Bias</th><th>Exp 범위</th><th>E 범위</th></tr>
+<tr><td>Single (8bit exp)</td><td>127</td><td>1 ~ 254</td><td>-126 ~ +127</td></tr>
+<tr><td>Double (11bit exp)</td><td>1023</td><td>1 ~ 2046</td><td>-1022 ~ +1023</td></tr>
+</table>
+<p><strong>Significand 인코딩:</strong> 암묵적 선행 1(implied leading 1)을 가집니다:</p>
+<div class="math-block">
+\\(M = 1.xxx\\ldots x_2\\) (frac 필드가 xxx...x)
+</div>
+<p>frac = 000...0이면 \\(M = 1.0\\), frac = 111...1이면 \\(M = 2.0 - \\varepsilon\\). "공짜로" 1비트를 더 얻는 셈입니다!</p>
+</div>`}},
+// ===== 13: Normalized Example (p13) =====
+{title:"Normalized 인코딩 예제 — 15213.0",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p><span style="color:var(--purple)">float F = 15213.0;</span>을 인코딩해봅시다:</p>
+<div class="code-block">15213₁₀ = 11101101101101₂
+        = 1.1101101101101₂ × 2¹³</div>
+<p><strong>Significand:</strong></p>
+<div class="math-block">
+\\(M = 1.1101101101101_2\\)<br>
+frac = 11011011011010000000000₂ (23비트, 소수점 뒤 부분)
+</div>
+<p><strong>Exponent:</strong></p>
+<div class="math-block">
+\\(E = 13, \\quad Bias = 127\\)<br>
+\\(Exp = E + Bias = 13 + 127 = 140 = 10001100_2\\)
+</div>
+<div class="code-block">결과: 0  10001100  11011011011010000000000
+      s    exp              frac</div>
+</div>`}},
+// ===== 14: Denormalized Values (p14) =====
+{title:"Denormalized Values — 비정규화된 값",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p><strong>조건:</strong> exp = 000...0 일 때</p>
+<p>Normalized와 다른 두 가지 규칙:</p>
+<div class="highlight-box">
+<strong>1. Exponent:</strong> \\(E = 1 - Bias\\) (0 - Bias가 아님!)<br>
+<strong>2. Significand:</strong> \\(M = 0.xxx\\ldots x_2\\) (선행 1 대신 <em>선행 0</em>)
+</div>
+<p><strong>Case 1: frac = 000...0</strong> → 값 = <strong>0</strong></p>
+<p>+0과 -0이 별도로 존재합니다 (s비트에 따라).</p>
+<p><strong>Case 2: frac ≠ 000...0</strong> → <strong>0에 매우 가까운 수</strong></p>
+<p>이 값들은 <em>등간격(equispaced)</em>으로 분포합니다.</p>
+<div class="key-point">Denormalized의 존재 이유: Normalized로는 0에 가까운 수를 표현할 수 없습니다. \\(E = 1 - Bias\\) 규칙 덕분에 Denormalized → Normalized 전환이 매끄럽게 이어집니다.</div>
+</div>`}},
+// ===== 15: Special Values (p15) =====
+{title:"Special Values — 무한대와 NaN",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p><strong>조건:</strong> exp = 111...1 일 때</p>
+<table class="info-table">
+<tr><th>exp</th><th>frac</th><th>의미</th><th>예시</th></tr>
+<tr><td>111...1</td><td>000...0</td><td><strong>무한대 (Infinity)</strong></td><td>1.0/0.0 = +∞, -1.0/0.0 = -∞</td></tr>
+<tr><td>111...1</td><td>≠ 000...0</td><td><strong>NaN (Not a Number)</strong></td><td>sqrt(-1), ∞-∞, ∞×0</td></tr>
+</table>
+<div class="warning-box">NaN은 자기 자신과도 같지 않습니다: <span style="color:var(--purple)">NaN == NaN</span>은 <strong>false</strong>입니다! C에서 NaN 검사는 <span style="color:var(--purple)">x != x</span>로 합니다.</div>
+</div>`}},
+// ===== 16: Visualization (p16) =====
+{title:"부동소수점 인코딩의 시각화",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>수직선 위에서 부동소수점 값들의 분포:</p>
+<div class="code-block">  -∞ ← ... -Normalized ... -Denorm  -0  +0  +Denorm ... +Normalized ... → +∞
+  NaN                                                                      NaN</div>
+<div class="highlight-box">
+<strong>구조 요약:</strong><br>
+• <em>Denormalized</em>: 0 근처의 매우 작은 수들 (등간격)<br>
+• <em>Normalized</em>: 대부분의 수 (0에서 멀어질수록 간격이 넓어짐)<br>
+• <em>±∞</em>: 양/음의 무한대<br>
+• <em>NaN</em>: 숫자가 아닌 값
+</div>
+</div>`}},
+// ===== 17: 로드맵 - Example (p17) =====
+{title:"로드맵 — 예제와 성질",render:function(c){c.innerHTML=`
+<div class="explanation">
+<div class="section-divider">— Example and Properties —</div>
+<p>8비트 미니 부동소수점으로 전체 동작을 확인하고, 수의 분포를 시각적으로 이해합니다.</p>
+</div>`}},
+// ===== 18: Tiny FP Example (p18) =====
+{title:"Tiny Floating Point — 8비트 미니 FP",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>학습을 위한 8비트 부동소수점 시스템:</p>
+<div class="code-block">  [s] [exp ] [frac]
+   1   4bit   3bit     Bias = 2⁴⁻¹ - 1 = 7</div>
+<p>IEEE 754와 동일한 규칙을 적용합니다: Normalized, Denormalized, ±0, ±∞, NaN 모두 존재.</p>
+</div>`}},
+// ===== 19: Dynamic Range (p19) =====
+{title:"Dynamic Range — 양수 범위 전체",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>8비트 미니 FP의 양수 전체 범위 (Bias = 7):</p>
+<table class="info-table">
+<tr><th>종류</th><th>exp</th><th>frac</th><th>E</th><th>M</th><th>값</th></tr>
+<tr><td rowspan="3"><em>Denorm</em></td><td>0000</td><td>001</td><td>-6</td><td>1/8</td><td>1/512 (최소 양수)</td></tr>
+<tr><td>0000</td><td>110</td><td>-6</td><td>6/8</td><td>6/512</td></tr>
+<tr><td>0000</td><td>111</td><td>-6</td><td>7/8</td><td>7/512 (최대 denorm)</td></tr>
+<tr><td rowspan="5"><strong>Norm</strong></td><td>0001</td><td>000</td><td>-6</td><td>8/8</td><td>8/512 (최소 norm)</td></tr>
+<tr><td>0110</td><td>111</td><td>-1</td><td>15/8</td><td>15/16 (1 바로 아래)</td></tr>
+<tr><td>0111</td><td>000</td><td>0</td><td>8/8</td><td><strong>1</strong></td></tr>
+<tr><td>0111</td><td>001</td><td>0</td><td>9/8</td><td>9/8 (1 바로 위)</td></tr>
+<tr><td>1110</td><td>111</td><td>7</td><td>15/8</td><td><strong>240</strong> (최대 norm)</td></tr>
+<tr><td>∞</td><td>1111</td><td>000</td><td>—</td><td>—</td><td>+∞</td></tr>
+</table>
+<div class="key-point">Denormalized의 최대값(7/512)과 Normalized의 최소값(8/512)이 <strong>매끄럽게 이어집니다</strong>. \\(E = 1 - Bias\\) 규칙 덕분입니다.</div>
+</div>`}},
+// ===== 20: Distribution (p20) =====
+{title:"값의 분포 — 0 근처가 촘촘",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>6비트 IEEE-like 형식 (exp 3비트, frac 2비트, Bias = 3)의 수직선 분포:</p>
+<div class="code-block">  -15    -10     -5      0      5     10     15
+   |------|------|------|------|------|------|
+         촘촘  ←   Denorm  Norm   →  듬성듬성</div>
+<div class="key-point"><strong>핵심 관찰:</strong> 0에 가까울수록 수들이 <em>촘촘하게</em> 분포하고, 멀어질수록 <em>듬성듬성</em>해집니다. 이것이 부동소수점의 핵심 특성입니다 — 절대 오차가 아닌 <strong>상대 오차</strong>를 일정하게 유지합니다.</div>
+</div>`}},
+// ===== 21: Distribution close-up (p21) =====
+{title:"값의 분포 — 근접 확대",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>-1 ~ +1 구간을 확대하면:</p>
+<div class="code-block">  -1      -0.5       0        0.5       1
+   |--------|--------|--------|--------|
+        Denorm 영역이 특히 촘촘</div>
+<p>Denormalized 값들은 0 주변에 <strong>등간격</strong>으로 분포합니다. Normalized로 넘어가면 간격이 점점 벌어집니다.</p>
+</div>`}},
+// ===== 22: Special Properties (p22) =====
+{title:"IEEE 인코딩의 특별한 성질",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>IEEE 부동소수점 인코딩에는 편리한 성질들이 있습니다:</p>
+<div class="highlight-box">
+<strong>1. FP 0 = 정수 0:</strong> 모든 비트가 0이면 부동소수점에서도 정수에서도 0입니다.<br><br>
+<strong>2. (거의) Unsigned 정수 비교 가능:</strong><br>
+• 부호 비트를 먼저 비교한 후<br>
+• \\(-0 = +0\\) 처리<br>
+• NaN은 예외 (어떤 값보다 크게 나옴)<br>
+• 그 외에는 Denorm↔Norm↔∞ 순서가 unsigned 정수 비교와 일치!
+</div>
+<div class="key-point">이 성질 덕분에 하드웨어에서 부동소수점 비교를 정수 비교 회로로 빠르게 구현할 수 있습니다.</div>
+</div>`}},
+// ===== 23: 로드맵 - Rounding (p23) =====
+{title:"로드맵 — Rounding",render:function(c){c.innerHTML=`
+<div class="explanation">
+<div class="section-divider">— Rounding, Addition, Multiplication —</div>
+<p>부동소수점 연산의 핵심: <strong>"정확한 결과를 먼저 계산한 뒤, 표현 가능한 값으로 반올림한다"</strong></p>
+</div>`}},
+// ===== 24: FP Operations Basic Idea (p24) =====
+{title:"부동소수점 연산의 기본 아이디어",render:function(c){c.innerHTML=`
+<div class="explanation">
+<div class="math-block">
+\\(x +_f y = Round(x + y)\\)<br>
+\\(x \\times_f y = Round(x \\times y)\\)
+</div>
+<p>기본 절차:</p>
+<div class="highlight-box">
+1. 먼저 <strong>정확한 결과</strong>를 계산<br>
+2. 원하는 정밀도에 <strong>맞추기</strong>:<br>
+&emsp;• 지수가 너무 크면 → <em>오버플로우</em> (±∞)<br>
+&emsp;• frac에 맞지 않으면 → <em>반올림(Round)</em>
+</div>
+</div>`}},
+// ===== 25: Rounding Modes (p25) =====
+{title:"반올림 방식 — Rounding Modes",render:function(c){c.innerHTML=`
+<div class="explanation">
+<table class="info-table">
+<tr><th>방식</th><th>1.40</th><th>1.60</th><th>1.50</th><th>2.50</th><th>-1.50</th></tr>
+<tr><td>Towards zero (0 방향)</td><td>1</td><td>1</td><td>1</td><td>2</td><td>-1</td></tr>
+<tr><td>Round down (-∞ 방향)</td><td>1</td><td>1</td><td>1</td><td>2</td><td>-2</td></tr>
+<tr><td>Round up (+∞ 방향)</td><td>2</td><td>2</td><td>2</td><td>3</td><td>-1</td></tr>
+<tr style="background:rgba(108,140,255,0.06)"><td><strong>Nearest Even (기본)</strong></td><td>1</td><td>2</td><td><strong>2</strong></td><td><strong>2</strong></td><td><strong>-2</strong></td></tr>
+</table>
+<div class="key-point"><strong>Round-to-Even</strong>이 기본(default) 모드입니다. 정확히 중간값(halfway)일 때 <em>짝수 쪽으로</em> 반올림합니다. 다른 방식은 통계적으로 편향(bias)이 있지만, Round-to-Even은 편향이 없습니다.</div>
+</div>`}},
+// ===== 26: Round-to-Even detail (p26) =====
+{title:"Round-to-Even 상세",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>정확히 중간값(halfway)일 때만 특별 규칙을 적용합니다:</p>
+<div class="code-block">7.8949999 → 7.89   (중간 미만 → 내림)
+7.8950001 → 7.90   (중간 초과 → 올림)
+7.8950000 → 7.90   (정확히 중간 → 짝수 쪽 = .90 ✅)
+7.8850000 → 7.88   (정확히 중간 → 짝수 쪽 = .88 ✅)</div>
+</div>`}},
+// ===== 27: Rounding Binary (p27) =====
+{title:"이진수에서의 반올림",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>이진수에서 "짝수"는 <strong>LSB = 0</strong>, "중간값"은 반올림 위치 오른쪽이 <strong>100...₂</strong>일 때입니다.</p>
+<table class="info-table">
+<tr><th>값</th><th>이진수</th><th>반올림 결과</th><th>동작</th><th>결과값</th></tr>
+<tr><td>2 3/32</td><td>10.00011₂</td><td>10.00₂</td><td>&lt;1/2 → 내림</td><td>2</td></tr>
+<tr><td>2 3/16</td><td>10.00110₂</td><td>10.01₂</td><td>&gt;1/2 → 올림</td><td>2 1/4</td></tr>
+<tr><td>2 7/8</td><td>10.11100₂</td><td>11.00₂</td><td>=1/2 → 짝수(올림)</td><td>3</td></tr>
+<tr><td>2 5/8</td><td>10.10100₂</td><td>10.10₂</td><td>=1/2 → 짝수(내림)</td><td>2 1/2</td></tr>
+</table>
+</div>`}},
+// ===== 28: FP Addition (p28) =====
+{title:"부동소수점 덧셈",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>\\((-1)^{s_1} M_1 \\cdot 2^{E_1} + (-1)^{s_2} M_2 \\cdot 2^{E_2}\\) (\\(E_1 \\geq E_2\\) 가정)</p>
+<div class="highlight-box">
+<strong>절차:</strong><br>
+1. <strong>정렬(Align):</strong> 작은 지수의 수를 오른쪽 시프트하여 binary point를 맞춤<br>
+2. <strong>덧셈:</strong> Significand끼리 더함<br>
+3. <strong>정규화:</strong> \\(M \\geq 2\\)이면 오른쪽 시프트 & E 증가, \\(M < 1\\)이면 왼쪽 시프트 & E 감소<br>
+4. <strong>오버플로우 체크:</strong> E가 범위 초과하면 ±∞<br>
+5. <strong>반올림:</strong> M을 frac 정밀도에 맞춤
+</div>
+<div class="warning-box">정렬 과정에서 작은 수의 하위 비트가 사라질 수 있습니다. 이것이 <span style="color:var(--purple)">1e20 + 3.14 = 1e20</span>이 되는 이유입니다.</div>
+</div>`}},
+// ===== 29: FP Add Properties (p29) =====
+{title:"부동소수점 덧셈의 수학적 성질",render:function(c){c.innerHTML=`
+<div class="explanation">
+<table class="info-table">
+<tr><th>성질</th><th>성립?</th><th>비고</th></tr>
+<tr><td>닫힘 (Closed)</td><td><em>거의</em></td><td>∞나 NaN이 생길 수 있음</td></tr>
+<tr><td>교환법칙 (Commutative)</td><td><em>Yes</em></td><td>\\(a +_f b = b +_f a\\)</td></tr>
+<tr style="background:rgba(248,113,113,0.08)"><td><strong>결합법칙 (Associative)</strong></td><td><strong>No!</strong></td><td>(3.14+1e10)-1e10 = 0 ≠ 3.14</td></tr>
+<tr><td>항등원 (0)</td><td><em>Yes</em></td><td></td></tr>
+<tr><td>역원 존재</td><td><em>거의</em></td><td>∞와 NaN은 역원 없음</td></tr>
+<tr><td>단조성 (Monotonicity)</td><td><em>거의</em></td><td>∞와 NaN 제외하면 성립</td></tr>
+</table>
+<div class="warning-box"><strong>결합법칙 불성립</strong>은 부동소수점의 가장 중요한 한계입니다. 컴파일러가 덧셈 순서를 자유롭게 바꿀 수 없는 이유입니다.</div>
+</div>`}},
+// ===== 30: FP Multiplication (p30) =====
+{title:"부동소수점 곱셈",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>\\((-1)^{s_1} M_1 \\cdot 2^{E_1} \\times (-1)^{s_2} M_2 \\cdot 2^{E_2}\\)</p>
+<div class="math-block">
+부호: \\(s = s_1 \\oplus s_2\\) (XOR)<br>
+유효숫자: \\(M = M_1 \\times M_2\\)<br>
+지수: \\(E = E_1 + E_2\\)
+</div>
+<p>정규화 후 반올림합니다. \\(M \\geq 2\\)이면 오른쪽 시프트 & E 증가.</p>
+</div>`}},
+// ===== 31: FP Mult Properties (p31) =====
+{title:"부동소수점 곱셈의 수학적 성질",render:function(c){c.innerHTML=`
+<div class="explanation">
+<table class="info-table">
+<tr><th>성질</th><th>성립?</th><th>비고</th></tr>
+<tr><td>닫힘</td><td><em>거의</em></td><td>∞, NaN 가능</td></tr>
+<tr><td>교환법칙</td><td><em>Yes</em></td><td></td></tr>
+<tr style="background:rgba(248,113,113,0.08)"><td><strong>결합법칙</strong></td><td><strong>No!</strong></td><td>(1e20×1e20)×1e-20 = ∞, 1e20×(1e20×1e-20) = 1e20</td></tr>
+<tr><td>항등원 (1)</td><td><em>Yes</em></td><td></td></tr>
+<tr style="background:rgba(248,113,113,0.08)"><td><strong>분배법칙</strong></td><td><strong>No!</strong></td><td>1e20×(1e20-1e20) = 0, 1e20×1e20 - 1e20×1e20 = NaN</td></tr>
+<tr><td>단조성</td><td><em>거의</em></td><td>∞, NaN 제외</td></tr>
+</table>
+</div>`}},
+// ===== 32: 로드맵 - C (p32) =====
+{title:"로드맵 — C에서의 Floating Point",render:function(c){c.innerHTML=`
+<div class="explanation">
+<div class="section-divider">— Floating Point in C —</div>
+<p>C에서 float/double 타입과 정수 간 변환 시 주의사항을 알아봅니다.</p>
+</div>`}},
+// ===== 33: FP in C (p33) =====
+{title:"C에서의 Floating Point — 변환 규칙",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>C는 <span style="color:var(--purple)">float</span> (single)과 <span style="color:var(--purple)">double</span> (double precision)을 지원합니다.</p>
+<p><strong>캐스팅 시 변환 규칙:</strong></p>
+<table class="info-table">
+<tr><th>변환</th><th>동작</th><th>주의</th></tr>
+<tr><td>double/float → int</td><td>소수부 잘라냄 (toward zero)</td><td>범위 초과/NaN → 보통 TMin</td></tr>
+<tr><td>int → double</td><td><strong>정확한 변환</strong></td><td>int가 53비트 이내면 OK</td></tr>
+<tr><td>int → float</td><td>반올림 발생 가능</td><td>float의 significand = 23비트 &lt; 32비트 int</td></tr>
+</table>
+<div class="warning-box">
+<strong>int → float</strong> 변환에서 정밀도 손실이 발생할 수 있습니다! 32비트 int는 최대 \\(2^{31}\\)까지인데, float의 significand는 24비트(23+1)뿐이므로 큰 정수는 반올림됩니다.
+</div>
+</div>`}},
+// ===== 34: FP Puzzles (p34) =====
+{title:"Floating Point 퍼즐",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p><span style="color:var(--purple)">int x; float f; double d;</span> — d, f는 NaN이 아닐 때:</p>
+<table class="info-table">
+<tr><th>표현식</th><th>참?</th><th>이유</th></tr>
+<tr><td>x == (int)(float) x</td><td><strong>No</strong></td><td>float의 24비트 significand로는 큰 int 정확히 표현 불가</td></tr>
+<tr><td>x == (int)(double) x</td><td><em>Yes</em></td><td>double의 53비트 significand > 32비트 int</td></tr>
+<tr><td>f == (float)(double) f</td><td><em>Yes</em></td><td>정밀도가 올라가므로 손실 없음</td></tr>
+<tr><td>d == (double)(float) d</td><td><strong>No</strong></td><td>double → float에서 정밀도 손실</td></tr>
+<tr><td>f == -(-f)</td><td><em>Yes</em></td><td>부호 비트만 토글</td></tr>
+<tr><td>2/3 == 2/3.0</td><td><strong>No</strong></td><td>2/3은 정수 나눗셈 = 0, 2/3.0은 FP 나눗셈 ≈ 0.667</td></tr>
+<tr><td>d &lt; 0.0 ⇒ (d*2) &lt; 0.0</td><td><em>Yes</em></td><td>부호 유지 (오버플로우 → -∞도 음수)</td></tr>
+<tr><td>d &gt; f ⇒ -f &gt; -d</td><td><em>Yes</em></td><td>부호 반전으로 부등호 반전</td></tr>
+<tr><td>d * d &gt;= 0.0</td><td><em>Yes</em></td><td>제곱은 항상 양수 (FP에서는 성립!)</td></tr>
+<tr><td>(d+f)-d == f</td><td><strong>No</strong></td><td>결합법칙 불성립</td></tr>
+</table>
+</div>`}},
+// ===== 35: Ariane 5 (p35-36) =====
+{title:"Ariane 5 — 실제 사고 사례",render:function(c){c.innerHTML=`
+<div class="explanation">
+<p>1996년 6월 4일, 유럽우주국(ESA)의 <strong>Ariane 5</strong> 로켓이 발사 40초 만에 폭발했습니다.</p>
+<div class="warning-box">
+<strong>10년 개발, 70억 달러.</strong> 파괴된 로켓과 화물의 가치는 <strong>5억 달러</strong>.
+</div>
+<p><strong>원인:</strong> 관성 항법 시스템의 소프트웨어 오류</p>
+<div class="highlight-box">
+로켓의 수평 속도를 나타내는 <strong>64비트 부동소수점 수</strong>를 <strong>16비트 signed 정수</strong>로 변환하는 코드에서 문제 발생.<br><br>
+속도 값이 <strong>32,767</strong>(16비트 signed int 최대값)을 초과하여 변환이 실패 → 시스템 크래시 → 로켓 폭발
+</div>
+<div class="key-point">이전 챕터의 보안 취약점 예제와 같은 원리입니다. 타입 변환 시 범위 검증의 중요성을 보여주는 실제 사례입니다.</div>
+</div>`}},
+// ===== 36: Summary (p37) =====
+{title:"요약 — Floating Point",render:function(c){c.innerHTML=`
+<div class="explanation">
+<div class="key-point">
+<strong>IEEE Floating Point 핵심 정리:</strong><br><br>
+• \\(v = (-1)^s \\times M \\times 2^E\\) 형태로 수를 표현<br>
+• 명확한 수학적 성질: "정확한 결과를 계산 후 반올림"으로 동작 이해 가능<br>
+• 구현과 독립적으로 동작을 추론할 수 있음
+</div>
+<div class="warning-box">
+<strong>실수 산술과 다른 점:</strong><br>
+• <strong>결합법칙 불성립</strong> — 덧셈과 곱셈 모두<br>
+• <strong>분배법칙 불성립</strong> — 곱셈<br>
+• 컴파일러와 수치 계산 프로그래머에게 큰 도전
+</div>
+<p>이 챕터의 핵심 교훈: 부동소수점은 <strong>근사값</strong>이며, 수학의 실수와 동일하게 취급하면 안 됩니다.</p>
+</div>`}}
+];
+let cur=0;
+function renderSlide(){const app=document.getElementById('content');app.innerHTML='';const nav=document.createElement('div');nav.className='nav';nav.innerHTML='<button onclick="goSlide(0)">목차</button><button onclick="prev()"'+(cur===0?' disabled':'')+'>◀ 이전</button><span class="slide-num">'+(cur+1)+' / '+slides.length+'</span><button onclick="next()"'+(cur===slides.length-1?' disabled':'')+'>다음 ▶</button><div class="progress-bar"><div class="progress-fill" style="width:'+((cur+1)/slides.length*100)+'%"></div></div>';app.appendChild(nav);const slide=document.createElement('div');slide.className='slide';const t=document.createElement('div');t.className='slide-title';t.innerHTML='<span class="num">'+(cur+1)+'</span>'+slides[cur].title;slide.appendChild(t);const body=document.createElement('div');slides[cur].render(body);slide.appendChild(body);app.appendChild(slide);window.scrollTo({top:0,behavior:'smooth'});if(window.MathJax&&MathJax.typesetPromise){MathJax.typesetPromise([slide]).catch(function(e){})}}
+function next(){if(cur<slides.length-1){cur++;renderSlide()}}
+function prev(){if(cur>0){cur--;renderSlide()}}
+function goSlide(n){cur=n;renderSlide()}
+document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowDown')next();if(e.key==='ArrowLeft'||e.key==='ArrowUp')prev()});
+renderSlide();
+</script>
+</body>
+</html>

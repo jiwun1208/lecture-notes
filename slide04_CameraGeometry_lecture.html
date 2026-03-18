@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camera Geometry — CSE404 Computer Vision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1280px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 16px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar .section-group {
+    margin-bottom: 14px;
+  }
+  .sidebar .section-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    padding: 6px 12px 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .sidebar a {
+    display: block;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.15s;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+    max-width: 860px;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .page-section h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 24px 0 14px;
+    color: var(--accent);
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .tip::before {
+    content: '\1F4A1';
+    flex-shrink: 0;
+  }
+
+  .warning {
+    background: #FFF3CD;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  [data-theme="dark"] .warning {
+    background: #3D3520;
+  }
+  .warning::before {
+    content: '\26A0\FE0F';
+    flex-shrink: 0;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+
+  .formula-box {
+    background: var(--bg-card);
+    border: 2px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+
+  .step-list {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+  }
+  .step-list li {
+    counter-increment: step;
+    padding: 12px 0 12px 48px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-list li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 12px;
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  p { margin-bottom: 12px; }
+  strong { font-weight: 700; }
+  ul, ol { margin: 8px 0 12px 20px; }
+  li { margin-bottom: 4px; }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .page-section h2 { font-size: 20px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Camera Geometry -- 카메라 기하학</h1>
+      <div class="meta">CSE404 Introduction to Computer Vision &middot; DGIST &middot; Prof. Sunghoon Im</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">&#127769; 다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">목차</div>
+      <div class="section-group">
+        <div class="section-group-title">도입</div>
+        <a href="#p1">01 -- 강의 소개</a>
+        <a href="#p2">02 -- 교재 안내</a>
+        <a href="#p3">03 -- 강의 요약</a>
+        <a href="#p4">04 -- 카메라와 이미지</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">Part 1. 카메라 모델</div>
+        <a href="#p5">05 -- 카메라 내부 파라미터</a>
+        <a href="#p7">07 -- 카메라 외부 파라미터</a>
+        <a href="#p9">09 -- 에피폴라 기하학 소개</a>
+        <a href="#p11">11 -- Single & Two View 종합</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">Ch 1. 핀홀 카메라</div>
+        <a href="#p12">12 -- 핀홀 카메라 모델</a>
+        <a href="#p13">13 -- 카메라 모델 정의</a>
+        <a href="#p14">14 -- 카메라 모델 종류</a>
+        <a href="#p15">15 -- 원근 투영</a>
+        <a href="#p17">17 -- 초점 거리와 깊이</a>
+        <a href="#p18">18 -- 투영 수식 유도</a>
+        <a href="#p19">19 -- 이미지 좌표계</a>
+        <a href="#p20">20 -- 행렬 변환</a>
+        <a href="#p21">21 -- 내부 행렬 K 정리</a>
+        <a href="#p22">22 -- fx, fy와 센서 비율</a>
+        <a href="#p23">23 -- Skew 파라미터</a>
+        <a href="#p25">25 -- 렌즈 왜곡</a>
+        <a href="#p26">26 -- 카메라 파라미터 시각화</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">Ch 2. 카메라 외부 파라미터</div>
+        <a href="#p27">27 -- Extrinsic 소개</a>
+        <a href="#p28">28 -- 좌표계 변환</a>
+        <a href="#p29">29 -- 단계별 유도</a>
+        <a href="#p32">32 -- 전체 투영 방정식</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">Ch 3. 에피폴라 기하학</div>
+        <a href="#p33">33 -- 에피폴라 기하학 도입</a>
+        <a href="#p34">34 -- 에피폴라 기하학 개요</a>
+        <a href="#p35">35 -- 스테레오 깊이 추정</a>
+        <a href="#p37">37 -- 대응점 문제</a>
+        <a href="#p39">39 -- 에피폴라 구속 조건</a>
+        <a href="#p41">41 -- Fundamental Matrix 유도</a>
+        <a href="#p44">44 -- F 행렬 성질 정리</a>
+        <a href="#p47">47 -- F 행렬 응용 예시</a>
+        <a href="#p49">49 -- 수렴 카메라 예시</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">F 행렬 계산</div>
+        <a href="#p52">52 -- F 행렬 추정</a>
+        <a href="#p55">55 -- 8점 알고리즘</a>
+        <a href="#p58">58 -- MATLAB 구현</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">Essential & Fundamental</div>
+        <a href="#p62">62 -- Essential Matrix 유도</a>
+        <a href="#p65">65 -- Fundamental Matrix 유도</a>
+        <a href="#p66">66 -- F와 E 요약</a>
+        <a href="#p68">68 -- F와 카메라 파라미터</a>
+      </div>
+      <div class="section-group">
+        <div class="section-group-title">응용: 스테레오 정류</div>
+        <a href="#p69">69 -- 에피폴라 기하학 활용</a>
+        <a href="#p70">70 -- 스테레오 정류</a>
+        <a href="#p77">77 -- R_rect 구성</a>
+        <a href="#p80">80 -- 최종 요약</a>
+      </div>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== Page 1 ==================== -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>Camera Geometry -- 카메라 기하학</h2>
+
+        <div class="summary-box">
+          이 강의는 컴퓨터 비전의 핵심 주제인 <strong>카메라 기하학(Camera Geometry)</strong>을 다룹니다. 3D 세계가 어떻게 2D 이미지로 변환되는지, 그리고 두 장의 이미지 사이에는 어떤 기하학적 관계가 존재하는지를 수학적으로 이해하는 것이 목표입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">강의 정보</div>
+          <table class="terms-table">
+            <tbody>
+              <tr><td class="en">Course</td><td>CSE404: Introduction to Computer Vision</td></tr>
+              <tr><td class="en">Instructor</td><td>Sunghoon Im, EECS, DGIST</td></tr>
+              <tr><td class="en">Topic</td><td>Camera Geometry (카메라 기하학)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-label">왜 카메라 기하학을 배우는가?</div>
+          <p>우리가 사진을 찍을 때, 3차원 세계는 2차원 이미지로 "납작하게" 눌려집니다. 이 과정에서 <strong>깊이(depth) 정보</strong>가 사라집니다. 카메라 기하학을 이해하면 다음을 할 수 있습니다:</p>
+          <ul>
+            <li>사진에서 3D 구조를 복원 (3D Reconstruction)</li>
+            <li>두 장의 사진으로 깊이를 추정 (Stereo Vision)</li>
+            <li>카메라의 위치와 방향 계산 (Visual Localization)</li>
+            <li>증강현실(AR), 자율주행 등 다양한 응용</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 2-3 ==================== -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>교재 및 참고 자료</h2>
+
+        <div class="summary-box">
+          이 강의의 주 참고 교재는 Richard Hartley와 Andrew Zisserman의 <em>Multiple View Geometry in Computer Vision</em> (Cambridge University Press, 2003)입니다. 컴퓨터 비전 분야에서 "바이블"로 불리는 책입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">교재 구성</div>
+          <p>교재는 크게 다섯 파트로 나뉩니다:</p>
+          <ul>
+            <li><strong>Part 0: Background</strong> -- 사영 기하학(Projective Geometry)의 기초 개념</li>
+            <li><strong>Part 1: Single View Geometry</strong> -- 하나의 카메라가 3D를 2D로 투영하는 모델 (이번 강의의 Ch.6)</li>
+            <li><strong>Part 2: Two View Geometry</strong> -- 두 카메라 사이의 에피폴라 기하학 (이번 강의의 Ch.9)</li>
+            <li><strong>Part 3: Three View Geometry</strong> -- 세 카메라의 삼초점 기하학</li>
+            <li><strong>Part 4: N-views</strong> -- 다수 카메라에 대한 확장</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          이번 강의에서는 Part 1 (Ch.6 Camera Model)과 Part 2 (Ch.9 Epipolar Geometry)를 집중적으로 다룹니다. 특히 Camera Intrinsic, Camera Extrinsic, Fundamental Matrix, Essential Matrix가 핵심 키워드입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 3 ==================== -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>강의 요약 (Summary)</h2>
+
+        <div class="card">
+          <div class="card-label">이번 강의에서 다루는 내용</div>
+          <p>이 강의는 크게 두 부분으로 나뉩니다:</p>
+          <br>
+          <p><strong>1. Single View Geometry (단일 뷰 기하학)</strong></p>
+          <ul>
+            <li>Ch.6 - Camera Model (카메라 모델)</li>
+            <li><strong style="color:var(--accent);">Camera Intrinsic (내부 파라미터)</strong> -- 카메라 자체의 광학적 특성</li>
+            <li><strong style="color:var(--accent);">Camera Extrinsic (외부 파라미터)</strong> -- 카메라의 위치와 방향</li>
+          </ul>
+          <br>
+          <p><strong>2. Two View Geometry (이중 뷰 기하학)</strong></p>
+          <ul>
+            <li>Ch.9 - Epipolar Geometry (에피폴라 기하학)</li>
+            <li><strong style="color:var(--accent);">Fundamental Matrix (기본 행렬)</strong></li>
+            <li><strong style="color:var(--accent);">Essential Matrix (본질 행렬)</strong></li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          "Geometric Relation"이라는 큰 주제 아래, 3D 점과 2D 점 사이, 서로 다른 좌표계 사이, 그리고 두 이미지 사이의 기하학적 관계를 수학적으로 정의하는 것이 이 강의의 핵심입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 4 ==================== -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>카메라와 이미지란 무엇인가?</h2>
+
+        <div class="summary-box">
+          <strong>카메라(Camera)</strong>는 3D 세계(object space)를 2D 이미지로 매핑하는 장치입니다. <strong>이미지(Image)</strong>는 3D 세계를 2D 이미지 평면에 투영(projection)하여 만들어진 2차원 패턴입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">직관적 이해</div>
+          <p>카메라를 들고 에펠탑을 찍는다고 상상해봅시다. 실제 에펠탑은 높이 330m의 거대한 3차원 구조물이지만, 사진 속 에펠탑은 불과 몇 cm의 2차원 이미지입니다.</p>
+          <br>
+          <p>이 과정에서 핵심적인 일이 벌어집니다:</p>
+          <ul>
+            <li>3차원의 점 \(\mathbf{X} = [X, Y, Z]^T\)이 2차원 점 \(\mathbf{x} = [x, y]^T\)으로 변환됩니다</li>
+            <li><strong>깊이 정보(Z)</strong>가 사라집니다 -- 3D에서 2D로의 투영은 정보 손실을 수반합니다</li>
+            <li>카메라의 위치, 방향, 렌즈 특성에 따라 결과 이미지가 달라집니다</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Viewing Frustum</td><td>시야 절두체</td><td>카메라가 볼 수 있는 3D 영역 (사다리꼴 모양)</td></tr>
+              <tr><td class="en">Viewpoint</td><td>시점</td><td>카메라의 위치 (관찰자의 눈)</td></tr>
+              <tr><td class="en">Near/Far Clip Plane</td><td>근/원 클리핑 평면</td><td>카메라가 볼 수 있는 가장 가까운/먼 거리</td></tr>
+              <tr><td class="en">Image Plane</td><td>이미지 평면</td><td>3D 세계가 투영되는 2D 평면</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 5-6 ==================== -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05-06</span>
+        <h2>Part 1. 카메라 모델 -- Camera Intrinsic (내부 파라미터)</h2>
+
+        <div class="summary-box">
+          카메라 내부 파라미터(Camera Intrinsic) \(\mathbf{K}\)는 3D 점을 2D 이미지 좌표로 변환하는 행렬입니다. 투영(Projection)은 \(\mathbf{X} \to \mathbf{x}\), 역투영(Back-projection)은 \(\mathbf{x} \to \mathbf{X}\)입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 개념: Projection vs Back-projection</div>
+          <p>3D 세계의 점을 \(\mathbf{X} = [X, Y, Z]^T\), 이미지의 점을 \(\mathbf{x} = [x, y]^T\)라 하면:</p>
+          <br>
+          <p><strong>투영 (Projection): \(\mathbf{X} \to \mathbf{x}\)</strong></p>
+          <p>카메라 내부 행렬 \(\mathbf{K}\)를 사용하여 3D 점을 2D로 변환합니다.</p>
+          \[\mathbf{K}[X/Z, Y/Z, 1]^T \to [x, y, 1]^T\]
+          <br>
+          <p><strong>역투영 (Back-projection): \(\mathbf{x} \to \mathbf{X}\)</strong></p>
+          <p>카메라 내부 행렬의 역행렬 \(\mathbf{K}^{-1}\)과 <strong>깊이(depth) 정보</strong>를 사용합니다.</p>
+
+          <div class="formula-box">
+            \[\mathbf{K} = \begin{bmatrix} f & 0 & c_x \\ 0 & f & c_y \\ 0 & 0 & 1 \end{bmatrix}\]
+          </div>
+        </div>
+
+        <div class="tip">
+          투영은 3D에서 2D로 가는 "일방향" 과정입니다. 하나의 2D 점에 대응하는 3D 점은 무한히 많습니다 (카메라 중심에서 해당 방향으로 뻗는 직선 위의 모든 점). 따라서 역투영에는 반드시 <strong>깊이(depth)</strong> 정보가 추가로 필요합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">비유: 그림자 놀이</div>
+          <p>손전등을 벽에 비추면 손의 그림자(2D)가 생깁니다. 그림자만 보고 원래 손의 3D 형태를 정확히 알 수 있을까요? 불가능합니다. 그림자의 크기와 모양은 손과 벽 사이의 거리(깊이)에 따라 달라지기 때문입니다. 이것이 바로 투영에서 깊이 정보가 사라지는 본질입니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 7-8 ==================== -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07-08</span>
+        <h2>Part 1. 카메라 모델 -- Camera Extrinsic (외부 파라미터)</h2>
+
+        <div class="summary-box">
+          카메라 외부 파라미터 \([\mathbf{R}|\mathbf{t}]\)는 월드 좌표계의 3D 점 \(\mathbf{X}'\)을 카메라 좌표계의 3D 점 \(\mathbf{X}\)로 변환하는 3D 변환 행렬입니다. 회전(Rotation) \(\mathbf{R}\)과 이동(Translation) \(\mathbf{t}\)로 구성됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">두 좌표계의 관계</div>
+          <p>실제 세계에는 "월드 좌표계(World coordinates)"가 있고, 카메라에는 "카메라 좌표계(Camera coordinates)"가 있습니다.</p>
+          <ul>
+            <li>\(\mathbf{X}_{world} = \mathbf{X}' = [X', Y', Z']^T\) : 월드 좌표계에서의 3D 점</li>
+            <li>\(\mathbf{X}_{O} = \mathbf{X} = [X, Y, Z]^T\) : 카메라 좌표계에서의 3D 점</li>
+          </ul>
+          <br>
+          <p>이 두 좌표계 사이의 관계는 <strong>강체 변환(Rigid Body Transformation)</strong>으로 표현됩니다:</p>
+
+          <div class="formula-box">
+            \[\mathbf{X} \leftrightarrow \mathbf{X}' : \text{3D Transformation by } [\mathbf{R}|\mathbf{t}]\]
+            \[[\mathbf{R}|\mathbf{t}] = \begin{bmatrix} r_{11} & r_{12} & r_{13} & t_x \\ r_{21} & r_{22} & r_{23} & t_y \\ r_{31} & r_{32} & r_{33} & t_z \end{bmatrix}\]
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">직관적 이해</div>
+          <p>카메라를 들고 있는 자신을 상상해봅시다. 방 안의 책상 위에 컵이 있다면:</p>
+          <ul>
+            <li><strong>월드 좌표계</strong>: 방의 모서리를 원점으로 한 절대 좌표 (컵은 "방에서" 어디에 있나?)</li>
+            <li><strong>카메라 좌표계</strong>: 카메라 렌즈 중심을 원점으로 한 상대 좌표 (컵은 "내 카메라 기준으로" 어디에 있나?)</li>
+          </ul>
+          <p>카메라를 이동하거나 회전하면, 월드 좌표는 바뀌지 않지만 카메라 좌표는 바뀝니다. 이 변환을 수학적으로 표현한 것이 외부 파라미터 \([\mathbf{R}|\mathbf{t}]\)입니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">R (Rotation)</td><td>회전 행렬</td><td>3x3 직교 행렬, 카메라의 방향을 나타냄</td></tr>
+              <tr><td class="en">t (Translation)</td><td>이동 벡터</td><td>3x1 벡터, 카메라의 위치(이동량)를 나타냄</td></tr>
+              <tr><td class="en">[R|t]</td><td>외부 파라미터 행렬</td><td>3x4 행렬, 좌표계 변환을 수행</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 9-10 ==================== -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09-10</span>
+        <h2>Part 2. 에피폴라 기하학 소개</h2>
+
+        <div class="summary-box">
+          두 대의 카메라가 같은 3D 점을 바라볼 때, 두 이미지 점 \(\mathbf{x}\)와 \(\mathbf{x}'\) 사이에는 <strong>Fundamental Matrix \(\mathbf{F}\)</strong>에 의한 기하학적 관계가 성립합니다: \(\mathbf{x}^T \mathbf{F} \mathbf{x}' = 0\)
+        </div>
+
+        <div class="card">
+          <div class="card-label">에피폴라 기하학이란?</div>
+          <p>같은 3D 장면을 두 대의 카메라(Cam 1, Cam 2)로 촬영했을 때:</p>
+          <ul>
+            <li>Cam 1의 이미지 점: \(\mathbf{x} = [x, y]^T\)</li>
+            <li>Cam 2의 이미지 점: \(\mathbf{x}' = [x', y']^T\)</li>
+          </ul>
+          <br>
+          <p>이 두 이미지 점 사이의 관계를 수학적으로 기술하는 것이 에피폴라 기하학(Epipolar Geometry)이며, 이 관계를 매핑하는 행렬이 <strong>Fundamental Matrix \(\mathbf{F}\)</strong>입니다.</p>
+
+          <div class="formula-box">
+            \[\mathbf{x}^T \mathbf{F} \mathbf{x}' = 0\]
+            <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">에피폴라 구속 조건 (Epipolar Constraint)</p>
+          </div>
+        </div>
+
+        <div class="tip">
+          이 등식의 의미: 첫 번째 이미지의 점 \(\mathbf{x}\)와 두 번째 이미지의 대응점 \(\mathbf{x}'\)는 반드시 이 관계를 만족합니다. 이를 통해 대응점 탐색 범위를 2D 전체에서 1D 직선으로 줄일 수 있습니다!
+        </div>
+      </section>
+
+      <!-- ==================== Page 11 ==================== -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>Single & Two View Geometry 종합</h2>
+
+        <div class="summary-box">
+          카메라 기하학에서 다루는 세 가지 핵심 관계를 종합적으로 정리합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">세 가지 핵심 관계</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>관계</th><th>매핑</th><th>핵심 행렬</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. 투영</strong></td>
+                <td>\(\mathbf{X} \to \mathbf{x}\)</td>
+                <td>Camera Intrinsic \(\mathbf{K}\)</td>
+              </tr>
+              <tr>
+                <td><strong>2. 좌표 변환</strong></td>
+                <td>\(\mathbf{X} \leftrightarrow \mathbf{X}'\)</td>
+                <td>Camera Extrinsic \([\mathbf{R}|\mathbf{t}]\)</td>
+              </tr>
+              <tr>
+                <td><strong>3. 이미지 간 관계</strong></td>
+                <td>\(\mathbf{x} \leftrightarrow \mathbf{x}'\)</td>
+                <td>Epipolar Geometry (\(\mathbf{F}\))</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">
+          이 세 가지 관계가 이 강의의 전체 뼈대입니다. 앞으로의 내용은 각 관계를 수학적으로 유도하고, 어떻게 계산하며, 실제로 어떻게 활용하는지를 상세히 다룹니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 12 ==================== -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>Ch 1. 핀홀 카메라 모델 (Pinhole Camera Model)</h2>
+
+        <div class="summary-box">
+          핀홀 카메라 모델은 3D를 2D로 투영하는 가장 간단하면서도 효과적인 모델입니다. 수식으로 표현하면 \(s\mathbf{x} = \mathbf{K}\mathbf{X}\)이며, \(\mathbf{K}\)는 카메라 내부 행렬입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핀홀 카메라 모델의 기본 구조</div>
+          <p>핀홀 카메라의 핵심은 아주 작은 구멍(pinhole)을 통해 빛이 들어와 뒷면(이미지 평면)에 상이 맺히는 것입니다.</p>
+
+          <div class="formula-box">
+            \[s\mathbf{x} = \mathbf{K}\mathbf{X}, \quad \mathbf{K} = \begin{bmatrix} f_x & \alpha & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix}\]
+          </div>
+
+          <p>\(\mathbf{K}\)의 각 요소:</p>
+          <ul>
+            <li>\(f_x, f_y\): 초점 거리 (픽셀 단위)</li>
+            <li>\(c_x, c_y\): 주점 (Principal Point, 이미지 중심)</li>
+            <li>\(\alpha\): 비대칭 계수 (Skew, 보통 0)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 13 ==================== -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>카메라 모델의 수학적 정의</h2>
+
+        <div class="card">
+          <div class="card-label">카메라 모델 = 수학적 매핑 함수</div>
+          <p>카메라 모델은 3D 점 집합을 2D 점 집합으로 변환하는 <strong>수학적 매핑 함수 \(f\)</strong>입니다:</p>
+
+          <div class="formula-box">
+            \[f: \mathbf{X} \mapsto \mathbf{x}\]
+            \[\mathbf{X} = \{\mathbf{X}_1, \mathbf{X}_2, \ldots, \mathbf{X}_N\}: \text{3D 점 집합}\]
+            \[\mathbf{x} = \{\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N\}: \text{2D 점 집합}\]
+          </div>
+
+          <p>여기서 \(\mathbf{X}_i = [X_i, Y_i, Z_i]^T\)는 3D 점, \(\mathbf{x}_i = [x_i, y_i]^T\)는 2D 이미지 점입니다.</p>
+        </div>
+
+        <div class="tip">
+          카메라 모델은 결국 "3D 점의 좌표를 입력하면 2D 이미지의 어느 위치에 찍히는지 알려주는 함수"입니다. 이 함수의 구체적 형태를 결정하는 것이 카메라의 파라미터들입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 14 ==================== -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>카메라 모델의 종류</h2>
+
+        <div class="card">
+          <div class="card-label">다양한 카메라 모델들</div>
+          <ul>
+            <li><strong>Pinhole camera model</strong> -- 가장 기본적이고 널리 사용됨</li>
+            <li><strong>Pushroom camera model</strong> -- 위성 카메라 등에서 사용</li>
+            <li><strong>Line camera model</strong> -- 1D 센서 기반</li>
+            <li><strong>Omnidirectional camera model</strong> -- 360도 카메라</li>
+            <li>기타 다양한 특수 모델들</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">설계 원칙</div>
+          <p>모델 선택 시 핵심 원칙: <strong>"단순하면서도 효과적(simple yet effective)"</strong>이어야 합니다.</p>
+          <br>
+          <p style="color:var(--accent); font-weight:700; text-align:center; font-size:16px;">
+            "Pinhole camera model"<br>
+            가장 보편적이고 널리 사용되는 모델
+          </p>
+        </div>
+
+        <div class="tip">
+          실제 카메라 렌즈는 복잡하지만, 대부분의 경우 핀홀 모델로 충분히 근사할 수 있습니다. 복잡한 모델은 파라미터가 많아 추정이 어렵고, 단순한 모델은 실용적이지만 정밀도가 떨어질 수 있습니다. 핀홀 모델은 이 둘 사이의 좋은 균형점입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 15-16 ==================== -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15-16</span>
+        <h2>핀홀 카메라: 원근 투영 (Perspective Projection)</h2>
+
+        <div class="summary-box">
+          핀홀 카메라의 핵심 아이디어: 상자에 작은 구멍(pinhole)을 뚫어 대부분의 광선을 차단하고, 구멍을 통과한 빛만으로 상을 형성합니다. 이것이 Camera Obscura(어두운 방)의 원리입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핀홀 카메라의 원리</div>
+          <p><strong>기본 구조:</strong> 빛이 사방에서 물체를 비추면, 물체의 각 점에서 모든 방향으로 빛이 반사됩니다. 만약 이 빛을 그냥 필름에 받으면, 모든 점에서 온 빛이 뒤섞여 아무것도 보이지 않습니다.</p>
+          <br>
+          <p><strong>해결책:</strong> 차단벽(barrier)에 작은 구멍을 뚫어, 각 물체 점에서 온 빛 중 오직 하나의 광선만 통과시킵니다. 이렇게 하면 필름 위에 선명한 상(image)이 맺힙니다.</p>
+          <br>
+          <p><strong>Camera Obscura (카메라 옵스쿠라):</strong> 11세기부터 17세기까지 사용된 원시적 카메라. 어두운 방에 작은 구멍을 뚫어 바깥 풍경을 벽에 비추는 장치입니다.</p>
+          <br>
+          <p><strong>렌즈의 필요성:</strong> 핀홀이 너무 작으면 빛이 부족하고, 너무 크면 상이 흐려집니다. 실제 카메라는 <strong>렌즈(lens)</strong>를 사용하여 충분한 빛을 모으면서도 선명한 상을 형성합니다. 하지만 수학적 모델은 여전히 핀홀 모델로 근사할 수 있습니다.</p>
+        </div>
+
+        <div class="warning">
+          핀홀 모델에서 실제 이미지 평면(Image Plane)의 상은 상하좌우가 뒤집힙니다. 수학적 편의를 위해 보통 핀홀 앞쪽에 가상 이미지 평면(Virtual Image Plane)을 설정하여, 뒤집히지 않은 상으로 다룹니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 17 ==================== -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>초점 거리(Focal Length)와 깊이(Depth)</h2>
+
+        <div class="card">
+          <div class="card-label">두 가지 핵심 거리</div>
+          <ul>
+            <li><strong>\(f\) (Focal Length, 초점 거리):</strong> 카메라 중심(핀홀)에서 이미지 평면까지의 거리</li>
+            <li><strong>\(Z\) (Depth, 깊이):</strong> 카메라 중심에서 물체까지의 거리</li>
+          </ul>
+          <br>
+          <p>초점 거리 \(f\)는 카메라의 고유한 특성(내부 파라미터)이고, 깊이 \(Z\)는 물체의 위치에 따라 달라지는 변수입니다.</p>
+        </div>
+
+        <div class="tip">
+          초점 거리가 길면(망원 렌즈) 물체가 크게 보이고 화각이 좁아집니다. 초점 거리가 짧으면(광각 렌즈) 넓은 범위를 담을 수 있지만 물체가 작게 보입니다. 스마트폰 카메라의 "줌" 기능도 초점 거리를 변경하는 것입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 18 ==================== -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>원근 투영 수식 유도</h2>
+
+        <div class="summary-box">
+          핀홀 카메라에서 3D 점 \(\mathbf{X}_1 = [X_1, Y_1, Z_1]^T\)이 이미지 평면에 투영되어 2D 점 \(\mathbf{x}'_1 = [x'_1, y'_1]^T\)이 되는 과정을 삼각형의 닮음을 이용하여 유도합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">닮은 삼각형을 이용한 유도</div>
+          <p>핀홀(카메라 중심)을 원점 \(\mathbf{O}\)로 놓으면, 3D 점 \(\mathbf{X}_1\)과 핀홀, 그리고 이미지 평면 위의 투영점이 삼각형을 이룹니다.</p>
+          <br>
+          <p><strong>닮음비(Similar Triangles):</strong></p>
+
+          <div class="formula-box">
+            \[f : Z = x'_1 : X_1\]
+            \[\therefore \; x'_1 = \frac{f}{Z} X_1\]
+          </div>
+
+          <p>마찬가지로 \(y\) 방향으로도:</p>
+          \[y'_1 = \frac{f}{Z} Y_1\]
+
+          <p>가상 이미지 평면(Virtual Image Plane) 위의 점:</p>
+          \[\mathbf{x}'_1 = \begin{bmatrix} x'_1 \\ y'_1 \\ f \end{bmatrix}\]
+          <p>실제 이미지 평면에서는 상이 반전되어 \(\mathbf{x}'_1 = [x'_1, y'_1, -f]^T\)이 됩니다.</p>
+        </div>
+
+        <div class="tip">
+          이 유도의 핵심: 깊이 \(Z\)가 커질수록 투영된 좌표 \(x'_1\)은 작아집니다. 멀리 있는 물체가 작게 보이는 원근감(perspective)이 바로 이 수식에서 나옵니다! 철도 레일이 먼 곳에서 만나는 것처럼 보이는 것도 같은 원리입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 19 ==================== -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 19</span>
+        <h2>이미지 좌표계와 주점(Principal Point)</h2>
+
+        <div class="summary-box">
+          실제 이미지의 좌표 원점은 이미지의 왼쪽 상단 모서리입니다. 이를 반영하기 위해 주점(principal point) \(\mathbf{c} = [c_x, c_y]^T\)이 필요합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">좌표 변환</div>
+          <p>지금까지의 유도에서 \(x'_1 = \frac{f}{Z}X_1\)은 카메라 광축과 이미지 평면의 교점을 원점으로 한 좌표입니다.</p>
+          <br>
+          <p>하지만 실제 2D 이미지 좌표계의 원점 \(\mathbf{o}\)는 이미지의 왼쪽 상단 모서리입니다. 따라서:</p>
+
+          <div class="formula-box">
+            \[x'_1 = (x_1 - c_x) = \frac{f}{Z} X_1\]
+            \[y'_1 = (y_1 - c_y) = \frac{f}{Z} Y_1\]
+          </div>
+
+          <p>여기서 \(\mathbf{c} = [c_x, c_y]^T\)는 <strong>이미지 중심(Image Center)</strong>, 즉 광축이 이미지 평면과 만나는 점의 이미지 좌표입니다. 이를 <strong>주점(Principal Point)</strong>이라 합니다.</p>
+        </div>
+
+        <div class="tip">
+          디지털 카메라에서 주점은 보통 이미지의 중심 근처에 있습니다. 예를 들어 1920x1080 해상도의 카메라라면, \(c_x \approx 960\), \(c_y \approx 540\) 근처입니다. 하지만 정확한 값은 카메라 캘리브레이션을 통해 구해야 합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 20 ==================== -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 20</span>
+        <h2>투영 수식의 행렬 표현</h2>
+
+        <div class="card">
+          <div class="card-label">\(c_x, c_y\)를 우변으로 이동</div>
+          <p>이전 슬라이드의 수식을 정리하면:</p>
+          \[x_1 = \frac{f}{Z_1} X_1 + c_x, \quad y_1 = \frac{f}{Z_1} Y_1 + c_y\]
+          <br>
+          <p><strong>행렬 형태로 변환:</strong></p>
+
+          <div class="formula-box">
+            \[\begin{bmatrix} x_1 \\ y_1 \\ 1 \end{bmatrix} = \begin{bmatrix} f & 0 & c_x \\ 0 & f & c_y \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} X_1/Z_1 \\ Y_1/Z_1 \\ 1 \end{bmatrix}\]
+          </div>
+
+          <p>양변에 \(Z_1\)을 곱하면:</p>
+
+          <div class="formula-box">
+            \[s \begin{bmatrix} x_1 \\ y_1 \\ 1 \end{bmatrix} = \begin{bmatrix} f & 0 & c_x \\ 0 & f & c_y \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} X_1 \\ Y_1 \\ Z_1 \end{bmatrix}\]
+            <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">\(s = Z_1\) : 스케일 팩터 (깊이)</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 21 ==================== -->
+      <section class="page-section" id="p21">
+        <span class="page-num">Page 21</span>
+        <h2>카메라 내부 행렬 K 정리</h2>
+
+        <div class="summary-box">
+          핀홀 카메라의 투영 관계가 하나의 깔끔한 행렬 방정식으로 정리됩니다: \(s\mathbf{x} = \mathbf{K}\mathbf{X}\), 또는 사영적 동치(projective equivalence)로 \(\mathbf{x} \sim \mathbf{K}\mathbf{X}\)
+        </div>
+
+        <div class="card">
+          <div class="card-label">Camera Intrinsic K의 역할</div>
+          <p>\(\mathbf{K}\)의 역할을 정리하면:</p>
+          <ul>
+            <li>3D 좌표의 원점: <strong>카메라 중심</strong></li>
+            <li>2D 좌표의 원점: <strong>이미지 왼쪽 상단 모서리</strong></li>
+            <li>\(\mathbf{K}\)는 카메라 중심 기준의 3D 점을 이미지 좌표계의 2D 점으로 변환</li>
+          </ul>
+
+          <div class="formula-box">
+            \[s\mathbf{x} = \mathbf{K}\mathbf{X}\]
+            \[\mathbf{x} \sim \mathbf{K}\mathbf{X}\]
+            <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">\(\sim\) 기호는 "사영적 동치(projective equivalence)"를 의미 -- 스케일만 다른 경우 동일하게 취급</p>
+          </div>
+        </div>
+
+        <div class="tip">
+          사영적 동치란? 동차좌표(homogeneous coordinates)에서는 \([2, 4, 2]^T\)와 \([1, 2, 1]^T\)가 같은 점을 나타냅니다 (전체를 상수배 해도 같은 점). 이것이 \(\sim\) 기호의 의미이며, 깊이 \(s\)를 무시하고 방향(ray) 정보만 남기는 것입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 22 ==================== -->
+      <section class="page-section" id="p22">
+        <span class="page-num">Page 22</span>
+        <h2>\(f_x\), \(f_y\)와 이미지 센서 비율</h2>
+
+        <div class="summary-box">
+          실제 카메라에서는 이미지 센서의 가로/세로 픽셀 크기가 다를 수 있으므로, 초점 거리도 \(f_x\)와 \(f_y\)로 분리됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">보다 정밀한 내부 행렬</div>
+
+          <div class="formula-box">
+            \[s \begin{bmatrix} x_1 \\ y_1 \\ 1 \end{bmatrix} = \begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} X_1 \\ Y_1 \\ Z_1 \end{bmatrix}\]
+          </div>
+
+          <p>\(f_x\)와 \(f_y\)의 관계:</p>
+          \[f_x = f \cdot s_x, \quad f_y = f \cdot s_y\]
+          <p>여기서 \(s_x, s_y\)는 센서의 가로/세로 픽셀 밀도(pixels/mm)입니다.</p>
+          <br>
+          <p>계산 예시:</p>
+          <pre>focal_pixel = (focal_mm / sensor_width_mm) * image_width_in_pixels</pre>
+          <p>센서 비율이 4:3이면 가로와 세로의 픽셀 밀도가 같아 \(f_x = f_y\). 16:9 등으로 크롭하면 달라질 수 있습니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 23 ==================== -->
+      <section class="page-section" id="p23">
+        <span class="page-num">Page 23</span>
+        <h2>Skew 파라미터 (\(\alpha\))</h2>
+
+        <div class="card">
+          <div class="card-label">가장 일반적인 내부 행렬</div>
+
+          <div class="formula-box">
+            \[\mathbf{K} = \begin{bmatrix} f_x & \alpha & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix}\]
+          </div>
+
+          <p>\(\alpha\)는 <strong>비대칭 계수(Vertical Skew)</strong>로, 이미지 센서의 픽셀 축이 직교하지 않을 때 발생합니다.</p>
+          <br>
+          <p>직관적으로: 이미지가 완벽한 직사각형이 아니라 평행사변형으로 기울어진 정도를 나타냅니다.</p>
+        </div>
+
+        <div class="tip">
+          현대의 디지털 카메라에서는 센서 제조 정밀도가 높아 \(\alpha \approx 0\)입니다. 따라서 실용적으로 \(\mathbf{K}\)는 대부분 5개 파라미터(자유도 5)로 취급합니다: \(f_x, f_y, c_x, c_y, \alpha\).
+        </div>
+      </section>
+
+      <!-- ==================== Page 24 - summary -->
+      <section class="page-section" id="p24" style="display:none;"></section>
+
+      <!-- ==================== Page 25 ==================== -->
+      <section class="page-section" id="p25">
+        <span class="page-num">Page 25</span>
+        <h2>추가 내부 파라미터: 렌즈 왜곡(Lens Distortion)</h2>
+
+        <div class="summary-box">
+          실제 렌즈는 핀홀 모델의 이상적 투영에서 벗어나는 <strong>왜곡(distortion)</strong>을 발생시킵니다. 크게 <strong>방사왜곡(Radial)</strong>과 <strong>접선왜곡(Tangential)</strong>으로 나뉩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">왜곡 모델 (MATLAB Toolbox & OpenCV)</div>
+          <p>비왜곡(undistorted) 좌표에서 왜곡(distorted) 좌표로의 변환:</p>
+
+          <div class="formula-box">
+            \[\begin{bmatrix} u \\ v \end{bmatrix} = (1 + k_1 r^2 + k_2 r^4 + k_5 r^6) \begin{bmatrix} x \\ y \end{bmatrix} + \begin{bmatrix} 2k_3 xy + k_4(r^2 + 2x^2) \\ k_3(r^2 + 2y^2) + 2k_4 xy \end{bmatrix}\]
+            <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">\(r = \sqrt{x^2 + y^2}\), 총 5개 파라미터 (\(k_1, k_2, k_3, k_4, k_5\))</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">왜곡의 종류</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>종류</th><th>원인</th><th>특징</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>방사왜곡 (Radial)</strong></td>
+                <td>볼록렌즈의 굴절률 불균일</td>
+                <td>이미지 중심으로부터의 거리에 비례. 배럴(Barrel) 또는 핀쿠션(Pincushion) 형태</td>
+              </tr>
+              <tr>
+                <td><strong>접선왜곡 (Tangential)</strong></td>
+                <td>렌즈와 센서의 비평행 조립</td>
+                <td>렌즈 자체의 중심이 맞지 않거나 센서가 기울어진 경우 발생</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">
+          GoPro 같은 광각 카메라로 찍으면 직선이 휘어져 보이는 것이 방사왜곡의 대표적인 예입니다. 카메라 캘리브레이션을 통해 왜곡 파라미터를 구하고, 이를 보정(undistortion)하면 직선이 다시 직선으로 보입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 26 ==================== -->
+      <section class="page-section" id="p26">
+        <span class="page-num">Page 26</span>
+        <h2>카메라 파라미터 시각화 도구</h2>
+
+        <div class="card">
+          <div class="card-label">실습 도구</div>
+          <p>카메라 행렬의 각 파라미터가 이미지에 어떤 영향을 미치는지 직접 확인할 수 있는 인터랙티브 도구가 있습니다:</p>
+          <br>
+          <p><strong>"Dissecting the Camera Matrix"</strong> -- Kyle Simek의 블로그 시리즈:</p>
+          <ul>
+            <li>Extrinsic 파라미터: \(t_x, t_y, t_z\) (이동)과 x, y, z Rotation (회전)</li>
+            <li>Intrinsic 파라미터: Focal Length, Axis Skew, \(x_0, y_0\) (주점)</li>
+          </ul>
+          <br>
+          <p>슬라이더를 움직이면서 Scene과 Image가 어떻게 변하는지 관찰하면, 각 파라미터의 의미를 직관적으로 이해할 수 있습니다.</p>
+        </div>
+
+        <div class="tip">
+          카메라 파라미터를 처음 배울 때 숫자와 수식만으로는 감이 잡히지 않습니다. 시각화 도구를 통해 "focal length를 키우면 어떻게 되는지", "카메라를 회전하면 이미지가 어떻게 변하는지"를 직접 실험해보세요.
+        </div>
+      </section>
+
+      <!-- ==================== Page 27 ==================== -->
+      <section class="page-section" id="p27">
+        <span class="page-num">Page 27</span>
+        <h2>Ch 2. Camera Extrinsic -- 카메라 외부 파라미터</h2>
+
+        <div class="summary-box">
+          Camera Extrinsic은 한 좌표계의 점을 다른 좌표계로 변환하는 변환 행렬입니다. 두 대의 카메라(또는 카메라와 월드) 사이의 상대적 위치와 방향을 기술합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 개념</div>
+          <p>두 카메라 Cam 1과 Cam 2가 3D 세계를 바라보고 있을 때, 각 카메라는 자기만의 좌표계를 가집니다:</p>
+          <ul>
+            <li>Cam 1의 중심: \(\mathbf{O}_1\)</li>
+            <li>Cam 2의 중심: \(\mathbf{O}_2\)</li>
+          </ul>
+          <p>이 두 좌표계 사이의 변환이 바로 \([\mathbf{R}|\mathbf{t}]\)입니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 28 ==================== -->
+      <section class="page-section" id="p28">
+        <span class="page-num">Page 28</span>
+        <h2>카메라 외부 파라미터: 좌표계 변환의 필요성</h2>
+
+        <div class="card">
+          <div class="card-label">왜 좌표 변환이 필요한가?</div>
+          <p>카메라 내부 행렬 \(\mathbf{K}\)는 3D 점을 2D로 투영하지만, 한 가지 가정이 있었습니다:</p>
+          <p style="color:var(--accent); font-weight:500; text-align:center; padding: 12px;">
+            "3D 좌표의 원점이 카메라 중심이다"
+          </p>
+          <p>하지만 실제로 카메라 중심이 항상 월드 좌표계의 원점인 것은 아닙니다!</p>
+          <br>
+          <p>따라서 월드 좌표계 \(C_w\)에서 카메라 좌표계 \(C\)로의 변환 \([\mathbf{R}|\mathbf{t}]_{C_w \to C}\)가 필요합니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 29-31 ==================== -->
+      <section class="page-section" id="p29">
+        <span class="page-num">Page 29-31</span>
+        <h2>외부 파라미터의 단계적 유도</h2>
+
+        <div class="card">
+          <div class="card-label">가정을 하나씩 풀어나가는 과정</div>
+
+          <h3>1단계: 회전 없음, 카메라 원점 = (0,0,0)</h3>
+          <p>가장 단순한 경우: 월드 좌표계와 카메라 좌표계가 일치</p>
+          <div class="formula-box">
+            \[\mathbf{x} = \mathbf{K}[\mathbf{I}|\mathbf{0}]\mathbf{X}\]
+            \[s \begin{bmatrix} x \\ y \\ 1 \end{bmatrix} = \begin{bmatrix} f_x & \alpha & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \end{bmatrix} \begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}\]
+          </div>
+
+          <h3>2단계: 회전 추가, 카메라 원점 = (0,0,0)</h3>
+          <p>카메라가 원점에 있지만 방향이 다른 경우:</p>
+          <div class="formula-box">
+            \[\mathbf{x} = \mathbf{K}[\mathbf{R}|\mathbf{0}]\mathbf{X}\]
+          </div>
+
+          <h3>3단계: 회전 + 이동 (일반적인 경우)</h3>
+          <p>카메라가 임의의 위치에 임의의 방향으로 놓인 경우:</p>
+          <div class="formula-box">
+            \[\mathbf{x} = \mathbf{K}[\mathbf{R}|\mathbf{t}]\mathbf{X}\]
+            \[s \begin{bmatrix} x \\ y \\ 1 \end{bmatrix} = \begin{bmatrix} f_x & \alpha & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} r_{11} & r_{12} & r_{13} & t_x \\ r_{21} & r_{22} & r_{23} & t_y \\ r_{31} & r_{32} & r_{33} & t_z \end{bmatrix} \begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}\]
+          </div>
+        </div>
+
+        <div class="tip">
+          이 단계적 유도가 중요한 이유: 복잡한 전체 방정식을 한 번에 이해하기 어려워도, 가정을 하나씩 추가하면서 자연스럽게 일반화할 수 있기 때문입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 32 ==================== -->
+      <section class="page-section" id="p32">
+        <span class="page-num">Page 32</span>
+        <h2>전체 투영 방정식과 자유도(DoF)</h2>
+
+        <div class="summary-box">
+          카메라의 전체 투영 방정식 \(\mathbf{x} = \mathbf{K}[\mathbf{R}|\mathbf{t}]\mathbf{X}\)에서, 내부 파라미터는 5 DoF, 외부 파라미터는 6 DoF로 총 11 DoF입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">자유도(Degrees of Freedom) 분석</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>행렬</th><th>DoF</th><th>구성</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">K (Intrinsic)</td>
+                <td><strong>5 DoF</strong></td>
+                <td>\(f_x, f_y, c_x, c_y, \alpha\)</td>
+              </tr>
+              <tr>
+                <td class="en">[R|t] (Extrinsic)</td>
+                <td><strong>6 DoF</strong></td>
+                <td>회전 3 (\(\theta_x, \theta_y, \theta_z\)) + 이동 3 (\(t_x, t_y, t_z\))</td>
+              </tr>
+              <tr>
+                <td><strong>합계</strong></td>
+                <td><strong>11 DoF</strong></td>
+                <td>투영 행렬(Projection Matrix)의 총 자유도</td>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          <p>투영 행렬은 모든 파라미터의 누적 효과(cumulative effect)를 모델링합니다. 이를 일련의 연산으로 분해(decompose)하여 이해하는 것이 유용합니다.</p>
+        </div>
+
+        <div class="warning">
+          회전 행렬 \(\mathbf{R}\)은 3x3 = 9개의 요소를 가지지만, 직교 조건 \(\mathbf{R}^T\mathbf{R} = \mathbf{I}\)과 \(\det(\mathbf{R}) = 1\) 때문에 실제 자유도는 3입니다. 9개 중 6개의 구속 조건이 있는 것입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 33 ==================== -->
+      <section class="page-section" id="p33">
+        <span class="page-num">Page 33</span>
+        <h2>Ch 3. Epipolar Geometry -- 에피폴라 기하학</h2>
+
+        <div class="summary-box">
+          에피폴라 기하학(Epipolar Geometry)은 <strong>두 뷰(two views) 사이의 내재적 사영 기하학(intrinsic projective geometry)</strong>입니다. 3D 장면의 구조와 무관하게, 카메라의 내부/외부 파라미터만으로 결정됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 도입</div>
+          <p>두 카메라 Cam 1과 Cam 2가 같은 3D 점 \(\mathbf{X}\)를 바라볼 때, 각각의 이미지 평면 \(\Pi\)와 \(\Pi'\)에 투영점 \(\mathbf{x}\)와 \(\mathbf{x}'\)가 생깁니다.</p>
+          <br>
+          <p>에피폴라 기하학의 핵심 질문: <strong>이 두 투영점 사이에 어떤 기하학적 관계가 존재하는가?</strong></p>
+          <br>
+          <p>주요 구성 요소:</p>
+          <ul>
+            <li>\(\mathbf{x}, \mathbf{x}'\) : 대응점 (corresponding points)</li>
+            <li>\(l, l'\) : 에피폴라 선 (epipolar lines)</li>
+            <li>\(e, e'\) : 에피폴 (epipoles)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 34 ==================== -->
+      <section class="page-section" id="p34">
+        <span class="page-num">Page 34</span>
+        <h2>에피폴라 기하학 개요</h2>
+
+        <div class="card">
+          <div class="card-label">정의와 구성요소</div>
+          <p><strong>에피폴라 기하학</strong>: 두 이미지 평면의 교차(intersection) 기하학</p>
+          <br>
+          <p><strong>구성요소:</strong></p>
+          <ul>
+            <li><strong>Baseline(기선)</strong>: 두 카메라 중심을 잇는 선분</li>
+            <li><strong>Epipole(에피폴)</strong>: 기선이 이미지 평면과 만나는 점</li>
+            <li><strong>Epipolar Line(에피폴라 선)</strong>: 에피폴라 평면이 이미지 평면과 만나는 선</li>
+            <li><strong>Epipolar Plane(에피폴라 평면)</strong>: 기선을 포함하는 평면</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">에피폴라 기하학의 중요한 성질</div>
+          <ul>
+            <li><strong>장면 구조와 독립적</strong>: 3D 점이 어디에 있든, 에피폴라 기하학 자체는 변하지 않음</li>
+            <li><strong>카메라 파라미터에만 의존</strong>: 카메라의 내부/외부 파라미터로 완전히 결정됨</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">왜 에피폴라 기하학이 중요한가?</div>
+          <ul>
+            <li>두 이미지 평면의 교차 기하학을 파악하기 위해</li>
+            <li>에피폴라 기하학을 이용하여 카메라 내부/외부 파라미터를 계산하기 위해</li>
+            <li><strong>스테레오 매칭에서 대응점 탐색 범위를 줄이기 위해</strong> (2D 탐색 -> 1D 탐색)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 35-36 ==================== -->
+      <section class="page-section" id="p35">
+        <span class="page-num">Page 35-36</span>
+        <h2>스테레오에서의 깊이 추정 (Depth from Stereo)</h2>
+
+        <div class="summary-box">
+          스테레오 비전의 목표: 이미지 좌표 \(\mathbf{x}\)에 대응하는 점 \(\mathbf{x}'\)를 찾아서 깊이(depth)를 복원하는 것. 핵심 하위 문제는 <strong>캘리브레이션</strong>과 <strong>대응점 탐색(Correspondence)</strong>입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">스테레오 비전의 원리</div>
+          <p>사람이 양쪽 눈으로 깊이를 인지하는 것처럼, 두 대의 카메라로 같은 장면을 찍으면 깊이를 추정할 수 있습니다.</p>
+          <br>
+          <p><strong>목표(Goal):</strong> 이미지 좌표 \(\mathbf{x}\)에 대응하는 \(\mathbf{x}'\)를 찾아서 깊이를 복원</p>
+          <br>
+          <p><strong>하위 문제(Sub-Problems):</strong></p>
+          <ol>
+            <li><strong>캘리브레이션(Calibration):</strong> 두 카메라의 관계를 어떻게 복원하는가? (카메라 파라미터를 모르는 경우)</li>
+            <li><strong>대응점 탐색(Correspondence):</strong> 첫 번째 이미지의 점에 대응하는 두 번째 이미지의 점을 어떻게 찾는가?</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ==================== Page 37-38 ==================== -->
+      <section class="page-section" id="p37">
+        <span class="page-num">Page 37-38</span>
+        <h2>대응점 문제 (Correspondence Problem)</h2>
+
+        <div class="card">
+          <div class="card-label">문제 정의</div>
+          <p>서로 다른 내부/외부 파라미터를 가진 두 카메라로 촬영한 두 장의 이미지가 있을 때:</p>
+          <br>
+          <p><strong>첫 번째 이미지의 한 점을 두 번째 이미지에서 어떻게 찾을 것인가?</strong></p>
+          <p><strong>탐색 범위를 어떻게 제한할 수 있는가?</strong></p>
+          <br>
+          <p>가장 단순한 접근: 두 번째 이미지의 <strong>모든 픽셀</strong>을 탐색 -- 하지만 이는 매우 비효율적입니다!</p>
+        </div>
+
+        <div class="tip">
+          1920x1080 해상도의 이미지에서 한 점의 대응점을 찾기 위해 200만 개 이상의 픽셀을 모두 비교해야 한다면, 모든 점에 대해 이를 수행하면 연산량이 폭발합니다. 에피폴라 구속 조건을 사용하면 탐색을 하나의 직선(1D)으로 줄일 수 있습니다!
+        </div>
+      </section>
+
+      <!-- ==================== Page 39-40 ==================== -->
+      <section class="page-section" id="p39">
+        <span class="page-num">Page 39-40</span>
+        <h2>핵심 아이디어: 에피폴라 구속 조건</h2>
+
+        <div class="summary-box">
+          에피폴라 기하학의 핵심: 첫 번째 이미지의 점 \(\mathbf{x}\)의 대응점은 반드시 두 번째 이미지의 에피폴라 선 \(l'\) 위에 있습니다. 이를 통해 2D 탐색을 1D로 줄입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">에피폴라 기하학의 구성 요소 상세</div>
+
+          <table class="terms-table">
+            <thead>
+              <tr><th>구성 요소</th><th>정의</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">Epipolar Plane</td>
+                <td>기선(Baseline)을 포함하는 평면 (1D 패밀리). 3D 점 \(\mathbf{X}\), 카메라 중심 \(\mathbf{O}\), \(\mathbf{O}'\)가 이루는 평면</td>
+              </tr>
+              <tr>
+                <td class="en">Epipole (e, e')</td>
+                <td>기선이 이미지 평면과 만나는 점. 다른 카메라 중심의 투영점</td>
+              </tr>
+              <tr>
+                <td class="en">Epipolar Line (l, l')</td>
+                <td>에피폴라 평면이 이미지 평면과 만나는 선. 항상 쌍(pair)으로 존재</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-label">에피폴라 구속의 핵심</div>
+          <p>\(\mathbf{x}\)의 가능한 대응점은 반드시 대응하는 에피폴라 선 \(l'\) 위에 있습니다.</p>
+          <br>
+          <p>왜? 카메라 1에서 점 \(\mathbf{x}\)를 역투영하면 3D 공간에서 하나의 광선(ray)이 됩니다. 이 광선 위의 어떤 3D 점이든 카메라 1에서는 같은 점 \(\mathbf{x}\)로 투영됩니다. 하지만 카메라 2에서는 각기 다른 위치에 투영됩니다. 이 모든 가능한 투영점들이 이루는 선이 바로 에피폴라 선 \(l'\)입니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">양방향 구속</div>
+          <ul>
+            <li>\(\mathbf{x}\)의 대응점 후보들은 \(l'\) 위에 존재</li>
+            <li>\(\mathbf{x}'\)의 대응점 후보들은 \(l\) 위에 존재</li>
+          </ul>
+          <p>우리에게 필요한 것: <strong>매핑 함수</strong> \(\mathbf{x}' \mapsto l\) 그리고 \(\mathbf{x} \mapsto l'\)</p>
+          <p style="color:var(--accent); font-weight:700;">이 매핑 함수가 바로 Fundamental Matrix F입니다!</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 41-43 ==================== -->
+      <section class="page-section" id="p41">
+        <span class="page-num">Page 41-43</span>
+        <h2>Fundamental Matrix F의 유도</h2>
+
+        <div class="summary-box">
+          Fundamental Matrix \(\mathbf{F}\)는 한 이미지의 점을 다른 이미지의 에피폴라 선으로 매핑하는 3x3 행렬입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">유도 과정 (l' = Fx 방향)</div>
+          <p>카메라 1의 투영 행렬을 \(\mathbf{P} = \mathbf{K}[\mathbf{R}|\mathbf{t}]\), 카메라 2를 \(\mathbf{P}' = \mathbf{K}'[\mathbf{R}'|\mathbf{t}']\)라 하면:</p>
+          <br>
+          <ol class="step-list">
+            <li>에피폴라 선 \(l'\)은 에피폴 \(\mathbf{e}'\)와 대응점 \(\mathbf{x}'\)를 지나는 선: \(l' = \mathbf{e}' \times \mathbf{x}'\)</li>
+            <li>\(\mathbf{x}'\)는 \(\mathbf{x}\)를 역투영 후 다시 투영하여 얻음: \(\mathbf{x}' = \mathbf{P}'\mathbf{P}^+\mathbf{x}\)<br>여기서 \(\mathbf{P}^+ = \text{pinv}(\mathbf{P})\)는 의사역행렬</li>
+            <li>대입하면: \(l' = \mathbf{e}' \times (\mathbf{P}'\mathbf{P}^+\mathbf{x})\)</li>
+            <li>외적을 행렬 곱으로 변환: \(l' = [\mathbf{e}']_\times (\mathbf{P}'\mathbf{P}^+)\mathbf{x}\)</li>
+            <li>따라서: \(l' = \mathbf{F}\mathbf{x}\) 여기서 \(\mathbf{F} = [\mathbf{e}']_\times(\mathbf{P}'\mathbf{P}^+)\)</li>
+          </ol>
+
+          <div class="formula-box">
+            <p style="font-size:14px; margin-bottom:8px;">외적의 행렬 표현 (skew-symmetric matrix):</p>
+            \[[\mathbf{a}]_\times \overset{\text{def}}{=} \begin{bmatrix} 0 & -a_3 & a_2 \\ a_3 & 0 & -a_1 \\ -a_2 & a_1 & 0 \end{bmatrix}\]
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 44-46 ==================== -->
+      <section class="page-section" id="p44">
+        <span class="page-num">Page 44-46</span>
+        <h2>Fundamental Matrix의 핵심 성질</h2>
+
+        <div class="card">
+          <div class="card-label">에피폴라 구속 조건의 유도</div>
+          <p>\(l = \mathbf{F}\mathbf{x}'\)이고, 점 \(\mathbf{x}\)가 선 \(l\) 위에 있으면 \(\mathbf{x}^T l = 0\)이므로:</p>
+
+          <div class="formula-box">
+            \[\mathbf{x}^T \mathbf{F} \mathbf{x}' = 0\]
+            <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">에피폴라 구속 조건 (Epipolar Constraint)</p>
+          </div>
+
+          <p>또한 \(\mathbf{x}^T \mathbf{F} \mathbf{x}' = 0\)에서 \((\mathbf{F}^T \mathbf{x})^T \mathbf{x}' = 0\)이므로:</p>
+          <div class="formula-box">
+            \[l' = \mathbf{F}^T \mathbf{x}\]
+            <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">반대 방향 매핑: \(\mathbf{x}\)에서 두 번째 이미지의 에피폴라 선 \(l'\)</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">F의 주요 성질 정리</div>
+          <ul>
+            <li>\(\mathbf{F}\mathbf{x}'\)는 \(\mathbf{x}'\)에 대응하는 에피폴라 선 \(l\) (첫 번째 이미지에서)</li>
+            <li>\(\mathbf{F}^T\mathbf{x}\)는 \(\mathbf{x}\)에 대응하는 에피폴라 선 \(l'\) (두 번째 이미지에서)</li>
+            <li>\(\mathbf{F}\mathbf{e}' = \mathbf{0}\), \(\mathbf{F}^T\mathbf{e} = \mathbf{0}\) -- 에피폴은 F의 영공간(null space)에 있음</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          "대응점이 에피폴라 선 위에 있어야 한다"는 것은 매우 강력한 구속 조건입니다. 2D 이미지 전체를 탐색하는 대신 1D 직선만 탐색하면 되므로, 연산량이 획기적으로 줄어들 뿐 아니라 잘못된 매칭도 줄일 수 있습니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 47-48 ==================== -->
+      <section class="page-section" id="p47">
+        <span class="page-num">Page 47-48</span>
+        <h2>Fundamental Matrix의 탐색 범위 축소 효과</h2>
+
+        <div class="card">
+          <div class="card-label">2D에서 1D로의 탐색 축소</div>
+          <p>Fundamental Matrix \(\mathbf{F}\)를 알고 있으면:</p>
+          <br>
+          <p>이미지 1의 점 \(\mathbf{x}\)에 대해, 이미지 2에서의 대응점은:</p>
+          <ul>
+            <li><strong>F 없이:</strong> 이미지 2의 <strong>모든 픽셀</strong>을 탐색 (2D 전체)</li>
+            <li><strong>F 있으면:</strong> 에피폴라 선 \(l' = \mathbf{F}^T\mathbf{x}\) 위의 점만 탐색 (1D 직선)</li>
+          </ul>
+          <br>
+          <p>대응점이 어디에 있을 수 있는지 미리 알 수 있다면, 2D 탐색을 1D로 줄일 수 있습니다!</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 49-51 ==================== -->
+      <section class="page-section" id="p49">
+        <span class="page-num">Page 49-51</span>
+        <h2>예시: 수렴 카메라(Converging Cameras)와 실제 응용</h2>
+
+        <div class="card">
+          <div class="card-label">수렴 카메라에서의 에피폴라 선</div>
+          <p>두 카메라가 안쪽으로 향하는(converging) 설정에서:</p>
+          <ul>
+            <li>이미지 1의 여러 점 \(\mathbf{x}_1, \mathbf{x}_2, \mathbf{x}_3\)에 대해</li>
+            <li>각각의 에피폴라 선 \(l'_1 = \mathbf{F}^T\mathbf{x}_1\), \(l'_2 = \mathbf{F}^T\mathbf{x}_2\), \(l'_3 = \mathbf{F}^T\mathbf{x}_3\)이 이미지 2에 그려짐</li>
+            <li>모든 에피폴라 선은 에피폴 \(\mathbf{e}'\)를 지남</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">실제 예시: SIFT 매칭과 에피폴라 선</div>
+          <p>실제 건물 사진 두 장에서:</p>
+          <ol>
+            <li><strong>Feature Extraction (SIFT):</strong> 두 이미지에서 특징점을 추출하고 매칭합니다</li>
+            <li><strong>F 추정:</strong> 매칭된 점 쌍으로부터 Fundamental Matrix를 추정합니다</li>
+            <li><strong>에피폴라 선 시각화:</strong> 추정된 F를 이용하여 에피폴라 선을 그리면, 대응점이 정확히 해당 선 위에 놓이는 것을 확인할 수 있습니다</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ==================== Page 52-54 ==================== -->
+      <section class="page-section" id="p52">
+        <span class="page-num">Page 52-54</span>
+        <h2>Fundamental Matrix F의 추정</h2>
+
+        <div class="summary-box">
+          매칭된 이미지 점 쌍 \(\{\mathbf{x}_i, \mathbf{x}'_i\}_{i=1,\ldots,N}\)이 주어졌을 때, 에피폴라 구속 \(\mathbf{x}_i^T \mathbf{F} \mathbf{x}'_i = 0\)을 만족하는 \(\mathbf{F}\)를 추정합니다. 각 점 쌍은 하나의 스칼라 방정식을 제공하므로, 최소 8개의 점이 필요합니다 -- <strong>8점 알고리즘(8-point algorithm)</strong>.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제 설정</div>
+          <p>매칭된 점 쌍이 주어짐:</p>
+          \[\{\mathbf{x}_i, \mathbf{x}'_i\}_{i=1,\ldots,N}, \quad \mathbf{x}_i = [x_i, y_i, 1], \quad \mathbf{x}'_i = [x'_i, y'_i, 1]\]
+
+          <p>각 대응 쌍은 에피폴라 구속을 만족해야 함:</p>
+          <div class="formula-box">
+            \[\mathbf{x}_i^T \mathbf{F} \mathbf{x}'_i = 0\]
+            \[[x_i, y_i, 1] \begin{bmatrix} f_{11} & f_{12} & f_{13} \\ f_{21} & f_{22} & f_{23} \\ f_{31} & f_{32} & f_{33} \end{bmatrix} \begin{bmatrix} x'_i \\ y'_i \\ 1 \end{bmatrix} = 0\]
+          </div>
+
+          <p>\(\mathbf{F}\)는 3x3 행렬로 9개의 미지수가 있지만, 스케일 모호성(scale ambiguity)이 있어 실제 자유도는 8입니다. 따라서 <strong>최소 8개의 점 쌍</strong>이 필요합니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 55-57 ==================== -->
+      <section class="page-section" id="p55">
+        <span class="page-num">Page 55-57</span>
+        <h2>8점 알고리즘 (8-Point Algorithm)</h2>
+
+        <div class="card">
+          <div class="card-label">동차 선형 방정식 풀기</div>
+          <p>에피폴라 구속을 전개하면:</p>
+          \[xx'f_{11} + xy'f_{12} + xf_{13} + yx'f_{21} + yy'f_{22} + yf_{23} + x'f_{31} + y'f_{32} + f_{33} = 0\]
+
+          <p>이를 행렬 형태로 모으면:</p>
+          <div class="formula-box">
+            \[\mathbf{A}\mathbf{f} = \mathbf{0}\]
+            <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">\(\mathbf{A}\)는 \(N \times 9\) 행렬, \(\mathbf{f}\)는 \(\mathbf{F}\)를 벡터화한 \(9 \times 1\) 벡터</p>
+          </div>
+
+          <p>이 동차 선형 방정식의 풀이법: <strong>Total Least Squares (TLS)</strong></p>
+          <div class="formula-box">
+            \[\hat{\mathbf{f}} = \arg\min_{\mathbf{f}} \|\mathbf{A}\mathbf{f}\|^2 \quad \text{subject to} \quad \|\mathbf{f}\|^2 = 1\]
+          </div>
+
+          <p>이 문제의 해는 <strong>특이값 분해(SVD)</strong>로 구합니다:</p>
+          \[\hat{\mathbf{f}} = \arg\min_{\mathbf{f}} \|\mathbf{U}\mathbf{\Sigma}\mathbf{V}^T\mathbf{f}\|^2\]
+          <p>해: \(\mathbf{V}\)의 마지막 열벡터 (가장 작은 특이값에 대응하는 열)</p>
+        </div>
+
+        <div class="tip">
+          SVD는 선형대수의 가장 강력한 도구 중 하나입니다. \(\mathbf{A} = \mathbf{U}\mathbf{\Sigma}\mathbf{V}^T\)로 분해한 뒤, \(\mathbf{V}\)의 마지막 열이 \(\|\mathbf{A}\mathbf{f}\|\)를 최소화하는 단위 벡터입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 58-59 ==================== -->
+      <section class="page-section" id="p58">
+        <span class="page-num">Page 58-59</span>
+        <h2>8점 알고리즘 구현 (MATLAB)</h2>
+
+        <div class="card">
+          <div class="card-label">MATLAB 코드</div>
+          <ol class="step-list">
+            <li>
+              <strong>SVD로 \(\mathbf{A}\mathbf{f} = \mathbf{0}\) 풀기</strong>
+              <pre>[U, S, V] = svd(A);
+f = V(:, end);
+F = reshape(f, [3 3])';</pre>
+            </li>
+            <li>
+              <strong>Rank-2 구속 조건 적용: \(\det(\mathbf{F}) = 0\)</strong>
+              <pre>[U, S, V] = svd(F);
+S(3,3) = 0;
+F = U*S*V';</pre>
+              <p>F는 반드시 rank 2여야 합니다. SVD로 분해한 후 가장 작은 특이값을 0으로 강제합니다.</p>
+            </li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <div class="card-label">전체 구현 코드</div>
+          <pre>% Build the constraint matrix
+A = [x2(1,:)'.*x1(1,:)'  x2(1,:)'.*x1(2,:)'  x2(1,:)' ...
+     x2(2,:)'.*x1(1,:)'  x2(2,:)'.*x1(2,:)'  x2(2,:)' ...
+     x1(1,:)'            x1(2,:)'             ones(npts,1) ];
+
+[U,D,V] = svd(A);
+
+% Extract fundamental matrix from the column of V
+% corresponding to the smallest singular value.
+F = reshape(V(:,9),3,3)';
+
+% Enforce rank2 constraint
+[U,D,V] = svd(F);
+F = U*diag([D(1,1) D(2,2) 0])*V';</pre>
+        </div>
+
+        <div class="warning">
+          8점 알고리즘은 노이즈에 민감합니다. 실제로는 좌표를 정규화(normalization)한 뒤 적용하는 "Normalized 8-point algorithm"을 사용하며, RANSAC 등의 robust 추정 기법과 결합합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 62-63 ==================== -->
+      <section class="page-section" id="p62">
+        <span class="page-num">Page 62-63</span>
+        <h2>Essential Matrix의 유도</h2>
+
+        <div class="summary-box">
+          Essential Matrix \(\mathbf{E}\)는 <strong>정규화된(normalized) 이미지 좌표</strong> 사이의 에피폴라 관계를 기술합니다. Fundamental Matrix가 픽셀 좌표에서 작동한다면, Essential Matrix는 카메라 내부 파라미터를 제거한 좌표에서 작동합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">유도 과정</div>
+
+          <h3>1단계: 정규화된 좌표 정의</h3>
+          <p>내부 파라미터를 이용하여 정규화된 좌표를 구합니다:</p>
+          \[\hat{\mathbf{x}} = \mathbf{K}^{-1}\mathbf{x}, \quad \hat{\mathbf{x}}' = \mathbf{K}'^{-1}\mathbf{x}'\]
+
+          <h3>2단계: 외부 파라미터로 관계 설정</h3>
+          \[\hat{\mathbf{x}} = [\mathbf{R}|\mathbf{t}]_{O' \to O} \hat{\mathbf{x}}' \quad \Rightarrow \quad \hat{\mathbf{x}} = \mathbf{R}\hat{\mathbf{x}}' + \mathbf{t}\]
+
+          <h3>3단계: 공평면 조건 (Coplanarity Constraint)</h3>
+          <p>\(\hat{\mathbf{x}}\), \(\mathbf{t}\), \(\mathbf{R}\hat{\mathbf{x}}'\)가 같은 평면에 있으므로:</p>
+          \[\hat{\mathbf{x}} \cdot [\mathbf{t} \times \hat{\mathbf{x}}] = 0\]
+          <p>\(\hat{\mathbf{x}} = \mathbf{R}\hat{\mathbf{x}}' + \mathbf{t}\)를 대입하면:</p>
+          \[\hat{\mathbf{x}} \cdot [\mathbf{t} \times (\mathbf{R}\hat{\mathbf{x}}' + \mathbf{t})] = 0\]
+          <p>\(\mathbf{t} \times \mathbf{t} = \mathbf{0}\)이므로:</p>
+          \[\hat{\mathbf{x}} \cdot [\mathbf{t} \times \mathbf{R}\hat{\mathbf{x}}'] = 0\]
+
+          <div class="formula-box">
+            \[\hat{\mathbf{x}}^T [\mathbf{t}]_\times \mathbf{R} \hat{\mathbf{x}}' = 0\]
+            \[\hat{\mathbf{x}}^T \mathbf{E} \hat{\mathbf{x}}' = 0\]
+            <p style="font-size:14px; margin-top:10px;">\(\mathbf{E} = [\mathbf{t}]_\times \mathbf{R}\) : <strong>Essential Matrix</strong></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 65 ==================== -->
+      <section class="page-section" id="p65">
+        <span class="page-num">Page 65</span>
+        <h2>Essential Matrix에서 Fundamental Matrix로</h2>
+
+        <div class="card">
+          <div class="card-label">F와 E의 관계 유도</div>
+          <p>\(\hat{\mathbf{x}} = \mathbf{K}^{-1}\mathbf{x}\), \(\hat{\mathbf{x}}' = \mathbf{K}'^{-1}\mathbf{x}'\)를 Essential Matrix 등식에 대입하면:</p>
+
+          \[\hat{\mathbf{x}}^T \mathbf{E} \hat{\mathbf{x}}' = 0\]
+          \[(\mathbf{K}^{-1}\mathbf{x})^T \mathbf{E} (\mathbf{K}'^{-1}\mathbf{x}') = 0\]
+          \[\mathbf{x}^T \mathbf{K}^{-T} \mathbf{E} \mathbf{K}'^{-1} \mathbf{x}' = 0\]
+          \[\mathbf{x}^T \mathbf{F} \mathbf{x}' = 0\]
+
+          <div class="formula-box">
+            \[\mathbf{F} = \mathbf{K}^{-T} \mathbf{E} \mathbf{K}'^{-1}\]
+            <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">Fundamental Matrix는 Essential Matrix에 카메라 내부 파라미터를 결합한 것</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 66-67 ==================== -->
+      <section class="page-section" id="p66">
+        <span class="page-num">Page 66-67</span>
+        <h2>Fundamental Matrix vs Essential Matrix 비교 요약</h2>
+
+        <div class="card">
+          <div class="card-label">Fundamental Matrix 요약</div>
+          <div class="formula-box">
+            \[\mathbf{x}^T \mathbf{F} \mathbf{x}' = 0\]
+          </div>
+          <ul>
+            <li>\(\mathbf{F}\mathbf{x}'\): \(\mathbf{x}'\)에 대응하는 에피폴라 선 \(l\) (\(l = \mathbf{F}\mathbf{x}'\))</li>
+            <li>\(\mathbf{F}^T\mathbf{x}\): \(\mathbf{x}\)에 대응하는 에피폴라 선 \(l'\) (\(l' = \mathbf{F}^T\mathbf{x}\))</li>
+            <li>\(\mathbf{F}\mathbf{e}' = \mathbf{0}\), \(\mathbf{F}^T\mathbf{e} = \mathbf{0}\)</li>
+            <li>\(\mathbf{F}\)는 특이행렬 (rank 2): \(\det(\mathbf{F}) = 0\)</li>
+            <li><strong>자유도: 7</strong> (9개 원소 - 스케일 1 - det=0 구속 1)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Essential Matrix 요약</div>
+          <div class="formula-box">
+            \[\hat{\mathbf{x}}^T \mathbf{E} \hat{\mathbf{x}}' = 0\]
+          </div>
+          <ul>
+            <li>\(\mathbf{E}\hat{\mathbf{x}}'\): \(\hat{\mathbf{x}}'\)에 대응하는 에피폴라 선</li>
+            <li>\(\mathbf{E}^T\hat{\mathbf{x}}\): \(\hat{\mathbf{x}}\)에 대응하는 에피폴라 선</li>
+            <li>\(\mathbf{E}\mathbf{e}' = \mathbf{0}\), \(\mathbf{E}^T\mathbf{e} = \mathbf{0}\)</li>
+            <li>\(\mathbf{E}\)는 특이행렬 (rank 2)</li>
+            <li><strong>자유도: 5</strong> (R 3개 + t 2개, t는 스케일까지만 결정 가능)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">비교 테이블</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>항목</th><th>Fundamental Matrix (F)</th><th>Essential Matrix (E)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>좌표계</td><td>픽셀 좌표 \(\mathbf{x}, \mathbf{x}'\)</td><td>정규화 좌표 \(\hat{\mathbf{x}}, \hat{\mathbf{x}}'\)</td></tr>
+              <tr><td>자유도</td><td>7 DoF</td><td>5 DoF</td></tr>
+              <tr><td>내부 파라미터</td><td>필요 없음 (포함됨)</td><td>필요함 (K 알아야 함)</td></tr>
+              <tr><td>수식</td><td>\(\mathbf{F} = \mathbf{K}^{-T}\mathbf{E}\mathbf{K}'^{-1}\)</td><td>\(\mathbf{E} = [\mathbf{t}]_\times \mathbf{R}\)</td></tr>
+              <tr><td>Rank</td><td>2</td><td>2</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">
+          F와 E의 핵심 차이: F는 카메라 내부 파라미터를 모를 때 사용할 수 있고, E는 내부 파라미터를 이미 알 때 사용합니다. E에서 R과 t를 직접 분해할 수 있으므로, 내부 파라미터를 알면 E를 추정하는 것이 더 유리합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 68 ==================== -->
+      <section class="page-section" id="p68">
+        <span class="page-num">Page 68</span>
+        <h2>Fundamental Matrix와 카메라 파라미터의 관계</h2>
+
+        <div class="card">
+          <div class="card-label">핵심 관계식</div>
+
+          <div class="formula-box">
+            \[\mathbf{F} = \mathbf{K}^{-T}\mathbf{E}\mathbf{K}'^{-1} = \mathbf{K}^{-T}[\mathbf{t}]_\times\mathbf{R}\mathbf{K}'^{-1}\]
+          </div>
+
+          <table class="terms-table">
+            <thead>
+              <tr><th>기호</th><th>이름</th><th>역할</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">F</td><td>Fundamental Matrix</td><td>픽셀 좌표 간 에피폴라 관계</td></tr>
+              <tr><td class="en">E</td><td>Essential Matrix</td><td>정규화 좌표 간 에피폴라 관계</td></tr>
+              <tr><td class="en">K</td><td>Intrinsic Matrix</td><td>카메라 내부 파라미터 (3x3)</td></tr>
+              <tr><td class="en">[R|t]</td><td>Extrinsic Matrix</td><td>카메라 외부 파라미터 (3x4)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 69 ==================== -->
+      <section class="page-section" id="p69">
+        <span class="page-num">Page 69</span>
+        <h2>에피폴라 기하학의 응용</h2>
+
+        <div class="card">
+          <div class="card-label">1. 카메라 파라미터 계산 (Structure-from-Motion)</div>
+          <p>에피폴라 기하학의 첫 번째 중요한 응용은 <strong>Structure-from-Motion (SfM)</strong>입니다.</p>
+          <br>
+          <p>여러 장의 사진으로부터:</p>
+          <ol>
+            <li>이미지 간의 특징점 매칭</li>
+            <li>F (또는 E) 추정</li>
+            <li>카메라 위치/방향 복원</li>
+            <li>3D 점 구름(Point Cloud) 생성</li>
+          </ol>
+          <br>
+          <p>대표적 예시: 콜로세움의 관광 사진 수천 장으로부터 정밀한 3D 모델을 생성하는 Photosynth 프로젝트.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 70 ==================== -->
+      <section class="page-section" id="p70">
+        <span class="page-num">Page 70</span>
+        <h2>응용 2: 스테레오 정류 (Stereo Rectification)</h2>
+
+        <div class="summary-box">
+          스테레오 정류(Stereo Rectification)는 두 이미지를 변환하여 에피폴라 선이 수평이 되도록 만드는 과정입니다. 이렇게 하면 대응점 탐색이 같은 행(row)에서만 이루어지므로 매우 효율적입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">정류의 핵심 아이디어</div>
+          <p>에피폴 \(\mathbf{e}\)를 \([1, 0, 0]^T\) (무한원점)으로 매핑: \(\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix} = \mathbf{H}\mathbf{e}\)</p>
+          <br>
+          <p>에피폴이 무한원점에 있으면 모든 에피폴라 선이 수평이 됩니다. 이미지 왜곡을 최소화하면서 이를 달성하는 것이 목표입니다.</p>
+        </div>
+
+        <div class="warning">
+          에피폴이 이미지 안에 있거나 매우 가까이 있으면, 정류 시 심한 왜곡이 발생할 수 있습니다. 이런 경우에는 다른 방법을 사용해야 합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 71-79 ==================== -->
+      <section class="page-section" id="p77">
+        <span class="page-num">Page 71-79</span>
+        <h2>스테레오 정류 절차와 \(\mathbf{R}_{rect}\) 구성</h2>
+
+        <div class="card">
+          <div class="card-label">스테레오 정류 알고리즘</div>
+          <ol class="step-list">
+            <li>8점 알고리즘으로 Essential Matrix \(\mathbf{E}\)를 추정</li>
+            <li>에피폴 \(\mathbf{e}\)를 구함 (\(\mathbf{E}\mathbf{e} = \mathbf{0}\) 풀기)</li>
+            <li>\(\mathbf{e}\)로부터 정류 회전행렬 \(\mathbf{R}_{rect}\)를 구성</li>
+            <li>\(\mathbf{E}\)를 \(\mathbf{R}\)과 \(\mathbf{t}\)로 분해</li>
+            <li>\(\mathbf{R}_1 = \mathbf{R}_{rect}\), \(\mathbf{R}_2 = \mathbf{R}\mathbf{R}_{rect}\) 설정</li>
+            <li>왼쪽 카메라의 각 점을 변환: \(\mathbf{x}' \sim \mathbf{H}\mathbf{x}\) (\(\mathbf{H} = \mathbf{K}\mathbf{R}_1\))</li>
+            <li>오른쪽 카메라에 대해 \(\mathbf{R}_2\)를 사용하여 동일 과정 반복</li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <div class="card-label">\(\mathbf{R}_{rect}\) 구성 방법</div>
+          <p>에피폴을 무한원점으로 보내는 회전행렬을 구성합니다:</p>
+
+          <div class="formula-box">
+            \[\mathbf{R}_{rect} = \begin{bmatrix} \mathbf{r}_1^T \\ \mathbf{r}_2^T \\ \mathbf{r}_3^T \end{bmatrix}\]
+          </div>
+
+          <p>각 행벡터의 정의:</p>
+          <table class="terms-table">
+            <thead>
+              <tr><th>벡터</th><th>수식</th><th>의미</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">r_1</td>
+                <td>\(\mathbf{r}_1 = \mathbf{e}_1 = \frac{\mathbf{T}}{\|\mathbf{T}\|}\)</td>
+                <td>에피폴이 이동 벡터 방향과 일치</td>
+              </tr>
+              <tr>
+                <td class="en">r_2</td>
+                <td>\(\mathbf{r}_2 = \frac{1}{\sqrt{T_x^2 + T_y^2}}[-T_y, -T_x, 0]\)</td>
+                <td>에피폴과 광축 방향 벡터의 외적</td>
+              </tr>
+              <tr>
+                <td class="en">r_3</td>
+                <td>\(\mathbf{r}_3 = \mathbf{r}_1 \times \mathbf{r}_2\)</td>
+                <td>직교 벡터 (정규 직교 기저 완성)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <br>
+          <p>이렇게 구성하면 \(\mathbf{R}_{rect}\mathbf{e}_1 = [?, ?, ?]^T\)가 되고, 에피폴이 x축 무한원점 \([1, 0, 0]^T\)으로 매핑됩니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">정류 과정 시각화</div>
+          <p>3단계 과정으로 두 이미지를 정류합니다:</p>
+          <ol>
+            <li><strong>E 계산 -> R 추출:</strong> 두 카메라 사이의 상대적 회전을 구함</li>
+            <li><strong>오른쪽 이미지를 R로 회전:</strong> 두 카메라가 같은 방향을 바라보도록 만듦</li>
+            <li><strong>양쪽 이미지를 R_rect로 회전:</strong> 에피폴라 선이 수평이 되도록 만듦</li>
+          </ol>
+          <br>
+          <p>정류 후 결과: 두 이미지에서 같은 높이(row)의 수평선을 그으면, 대응점이 정확히 같은 행에 위치합니다. 이렇게 하면 1D 스캔라인(scanline) 매칭만으로 대응점을 찾을 수 있어 매우 효율적입니다.</p>
+        </div>
+
+        <div class="tip">
+          정류 후의 스테레오 매칭은 각 행(row)에서 좌우 방향으로만 탐색하면 됩니다. 이것이 실시간 스테레오 비전의 핵심이며, 자율주행 차량의 깊이 추정 등에 활용됩니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 80 ==================== -->
+      <section class="page-section" id="p80">
+        <span class="page-num">Page 80</span>
+        <h2>최종 요약</h2>
+
+        <div class="summary-box">
+          이번 강의에서는 카메라 기하학의 핵심인 Camera Intrinsic, Camera Extrinsic, Fundamental Matrix, Essential Matrix를 배웠습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">전체 내용 정리</div>
+          <h3>Single View Geometry</h3>
+          <ul>
+            <li><strong>Ch.6 Camera Model:</strong> 카메라가 3D를 2D로 투영하는 수학적 모델</li>
+            <li><strong>Camera Intrinsic (K):</strong> 초점 거리, 주점, 비대칭 계수 등 카메라 내부 특성 (5 DoF)</li>
+            <li><strong>Camera Extrinsic ([R|t]):</strong> 카메라의 위치와 방향 (6 DoF)</li>
+            <li><strong>전체 투영:</strong> \(\mathbf{x} = \mathbf{K}[\mathbf{R}|\mathbf{t}]\mathbf{X}\)</li>
+          </ul>
+
+          <h3>Two View Geometry</h3>
+          <ul>
+            <li><strong>Ch.9 Epipolar Geometry:</strong> 두 뷰 사이의 기하학적 관계</li>
+            <li><strong>Fundamental Matrix (F):</strong> 픽셀 좌표 간의 에피폴라 관계 (7 DoF)</li>
+            <li><strong>Essential Matrix (E):</strong> 정규화 좌표 간의 에피폴라 관계 (5 DoF)</li>
+            <li><strong>관계:</strong> \(\mathbf{F} = \mathbf{K}^{-T}\mathbf{E}\mathbf{K}'^{-1}\)</li>
+            <li><strong>8점 알고리즘:</strong> 매칭점으로부터 F(또는 E)를 추정하는 방법</li>
+            <li><strong>스테레오 정류:</strong> 에피폴라 선을 수평으로 만들어 효율적 대응점 탐색</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 수식 총정리</div>
+          <div class="formula-box">
+            <p style="text-align:left; font-size:14px;">
+              <strong>1. 투영 방정식:</strong> \(\mathbf{x} = \mathbf{K}[\mathbf{R}|\mathbf{t}]\mathbf{X}\)<br><br>
+              <strong>2. 에피폴라 구속 (F):</strong> \(\mathbf{x}^T\mathbf{F}\mathbf{x}' = 0\)<br><br>
+              <strong>3. 에피폴라 구속 (E):</strong> \(\hat{\mathbf{x}}^T\mathbf{E}\hat{\mathbf{x}}' = 0\)<br><br>
+              <strong>4. F-E 관계:</strong> \(\mathbf{F} = \mathbf{K}^{-T}[\mathbf{t}]_\times\mathbf{R}\mathbf{K}'^{-1}\)<br><br>
+              <strong>5. Essential Matrix:</strong> \(\mathbf{E} = [\mathbf{t}]_\times\mathbf{R}\)
+            </p>
+          </div>
+        </div>
+
+        <div class="tip">
+          이 강의의 내용은 3D 컴퓨터 비전의 가장 근본적인 토대입니다. SLAM, SfM, 3D Reconstruction, 자율주행, AR 등 거의 모든 3D 비전 응용에서 이 수학적 틀이 사용됩니다. 수식을 단순히 암기하기보다, "왜 이런 관계가 성립하는가"를 기하학적으로 이해하는 것이 중요합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">참고 문헌</div>
+          <p>[1] Hartley, Richard, and Andrew Zisserman. <em>Multiple View Geometry in Computer Vision</em>. Cambridge University Press, 2003.</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '\u{1F319} \uB2E4\uD06C\uBAA8\uB4DC';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '\u2600\uFE0F \uB77C\uC774\uD2B8\uBAA8\uB4DC';
+      }
+    }
+
+    // Active sidebar link tracking
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+
+    // Smooth scrolling
+    document.querySelectorAll('.sidebar a').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
