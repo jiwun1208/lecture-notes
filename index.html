@@ -41,6 +41,10 @@
   --c-oc: #0D9488;
   --c-oc-light: #F0FDFA;
   --c-oc-border: #99F6E4;
+
+  --c-ac: #D97706;
+  --c-ac-light: #FFFBEB;
+  --c-ac-border: #FDE68A;
 }
 
 [data-theme="dark"] {
@@ -71,6 +75,9 @@
 
   --c-oc-light: rgba(13,148,136,0.12);
   --c-oc-border: rgba(13,148,136,0.3);
+
+  --c-ac-light: rgba(217,119,6,0.12);
+  --c-ac-border: rgba(217,119,6,0.3);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -552,6 +559,42 @@ const DEFAULT_COURSES = [
         title: "산-염기 심화 & 알케인 명명법",
         desc: "Ch 3.4-4.2: ARIO 심화, 알케인, IUPAC 명명법",
         file: "OC_5_Alkanes_lecture.html"
+      }
+    ]
+  },
+  {
+    name: "분석화학",
+    color: "ac",
+    lectures: [
+      {
+        num: "00",
+        title: "분석화학 개론 (Introduction)",
+        desc: "Ch 0: 분석화학이란, 정량분석 절차, HPLC 초콜릿 카페인 분석",
+        file: "AC_0_Intro_lecture.html"
+      },
+      {
+        num: "01",
+        title: "화학 측정의 기초 (Chemical Measurements)",
+        desc: "Ch 1: SI 단위, 몰농도, 형식농도, 희석, 평형상수",
+        file: "AC_1_ChemMeasurement_lecture.html"
+      },
+      {
+        num: "02",
+        title: "유효숫자와 오차 분석 (Sig Figs & Error)",
+        desc: "Ch 3: 유효숫자 규칙, 은행원 반올림, 정밀도·정확도, 계통오차",
+        file: "AC_2_MathToolkit_lecture.html"
+      },
+      {
+        num: "03",
+        title: "통계학 기초 (Statistics)",
+        desc: "Ch 4: 가우시안 분포, 표준편차, F-검정, Student t-검정",
+        file: "AC_3_Statistics_lecture.html"
+      },
+      {
+        num: "04",
+        title: "적정 분석 (Titration)",
+        desc: "Ch 6: 부피분석 원리, 직접·역적정, 화학양론 계산",
+        file: "AC_4_Titration_lecture.html"
       }
     ]
   }

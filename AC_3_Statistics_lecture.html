@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 4: 통계학 기초 (Statistics in Analytical Chemistry)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    processEscapes: false
+  },
+  startup: {
+    ready: function() {
+      MathJax.startup.defaultReady();
+      window.mathJaxReady = true;
+    }
+  }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+    gap: 8px;
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  img { max-width: 100%; height: auto; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-top: 16px;
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    min-width: 0;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .page-section h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 24px 0 14px;
+    line-height: 1.4;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .math-block {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    overflow-x: auto;
+    font-size: 1.05em;
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 14px 0;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+    max-width: 100%;
+  }
+
+  strong { color: var(--accent); font-weight: 500; }
+
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 8px 0 12px 20px; }
+  li { margin-bottom: 4px; }
+
+  .diagram-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .diagram-container svg {
+    max-width: 100%;
+    height: auto;
+  }
+  .diagram-caption {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+  .diagram-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .diagram-cell {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+  }
+  .diagram-cell .cell-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .diagram-cell .cell-desc {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  .data-table th {
+    text-align: center;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+    background: var(--bg-aside);
+  }
+  .data-table td {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    vertical-align: middle;
+  }
+  .data-table tr:hover {
+    background: var(--accent-light);
+  }
+
+  .step-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 10px 0;
+  }
+  .step-box .step-num {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 200px 1fr; }
+    .content { padding: 32px 32px 60px; }
+    .sidebar { padding: 20px 12px; }
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 28px 24px 60px; }
+  }
+
+  @media (max-width: 768px) {
+    .topbar { padding: 10px 16px; }
+    .topbar h1 { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60vw; }
+    .topbar .meta { font-size: 10px; }
+    .content { padding: 20px 16px 48px; }
+    .page-section h2 { font-size: 18px; }
+    .page-section h3 { font-size: 16px; }
+    .card { padding: 18px 16px; }
+    .summary-box { padding: 14px 16px; }
+  }
+
+  @media (max-width: 480px) {
+    .content { padding: 16px 12px 40px; }
+    .topbar h1 { font-size: 13px; max-width: 50vw; }
+    body { font-size: 14px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>통계학 기초 (Statistics in Analytical Chemistry)</h1>
+      <div class="meta">Analytical Chemistry &mdash; Lecture 3 (Chapter 4)</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">페이지 목록</div>
+      <div class="section-label">4-1. 가우스 분포</div>
+      <a href="#p1">01 &mdash; Chapter 4 개요</a>
+      <a href="#p2">02 &mdash; 적혈구 수 문제</a>
+      <a href="#p3">03 &mdash; 가우스 분포 소개</a>
+      <a href="#p4">04 &mdash; 평균과 중앙값</a>
+      <a href="#p5">05 &mdash; 표준편차 (유한)</a>
+      <a href="#p6">06 &mdash; 표준편차 (무한)</a>
+      <a href="#p7">07 &mdash; 분산, RSD, 범위</a>
+      <a href="#p8">08 &mdash; 예제: 기본 통계량</a>
+      <a href="#p9">09 &mdash; 예제 4-A 풀이</a>
+      <div class="section-label">정규 오차 곡선</div>
+      <a href="#p10">10 &mdash; 정규 오차 곡선</a>
+      <a href="#p11">11 &mdash; z-점수 정의</a>
+      <a href="#p12">12 &mdash; 확률과 면적</a>
+      <a href="#p13">13 &mdash; z-표 (Table 4-1)</a>
+      <div class="section-label">4-2. F 검정</div>
+      <a href="#p14">14 &mdash; F 검정 소개</a>
+      <a href="#p15">15 &mdash; F 검정 공식과 표</a>
+      <a href="#p16">16 &mdash; F 검정 풀이</a>
+      <a href="#p17">17 &mdash; 예제 4-B</a>
+      <div class="section-label">4-3. Student's t</div>
+      <a href="#p18">18 &mdash; Student's t 소개</a>
+      <a href="#p19">19 &mdash; 신뢰 구간</a>
+      <a href="#p20">20 &mdash; CI 공식과 t-표</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== Page 1 ==================== -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>Chapter 4: 분석화학에서의 통계학 (Statistics for Analytical Chemistry)</h2>
+        <div class="summary-box">
+          분석화학에서 측정값의 <strong>신뢰성</strong>을 평가하기 위해 통계적 방법을 사용한다. 이 장에서는 가우스 분포, F 검정, Student's t 검정 등의 핵심 통계 도구를 다룬다.
+        </div>
+        <div class="card">
+          <div class="card-label">Chapter 4 주요 내용</div>
+          <table class="terms-table">
+            <thead><tr><th>주제</th><th>영어</th><th>핵심 내용</th></tr></thead>
+            <tbody>
+              <tr><td>(1) 가우스 분포</td><td class="en">Gaussian Distribution</td><td>평균(Mean), 표준편차(Standard Deviation), 확률(Probability)</td></tr>
+              <tr><td>(2) F 검정</td><td class="en">F Test</td><td>표준편차 비교 (Comparison of Standard Deviations)</td></tr>
+              <tr><td>(3) Student's t</td><td class="en">Student's t</td><td>신뢰구간(Confidence Interval) &amp; 평균비교(Comparison of Means)</td></tr>
+              <tr><td>(4) 이상점 판별</td><td class="en">Grubbs Test</td><td>의심스러운 데이터 검출</td></tr>
+              <tr><td>(5) 최적 직선</td><td class="en">Best Straight Line</td><td>최소 제곱법 (Least Squares Method)</td></tr>
+              <tr><td>(6) 교정곡선</td><td class="en">Calibration Curve</td><td>분석 기기 보정</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="key-point">
+          이 강의에서는 (1)~(3)을 집중적으로 다룬다. 모든 분석 실험에서 측정값에는 <strong>불확실성(uncertainty)</strong>이 존재하며, 통계는 이 불확실성을 정량적으로 평가하는 도구이다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 2 ==================== -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>동기 부여: "오늘 적혈구 수치가 높은가?"</h2>
+        <div class="summary-box">
+          <strong>Is My Red Blood Cell Count High Today?</strong> &mdash; "오늘 적혈구 수치는 정상 수치보다 높다"라고 확신할 수 있는가? 이 질문에 답하기 위해 통계적 방법이 필요하다.
+        </div>
+        <div class="card">
+          <div class="card-label">적혈구 수 데이터</div>
+          <table class="data-table">
+            <thead><tr><th>정상일 측정값 (Count on "normal" days)</th><th>오늘 측정값 (Today's count)</th></tr></thead>
+            <tbody>
+              <tr><td>5.1</td><td rowspan="5" style="vertical-align:middle;">\(5.6 \times 10^6\) cells/&mu;L</td></tr>
+              <tr><td>5.3</td></tr>
+              <tr><td>4.8</td></tr>
+              <tr><td>5.4</td></tr>
+              <tr><td>5.2</td></tr>
+            </tbody>
+          </table>
+          <p style="text-align:center; margin-top:8px;">정상일 평균: \(\bar{x} = \dfrac{5.1 + 5.3 + 4.8 + 5.4 + 5.2}{5} = 5.16 \times 10^6\) cells/&mu;L</p>
+        </div>
+        <div class="tip">오늘 측정값 5.6은 평균 5.16보다 높지만, 이것이 <strong>통계적으로 유의미한(statistically significant)</strong> 차이인지 판단하려면 표준편차와 신뢰구간 개념이 필요하다. 단순히 "더 크다"는 것만으로는 결론을 내릴 수 없다.</div>
+      </section>
+
+      <!-- ==================== Page 3 ==================== -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>4-1. 가우스 분포 (Gaussian Distribution)</h2>
+        <div class="summary-box">
+          자연 현상에서 반복 측정한 데이터는 대부분 <strong>가우스 분포(정규분포, Normal Distribution)</strong> 형태를 따른다. 개구리 근육 세포의 이온 채널 전류 측정 실험이 좋은 예시이다.
+        </div>
+        <div class="card">
+          <div class="card-label">실험 예시: 개구리 근육 세포 이온 채널</div>
+          <p>개구리 근육 세포(frog muscle cell)의 개별 이온 채널(ion channel)을 통과하는 <strong>양이온 전류(cation current)</strong>를 반복 측정하면:</p>
+          <ul>
+            <li>단백질 게이트(Protein gate)가 닫혀 있으면 &rarr; 이온 통과 불가</li>
+            <li>신경전달물질(Neurotransmitter)이 결합하면 &rarr; 채널이 열리고 양이온 통과</li>
+          </ul>
+          <p>약 1000회 측정 결과:</p>
+          <ul>
+            <li>평균 전류: \(\bar{x} = 2.670\) pA (picoampere)</li>
+            <li>표준편차: \(s = 0.090\) pA</li>
+          </ul>
+          <p>이 데이터를 히스토그램으로 그리면 <strong>종 모양(bell shape)</strong>의 가우스 분포 곡선에 잘 맞는다 (Figure 4.2).</p>
+        </div>
+
+        <!-- SVG Bell Curve -->
+        <div class="diagram-container">
+          <svg width="520" height="300" viewBox="0 0 520 300">
+            <!-- Axes -->
+            <line x1="60" y1="260" x2="480" y2="260" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="60" y1="260" x2="60" y2="20" stroke="currentColor" stroke-width="1.5"/>
+            <!-- Y-axis label -->
+            <text x="15" y="140" font-size="12" fill="var(--text-muted)" transform="rotate(-90,15,140)" text-anchor="middle">관측 수 (Number of observations)</text>
+            <!-- X-axis label -->
+            <text x="270" y="295" font-size="12" fill="var(--text-muted)" text-anchor="middle">전류 Current (pA)</text>
+            <!-- X-axis ticks -->
+            <text x="90" y="278" font-size="11" fill="var(--text-muted)" text-anchor="middle">2.3</text>
+            <text x="150" y="278" font-size="11" fill="var(--text-muted)" text-anchor="middle">2.4</text>
+            <text x="210" y="278" font-size="11" fill="var(--text-muted)" text-anchor="middle">2.5</text>
+            <text x="270" y="278" font-size="11" fill="var(--text-muted)" text-anchor="middle">2.6</text>
+            <text x="330" y="278" font-size="11" fill="var(--text-muted)" text-anchor="middle">2.7</text>
+            <text x="390" y="278" font-size="11" fill="var(--text-muted)" text-anchor="middle">2.8</text>
+            <text x="450" y="278" font-size="11" fill="var(--text-muted)" text-anchor="middle">2.9</text>
+            <!-- Gaussian curve -->
+            <path d="M 90,258 Q 120,256 150,250 Q 180,235 210,200 Q 240,140 260,80 Q 270,50 280,40 Q 290,50 300,80 Q 320,140 350,200 Q 380,235 410,250 Q 440,256 470,258" fill="rgba(135,206,235,0.2)" stroke="#4A9EBF" stroke-width="2.5" fill-rule="nonzero"/>
+            <!-- Mean line -->
+            <line x1="330" y1="40" x2="330" y2="260" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="6,3"/>
+            <text x="340" y="35" font-size="12" fill="var(--accent)" font-weight="500">x&#772; = 2.670</text>
+            <!-- Standard deviation annotation -->
+            <line x1="270" y1="80" x2="270" y2="260" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+            <line x1="390" y1="200" x2="390" y2="260" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+            <!-- s arrows -->
+            <line x1="270" y1="130" x2="330" y2="130" stroke="var(--accent)" stroke-width="1"/>
+            <text x="290" y="125" font-size="11" fill="var(--accent)">s</text>
+            <line x1="330" y1="130" x2="390" y2="130" stroke="var(--accent)" stroke-width="1"/>
+            <text x="350" y="125" font-size="11" fill="var(--accent)">s</text>
+            <!-- Histogram bars (simplified) -->
+            <rect x="255" y="55" width="15" height="205" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="270" y="65" width="15" height="195" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="285" y="45" width="15" height="215" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="300" y="55" width="15" height="205" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="315" y="48" width="15" height="212" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="330" y="60" width="15" height="200" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="345" y="100" width="15" height="160" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="360" y="130" width="15" height="130" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="375" y="170" width="15" height="90" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="225" y="120" width="15" height="140" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="240" y="90" width="15" height="170" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="210" y="170" width="15" height="90" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="195" y="210" width="15" height="50" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <rect x="390" y="210" width="15" height="50" fill="rgba(135,206,235,0.4)" stroke="rgba(135,206,235,0.6)" rx="1"/>
+            <!-- s = 0.090 label -->
+            <text x="400" y="110" font-size="11" fill="var(--text-muted)">s = 0.090 pA</text>
+            <text x="400" y="95" font-size="11" fill="var(--text-muted)">Gaussian fit</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">Figure 4.2: 개구리 근육 세포 이온 채널 전류의 히스토그램과 가우스 곡선 적합</div>
+      </section>
+
+      <!-- ==================== Page 4 ==================== -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>평균 (Mean)과 중앙값 (Median)</h2>
+        <div class="summary-box">
+          측정 데이터를 대표하는 두 가지 중심 경향 측도: <strong>평균(Mean)</strong>과 <strong>중앙값(Median)</strong>을 이해한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">평균 (Mean, 평균)</div>
+          <p>측정값의 합을 측정 횟수로 나눈 값이다. <strong>Average</strong>라고도 한다.</p>
+          <div class="math-block">
+            \[ \bar{x} = \frac{\displaystyle\sum_{i=1}^{n} x_i}{n} = \frac{x_1 + x_2 + \cdots + x_n}{n} \]
+          </div>
+          <ul>
+            <li>\(x_i\): 개별 측정값 (individual measurement)</li>
+            <li>\(n\): 반복 측정 횟수 (number of replicate measurements)</li>
+            <li>\(\bar{x}\): 표본 평균 (sample mean)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">중앙값 (Median, 중앙값)</div>
+          <p>데이터를 오름차순 또는 내림차순으로 정렬했을 때 <strong>정가운데에 위치한 값</strong>이다.</p>
+          <ul>
+            <li>중앙값 위아래로 동일한 수의 데이터가 존재</li>
+            <li>짝수 개의 데이터인 경우: 가운데 두 값의 평균</li>
+            <li>평균에 비해 <strong>이상점(outlier, 이상점)에 덜 민감</strong>하다</li>
+          </ul>
+        </div>
+
+        <div class="tip">이상점(bad data)이 의심될 때는 중앙값이 평균보다 더 신뢰할 수 있는 대표값이 된다. 하지만 일반적인 분석화학 데이터에서는 평균을 주로 사용한다.</div>
+      </section>
+
+      <!-- ==================== Page 5 ==================== -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>표준편차 (Standard Deviation) &mdash; 유한 측정</h2>
+        <div class="summary-box">
+          <strong>표준편차(Standard Deviation)</strong>는 데이터가 평균 주위에 얼마나 밀집해 있는지를 나타내는 척도이다. 편차가 작을수록 <strong>정밀도(Precision)</strong>가 높다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">표본 표준편차 (Sample Standard Deviation, s)</div>
+          <p><strong>유한 횟수</strong>(finite set)의 측정에서 사용하는 표준편차:</p>
+          <div class="math-block">
+            \[ s = \sqrt{\frac{\displaystyle\sum_{i=1}^{n}(x_i - \bar{x})^2}{n-1}} \]
+          </div>
+          <table class="terms-table">
+            <thead><tr><th>기호</th><th>의미</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">\(s\)</td><td>표본 표준편차</td><td>sample standard deviation</td></tr>
+              <tr><td class="en">\(x_i\)</td><td>개별 측정값</td><td>individual measurement</td></tr>
+              <tr><td class="en">\(\bar{x}\)</td><td>표본 평균</td><td>mean value</td></tr>
+              <tr><td class="en">\(n\)</td><td>측정 횟수</td><td>total number of measurements</td></tr>
+              <tr><td class="en">\(n-1\)</td><td>자유도</td><td>degrees of freedom (자유도)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-label">왜 n이 아닌 n-1로 나누는가? (Bessel's Correction)</div>
+          <p>분모가 \(n\)이 아닌 \(n-1\)인 이유를 이해하는 것이 중요하다:</p>
+          <ol>
+            <li><strong>자유도(Degrees of Freedom)</strong>: \(n\)개의 측정값에서 평균 \(\bar{x}\)를 계산하면, 하나의 구속 조건(constraint)이 생긴다. 즉, \(\sum(x_i - \bar{x}) = 0\)이므로 마지막 하나의 편차는 나머지로부터 결정된다. 따라서 독립적인 정보는 \(n-1\)개뿐이다.</li>
+            <li><strong>편향 보정(Bias Correction)</strong>: 표본 평균 \(\bar{x}\)는 모집단 평균 \(\mu\)와 정확히 같지 않다. \(n\)으로 나누면 표준편차가 체계적으로 과소평가(underestimate)된다. \(n-1\)로 나누면 모집단 표준편차 \(\sigma\)의 <strong>불편 추정량(unbiased estimator)</strong>이 된다.</li>
+            <li>이 보정을 <strong>베셀의 보정(Bessel's Correction)</strong>이라 한다.</li>
+          </ol>
+        </div>
+
+        <div class="warning-box">
+          <strong>주의:</strong> 표본(sample)에서는 \(s\)와 \(\bar{x}\)를 사용하고, 모집단(population)에서는 \(\sigma\)와 \(\mu\)를 사용한다. 기호를 혼동하지 않도록 주의하자.
+        </div>
+
+        <!-- SVG for 68.3% illustration -->
+        <div class="diagram-container">
+          <svg width="460" height="220" viewBox="0 0 460 220">
+            <defs>
+              <clipPath id="clip68">
+                <rect x="160" y="0" width="140" height="200"/>
+              </clipPath>
+            </defs>
+            <!-- Axes -->
+            <line x1="40" y1="190" x2="420" y2="190" stroke="currentColor" stroke-width="1"/>
+            <!-- Bell curve -->
+            <path d="M 50,188 Q 80,186 110,180 Q 140,165 170,130 Q 200,70 220,40 Q 230,30 240,40 Q 260,70 290,130 Q 320,165 350,180 Q 380,186 410,188" fill="none" stroke="currentColor" stroke-width="2"/>
+            <!-- Shaded 68.3% area -->
+            <path d="M 160,162 Q 180,120 200,70 Q 220,40 230,30 Q 240,40 260,70 Q 280,120 300,162 L 300,190 L 160,190 Z" fill="rgba(135,206,235,0.35)" stroke="none"/>
+            <!-- Mean line -->
+            <line x1="230" y1="28" x2="230" y2="190" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <!-- Labels -->
+            <text x="230" y="15" font-size="12" fill="var(--accent)" text-anchor="middle" font-weight="500">\u03BC (or x&#772;)</text>
+            <text x="160" y="205" font-size="11" fill="var(--text-muted)" text-anchor="middle">-1s</text>
+            <text x="300" y="205" font-size="11" fill="var(--text-muted)" text-anchor="middle">+1s</text>
+            <text x="230" y="145" font-size="14" fill="var(--accent)" text-anchor="middle" font-weight="700">68.3%</text>
+            <!-- Annotations -->
+            <text x="230" y="175" font-size="10" fill="var(--text-muted)" text-anchor="middle">of area under curve</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">Figure 4.3: 가우스 곡선에서 평균 &plusmn; 1s 내에 68.3%의 데이터가 포함됨</div>
+      </section>
+
+      <!-- ==================== Page 6 ==================== -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>표준편차 (Standard Deviation) &mdash; 무한 측정 (모집단)</h2>
+        <div class="summary-box">
+          이론적으로 <strong>무한 횟수</strong>(infinite set)의 측정을 한다면, 모집단 표준편차 \(\sigma\)와 모집단 평균 \(\mu\)를 사용한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">모집단 표준편차 (Population Standard Deviation, &sigma;)</div>
+          <div class="math-block">
+            \[ \sigma = \sqrt{\frac{\displaystyle\sum_{i=1}^{N}(x_i - \mu)^2}{N}} \]
+          </div>
+          <ul>
+            <li>\(\sigma\): <strong>모집단 표준편차 (population standard deviation)</strong></li>
+            <li>\(\mu\): <strong>모집단 평균 (population mean)</strong> &mdash; 참값에 해당</li>
+            <li>\(N\): 모집단의 전체 데이터 수</li>
+          </ul>
+          <p>모집단에서는 분모가 \(N-1\)이 아닌 \(N\)이다. 모집단 평균 \(\mu\)가 알려져 있으므로 자유도 손실이 없기 때문이다.</p>
+        </div>
+
+        <div class="key-point">
+          <strong>핵심 구분:</strong> 계통 오차(systematic error)가 없는 경우, 모집단 평균 \(\mu\)는 측정의 <strong>참값(true value)</strong>과 같아야 한다. 그러나 현실에서는 무한 번 측정이 불가능하므로, 표본 통계량(\(\bar{x}\), \(s\))으로 모집단 모수(\(\mu\), \(\sigma\))를 추정한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">표본 vs. 모집단 기호 비교</div>
+          <table class="terms-table">
+            <thead><tr><th>구분</th><th>평균</th><th>표준편차</th><th>분모</th></tr></thead>
+            <tbody>
+              <tr><td>표본 (Sample, 유한)</td><td class="en">\(\bar{x}\)</td><td class="en">\(s\)</td><td>\(n-1\)</td></tr>
+              <tr><td>모집단 (Population, 무한)</td><td class="en">\(\mu\)</td><td class="en">\(\sigma\)</td><td>\(N\)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 7 ==================== -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>표준편차에서 파생된 표현들</h2>
+        <div class="summary-box">
+          표준편차로부터 <strong>분산(Variance)</strong>, <strong>상대 표준편차(RSD)</strong>, <strong>범위(Range)</strong> 등의 유용한 통계량을 계산할 수 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">파생 통계량</div>
+
+          <h3>1. 분산 (Variance, 분산)</h3>
+          <p>표준편차의 제곱이다.</p>
+          <div class="math-block">
+            \[ V = s^2 \]
+          </div>
+          <p>분산은 오차 전파(error propagation) 계산에서 자주 사용된다.</p>
+
+          <h3>2. 상대 표준편차 (Relative Standard Deviation, RSD)</h3>
+          <p><strong>변동계수(Coefficient of Variation, CV)</strong>라고도 한다. 표준편차를 평균으로 나누어 백분율로 표현한다.</p>
+          <div class="math-block">
+            \[ \text{R.S.D.} = \frac{s}{\bar{x}} \times 100\% \]
+          </div>
+          <p>서로 다른 크기의 측정값의 정밀도를 비교할 때 유용하다.</p>
+
+          <h3>3. 범위 (Range, 범위)</h3>
+          <div class="math-block">
+            \[ \text{Range} = \text{최대값(Max)} - \text{최소값(Min)} \]
+          </div>
+          <p>데이터의 전체 퍼짐 정도를 가장 간단하게 나타낸다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 8 ==================== -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>예제: 기본 통계량 계산</h2>
+        <div class="summary-box">
+          측정값 <strong>7, 18, 10, 15</strong>에 대해 (1) 평균, (2) 표준편차, (3) 상대 표준편차를 구하라.
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이 (Solution)</div>
+
+          <div class="step-box">
+            <span class="step-num">1</span> <strong>평균 (Mean)</strong>
+            <div class="math-block">
+              \[ \bar{x} = \frac{7 + 18 + 10 + 15}{4} = 12.5 \]
+            </div>
+            <p style="font-size:13px; color:var(--text-muted);">분모 4는 정확한 수(exact number)이므로 유효숫자에 영향을 주지 않는다.</p>
+          </div>
+
+          <div class="step-box">
+            <span class="step-num">2</span> <strong>표준편차 (Standard Deviation)</strong>
+            <p>반올림 오차를 피하기 위해, 중간 계산에서는 원래 데이터보다 한 자릿수 더 많은 숫자를 유지한다.</p>
+            <div class="math-block">
+              \[ s = \sqrt{\frac{(7-12.5)^2 + (18-12.5)^2 + (10-12.5)^2 + (15-12.5)^2}{4-1}} \]
+              \[ = \sqrt{\frac{(-5.5)^2 + (5.5)^2 + (-2.5)^2 + (2.5)^2}{3}} = \sqrt{\frac{30.25 + 30.25 + 6.25 + 6.25}{3}} \]
+              \[ = \sqrt{\frac{73.00}{3}} = \sqrt{24.33} = 4.9 \]
+            </div>
+          </div>
+
+          <div class="step-box">
+            <span class="step-num">3</span> <strong>상대 표준편차 (RSD)</strong>
+            <div class="math-block">
+              \[ \text{R.S.D.} = \frac{4.9}{12.5} \times 100 = 39\% \]
+            </div>
+          </div>
+        </div>
+
+        <div class="key-point">
+          <strong>유효숫자 규칙:</strong> 평균과 표준편차는 같은 자릿수(소수점 위치)에서 끝나야 한다. \(\bar{x} = 12.5\)이면, \(s = 4.9\)이다. 표준편차가 클 때는 유효숫자 수가 증가할 수 있다 (이 예에서는 한 자리 대신 두 자리).
+        </div>
+      </section>
+
+      <!-- ==================== Page 9 ==================== -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>예제 4-A: 종합 통계량 계산</h2>
+        <div class="summary-box">
+          숫자 <strong>821, 783, 834, 855</strong>에 대해 (1) 평균, (2) 표준편차, (3) 상대 표준편차, (4) 중앙값, (5) 범위를 구하라. 범위를 제외한 모든 값은 마지막 유효숫자 다음 한 자리까지 표시하라.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Ex 4-A 풀이</div>
+
+          <div class="step-box">
+            <span class="step-num">1</span> <strong>평균</strong>
+            <div class="math-block">
+              \[ \bar{x} = \frac{821 + 783 + 834 + 855}{4} = 823.2 \]
+            </div>
+          </div>
+
+          <div class="step-box">
+            <span class="step-num">2</span> <strong>표준편차</strong>
+            <div class="math-block">
+              \[ s = \sqrt{\frac{(821-823.2)^2 + (783-823.2)^2 + (834-823.2)^2 + (855-823.2)^2}{4-1}} \]
+              \[ = \sqrt{\frac{(-2.2)^2 + (-40.2)^2 + (10.8)^2 + (31.8)^2}{3}} \]
+              \[ = \sqrt{\frac{4.84 + 1616.04 + 116.64 + 1011.24}{3}} = \sqrt{\frac{2748.76}{3}} = \sqrt{916.25} = 30.3 \]
+            </div>
+          </div>
+
+          <div class="step-box">
+            <span class="step-num">3</span> <strong>상대 표준편차</strong>
+            <div class="math-block">
+              \[ \text{R.S.D.} = \frac{30.3}{823.2} \times 100 = 3.68\% \]
+            </div>
+          </div>
+
+          <div class="step-box">
+            <span class="step-num">4</span> <strong>중앙값</strong>
+            <p>오름차순 정렬: 783, 821, 834, 855 &rarr; 짝수 개이므로 가운데 두 값의 평균:</p>
+            <div class="math-block">
+              \[ \text{median} = \frac{821 + 834}{2} = 827.5 \]
+            </div>
+          </div>
+
+          <div class="step-box">
+            <span class="step-num">5</span> <strong>범위</strong>
+            <div class="math-block">
+              \[ \text{Range} = 855 - 783 = 72 \]
+            </div>
+          </div>
+        </div>
+
+        <div class="tip">유효숫자 규칙에 따르면, 평균(\(823.2\))과 표준편차(\(30.3\))는 같은 소수점 자리에서 끝나야 한다. 이 경우 소수점 첫째 자리까지 표기하여 유효숫자 규칙을 충족한다.</div>
+      </section>
+
+      <!-- ==================== Page 10 ==================== -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>표준편차와 확률: 정규 오차 곡선 (Normal Error Curve)</h2>
+        <div class="summary-box">
+          가우스 곡선의 면적을 1로 정규화(normalize)하면 <strong>정규 오차 곡선(Normal Error Curve)</strong>이 되며, 이 곡선 아래의 면적은 <strong>확률(probability)</strong>을 나타낸다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">가우스 분포 함수 (Gaussian Distribution Function)</div>
+          <div class="math-block">
+            \[ y = \frac{e^{-(x-\mu)^2 / 2\sigma^2}}{\sigma\sqrt{2\pi}} \]
+          </div>
+          <table class="terms-table">
+            <thead><tr><th>기호</th><th>의미</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">\(y\)</td><td>확률 밀도</td><td>해당 \(x\) 값에서의 상대 빈도</td></tr>
+              <tr><td class="en">\(x\)</td><td>측정값</td><td>관측된 데이터 값</td></tr>
+              <tr><td class="en">\(\mu\)</td><td>모집단 평균</td><td>분포의 중심 (center of distribution)</td></tr>
+              <tr><td class="en">\(\sigma\)</td><td>모집단 표준편차</td><td>분포의 폭 (width of distribution)</td></tr>
+              <tr><td class="en">\(e\)</td><td>자연상수</td><td>오일러 수 (\(\approx 2.71828\))</td></tr>
+              <tr><td class="en">\(\pi\)</td><td>원주율</td><td>\(\approx 3.14159\)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">
+          <strong>표준 정규분포:</strong> \(\mu = 0\), \(\sigma = 1\)로 설정하면 표준 정규분포(Standard Normal Distribution)가 되며, 이때 x축이 곧 z-점수가 된다.
+        </div>
+
+        <!-- Standard Normal SVG -->
+        <div class="diagram-container">
+          <svg width="420" height="220" viewBox="0 0 420 220">
+            <!-- Axes -->
+            <line x1="30" y1="180" x2="390" y2="180" stroke="currentColor" stroke-width="1.2"/>
+            <line x1="210" y1="180" x2="210" y2="15" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="4,3"/>
+            <!-- Bell curve for standard normal -->
+            <path d="M 30,178 Q 60,176 90,170 Q 120,158 150,130 Q 175,85 195,50 Q 205,30 210,22 Q 215,30 225,50 Q 245,85 270,130 Q 300,158 330,170 Q 360,176 390,178" fill="rgba(255,200,150,0.2)" stroke="currentColor" stroke-width="2"/>
+            <!-- Shaded tail -->
+            <path d="M 330,170 Q 345,174 360,176 Q 375,178 390,178 L 390,180 L 330,180 Z" fill="rgba(255,180,130,0.4)" stroke="none"/>
+            <!-- X-axis labels -->
+            <text x="30" y="198" font-size="11" fill="var(--text-muted)" text-anchor="middle">-3</text>
+            <text x="90" y="198" font-size="11" fill="var(--text-muted)" text-anchor="middle">-2</text>
+            <text x="150" y="198" font-size="11" fill="var(--text-muted)" text-anchor="middle">-1</text>
+            <text x="210" y="198" font-size="11" fill="var(--text-muted)" text-anchor="middle">0</text>
+            <text x="270" y="198" font-size="11" fill="var(--text-muted)" text-anchor="middle">1</text>
+            <text x="330" y="198" font-size="11" fill="var(--text-muted)" text-anchor="middle">2</text>
+            <text x="390" y="198" font-size="11" fill="var(--text-muted)" text-anchor="middle">3</text>
+            <text x="210" y="213" font-size="12" fill="var(--text-muted)" text-anchor="middle">x</text>
+            <!-- y-axis labels -->
+            <text x="22" y="185" font-size="10" fill="var(--text-muted)" text-anchor="end">0</text>
+            <text x="22" y="95" font-size="10" fill="var(--text-muted)" text-anchor="end">0.2</text>
+            <text x="22" y="25" font-size="10" fill="var(--text-muted)" text-anchor="end">0.4</text>
+            <text x="15" y="105" font-size="12" fill="var(--text-muted)" text-anchor="middle" transform="rotate(-90,15,105)">y</text>
+            <!-- Peak label -->
+            <text x="260" y="15" font-size="11" fill="var(--accent)">&mu; = 0, &sigma; = 1</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">&mu; = 0, &sigma; = 1일 때의 표준 정규분포 곡선</div>
+      </section>
+
+      <!-- ==================== Page 11 ==================== -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>z-점수 (z-score): 표준화 변수</h2>
+        <div class="summary-box">
+          <strong>z-점수</strong>는 데이터 값이 평균으로부터 몇 표준편차 떨어져 있는지를 나타내는 무차원 변수이다. 서로 다른 데이터 세트를 동일한 척도로 비교할 수 있게 해준다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">z-점수 정의</div>
+          <div class="math-block">
+            \[ z = \frac{x - \mu}{\sigma} \qquad\qquad dz = \frac{dx}{\sigma} \]
+          </div>
+          <ul>
+            <li>\(z = 1\)이면 \(x - \mu = \sigma\) &rarr; 평균에서 1 표준편차 떨어진 지점</li>
+            <li>\(z = 2\)이면 \(x - \mu = 2\sigma\) &rarr; 평균에서 2 표준편차 떨어진 지점</li>
+            <li>\(z = 3\)이면 \(x - \mu = 3\sigma\) &rarr; 평균에서 3 표준편차 떨어진 지점</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">z-점수를 사용한 가우스 곡선</div>
+          <p>x축을 z로 변환하면, 가우스 곡선의 방정식은 다음과 같이 단순화된다:</p>
+          <div class="math-block">
+            \[ y = \frac{e^{-z^2/2}}{\sigma\sqrt{2\pi}} \]
+          </div>
+          <p>이 변환의 의미:</p>
+          <ul>
+            <li>모든 가우스 분포는 z-점수로 변환하면 <strong>동일한 형태의 곡선</strong>이 된다</li>
+            <li>표준편차가 다른 여러 데이터 세트를 하나의 표로 비교할 수 있다</li>
+            <li>이것이 z-표(Table 4-1) 하나로 모든 정규분포의 확률을 계산할 수 있는 이유이다</li>
+          </ul>
+        </div>
+
+        <!-- Two bell curves with different sigma -->
+        <div class="diagram-container">
+          <svg width="460" height="200" viewBox="0 0 460 200">
+            <!-- Axes -->
+            <line x1="30" y1="170" x2="430" y2="170" stroke="currentColor" stroke-width="1"/>
+            <!-- Narrow curve (small sigma = A) -->
+            <path d="M 100,168 Q 140,160 170,130 Q 200,60 220,30 Q 230,20 240,30 Q 260,60 290,130 Q 320,160 360,168" fill="none" stroke="currentColor" stroke-width="2"/>
+            <text x="232" y="16" font-size="11" fill="currentColor" text-anchor="middle">A</text>
+            <!-- Wide curve (large sigma = B) -->
+            <path d="M 60,168 Q 100,164 140,152 Q 180,125 210,95 Q 225,80 230,75 Q 235,80 250,95 Q 280,125 320,152 Q 360,164 400,168" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="6,3"/>
+            <text x="380" y="155" font-size="11" fill="var(--text-muted)">B</text>
+            <!-- Labels -->
+            <text x="90" y="155" font-size="10" fill="currentColor">&sigma;_A &lt; &sigma;_B</text>
+            <text x="120" y="140" font-size="10" fill="currentColor">A: 좁고 높음 (더 정밀)</text>
+            <text x="120" y="128" font-size="10" fill="var(--text-muted)">B: 넓고 낮음 (덜 정밀)</text>
+            <text x="230" y="190" font-size="11" fill="var(--text-muted)" text-anchor="middle">평균으로부터의 편차, x - &mu;</text>
+            <!-- sigma annotations -->
+            <text x="170" y="168" font-size="9" fill="currentColor" text-anchor="middle">-&sigma;_A</text>
+            <text x="290" y="168" font-size="9" fill="currentColor" text-anchor="middle">+&sigma;_A</text>
+            <text x="140" y="168" font-size="9" fill="var(--text-muted)" text-anchor="middle">-&sigma;_B</text>
+            <text x="320" y="168" font-size="9" fill="var(--text-muted)" text-anchor="middle">+&sigma;_B</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">표준편차가 작은 분포(A)와 큰 분포(B): z-점수로 변환하면 같은 곡선이 된다</div>
+      </section>
+
+      <!-- ==================== Page 12 ==================== -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>정규 오차 곡선의 면적 = 확률 (Probability)</h2>
+        <div class="summary-box">
+          정규 오차 곡선 아래의 <strong>면적(area)</strong>은 해당 구간에 데이터가 떨어질 <strong>확률(probability)</strong>을 나타낸다. 이것이 통계적 검정의 핵심 원리이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 확률 구간 (68-95-99.7 규칙)</div>
+
+          <h3>\(\mu \pm 1\sigma\) 구간 (z = -1 ~ +1)</h3>
+          <div class="math-block">
+            \[ \text{area} = \int_{-\sigma}^{\sigma} \frac{e^{-(x-\mu)^2/2\sigma^2}}{\sigma\sqrt{2\pi}} \, dx = \int_{-1}^{1} \frac{e^{-z^2/2}}{\sqrt{2\pi}} \, dz = 0.683 \]
+          </div>
+          <p>데이터가 \(\mu \pm \sigma\) 범위에 들어올 확률: <strong>68.3%</strong> (범위 밖에 있을 확률: 31.7%)</p>
+
+          <h3>\(\mu \pm 2\sigma\) 구간 (z = -2 ~ +2)</h3>
+          <div class="math-block">
+            \[ \text{area} = \int_{-2}^{2} \frac{e^{-z^2/2}}{\sqrt{2\pi}} \, dz = 0.955 \]
+          </div>
+          <p>데이터가 \(\mu \pm 2\sigma\) 범위에 들어올 확률: <strong>95.5%</strong> (범위 밖: 4.5%)</p>
+
+          <h3>\(\mu \pm 3\sigma\) 구간 (z = -3 ~ +3)</h3>
+          <div class="math-block">
+            \[ \text{area} = \int_{-3}^{3} \frac{e^{-z^2/2}}{\sqrt{2\pi}} \, dz = 0.997 \]
+          </div>
+          <p>데이터가 \(\mu \pm 3\sigma\) 범위에 들어올 확률: <strong>99.7%</strong> (범위 밖: 0.3%)</p>
+        </div>
+
+        <!-- Three bell curves showing 68, 95, 99.7 -->
+        <div class="diagram-grid">
+          <div class="diagram-cell">
+            <div class="cell-title">&plusmn;1&sigma; &rarr; 68.3%</div>
+            <svg width="180" height="110" viewBox="0 0 180 110">
+              <path d="M 10,95 Q 30,92 50,82 Q 70,55 85,25 Q 90,15 95,25 Q 110,55 130,82 Q 150,92 170,95" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M 60,70 Q 75,35 85,25 Q 90,15 95,25 Q 105,35 120,70 L 120,95 L 60,95 Z" fill="rgba(135,206,235,0.4)" stroke="none"/>
+              <text x="90" y="75" font-size="13" fill="var(--accent)" text-anchor="middle" font-weight="700">0.683</text>
+            </svg>
+            <div class="cell-desc">범위 밖 확률: 31.7%</div>
+          </div>
+          <div class="diagram-cell">
+            <div class="cell-title">&plusmn;2&sigma; &rarr; 95.5%</div>
+            <svg width="180" height="110" viewBox="0 0 180 110">
+              <path d="M 10,95 Q 30,92 50,82 Q 70,55 85,25 Q 90,15 95,25 Q 110,55 130,82 Q 150,92 170,95" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M 35,88 Q 55,70 70,50 Q 82,30 85,25 Q 90,15 95,25 Q 98,30 110,50 Q 125,70 145,88 L 145,95 L 35,95 Z" fill="rgba(135,206,235,0.4)" stroke="none"/>
+              <text x="90" y="75" font-size="13" fill="var(--accent)" text-anchor="middle" font-weight="700">0.955</text>
+            </svg>
+            <div class="cell-desc">범위 밖 확률: 4.5%</div>
+          </div>
+          <div class="diagram-cell">
+            <div class="cell-title">&plusmn;3&sigma; &rarr; 99.7%</div>
+            <svg width="180" height="110" viewBox="0 0 180 110">
+              <path d="M 10,95 Q 30,92 50,82 Q 70,55 85,25 Q 90,15 95,25 Q 110,55 130,82 Q 150,92 170,95" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M 15,94 Q 35,88 50,82 Q 70,55 85,25 Q 90,15 95,25 Q 110,55 130,82 Q 145,88 165,94 L 165,95 L 15,95 Z" fill="rgba(135,206,235,0.4)" stroke="none"/>
+              <text x="90" y="75" font-size="13" fill="var(--accent)" text-anchor="middle" font-weight="700">0.997</text>
+            </svg>
+            <div class="cell-desc">범위 밖 확률: 0.3%</div>
+          </div>
+        </div>
+
+        <div class="warning-box">
+          <strong>시험 필수 암기:</strong> 68.3% - 95.5% - 99.7% 규칙은 통계학의 가장 기본적인 규칙이다. &plusmn;2&sigma; 구간이 약 95% 신뢰구간에 해당한다는 점이 특히 중요하다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 13 ==================== -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>z-표 (Table 4-1): 정규 오차 곡선의 좌표와 면적</h2>
+        <div class="summary-box">
+          z-표는 z = 0부터 특정 z 값까지의 <strong>면적(확률)</strong>을 나타낸다. 이 표를 사용하면 임의의 구간에 대한 확률을 계산할 수 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Table 4-1: 정규 오차 곡선의 좌표와 면적 (발췌)</div>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">
+            \(y = \dfrac{1}{\sqrt{2\pi}} e^{-z^2/2}\), &nbsp; Area = z = 0에서 해당 |z|까지의 면적
+          </p>
+          <table class="data-table">
+            <thead>
+              <tr><th>|z|</th><th>y</th><th>Area</th><th>|z|</th><th>y</th><th>Area</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0.0</td><td>0.3989</td><td>0.0000</td><td>1.5</td><td>0.1295</td><td>0.4332</td></tr>
+              <tr><td>0.1</td><td>0.3970</td><td>0.0398</td><td>1.6</td><td>0.1109</td><td>0.4452</td></tr>
+              <tr><td>0.2</td><td>0.3910</td><td>0.0793</td><td>1.7</td><td>0.0941</td><td>0.4554</td></tr>
+              <tr><td>0.3</td><td>0.3814</td><td>0.1179</td><td>1.8</td><td>0.0790</td><td>0.4641</td></tr>
+              <tr><td>0.4</td><td>0.3683</td><td>0.1554</td><td>1.9</td><td>0.0656</td><td>0.4713</td></tr>
+              <tr><td>0.5</td><td>0.3521</td><td>0.1915</td><td>2.0</td><td>0.0540</td><td>0.4773</td></tr>
+              <tr><td>0.6</td><td>0.3332</td><td>0.2258</td><td>2.1</td><td>0.0440</td><td>0.4821</td></tr>
+              <tr><td>0.7</td><td>0.3123</td><td>0.2580</td><td>2.2</td><td>0.0355</td><td>0.4861</td></tr>
+              <tr><td>0.8</td><td>0.2897</td><td>0.2881</td><td>2.5</td><td>0.0175</td><td>0.4938</td></tr>
+              <tr><td>0.9</td><td>0.2661</td><td>0.3159</td><td>2.7</td><td>0.0104</td><td>0.4965</td></tr>
+              <tr><td>1.0</td><td>0.2420</td><td>0.3413</td><td>3.0</td><td>0.0044</td><td>0.4987</td></tr>
+              <tr><td>1.1</td><td>0.2179</td><td>0.3643</td><td>3.5</td><td>0.0009</td><td>0.4998</td></tr>
+              <tr><td>1.2</td><td>0.1942</td><td>0.3849</td><td>4.0</td><td>0.0001</td><td>0.5000</td></tr>
+              <tr><td>1.3</td><td>0.1714</td><td>0.4032</td><td>&infin;</td><td>0</td><td>0.5000</td></tr>
+              <tr><td>1.4</td><td>0.1497</td><td>0.4192</td><td></td><td></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-label">z-표 사용법</div>
+          <ul>
+            <li>Area는 \(z = 0\)에서 해당 \(|z|\)값까지의 면적이다.</li>
+            <li>예: \(z = 1.4\)에서 Area = 0.4192 &rarr; z = 0에서 z = 1.4 사이의 면적</li>
+            <li>대칭이므로: z = -0.7 ~ z = 0 의 면적은 z = 0 ~ z = 0.7과 같다.</li>
+            <li>예: z = -0.5 ~ z = +0.3 의 면적 = (0.1915 + 0.1179) = 0.3094</li>
+            <li>\(-\infty\)에서 \(+\infty\)까지의 전체 면적 = 1 (= 100%)</li>
+          </ul>
+        </div>
+
+        <div class="tip">z-표에서 z = 1.0일 때 Area = 0.3413이므로, 양쪽 합은 2 &times; 0.3413 = 0.6826 ≈ 0.683 (68.3%). 이것이 &plusmn;1&sigma; 규칙의 근거이다.</div>
+      </section>
+
+      <!-- ==================== Page 14 ==================== -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>4-2. F 검정 (F Test): 표준편차 비교</h2>
+        <div class="summary-box">
+          <strong>F 검정</strong>은 두 데이터 세트의 표준편차(분산)가 통계적으로 같은지 다른지를 판별하는 방법이다. "대체 장비의 정밀도가 기존 장비와 같은가?"와 같은 질문에 답할 수 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">동기: 말(Horse)의 혈액 HCO&#8323;&sup1; 측정</div>
+          <p>말의 혈액에서 탄산수소 이온(\(\text{HCO}_3^-\))을 측정하는 두 장비를 비교한다:</p>
+          <table class="data-table">
+            <thead><tr><th>항목</th><th>기존 장비 (Original)</th><th>대체 장비 (Substitute)</th></tr></thead>
+            <tbody>
+              <tr><td>평균 (\(\bar{x}\), mM)</td><td>36.14</td><td>36.20</td></tr>
+              <tr><td>표준편차 (\(s\), mM)</td><td>0.28</td><td>0.47</td></tr>
+              <tr><td>측정 횟수 (\(n\))</td><td>10</td><td>4</td></tr>
+            </tbody>
+          </table>
+          <p style="margin-top:12px;">질문: 대체 장비의 표준편차(\(s = 0.47\))가 기존 장비의 표준편차(\(s = 0.28\))보다 "유의미하게(significantly)" 큰가?</p>
+        </div>
+
+        <div class="key-point">
+          <strong>F 검정의 핵심 질문:</strong> 두 표준편차의 차이가 <strong>실험적 불확실성(experimental uncertainty)</strong>으로 설명될 수 있는 수준인가, 아니면 장비 자체의 성능 차이인가?
+        </div>
+      </section>
+
+      <!-- ==================== Page 15 ==================== -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>F 검정: 공식과 임계값 표 (Table 4-4)</h2>
+        <div class="summary-box">
+          F 값은 두 분산의 비(ratio)이다. 계산된 F 값(\(F_{\text{calc}}\))을 표의 임계값(\(F_{\text{table}}\))과 비교하여 판정한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">F 검정 공식</div>
+          <div class="math-block">
+            \[ F_{\text{calculated}} = \frac{s_1^2}{s_2^2} \qquad (s_1 > s_2) \]
+          </div>
+          <p><strong>규칙:</strong></p>
+          <ol>
+            <li>항상 큰 표준편차를 분자에 놓아 \(F \geq 1\)이 되도록 한다</li>
+            <li>\(s_1 > s_2\)라는 가설을 F 검정으로 검증한다</li>
+            <li>\(F_{\text{calc}} > F_{\text{table}}\)이면 &rarr; 두 표준편차의 차이가 <strong>95% 신뢰수준에서 유의미</strong>하다</li>
+            <li>\(F_{\text{calc}} < F_{\text{table}}\)이면 &rarr; 차이가 유의미하지 않다 (우연에 의한 차이일 수 있다)</li>
+            <li>자유도(degrees of freedom): \(n\)개 측정에서 자유도 = \(n - 1\)</li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Table 4-4: F의 임계값 (95% 신뢰수준) &mdash; 발췌</div>
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">\(F = s_1^2 / s_2^2\) at 95% confidence level</p>
+          <div style="overflow-x:auto;">
+          <table class="data-table" style="font-size:12px;">
+            <thead>
+              <tr>
+                <th style="font-size:10px;">자유도<br/>(s&#8322;)</th>
+                <th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>15</th><th>20</th><th>30</th><th>&infin;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>2</strong></td><td>19.0</td><td>19.2</td><td>19.2</td><td>19.3</td><td>19.3</td><td>19.4</td><td>19.4</td><td>19.4</td><td>19.4</td><td>19.4</td><td>19.4</td><td>19.5</td><td>19.5</td></tr>
+              <tr><td><strong>3</strong></td><td>9.55</td><td>9.28</td><td>9.12</td><td>9.01</td><td>8.94</td><td>8.89</td><td>8.84</td><td>8.81</td><td>8.79</td><td>8.70</td><td>8.66</td><td>8.62</td><td>8.53</td></tr>
+              <tr><td><strong>4</strong></td><td>6.94</td><td>6.59</td><td>6.39</td><td>6.26</td><td>6.16</td><td>6.09</td><td>6.04</td><td>6.00</td><td>5.96</td><td>5.86</td><td>5.80</td><td>5.75</td><td>5.63</td></tr>
+              <tr><td><strong>5</strong></td><td>5.79</td><td>5.41</td><td>5.19</td><td>5.05</td><td>4.95</td><td>4.88</td><td>4.82</td><td>4.77</td><td>4.74</td><td>4.62</td><td>4.56</td><td>4.50</td><td>4.36</td></tr>
+              <tr><td><strong>6</strong></td><td>5.14</td><td>4.76</td><td>4.53</td><td>4.39</td><td>4.28</td><td>4.21</td><td>4.15</td><td>4.10</td><td>4.06</td><td>3.94</td><td>3.87</td><td>3.81</td><td>3.67</td></tr>
+              <tr><td><strong>7</strong></td><td>4.74</td><td>4.35</td><td>4.12</td><td>3.97</td><td>3.87</td><td>3.79</td><td>3.73</td><td>3.68</td><td>3.64</td><td>3.51</td><td>3.44</td><td>3.38</td><td>3.23</td></tr>
+              <tr><td><strong>8</strong></td><td>4.46</td><td>4.07</td><td>3.84</td><td>3.69</td><td>3.58</td><td>3.50</td><td>3.44</td><td>3.39</td><td>3.35</td><td>3.22</td><td>3.15</td><td>3.08</td><td>2.93</td></tr>
+              <tr><td><strong>9</strong></td><td>4.26</td><td>3.86</td><td>3.63</td><td>3.48</td><td>3.37</td><td>3.29</td><td>3.23</td><td>3.18</td><td>3.14</td><td>3.01</td><td>2.94</td><td>2.86</td><td>2.71</td></tr>
+              <tr><td><strong>10</strong></td><td>4.10</td><td>3.71</td><td>3.48</td><td>3.33</td><td>3.22</td><td>3.14</td><td>3.07</td><td>3.02</td><td>2.98</td><td>2.84</td><td>2.77</td><td>2.70</td><td>2.54</td></tr>
+              <tr><td><strong>20</strong></td><td>3.49</td><td>3.10</td><td>2.87</td><td>2.71</td><td>2.60</td><td>2.51</td><td>2.45</td><td>2.39</td><td>2.35</td><td>2.20</td><td>2.12</td><td>2.04</td><td>1.84</td></tr>
+              <tr><td><strong>30</strong></td><td>3.32</td><td>2.92</td><td>2.69</td><td>2.53</td><td>2.42</td><td>2.33</td><td>2.27</td><td>2.21</td><td>2.16</td><td>2.01</td><td>1.93</td><td>1.84</td><td>1.62</td></tr>
+              <tr><td><strong>&infin;</strong></td><td>3.00</td><td>2.60</td><td>2.37</td><td>2.21</td><td>2.10</td><td>2.01</td><td>1.94</td><td>1.88</td><td>1.83</td><td>1.67</td><td>1.57</td><td>1.46</td><td>1.00</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">행: \(s_2\)의 자유도, 열: \(s_1\)의 자유도 (분자의 큰 표준편차)</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 16 ==================== -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>F 검정: 말 혈액 HCO&#8323;&sup1; 예제 풀이</h2>
+        <div class="summary-box">
+          기존 장비(\(s_2 = 0.28\), \(n = 10\))와 대체 장비(\(s_1 = 0.47\), \(n = 4\))의 표준편차가 유의미하게 다른지 판단한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이 과정</div>
+
+          <div class="step-box">
+            <span class="step-num">1</span> <strong>F 값 계산</strong>
+            <p>큰 표준편차(\(s_1 = 0.47\))를 분자에 놓는다:</p>
+            <div class="math-block">
+              \[ F_{\text{calc}} = \frac{s_1^2}{s_2^2} = \frac{(0.47)^2}{(0.28)^2} = \frac{0.2209}{0.0784} = 2.82 \]
+            </div>
+          </div>
+
+          <div class="step-box">
+            <span class="step-num">2</span> <strong>자유도 결정</strong>
+            <ul>
+              <li>\(s_1\) (대체 장비): 자유도 = \(n_1 - 1 = 4 - 1 = 3\)</li>
+              <li>\(s_2\) (기존 장비): 자유도 = \(n_2 - 1 = 10 - 1 = 9\)</li>
+            </ul>
+          </div>
+
+          <div class="step-box">
+            <span class="step-num">3</span> <strong>F 표에서 임계값 찾기</strong>
+            <p>Table 4-4에서 \(s_1\)의 자유도 = 3 (열), \(s_2\)의 자유도 = 9 (행):</p>
+            <div class="math-block">
+              \[ F_{\text{table}} = 3.86 \]
+            </div>
+          </div>
+
+          <div class="step-box">
+            <span class="step-num">4</span> <strong>판정</strong>
+            <div class="math-block">
+              \[ F_{\text{calc}} = 2.82 < F_{\text{table}} = 3.86 \]
+            </div>
+          </div>
+        </div>
+
+        <div class="key-point">
+          <strong>결론:</strong> \(F_{\text{calc}} < F_{\text{table}}\)이므로, 두 장비의 표준편차 차이는 <strong>95% 신뢰수준에서 유의미하지 않다</strong>. 즉, 대체 장비의 정밀도가 기존 장비와 통계적으로 동등하다고 볼 수 있다. 따라서 대체 장비로 교체 가능하다.
+        </div>
+
+        <div class="tip">\(F_{\text{calc}} > F_{\text{table}}\)이었다면, "두 장비의 정밀도는 유의미하게 다르다"는 결론이 되어 대체 장비를 사용하기 어려웠을 것이다.</div>
+      </section>
+
+      <!-- ==================== Page 17 ==================== -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>예제 4-B: F 검정 연습</h2>
+        <div class="summary-box">
+          말 혈액의 탄산수소 이온(bicarbonate)을 두 가지 방법으로 각각 4회 측정했다. (a) 각 방법의 평균과 표준편차를 구하고, (b) 두 표준편차가 95% 신뢰수준에서 유의미하게 다른지 검정하라.
+        </div>
+
+        <div class="card">
+          <div class="card-label">데이터</div>
+          <table class="data-table">
+            <thead><tr><th>Method 1 (mM)</th><th>Method 2 (mM)</th></tr></thead>
+            <tbody>
+              <tr><td>31.40</td><td>30.70</td></tr>
+              <tr><td>31.24</td><td>29.49</td></tr>
+              <tr><td>31.18</td><td>30.01</td></tr>
+              <tr><td>31.43</td><td>30.15</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이</div>
+
+          <h3>(a) 평균과 표준편차</h3>
+          <div class="step-box">
+            <strong>Method 1:</strong>
+            <div class="math-block">
+              \[ \bar{x}_1 = \frac{31.40 + 31.24 + 31.18 + 31.43}{4} = 31.31 \text{ mM} \]
+              \[ s_1 = \sqrt{\frac{(31.40-31.31)^2 + (31.24-31.31)^2 + (31.18-31.31)^2 + (31.43-31.31)^2}{3}} \]
+              \[ = \sqrt{\frac{0.0081 + 0.0049 + 0.0169 + 0.0144}{3}} = \sqrt{\frac{0.0443}{3}} = \sqrt{0.01477} = 0.12 \text{ mM} \]
+            </div>
+          </div>
+
+          <div class="step-box">
+            <strong>Method 2:</strong>
+            <div class="math-block">
+              \[ \bar{x}_2 = \frac{30.70 + 29.49 + 30.01 + 30.15}{4} = 30.09 \text{ mM} \]
+              \[ s_2 = \sqrt{\frac{(30.70-30.09)^2 + (29.49-30.09)^2 + (30.01-30.09)^2 + (30.15-30.09)^2}{3}} \]
+              \[ = \sqrt{\frac{0.3721 + 0.3600 + 0.0064 + 0.0036}{3}} = \sqrt{\frac{0.7421}{3}} = \sqrt{0.2474} = 0.50 \text{ mM} \]
+            </div>
+          </div>
+
+          <h3>(b) F 검정</h3>
+          <div class="step-box">
+            <div class="math-block">
+              \[ F_{\text{calc}} = \frac{s_2^2}{s_1^2} = \frac{(0.50)^2}{(0.12)^2} = \frac{0.25}{0.0144} = 17.4 \]
+            </div>
+            <p>자유도: \(s_1\)과 \(s_2\) 모두 \(n - 1 = 3\)</p>
+            <p>Table 4-4에서 행 = 3, 열 = 3: \(F_{\text{table}} = 9.28\)</p>
+            <div class="math-block">
+              \[ F_{\text{calc}} = 17.4 > F_{\text{table}} = 9.28 \]
+            </div>
+          </div>
+        </div>
+
+        <div class="key-point">
+          <strong>결론:</strong> \(F_{\text{calc}} > F_{\text{table}}\)이므로, 두 방법의 표준편차 차이는 <strong>95% 신뢰수준에서 유의미하다</strong>. Method 2의 정밀도는 Method 1보다 떨어진다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 18 ==================== -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>4-3. Student's t 분포</h2>
+        <div class="summary-box">
+          <strong>Student's t</strong>는 두 가지 핵심 용도로 사용된다: (1) <strong>신뢰구간(Confidence Interval)</strong> 산출, (2) 두 측정값의 <strong>평균 비교(Comparison of Means)</strong>. "Student"는 William Sealy Gosset의 필명이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Student's t의 두 가지 용도</div>
+          <div class="diagram-grid">
+            <div class="diagram-cell">
+              <div class="cell-title">용도 1: 신뢰구간 산출</div>
+              <p style="font-size:13px; text-align:left;">실험적으로 결정한 평균 \(\bar{x}\) 주위에 <strong>모집단 평균 \(\mu\)가 존재할 구간</strong>을 설정한다.</p>
+              <p style="font-size:12px; color:var(--text-muted); text-align:left;">예: 여론 조사, 정당 지지율 조사에서 "오차 범위 &plusmn;3%"</p>
+            </div>
+            <div class="diagram-cell">
+              <div class="cell-title">용도 2: 평균 비교</div>
+              <p style="font-size:13px; text-align:left;">두 데이터 세트의 평균이 통계적으로 같은지 다른지를 판정한다.</p>
+              <p style="font-size:12px; color:var(--text-muted); text-align:left;">예: Lord Rayleigh의 질소 기체 질량 데이터</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">역사적 예시: Lord Rayleigh의 질소 기체 질량</div>
+          <p>Lord Rayleigh (1894)는 질소 기체를 두 가지 방법으로 분리하여 질량을 측정했다:</p>
+          <table class="data-table">
+            <thead><tr><th>공기에서 분리 (From air, g)</th><th>화학 분해로 분리 (From chemical decomposition, g)</th></tr></thead>
+            <tbody>
+              <tr><td>2.310 17</td><td>2.301 43</td></tr>
+              <tr><td>2.309 86</td><td>2.298 90</td></tr>
+              <tr><td>2.310 10</td><td>2.298 16</td></tr>
+              <tr><td>2.310 01</td><td>2.301 82</td></tr>
+              <tr><td>2.310 24</td><td>2.298 69</td></tr>
+              <tr><td>2.310 10</td><td>2.299 40</td></tr>
+              <tr><td>2.310 28</td><td>2.298 49</td></tr>
+              <tr><td>&mdash;</td><td>2.298 89</td></tr>
+            </tbody>
+          </table>
+          <table class="data-table" style="margin-top:8px;">
+            <thead><tr><th></th><th>공기에서</th><th>화학 분해</th></tr></thead>
+            <tbody>
+              <tr><td><strong>평균</strong></td><td>2.310 11</td><td>2.299 47</td></tr>
+              <tr><td><strong>표준편차</strong></td><td>0.000 14</td><td>0.001 38</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">
+          <strong>역사적 의의:</strong> 공기에서 분리한 질소가 화학 분해로 얻은 질소보다 일관되게 더 무거웠다. 이 통계적으로 유의미한 차이는 공기 중에 아르곤(Ar) 등의 <strong>비활성 기체(noble gas)</strong>가 포함되어 있었기 때문이다. 이 발견으로 Rayleigh는 1904년 노벨 물리학상을 수상했다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 19 ==================== -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 19</span>
+        <h2>용도 1: 신뢰 구간 (Confidence Intervals)</h2>
+        <div class="summary-box">
+          참값(true value, 모집단 평균 \(\mu\))은 현실에서 절대 알 수 없다. 그러나 <strong>신뢰 구간(CI)</strong>을 통해 "\(\mu\)가 이 범위 안에 있을 확률이 95%이다"와 같은 확률적 진술을 할 수 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">신뢰 구간의 개념</div>
+          <ul>
+            <li>참값(\(\mu\))은 현실 세계에서 결코 정확히 알 수 없다.</li>
+            <li>그러나 충분히 많은 측정을 하면, 표본 평균 \(\bar{x}\)가 참값 \(\mu\)에 가까워진다.</li>
+            <li>실험에서 사용할 수 있는 시료(sample)와 시간은 제한되어 있으므로, 한정된 데이터로부터 \(\mu\)의 범위를 추정해야 한다.</li>
+            <li>이때 <strong>신뢰 구간(Confidence Interval, CI)</strong>을 사용한다.</li>
+          </ul>
+        </div>
+
+        <div class="warning-box">
+          <strong>전제 조건:</strong> 신뢰 구간은 <strong>계통 오차(systematic error)</strong>가 없다는 가정 하에 유효하다. 계통 오차가 존재하면 신뢰 구간의 의미가 없어진다.
+        </div>
+
+        <div class="tip">여론 조사에서 "지지율 52% &plusmn; 3% (95% 신뢰수준)"이라고 하면, 진짜 지지율이 49%~55% 범위에 있을 확률이 95%라는 뜻이다. 이것이 신뢰 구간의 실생활 예시이다.</div>
+      </section>
+
+      <!-- ==================== Page 20 ==================== -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 20</span>
+        <h2>신뢰 구간 공식과 Student's t 표 (Table 4-2)</h2>
+        <div class="summary-box">
+          신뢰 구간 공식은 표본 평균, 표준편차, 측정 횟수, 그리고 t 값으로부터 계산된다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">신뢰 구간 (Confidence Interval) 공식</div>
+          <p>\(\mu\)는 \(\bar{x}\)로부터 일정 거리 내에 존재할 가능성이 높다:</p>
+          <div class="math-block">
+            \[ \text{CI for } \mu = \bar{x} \pm \frac{ts}{\sqrt{n}} \]
+          </div>
+          <table class="terms-table">
+            <thead><tr><th>기호</th><th>의미</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">\(\bar{x}\)</td><td>표본 평균</td><td>실험에서 구한 평균값</td></tr>
+              <tr><td class="en">\(t\)</td><td>Student's t 값</td><td>신뢰수준과 자유도에 따라 Table 4-2에서 결정</td></tr>
+              <tr><td class="en">\(s\)</td><td>표본 표준편차</td><td>실험에서 구한 표준편차</td></tr>
+              <tr><td class="en">\(n\)</td><td>측정 횟수</td><td>반복 측정 횟수</td></tr>
+              <tr><td class="en">\(n-1\)</td><td>자유도</td><td>degrees of freedom = \(n - 1\)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Table 4-2: Student's t 값</div>
+          <div style="overflow-x:auto;">
+          <table class="data-table" style="font-size:12px;">
+            <thead>
+              <tr>
+                <th>자유도<br/>(d.f.)</th>
+                <th>50%</th><th>90%</th><th>95%</th><th>98%</th><th>99%</th><th>99.5%</th><th>99.9%</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>1</strong></td><td>1.000</td><td>6.314</td><td>12.706</td><td>31.821</td><td>63.656</td><td>127.321</td><td>636.578</td></tr>
+              <tr><td><strong>2</strong></td><td>0.816</td><td>2.920</td><td>4.303</td><td>6.965</td><td>9.925</td><td>14.089</td><td>31.598</td></tr>
+              <tr><td><strong>3</strong></td><td>0.765</td><td>2.353</td><td>3.182</td><td>4.541</td><td>5.841</td><td>7.453</td><td>12.924</td></tr>
+              <tr><td><strong>4</strong></td><td>0.741</td><td>2.132</td><td>2.776</td><td>3.747</td><td>4.604</td><td>5.598</td><td>8.610</td></tr>
+              <tr><td><strong>5</strong></td><td>0.727</td><td>2.015</td><td>2.571</td><td>3.365</td><td>4.032</td><td>4.773</td><td>6.869</td></tr>
+              <tr><td><strong>6</strong></td><td>0.718</td><td>1.943</td><td>2.447</td><td>3.143</td><td>3.707</td><td>4.317</td><td>5.959</td></tr>
+              <tr><td><strong>7</strong></td><td>0.711</td><td>1.895</td><td>2.365</td><td>2.998</td><td>3.500</td><td>4.029</td><td>5.408</td></tr>
+              <tr><td><strong>8</strong></td><td>0.706</td><td>1.860</td><td>2.306</td><td>2.896</td><td>3.355</td><td>3.832</td><td>5.041</td></tr>
+              <tr><td><strong>9</strong></td><td>0.703</td><td>1.833</td><td>2.262</td><td>2.821</td><td>3.250</td><td>3.690</td><td>4.781</td></tr>
+              <tr><td><strong>10</strong></td><td>0.700</td><td>1.812</td><td>2.228</td><td>2.764</td><td>3.169</td><td>3.581</td><td>4.587</td></tr>
+              <tr><td><strong>15</strong></td><td>0.691</td><td>1.753</td><td>2.131</td><td>2.602</td><td>2.947</td><td>3.252</td><td>4.073</td></tr>
+              <tr><td><strong>20</strong></td><td>0.687</td><td>1.725</td><td>2.086</td><td>2.528</td><td>2.845</td><td>3.153</td><td>3.850</td></tr>
+              <tr><td><strong>25</strong></td><td>0.684</td><td>1.708</td><td>2.060</td><td>2.485</td><td>2.787</td><td>3.078</td><td>3.725</td></tr>
+              <tr><td><strong>30</strong></td><td>0.683</td><td>1.697</td><td>2.042</td><td>2.457</td><td>2.750</td><td>3.030</td><td>3.646</td></tr>
+              <tr><td><strong>40</strong></td><td>0.681</td><td>1.684</td><td>2.021</td><td>2.423</td><td>2.704</td><td>2.971</td><td>3.551</td></tr>
+              <tr><td><strong>60</strong></td><td>0.679</td><td>1.671</td><td>2.000</td><td>2.390</td><td>2.660</td><td>2.915</td><td>3.460</td></tr>
+              <tr><td><strong>120</strong></td><td>0.677</td><td>1.658</td><td>1.980</td><td>2.358</td><td>2.617</td><td>2.860</td><td>3.373</td></tr>
+              <tr><td><strong>&infin;</strong></td><td>0.674</td><td>1.645</td><td>1.960</td><td>2.326</td><td>2.576</td><td>2.807</td><td>3.291</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">
+            자유도가 &infin;일 때의 t 값은 z 값과 일치한다 (예: 95% 신뢰수준에서 t = 1.960 = z). 자유도가 작을수록 t 값이 커지며, 이는 적은 데이터에서의 불확실성을 반영한다.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">CI 공식 해석</div>
+          <p>신뢰 구간 공식 \(\mu = \bar{x} \pm \dfrac{ts}{\sqrt{n}}\)에서 알 수 있는 것:</p>
+          <ul>
+            <li><strong>측정 횟수 \(n\)이 증가</strong>하면 &rarr; \(\sqrt{n}\)이 커지고 &rarr; 신뢰 구간이 <strong>좁아진다</strong> (더 정밀)</li>
+            <li><strong>표준편차 \(s\)가 작으면</strong> &rarr; 신뢰 구간이 <strong>좁아진다</strong></li>
+            <li><strong>신뢰수준을 높이면</strong> (예: 95% &rarr; 99%) &rarr; t 값이 커지고 &rarr; 신뢰 구간이 <strong>넓어진다</strong></li>
+          </ul>
+        </div>
+
+        <div class="key-point">
+          <strong>Student's t vs. z:</strong> 모집단 표준편차 \(\sigma\)를 알고 있을 때는 t 대신 z를 사용하고, \(\sigma\) 대신 \(s\)를 사용해야 할 때(대부분의 실험 상황) Student's t를 사용한다. 자유도가 클수록 t 분포는 정규분포에 수렴한다.
+        </div>
+
+        <div class="warning-box">
+          <strong>주의:</strong> Table 4-2의 t 값은 <strong>양쪽 검정(two-tailed test)</strong>에 해당한다. 95% 신뢰수준은 양쪽 꼬리에 각각 2.5%의 면적이 있음을 의미한다. 한쪽 검정(one-tailed test)에서는 90% 열의 t 값을 사용한다.
+        </div>
+      </section>
+
+      <!-- ==================== Summary Section ==================== -->
+      <section class="page-section" id="summary">
+        <span class="page-num">Summary</span>
+        <h2>핵심 용어 총정리</h2>
+        <div class="card">
+          <div class="card-label">Chapter 4 핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Gaussian Distribution</td><td>가우스(정규) 분포</td><td>자연 현상의 반복 측정에서 나타나는 종 모양 분포</td></tr>
+              <tr><td class="en">Mean (\(\bar{x}\))</td><td>평균</td><td>측정값의 합 / 측정 횟수</td></tr>
+              <tr><td class="en">Median</td><td>중앙값</td><td>정렬된 데이터의 가운데 값; 이상점에 강건</td></tr>
+              <tr><td class="en">Standard Deviation (s)</td><td>표본 표준편차</td><td>데이터의 퍼짐 정도; 분모 n-1</td></tr>
+              <tr><td class="en">Population SD (\(\sigma\))</td><td>모집단 표준편차</td><td>무한 측정의 표준편차; 분모 N</td></tr>
+              <tr><td class="en">Variance (\(s^2\))</td><td>분산</td><td>표준편차의 제곱</td></tr>
+              <tr><td class="en">RSD</td><td>상대 표준편차</td><td>(s / x&#772;) &times; 100%; 변동계수(CV)와 동일</td></tr>
+              <tr><td class="en">Degrees of Freedom</td><td>자유도</td><td>n - 1; 독립적인 정보의 수</td></tr>
+              <tr><td class="en">z-score</td><td>z-점수</td><td>(x - &mu;) / &sigma;; 표준화된 편차</td></tr>
+              <tr><td class="en">Normal Error Curve</td><td>정규 오차 곡선</td><td>면적 = 1로 정규화된 가우스 곡선</td></tr>
+              <tr><td class="en">F Test</td><td>F 검정</td><td>두 분산(표준편차) 비교; F = s&#8321;&sup2; / s&#8322;&sup2;</td></tr>
+              <tr><td class="en">Student's t</td><td>스튜던트 t</td><td>소표본에서 신뢰구간 산출 및 평균 비교</td></tr>
+              <tr><td class="en">Confidence Interval</td><td>신뢰 구간</td><td>&mu; = x&#772; &plusmn; ts/&radic;n</td></tr>
+              <tr><td class="en">Systematic Error</td><td>계통 오차</td><td>일정한 방향으로 편향된 오차; 신뢰구간으로 제거 불가</td></tr>
+              <tr><td class="en">Bessel's Correction</td><td>베셀의 보정</td><td>표본 표준편차에서 n-1로 나누는 이유</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 공식 요약</div>
+          <div class="math-block">
+            <p><strong>평균:</strong> \(\displaystyle \bar{x} = \frac{\sum x_i}{n}\)</p>
+          </div>
+          <div class="math-block">
+            <p><strong>표본 표준편차:</strong> \(\displaystyle s = \sqrt{\frac{\sum(x_i - \bar{x})^2}{n-1}}\)</p>
+          </div>
+          <div class="math-block">
+            <p><strong>모집단 표준편차:</strong> \(\displaystyle \sigma = \sqrt{\frac{\sum(x_i - \mu)^2}{N}}\)</p>
+          </div>
+          <div class="math-block">
+            <p><strong>가우스 함수:</strong> \(\displaystyle y = \frac{e^{-(x-\mu)^2/2\sigma^2}}{\sigma\sqrt{2\pi}}\)</p>
+          </div>
+          <div class="math-block">
+            <p><strong>z-점수:</strong> \(\displaystyle z = \frac{x - \mu}{\sigma}\)</p>
+          </div>
+          <div class="math-block">
+            <p><strong>F 검정:</strong> \(\displaystyle F_{\text{calc}} = \frac{s_1^2}{s_2^2}\) &nbsp; (\(s_1 > s_2\))</p>
+          </div>
+          <div class="math-block">
+            <p><strong>신뢰 구간:</strong> \(\displaystyle \mu = \bar{x} \pm \frac{ts}{\sqrt{n}}\)</p>
+          </div>
+        </div>
+
+        <div class="tip">시험 대비 요약: (1) 표본 vs. 모집단 기호를 구분하라 (\(\bar{x}\) vs. \(\mu\), \(s\) vs. \(\sigma\)). (2) F 검정은 분산 비교, t 검정은 평균 비교이다. (3) n-1은 자유도이며, 평균을 계산하면서 1개의 자유도를 잃기 때문이다. (4) 68-95-99.7 규칙을 암기하라.</div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '다크모드';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '라이트모드';
+      }
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>

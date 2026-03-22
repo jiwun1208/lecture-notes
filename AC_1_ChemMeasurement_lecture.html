@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 1: 화학 측정의 기초 (Chemical Measurements)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    processEscapes: false
+  },
+  startup: {
+    ready: function() {
+      MathJax.startup.defaultReady();
+      window.mathJaxReady = true;
+    }
+  }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+    gap: 8px;
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  img { max-width: 100%; height: auto; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-top: 16px;
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    min-width: 0;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .page-section h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 24px 0 14px;
+    line-height: 1.4;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .math-block {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    overflow-x: auto;
+    font-size: 1.05em;
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+    max-width: 100%;
+  }
+
+  strong { color: var(--accent); font-weight: 500; }
+
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 8px 0 12px 20px; }
+  li { margin-bottom: 4px; }
+
+  .diagram-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .diagram-container svg {
+    max-width: 100%;
+    height: auto;
+  }
+  .diagram-caption {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+  .diagram-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .diagram-cell {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+  }
+  .diagram-cell .cell-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .diagram-cell .cell-desc {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 200px 1fr; }
+    .content { padding: 32px 32px 60px; }
+    .sidebar { padding: 20px 12px; }
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 28px 24px 60px; }
+  }
+
+  @media (max-width: 768px) {
+    .topbar { padding: 10px 16px; }
+    .topbar h1 { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60vw; }
+    .topbar .meta { font-size: 10px; }
+    .content { padding: 20px 16px 48px; }
+    .page-section h2 { font-size: 18px; }
+    .page-section h3 { font-size: 16px; }
+    .card { padding: 18px 16px; }
+    .summary-box { padding: 14px 16px; }
+  }
+
+  @media (max-width: 480px) {
+    .content { padding: 16px 12px 40px; }
+    .topbar h1 { font-size: 13px; max-width: 50vw; }
+    body { font-size: 14px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>화학 측정의 기초 (Chemical Measurements)</h1>
+      <div class="meta">Analytical Chemistry &mdash; Lecture 1 (Chapter 1)</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">페이지 목록</div>
+      <div class="section-label">SI 단위</div>
+      <a href="#p1">01 &mdash; 강의 개요</a>
+      <a href="#p2">02 &mdash; SI 기본 단위</a>
+      <a href="#p3">03 &mdash; 새로운 SI 정의 (2019)</a>
+      <a href="#p4">04 &mdash; SI 유도 단위</a>
+      <a href="#p5">05 &mdash; SI 기본 단위 연습</a>
+      <a href="#p6">06 &mdash; SI 접두어</a>
+      <a href="#p7">07 &mdash; 환산 인자</a>
+      <a href="#p8">08 &mdash; 화성 궤도선 사고</a>
+      <div class="section-label">화학 농도</div>
+      <a href="#p9">09 &mdash; 몰, 몰농도, 몰랄농도</a>
+      <a href="#p10">10 &mdash; 몰농도 계산 예제</a>
+      <a href="#p11">11 &mdash; 몰랄농도 계산 (DIY)</a>
+      <a href="#p12">12 &mdash; 포말농도</a>
+      <a href="#p13">13 &mdash; wt% → M 환산</a>
+      <a href="#p14">14 &mdash; wt% → M 연습문제</a>
+      <a href="#p15">15 &mdash; ppm &amp; ppb</a>
+      <div class="section-label">용액 제조</div>
+      <a href="#p16">16 &mdash; 용액 제조 예제</a>
+      <a href="#p17">17 &mdash; 희석 (Dilution)</a>
+      <a href="#p18">18 &mdash; 희석 연습문제</a>
+      <div class="section-label">평형 상수</div>
+      <a href="#p19">19 &mdash; 실험 평형 상수</a>
+      <a href="#p20">20 &mdash; 열역학 평형 상수</a>
+      <div class="section-label">용어 정리</div>
+      <a href="#glossary">용어 총정리</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== Page 1 ==================== -->
+      <section class="page-section" id="p1">
+        <div class="page-num">Page 1</div>
+        <h2>Chapter 1 &mdash; Chemical Measurement: 단위와 농도</h2>
+        <div class="summary-box">
+          이 장에서는 <strong>분석화학의 토대</strong>가 되는 단위계(SI Units), 농도 표현법(Molarity, Molality, Formal Concentration, ppm/ppb), 용액 제조 및 희석, 그리고 평형 상수의 개념을 학습합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Outline</div>
+          <ol>
+            <li><strong>SI 단위 (SI Units)</strong> &mdash; 7가지 기본 단위, 2019년 새 정의, 유도 단위, 접두어, 환산 인자</li>
+            <li><strong>화학 농도 (Chemical Concentrations)</strong> &mdash; 몰, 몰농도(M), 몰랄농도(m), 포말농도(F), wt%, ppm, ppb</li>
+            <li><strong>용액 제조 (Preparing Solutions)</strong> &mdash; 고체 시약으로부터 용액 제조, 희석 공식</li>
+            <li><strong>평형 상수 (Equilibrium Constants)</strong> &mdash; \(K_c\), \(K_p\), 열역학적 평형 상수(무차원)</li>
+          </ol>
+        </div>
+
+        <div class="tip">분석화학에서는 <strong>정확한 단위 사용</strong>과 <strong>올바른 농도 계산</strong>이 모든 분석의 출발점입니다. 단위 오류 하나로 1억 2,500만 달러짜리 우주선이 파괴된 실화가 있습니다!</div>
+      </section>
+
+      <!-- ==================== Page 2 ==================== -->
+      <section class="page-section" id="p2">
+        <div class="page-num">Page 2</div>
+        <h2>SI 기본 단위 (Fundamental SI Units)</h2>
+        <div class="summary-box">
+          <strong>SI (Le Systeme International d'Unites)</strong>는 국제 단위계로, 7가지 기본 단위와 2가지 보충 단위로 구성됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Table 1-1: 7가지 기본 단위 + 2가지 보충 단위</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>물리량 (Quantity)</th><th>단위 (Unit)</th><th>기호</th><th>정의</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>길이 (Length)</td><td>미터 (meter)</td><td class="en">m</td><td>빛이 진공에서 \(\frac{1}{299\,792\,458}\) 초 동안 진행하는 거리</td></tr>
+              <tr><td>질량 (Mass)</td><td>킬로그램 (kilogram)</td><td class="en">kg</td><td>Pt-Ir 합금 원기의 질량 (1885년 제작, 프랑스 Sevres 보관)</td></tr>
+              <tr><td>시간 (Time)</td><td>초 (second)</td><td class="en">s</td><td>\(^{133}\text{Cs}\) 원자의 특정 전이에 해당하는 복사선의 9,192,631,770 주기</td></tr>
+              <tr><td>전류 (Electric current)</td><td>암페어 (ampere)</td><td class="en">A</td><td>1 m 간격의 무한히 긴 두 평행 도체에 \(2 \times 10^{-7}\) N/m의 힘을 생기게 하는 전류</td></tr>
+              <tr><td>온도 (Temperature)</td><td>켈빈 (kelvin)</td><td class="en">K</td><td>물의 삼중점 = 273.16 K, 절대 영도 = 0 K</td></tr>
+              <tr><td>광도 (Luminous intensity)</td><td>칸델라 (candela)</td><td class="en">cd</td><td>사람 눈에 보이는 광도의 척도</td></tr>
+              <tr><td>물질량 (Amount of substance)</td><td>몰 (mole)</td><td class="en">mol</td><td>\(^{12}\text{C}\) 0.012 kg에 포함된 원자 수 (약 \(6.022 \times 10^{23}\))</td></tr>
+              <tr><td>평면각 (Plane angle)</td><td>라디안 (radian)</td><td class="en">rad</td><td>원 한 바퀴 = \(2\pi\) rad (보충 단위)</td></tr>
+              <tr><td>입체각 (Solid angle)</td><td>스테라디안 (steradian)</td><td class="en">sr</td><td>구 전체 = \(4\pi\) sr (보충 단위)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">
+          <strong>핵심:</strong> 모든 SI 유도 단위는 이 7가지 기본 단위의 조합으로 표현됩니다. 시험에서 유도 단위를 기본 단위로 변환하는 문제가 자주 출제됩니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 3 ==================== -->
+      <section class="page-section" id="p3">
+        <div class="page-num">Page 3</div>
+        <h2>새로운 SI 정의 (2019년 개정)</h2>
+        <div class="summary-box">
+          2019년 5월 20일부터 SI 기본 단위 7가지가 모두 <strong>기본 물리 상수</strong>에 기반하여 재정의되었습니다. 더 이상 물리적 원기(artifact)에 의존하지 않습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">새로운 SI 정의: 기준 물리 상수</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>단위</th><th>기준 상수</th><th>고정된 수치</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>초 (s)</td><td class="en">&nu;</td><td>\(^{133}\text{Cs}\) 초미세 전이 진동수 \(\Delta\nu_{\text{Cs}} = 9\,192\,631\,770 \; \text{s}^{-1}\)</td></tr>
+              <tr><td>미터 (m)</td><td class="en">c</td><td>빛의 속도 \(c = 299\,792\,458 \; \text{m}\cdot\text{s}^{-1}\)</td></tr>
+              <tr><td>킬로그램 (kg)</td><td class="en">h</td><td>플랑크 상수 \(h = 6.62607015 \times 10^{-34} \; \text{kg}\cdot\text{m}^2\cdot\text{s}^{-1}\)</td></tr>
+              <tr><td>암페어 (A)</td><td class="en">e</td><td>전자의 전하량 \(e = 1.602\,176\,634\,8 \times 10^{-19} \; \text{A}\cdot\text{s}\)</td></tr>
+              <tr><td>켈빈 (K)</td><td class="en">k<sub>B</sub></td><td>볼츠만 상수 \(k_B = 1.380\,649 \times 10^{-23} \; \text{J}\cdot\text{K}^{-1}\)</td></tr>
+              <tr><td>몰 (mol)</td><td class="en">N<sub>A</sub></td><td>아보가드로 수 \(N_A = 6.022\,140\,76 \times 10^{23} \; \text{mol}^{-1}\)</td></tr>
+              <tr><td>칸델라 (cd)</td><td class="en">K<sub>cd</sub></td><td>발광 효율 \(K_{\text{cd}} = 683 \; \text{cd}\cdot\text{sr}\cdot\text{W}^{-1}\) (540 &times; 10<sup>12</sup> Hz)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="warning-box">
+          <strong>주의 (2019 개정의 핵심 변화):</strong> 킬로그램은 더 이상 파리의 Pt-Ir 합금 원기가 아닌 <strong>플랑크 상수 \(h\)</strong>를 기준으로 정의됩니다. 물리적 원기는 시간이 지남에 따라 대기 반응이나 마모로 질량이 변할 수 있었기 때문입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 4 ==================== -->
+      <section class="page-section" id="p4">
+        <div class="page-num">Page 4</div>
+        <h2>SI 유도 단위 (SI Derived Units)</h2>
+        <div class="summary-box">
+          유도 단위는 기본 단위의 조합으로 정의됩니다. <strong>유도 단위를 SI 기본 단위로 환산하는 것은 시험에 반드시 출제됩니다!</strong>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Table 1-2: 고유 이름을 가진 SI 유도 단위</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>물리량</th><th>유도 단위</th><th>기호</th><th>다른 단위 표현</th><th>SI 기본 단위 표현</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>진동수 (Frequency)</td><td>헤르츠 (hertz)</td><td class="en">Hz</td><td>&mdash;</td><td>\(\text{s}^{-1}\)</td></tr>
+              <tr><td>힘 (Force)</td><td>뉴턴 (newton)</td><td class="en">N</td><td>&mdash;</td><td>\(\text{m}\cdot\text{kg}\cdot\text{s}^{-2}\)</td></tr>
+              <tr><td>압력 (Pressure)</td><td>파스칼 (pascal)</td><td class="en">Pa</td><td>\(\text{N/m}^2\)</td><td>\(\text{kg}\cdot\text{m}^{-1}\cdot\text{s}^{-2}\)</td></tr>
+              <tr><td>에너지 (Energy)</td><td>줄 (joule)</td><td class="en">J</td><td>\(\text{N}\cdot\text{m}\)</td><td>\(\text{m}^2\cdot\text{kg}\cdot\text{s}^{-2}\)</td></tr>
+              <tr><td>전력 (Power)</td><td>와트 (watt)</td><td class="en">W</td><td>\(\text{J/s}\)</td><td>\(\text{m}^2\cdot\text{kg}\cdot\text{s}^{-3}\)</td></tr>
+              <tr><td>전하 (Electric charge)</td><td>쿨롱 (coulomb)</td><td class="en">C</td><td>&mdash;</td><td>\(\text{s}\cdot\text{A}\)</td></tr>
+              <tr><td>전위 (Electric potential)</td><td>볼트 (volt)</td><td class="en">V</td><td>\(\text{W/A}\)</td><td>\(\text{m}^2\cdot\text{kg}\cdot\text{s}^{-3}\cdot\text{A}^{-1}\)</td></tr>
+              <tr><td>전기저항 (Resistance)</td><td>옴 (ohm)</td><td class="en">&Omega;</td><td>\(\text{V/A}\)</td><td>\(\text{m}^2\cdot\text{kg}\cdot\text{s}^{-3}\cdot\text{A}^{-2}\)</td></tr>
+              <tr><td>전기용량 (Capacitance)</td><td>패럿 (farad)</td><td class="en">F</td><td>\(\text{C/V}\)</td><td>\(\text{s}^4\cdot\text{A}^2\cdot\text{m}^{-2}\cdot\text{kg}^{-1}\)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">시험 대비: 유도 단위를 기본 단위로 분해할 때, 정의를 차례로 대입하세요. 예를 들어 \(\text{J} = \text{N}\cdot\text{m} = (\text{kg}\cdot\text{m}\cdot\text{s}^{-2})\cdot\text{m} = \text{kg}\cdot\text{m}^2\cdot\text{s}^{-2}\)</div>
+      </section>
+
+      <!-- ==================== Page 5 ==================== -->
+      <section class="page-section" id="p5">
+        <div class="page-num">Page 5</div>
+        <h2>SI 기본 단위로 환산 연습</h2>
+        <div class="summary-box">
+          다음 물리량의 SI 기본 단위 표현은? 유도 단위 이름(N, J, C, V)이 아닌 <strong>기본 단위(m, kg, s, A)</strong>로 답해야 합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">연습 문제</div>
+          <p><strong>(a) 힘 (Force)</strong> &mdash; N이 아닙니다!</p>
+          <div class="math-block">
+            \[\text{Force} = \text{mass} \times \text{acceleration} = \text{kg} \cdot \text{m} \cdot \text{s}^{-2}\]
+          </div>
+
+          <p><strong>(b) 일 (Work)</strong> &mdash; J이 아닙니다!</p>
+          <div class="math-block">
+            \[\text{Work} = \text{Force} \times \text{distance} = \text{kg} \cdot \text{m}^2 \cdot \text{s}^{-2}\]
+          </div>
+
+          <p><strong>(c) 전하 (Charge)</strong> &mdash; C이 아닙니다!</p>
+          <div class="math-block">
+            \[\text{Charge} = \text{current} \times \text{time} = \text{A} \cdot \text{s}\]
+          </div>
+
+          <p><strong>(d) 전위 (Electric potential)</strong> &mdash; V가 아닙니다!</p>
+          <div class="math-block">
+            \[\text{Electric\;potential} = \frac{\text{Power}}{\text{Current}} = \frac{\text{kg} \cdot \text{m}^2 \cdot \text{s}^{-3}}{\text{A}} = \text{kg} \cdot \text{m}^2 \cdot \text{s}^{-3} \cdot \text{A}^{-1}\]
+          </div>
+        </div>
+
+        <div class="key-point">
+          <strong>풀이 전략:</strong> 유도 단위 &rarr; 정의식 대입 &rarr; 기본 단위만 남을 때까지 반복 치환합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 6 ==================== -->
+      <section class="page-section" id="p6">
+        <div class="page-num">Page 6</div>
+        <h2>SI 접두어 (Prefixes)</h2>
+        <div class="summary-box">
+          SI 접두어는 단위에 <strong>10의 거듭제곱 배</strong>를 나타내기 위해 사용합니다. 분석화학에서 자주 쓰이는 접두어를 반드시 숙지하세요.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Table 1-3: SI 접두어 (큰 수 &rarr; 작은 수)</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <table class="terms-table">
+              <thead>
+                <tr><th>접두어</th><th>기호</th><th>배수</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>yotta</td><td class="en">Y</td><td>\(10^{24}\)</td></tr>
+                <tr><td>zetta</td><td class="en">Z</td><td>\(10^{21}\)</td></tr>
+                <tr><td>exa</td><td class="en">E</td><td>\(10^{18}\)</td></tr>
+                <tr><td>peta</td><td class="en">P</td><td>\(10^{15}\)</td></tr>
+                <tr><td>tera</td><td class="en">T</td><td>\(10^{12}\)</td></tr>
+                <tr><td>giga</td><td class="en">G</td><td>\(10^{9}\)</td></tr>
+                <tr><td>mega</td><td class="en">M</td><td>\(10^{6}\)</td></tr>
+                <tr><td>kilo</td><td class="en">k</td><td>\(10^{3}\)</td></tr>
+                <tr><td>hecto</td><td class="en">h</td><td>\(10^{2}\)</td></tr>
+                <tr><td>deca</td><td class="en">da</td><td>\(10^{1}\)</td></tr>
+              </tbody>
+            </table>
+            <table class="terms-table">
+              <thead>
+                <tr><th>접두어</th><th>기호</th><th>배수</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>deci</td><td class="en">d</td><td>\(10^{-1}\)</td></tr>
+                <tr><td>centi</td><td class="en">c</td><td>\(10^{-2}\)</td></tr>
+                <tr><td>milli</td><td class="en">m</td><td>\(10^{-3}\)</td></tr>
+                <tr><td>micro</td><td class="en">&mu;</td><td>\(10^{-6}\)</td></tr>
+                <tr><td>nano</td><td class="en">n</td><td>\(10^{-9}\)</td></tr>
+                <tr><td>pico</td><td class="en">p</td><td>\(10^{-12}\)</td></tr>
+                <tr><td>femto</td><td class="en">f</td><td>\(10^{-15}\)</td></tr>
+                <tr><td>atto</td><td class="en">a</td><td>\(10^{-18}\)</td></tr>
+                <tr><td>zepto</td><td class="en">z</td><td>\(10^{-21}\)</td></tr>
+                <tr><td>yocto</td><td class="en">y</td><td>\(10^{-24}\)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tip">분석화학에서 가장 자주 쓰이는 접두어: <strong>milli (m, 10<sup>-3</sup>)</strong>, <strong>micro (&mu;, 10<sup>-6</sup>)</strong>, <strong>nano (n, 10<sup>-9</sup>)</strong>, <strong>pico (p, 10<sup>-12</sup>)</strong>. 농도 단위(mM, &mu;M, nM)와 질량 단위(mg, &mu;g, ng)에 반드시 익숙해지세요.</div>
+      </section>
+
+      <!-- ==================== Page 7 ==================== -->
+      <section class="page-section" id="p7">
+        <div class="page-num">Page 7</div>
+        <h2>환산 인자 (Conversion Factors)</h2>
+        <div class="summary-box">
+          비-SI 단위를 SI 단위로 환산하는 데 쓰이는 인자들입니다. 별표(*)가 붙은 값은 <strong>정의에 의해 정확한(exact)</strong> 환산입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Table 1-4: 주요 환산 인자</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>물리량</th><th>단위</th><th>기호</th><th>SI 환산</th></tr>
+            </thead>
+            <tbody>
+              <tr><td rowspan="2">부피 (Volume)</td><td>리터 (liter)</td><td class="en">L</td><td>\(= 10^{-3}\;\text{m}^3\) (정확)</td></tr>
+              <tr><td>밀리리터 (milliliter)</td><td class="en">mL</td><td>\(= 10^{-6}\;\text{m}^3\) (정확)</td></tr>
+              <tr><td rowspan="2">길이 (Length)</td><td>옹스트롬 (angstrom)</td><td class="en">&Aring;</td><td>\(= 10^{-10}\;\text{m}\) (정확)</td></tr>
+              <tr><td>인치 (inch)</td><td class="en">in.</td><td>\(= 0.025\,4\;\text{m}\) (정확)</td></tr>
+              <tr><td rowspan="2">질량 (Mass)</td><td>파운드 (pound)</td><td class="en">lb</td><td>\(= 0.453\,592\,37\;\text{kg}\) (정확)</td></tr>
+              <tr><td>메트릭 톤 (metric ton)</td><td class="en">&mdash;</td><td>\(= 1\,000\;\text{kg}\) (정확)</td></tr>
+              <tr><td rowspan="4">압력 (Pressure)</td><td>바 (bar)</td><td class="en">bar</td><td>\(= 10^5\;\text{Pa}\) (정확)</td></tr>
+              <tr><td>기압 (atmosphere)</td><td class="en">atm</td><td>\(= 101\,325\;\text{Pa}\) (정확)</td></tr>
+              <tr><td>토르 (torr, = 1 mmHg)</td><td class="en">Torr</td><td>\(= 133.322\;\text{Pa}\)</td></tr>
+              <tr><td>psi (pound/in<sup>2</sup>)</td><td class="en">psi</td><td>\(= 6\,894.76\;\text{Pa}\)</td></tr>
+              <tr><td rowspan="4">에너지 (Energy)</td><td>에르그 (erg)</td><td class="en">erg</td><td>\(= 10^{-7}\;\text{J}\) (정확)</td></tr>
+              <tr><td>전자볼트 (electron volt)</td><td class="en">eV</td><td>\(= 1.602\,176\,487 \times 10^{-19}\;\text{J}\)</td></tr>
+              <tr><td>칼로리 (cal, 열화학적)</td><td class="en">cal</td><td>\(= 4.184\;\text{J}\) (정확)</td></tr>
+              <tr><td>칼로리 (Cal, 대문자)</td><td class="en">Cal</td><td>\(= 1\,000\;\text{cal} = 4.184\;\text{kJ}\)</td></tr>
+              <tr><td rowspan="2">온도 (Temperature)</td><td>섭씨 (Celsius)</td><td class="en">&deg;C</td><td>\(= \text{K} - 273.15\) (정확)</td></tr>
+              <tr><td>화씨 (Fahrenheit)</td><td class="en">&deg;F</td><td>\(= 1.8(\text{K} - 273.15) + 32\) (정확)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">
+          <strong>Cal vs cal:</strong> 대문자 <strong>C</strong>alorie (Cal, 영양학 칼로리) = 1,000 소문자 calorie (cal). 혼동하지 않도록 주의하세요.
+        </div>
+      </section>
+
+      <!-- ==================== Page 8 ==================== -->
+      <section class="page-section" id="p8">
+        <div class="page-num">Page 8</div>
+        <h2>단위 오류로 인한 재앙: 화성 기후 궤도선 (Mars Climate Orbiter)</h2>
+        <div class="summary-box">
+          단위를 올바르게 사용하는 것이 얼마나 중요한지 보여주는 실제 사례입니다. <strong>1억 2,500만 달러 (약 1,900억 원)</strong>짜리 우주선이 단위 오류 하나로 파괴되었습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">사건 개요 (1999년)</div>
+          <p>1999년, NASA의 <strong>화성 기후 궤도선 (Mars Climate Orbiter)</strong>이 화성 대기권에 계획보다 <strong>100 km 낮은 고도</strong>로 진입하여 파괴되었습니다.</p>
+
+          <h3>무엇이 잘못되었는가?</h3>
+          <ul>
+            <li>우주선을 제작한 Lockheed Martin의 엔지니어들은 추력(thrust)을 <strong>영국 단위인 파운드-힘 (pound-force)</strong>으로 계산했습니다.</li>
+            <li>NASA의 제트추진연구소(JPL)는 전달받은 데이터가 <strong>SI 단위인 뉴턴 (newton)</strong>으로 되어 있다고 생각했습니다.</li>
+            <li><strong>아무도 이 오류를 발견하지 못했습니다.</strong></li>
+          </ul>
+
+          <div class="math-block">
+            \[1\;\text{pound-force} = 4.448\;\text{N}\]
+            <p style="margin-top:8px; font-size:14px; color: var(--text-muted);">추력 값이 약 4.4배 과소평가되어 궤도 계산이 크게 틀어짐</p>
+          </div>
+        </div>
+
+        <div class="warning-box">
+          <strong>교훈:</strong> 측정값에는 <strong>반드시 단위를 명시</strong>해야 합니다. "The navigation error would have been avoided if people had written their units of measurement." 분석화학에서도 마찬가지로, 단위 없는 숫자는 의미가 없습니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 9 ==================== -->
+      <section class="page-section" id="p9">
+        <div class="page-num">Page 9</div>
+        <h2>화학 농도: 몰, 몰농도, 몰랄농도</h2>
+        <div class="summary-box">
+          화학에서 물질의 양을 나타내는 기본 단위인 <strong>몰(mole)</strong>과 두 가지 핵심 농도 표현법인 <strong>몰농도(Molarity)</strong>, <strong>몰랄농도(Molality)</strong>를 학습합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">몰 (Mole)</div>
+          <p><strong>몰(mol)</strong>은 화학종의 양(amount)을 나타내는 SI 기본 단위입니다.</p>
+          <div class="math-block">
+            \[1\;\text{mol} = 6.022 \times 10^{23}\;\text{개의 입자}\]
+            <p style="margin-top:6px; font-size:14px;">원자, 분자, 이온, 전자, 이온쌍 등 모든 화학종에 적용 가능</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">몰농도 (Molarity, M) &mdash; 몰/L</div>
+          <div class="math-block">
+            \[\text{Molarity (몰농도)} = M = \frac{\text{moles of solute (용질의 몰수)}}{\text{liters of solution (용액의 부피, L)}}\]
+          </div>
+          <p>용액의 <strong>부피(L)</strong>를 기준으로 합니다. 온도에 따라 부피가 변하므로 온도 의존성이 있습니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">몰랄농도 (Molality, m) &mdash; 몰/kg</div>
+          <div class="math-block">
+            \[\text{Molality (몰랄농도)} = m = \frac{\text{moles of solute (용질의 몰수)}}{\text{kilograms of solvent (용매의 질량, kg)}}\]
+          </div>
+          <p>용매의 <strong>질량(kg)</strong>을 기준으로 합니다. 질량은 온도에 영향을 받지 않습니다.</p>
+        </div>
+
+        <div class="key-point">
+          <strong>Molality vs Molarity 핵심 차이:</strong> 몰랄농도(m)는 온도와 압력에 <strong>덜 의존</strong>합니다. 용매의 질량은 온도 변화에 영향을 받지 않지만, 용액의 부피는 열팽창으로 변하기 때문입니다. 정밀 측정에서는 몰랄농도가 선호됩니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 10 ==================== -->
+      <section class="page-section" id="p10">
+        <div class="page-num">Page 10</div>
+        <h2>몰농도 계산 예제</h2>
+
+        <div class="card">
+          <div class="card-label">예제 1: 해수 중 NaCl의 몰농도</div>
+          <p><strong>문제:</strong> 해수에는 NaCl이 1 dL (= 0.1 L)당 2.7 g 포함되어 있다. NaCl의 몰농도(M)는?</p>
+
+          <h3>풀이</h3>
+          <p>NaCl 분자량: \(M_w = 58.44\;\text{g/mol}\)</p>
+          <div class="math-block">
+            \[\text{NaCl 몰수} = \frac{2.7\;\text{g}}{58.44\;\text{g/mol}} = 0.046\;\text{mol}\]
+          </div>
+          <div class="math-block">
+            \[[\text{NaCl}] = \frac{0.046\;\text{mol}}{0.1\;\text{L}} = 0.46\;\text{M}\]
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">예제 2: 해수 중 MgCl<sub>2</sub>의 질량 계산</div>
+          <p><strong>문제:</strong> 해수의 MgCl<sub>2</sub> 농도가 0.054 M이다. 해수 25 mL에 포함된 MgCl<sub>2</sub>의 질량(g)은?</p>
+
+          <h3>풀이</h3>
+          <p>MgCl<sub>2</sub> 분자량: \(M_w = 95.2\;\text{g/mol}\)</p>
+          <div class="math-block">
+            \[\text{질량} = 0.054\;\text{M} \times 0.025\;\text{L} \times 95.2\;\text{g/mol} = 0.13\;\text{g}\]
+          </div>
+        </div>
+
+        <div class="tip">몰농도 계산의 삼각관계: <strong>질량(g)</strong>, <strong>분자량(g/mol)</strong>, <strong>부피(L)</strong> &mdash; 셋 중 둘을 알면 나머지를 구할 수 있습니다. 이것이 분석화학 계산의 기본입니다.</div>
+      </section>
+
+      <!-- ==================== Page 11 ==================== -->
+      <section class="page-section" id="p11">
+        <div class="page-num">Page 11</div>
+        <h2>몰랄농도 계산 (DIY 연습)</h2>
+
+        <div class="card">
+          <div class="card-label">연습문제: 해수 중 NaCl의 몰랄농도</div>
+          <p><strong>문제:</strong> 해수에 NaCl이 1 dL (0.1 L)당 2.7 g 포함되어 있다. NaCl의 몰랄농도(mol/kg)를 구하시오.</p>
+          <p>주어진 조건: NaCl \(M_w = 58.44\;\text{g/mol}\), 해수 밀도 = 1.030 g/mL</p>
+
+          <h3>풀이 과정</h3>
+          <p><strong>Step 1:</strong> NaCl 몰수 계산</p>
+          <div class="math-block">
+            \[\text{NaCl 몰수} = \frac{2.7\;\text{g}}{58.44\;\text{g/mol}} = 0.0462\;\text{mol}\]
+          </div>
+
+          <p><strong>Step 2:</strong> 용매(물)의 질량 계산</p>
+          <div class="math-block">
+            \[\text{해수 100 mL의 질량} = 100\;\text{mL} \times 1.030\;\text{g/mL} = 103.0\;\text{g}\]
+            \[\text{용매(물)의 질량} = 103.0\;\text{g} - 2.7\;\text{g (NaCl)} = 100.3\;\text{g} = 0.1003\;\text{kg}\]
+          </div>
+
+          <p><strong>Step 3:</strong> 몰랄농도 계산</p>
+          <div class="math-block">
+            \[m = \frac{0.0462\;\text{mol}}{0.1003\;\text{kg}} = 0.461\;\text{mol/kg}\]
+          </div>
+        </div>
+
+        <div class="key-point">
+          <strong>Molality 계산 주의사항:</strong> 분모는 <strong>용액(solution)</strong>이 아닌 <strong>용매(solvent)</strong>의 질량입니다. 용액 전체 질량에서 용질의 질량을 빼야 합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 12 ==================== -->
+      <section class="page-section" id="p12">
+        <div class="page-num">Page 12</div>
+        <h2>포말농도 (Formal Concentration, F)</h2>
+        <div class="summary-box">
+          <strong>포말농도</strong>는 용해된 물질이 실제로 어떤 화학종으로 존재하는지와 관계없이, 처음 녹인 물질의 총 몰수를 기준으로 하는 농도입니다. 강전해질(strong electrolyte)에서 특히 중요합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">강전해질 (Strong Electrolyte): MgCl<sub>2</sub></div>
+          <p>MgCl<sub>2</sub>는 <strong>강전해질</strong>이므로 수용액에서 <strong>완전히 이온화</strong>됩니다.</p>
+          <div class="math-block">
+            \[\text{MgCl}_2 \;\rightarrow\; 0.89\,\text{Mg}^{2+} \;+\; 0.11\,\text{MgCl}^{+} \;+\; 1.89\,\text{Cl}^{-}\]
+          </div>
+          <p>해수에서 비해리 MgCl<sub>2</sub>는 거의 존재하지 않습니다: \([\text{MgCl}_2] \fallingdotseq 0\)</p>
+          <div class="math-block">
+            <p>따라서: <strong>0.054 M (X, 잘못된 표현)</strong> &rarr; <strong>0.054 F (O, 올바른 표현)</strong></p>
+          </div>
+          <p>완전 해리하는 물질은 비해리 분자가 없으므로 "몰농도(M)"라고 할 수 없고, <strong>포말농도(F)</strong>를 사용합니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">약전해질 (Weak Electrolyte): 아세트산 (CH<sub>3</sub>COOH)</div>
+          <p>아세트산은 <strong>약전해질</strong>이므로 부분적으로만 이온화됩니다.</p>
+          <div class="math-block">
+            \[\text{CH}_3\text{COOH} \;\rightleftharpoons\; \text{CH}_3\text{COO}^{-} + \text{H}^{+}\]
+          </div>
+
+          <table class="terms-table">
+            <thead>
+              <tr><th>포말농도 (F)</th><th>해리율 (Dissociation %)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0.1 F</td><td>1.3%</td></tr>
+              <tr><td>0.01 F</td><td>4.1%</td></tr>
+              <tr><td>0.001 F</td><td>12.4%</td></tr>
+            </tbody>
+          </table>
+          <p style="margin-top:12px;">농도가 낮아질수록 해리율이 증가합니다. 약전해질에서는 비해리 분자가 존재하므로 몰농도(M)를 사용할 수도 있습니다.</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>M vs F 구분:</strong> 실무에서는 두 용어를 혼용하는 경우가 많지만, 엄밀히 강전해질이 완전히 해리할 경우 원래 용질의 "몰농도"는 0이므로 <strong>포말농도(F)</strong>를 써야 정확합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 13 ==================== -->
+      <section class="page-section" id="p13">
+        <div class="page-num">Page 13</div>
+        <h2>wt% &rarr; 몰농도(M) 환산</h2>
+        <div class="summary-box">
+          시약 병에 적힌 <strong>질량 퍼센트(wt%)</strong>와 <strong>밀도(d)</strong>를 이용하여 몰농도(M)를 계산하는 방법입니다. 실험실에서 가장 흔히 수행하는 환산입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">예제: 진한 HCl의 몰농도</div>
+          <p><strong>문제:</strong> 진한 HCl 수용액은 37.0 wt% HCl, 밀도 d = 1.188 g/mL이다. 이 용액의 몰농도(M)는?</p>
+          <p>HCl 분자량: \(M_w = 36.46\;\text{g/mol}\)</p>
+
+          <h3>풀이 (1 mL 기준)</h3>
+          <p><strong>Step 1:</strong> 용액 1 mL의 질량</p>
+          <div class="math-block">
+            \[\text{용액 1 mL의 질량} = 1.188\;\text{g}\]
+          </div>
+
+          <p><strong>Step 2:</strong> HCl의 질량</p>
+          <div class="math-block">
+            \[\text{HCl 질량} = 1.188\;\text{g} \times 0.37 = 0.4396\;\text{g}\]
+          </div>
+
+          <p><strong>Step 3:</strong> HCl의 몰수</p>
+          <div class="math-block">
+            \[\text{HCl 몰수} = \frac{0.4396\;\text{g}}{36.46\;\text{g/mol}} = 0.01206\;\text{mol}\]
+          </div>
+
+          <p><strong>Step 4:</strong> 몰농도 (1 mL = 0.001 L 기준)</p>
+          <div class="math-block">
+            \[M = \frac{0.01206\;\text{mol}}{0.001\;\text{L}} = 12.1\;\text{M}\]
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">일반 공식</div>
+          <div class="math-block">
+            \[M = \frac{d \;\text{(g/mL)} \times \text{wt\%}/100 \times 1000\;\text{(mL/L)}}{M_w\;\text{(g/mol)}}\]
+          </div>
+          <p>즉: <strong>밀도 &times; 질량분율 &times; 1000 / 분자량 = 몰농도</strong></p>
+        </div>
+
+        <div class="tip">이 공식을 기억하세요: wt%와 밀도(density)만 알면 &rarr; 몰농도(M) 계산 가능. 시약 병 라벨에는 보통 wt%와 밀도가 표기되어 있습니다.</div>
+      </section>
+
+      <!-- ==================== Page 14 ==================== -->
+      <section class="page-section" id="p14">
+        <div class="page-num">Page 14</div>
+        <h2>wt% &rarr; M 환산 연습문제 (Ex 1-C)</h2>
+
+        <div class="card">
+          <div class="card-label">연습문제: 과염소산 (HClO<sub>4</sub>)</div>
+          <p><strong>조건:</strong> 70.5 wt% 과염소산(HClO<sub>4</sub>) 수용액</p>
+          <p>\(M_w = 100.458\;\text{g/mol}\), \(d = 1.67\;\text{g/mL}\)</p>
+
+          <h3>(a) 1.00 L 용액의 질량은 몇 g인가?</h3>
+          <div class="math-block">
+            \[\text{질량} = 1.67\;\text{g/mL} \times 1000\;\text{mL} = 1670\;\text{g}\]
+          </div>
+
+          <h3>(b) 1.00 L에 포함된 HClO<sub>4</sub>의 질량은?</h3>
+          <div class="math-block">
+            \[\text{HClO}_4\;\text{질량} = 1670\;\text{g} \times 0.705 = 1177\;\text{g}\]
+          </div>
+
+          <h3>(c) 1.00 L에 포함된 HClO<sub>4</sub>의 몰수 (= 몰농도)는?</h3>
+          <div class="math-block">
+            \[M = \frac{1177\;\text{g}}{100.458\;\text{g/mol}} = 11.7\;\text{M}\]
+          </div>
+        </div>
+
+        <div class="key-point">
+          <strong>풀이 순서 정리:</strong> (1) 밀도로 용액 질량 구하기 &rarr; (2) wt%로 용질 질량 구하기 &rarr; (3) 분자량으로 몰수(=몰농도) 구하기. 이 3단계를 순서대로 적용하면 됩니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 15 ==================== -->
+      <section class="page-section" id="p15">
+        <div class="page-num">Page 15</div>
+        <h2>ppm &amp; ppb</h2>
+        <div class="summary-box">
+          매우 낮은 농도를 표현할 때 사용하는 단위입니다. 환경 분석, 미량 분석에서 필수적입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Parts per million (ppm)</div>
+          <div class="math-block">
+            \[\text{ppm} = \frac{\text{grams of solute}}{1 \times 10^6\;\text{g solution}}\]
+          </div>
+          <div class="math-block">
+            \[C_{\text{ppm}} = \frac{\text{mass of solute}}{\text{mass of solution}} \times 10^6\;\text{ppm}\]
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Parts per billion (ppb)</div>
+          <div class="math-block">
+            \[\text{ppb} = \frac{\text{grams of solute}}{1 \times 10^9\;\text{g solution}}\]
+          </div>
+          <div class="math-block">
+            \[C_{\text{ppb}} = \frac{\text{mass of solute}}{\text{mass of solution}} \times 10^9\;\text{ppb}\]
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">묽은 수용액에서의 간편 환산</div>
+          <p>묽은 수용액에서 밀도 &asymp; 1 g/mL이므로:</p>
+          <table class="terms-table">
+            <thead>
+              <tr><th>단위</th><th>등가 표현 (묽은 수용액)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">1 ppm</td><td>= 1 &mu;g/g &asymp; 1 &mu;g/mL &asymp; <strong>1 mg/L</strong></td></tr>
+              <tr><td class="en">1 ppb</td><td>= 1 ng/g &asymp; 1 ng/mL &asymp; <strong>1 &mu;g/L</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">환경 분석에서 수질 기준은 주로 ppm(mg/L) 또는 ppb(&mu;g/L)로 표현합니다. 묽은 수용액이라는 가정 하에 1 ppm &asymp; 1 mg/L로 간편하게 환산할 수 있다는 점을 기억하세요.</div>
+      </section>
+
+      <!-- ==================== Page 16 ==================== -->
+      <section class="page-section" id="p16">
+        <div class="page-num">Page 16</div>
+        <h2>용액 제조 (Preparing Solutions)</h2>
+        <div class="summary-box">
+          고체 시약으로부터 원하는 농도의 용액을 제조하는 방법을 학습합니다. 수화물(hydrate) 시약을 사용할 때 분자량에 주의해야 합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">예제: CuSO<sub>4</sub>&middot;5H<sub>2</sub>O로 Cu<sup>2+</sup> 용액 제조</div>
+          <p><strong>문제:</strong> CuSO<sub>4</sub>&middot;5H<sub>2</sub>O (Mw = 249.69 g/mol)를 사용하여 8 mM Cu<sup>2+</sup> 용액 250 mL를 만들려면 몇 g이 필요한가?</p>
+
+          <h3>풀이</h3>
+          <p><strong>Step 1:</strong> 필요한 Cu<sup>2+</sup>의 몰수 계산</p>
+          <div class="math-block">
+            \[\text{몰수} = 8.00\;\text{mM} \times 0.250\;\text{L} = 2.00\;\text{mmol}\]
+          </div>
+
+          <p><strong>Step 2:</strong> CuSO<sub>4</sub>&middot;5H<sub>2</sub>O의 질량 계산</p>
+          <p>CuSO<sub>4</sub>&middot;5H<sub>2</sub>O 1 mol = Cu<sup>2+</sup> 1 mol이므로 (1:1 비율)</p>
+          <div class="math-block">
+            \[\text{질량} = 2.00\;\text{mmol} \times 249.69\;\text{g/mol} = 0.499\;\text{g}\]
+          </div>
+        </div>
+
+        <div class="warning-box">
+          <strong>수화물 주의:</strong> CuSO<sub>4</sub> (무수물, 159.61 g/mol)가 아닌 <strong>CuSO<sub>4</sub>&middot;5H<sub>2</sub>O (249.69 g/mol)</strong>의 분자량을 사용해야 합니다. 결정수(5H<sub>2</sub>O)의 질량이 포함되어야 정확한 양을 칭량할 수 있습니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 17 ==================== -->
+      <section class="page-section" id="p17">
+        <div class="page-num">Page 17</div>
+        <h2>희석 (Dilution)</h2>
+        <div class="summary-box">
+          진한 용액을 묽혀서 원하는 농도의 용액을 만드는 과정입니다. 핵심 공식: <strong>용질의 몰수는 희석 전후에 동일</strong>합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">희석 공식</div>
+          <div class="math-block">
+            \[M_{\text{conc}} \cdot V_{\text{conc}} = M_{\text{dil}} \cdot V_{\text{dil}}\]
+          </div>
+          <p>진한 용액의 (농도 &times; 부피) = 묽은 용액의 (농도 &times; 부피)</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">예제: 진한 NH<sub>3</sub>에서 0.25 M NH<sub>3</sub> 500 mL 제조</div>
+          <p><strong>조건:</strong> 진한 NH<sub>3</sub> 수용액 (28.0 wt%, d = 0.899 g/mL), NH<sub>3</sub> Mw = 17.03 g/mol</p>
+
+          <h3>Step 1: 진한 NH<sub>3</sub>의 몰농도 계산</h3>
+          <div class="math-block">
+            \[M = \frac{0.28 \times 899\;\text{g/L}}{17.03\;\text{g/mol}} = \frac{251.7}{17.03} = 14.8\;\text{M}\]
+          </div>
+          <p style="font-size:14px; color: var(--text-muted);">밀도 0.899 g/mL = 899 g/L</p>
+
+          <h3>Step 2: 희석 공식 적용</h3>
+          <div class="math-block">
+            \[14.8\;\text{M} \times x\;\text{mL} = 0.25\;\text{M} \times 500\;\text{mL}\]
+          </div>
+          <div class="math-block">
+            \[x = \frac{0.25 \times 500}{14.8} = 8.45\;\text{mL}\]
+          </div>
+
+          <p><strong>결론:</strong> 진한 NH<sub>3</sub> <strong>8.45 mL</strong>를 취하여 물로 500 mL까지 채우면 0.25 M NH<sub>3</sub> 용액이 됩니다.</p>
+        </div>
+
+        <div class="tip">희석 공식 사용 시 양변의 부피 단위(mL 또는 L)만 일치시키면 됩니다. 양변에 같은 단위를 쓰면 환산 없이 계산 가능합니다.</div>
+      </section>
+
+      <!-- ==================== Page 18 ==================== -->
+      <section class="page-section" id="p18">
+        <div class="page-num">Page 18</div>
+        <h2>희석 연습문제 (Ex 1-D)</h2>
+
+        <div class="card">
+          <div class="card-label">연습문제: 진한 HBr 수용액</div>
+          <p><strong>조건:</strong> 48.0 wt% 진한 HBr 수용액, Mw = 80.912 g/mol, d = 1.50 g/mL</p>
+
+          <h3>(a) 1.00 L 용액의 질량은?</h3>
+          <div class="math-block">
+            \[\text{질량} = 1.50\;\text{g/mL} \times 1000\;\text{mL} = 1500\;\text{g}\]
+          </div>
+
+          <h3>(b) 1.00 L에 포함된 HBr의 질량은?</h3>
+          <div class="math-block">
+            \[\text{HBr 질량} = 1500\;\text{g} \times 0.48 = 720\;\text{g}\]
+          </div>
+
+          <h3>(c) HBr의 몰농도는?</h3>
+          <div class="math-block">
+            \[M = \frac{720\;\text{g}}{80.912\;\text{g/mol}} = 8.90\;\text{M}\]
+          </div>
+
+          <h3>(d) 0.250 L의 0.160 M HBr 용액을 만들려면 진한 HBr이 몇 mL 필요한가?</h3>
+          <div class="math-block">
+            \[8.90\;\text{M} \times x\;\text{mL} = 0.160\;\text{M} \times 250\;\text{mL}\]
+          </div>
+          <div class="math-block">
+            \[x = \frac{0.160 \times 250}{8.90} = 4.49\;\text{mL}\]
+          </div>
+        </div>
+
+        <div class="key-point">
+          <strong>계산 순서 총정리:</strong> wt% + 밀도 &rarr; 몰농도(M) &rarr; 희석 공식 적용 &rarr; 필요한 부피 산출. 이 흐름은 실험실에서 매일 반복하는 과정입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 19 ==================== -->
+      <section class="page-section" id="p19">
+        <div class="page-num">Page 19</div>
+        <h2>평형 상수 (Equilibrium Constant)</h2>
+        <div class="summary-box">
+          화학 반응이 평형에 도달했을 때, 생성물과 반응물의 농도(또는 압력) 비를 나타내는 상수입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">실험 평형 상수 (Empirical Equilibrium Constant)</div>
+          <p>일반 반응: \(\quad a\,\text{A} + b\,\text{B} \;\rightleftharpoons\; c\,\text{C} + d\,\text{D}\)</p>
+
+          <h3>용액 반응: \(K_c\)</h3>
+          <div class="math-block">
+            \[K_c = \frac{[\text{C}]^c_{\text{eq}}\,[\text{D}]^d_{\text{eq}}}{[\text{A}]^a_{\text{eq}}\,[\text{B}]^b_{\text{eq}}}\]
+          </div>
+          <p>차원: \((\text{concentration})^{c+d-a-b}\) &mdash; 차원이 있음 (단위가 남음)</p>
+
+          <h3>기체 반응: \(K_p\)</h3>
+          <div class="math-block">
+            \[K_p = \frac{(P_{\text{C}})^c_{\text{eq}}\,(P_{\text{D}})^d_{\text{eq}}}{(P_{\text{A}})^a_{\text{eq}}\,(P_{\text{B}})^b_{\text{eq}}}\]
+          </div>
+          <p>차원: \((\text{pressure})^{c+d-a-b}\) &mdash; 역시 차원이 있음</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>문제점:</strong> 실험 평형 상수 \(K_c\)와 \(K_p\)는 <strong>단위(차원)를 가집니다</strong>. 반응 화학양론에 따라 단위가 달라지므로, 서로 다른 반응의 평형 상수를 직접 비교하기 어렵습니다. 이를 해결하기 위해 <strong>열역학 평형 상수</strong>를 사용합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 20 ==================== -->
+      <section class="page-section" id="p20">
+        <div class="page-num">Page 20</div>
+        <h2>열역학 평형 상수 (Thermodynamic Equilibrium Constant)</h2>
+        <div class="summary-box">
+          열역학 평형 상수는 <strong>무차원(dimensionless)</strong>이며, 기준 농도 또는 기준 압력으로 나누어 단위를 제거합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">용액 반응</div>
+          <div class="math-block">
+            \[\frac{([\text{C}]/c_{\text{ref}})^c\,([\text{D}]/c_{\text{ref}})^d}{([\text{A}]/c_{\text{ref}})^a\,([\text{B}]/c_{\text{ref}})^b} = K\]
+          </div>
+          <p>기준 농도를 \(c_{\text{ref}} = 1\;\text{M}\)로 설정하면:</p>
+          <div class="math-block">
+            \[\frac{[\text{C}]^c\,[\text{D}]^d}{[\text{A}]^a\,[\text{B}]^b} = K \quad (\text{무차원, 숫자적으로 } K_c\text{와 같은 값})\]
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">기체 반응</div>
+          <div class="math-block">
+            \[\frac{(P_{\text{C}}/P_{\text{ref}})^c\,(P_{\text{D}}/P_{\text{ref}})^d}{(P_{\text{A}}/P_{\text{ref}})^a\,(P_{\text{B}}/P_{\text{ref}})^b} = K\]
+          </div>
+          <p>기준 압력을 \(P_{\text{ref}} = 1\;\text{atm}\)으로 설정하면:</p>
+          <div class="math-block">
+            \[\frac{P_{\text{C}}^{\,c}\,P_{\text{D}}^{\,d}}{P_{\text{A}}^{\,a}\,P_{\text{B}}^{\,b}} = K \quad (\text{무차원})\]
+          </div>
+        </div>
+
+        <div class="key-point">
+          <strong>이 강의 이후:</strong> 별도 언급이 없는 한, "평형 상수(Equilibrium Constant)"는 <strong>열역학 평형 상수(무차원)</strong>를 의미합니다. 농도를 M 단위로, 압력을 atm 단위로 대입하면 숫자값이 곧 무차원 \(K\)입니다.
+        </div>
+
+        <div class="tip">시험 대비: \(K_c\)와 \(K_p\)의 관계식도 기억하세요. \(K_p = K_c(RT)^{\Delta n}\), 여기서 \(\Delta n = (c+d) - (a+b)\)는 기체 몰수의 변화량입니다.</div>
+      </section>
+
+      <!-- ==================== Glossary ==================== -->
+      <section class="page-section" id="glossary">
+        <div class="page-num">Glossary</div>
+        <h2>용어 총정리</h2>
+
+        <div class="card">
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어 용어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">SI Units</td><td>국제 단위계</td><td>Le Systeme International d'Unites; 7가지 기본 단위로 구성된 표준 단위 체계</td></tr>
+              <tr><td class="en">Mole (mol)</td><td>몰</td><td>물질량의 SI 단위; \(6.022 \times 10^{23}\)개 입자</td></tr>
+              <tr><td class="en">Molarity (M)</td><td>몰농도</td><td>용질의 몰수 / 용액의 부피(L)</td></tr>
+              <tr><td class="en">Molality (m)</td><td>몰랄농도</td><td>용질의 몰수 / 용매의 질량(kg); 온도 의존성이 작음</td></tr>
+              <tr><td class="en">Formal Concentration (F)</td><td>포말농도</td><td>해리 여부와 무관하게 처음 녹인 물질의 총 농도</td></tr>
+              <tr><td class="en">Weight Percent (wt%)</td><td>질량 퍼센트</td><td>(용질 질량 / 용액 질량) &times; 100</td></tr>
+              <tr><td class="en">Parts per million (ppm)</td><td>백만분율</td><td>용질 질량 / 10<sup>6</sup> g 용액; 묽은 수용액에서 &asymp; mg/L</td></tr>
+              <tr><td class="en">Parts per billion (ppb)</td><td>십억분율</td><td>용질 질량 / 10<sup>9</sup> g 용액; 묽은 수용액에서 &asymp; &mu;g/L</td></tr>
+              <tr><td class="en">Dilution</td><td>희석</td><td>\(M_1V_1 = M_2V_2\); 용질의 몰수를 보존하며 농도를 낮추는 과정</td></tr>
+              <tr><td class="en">Strong Electrolyte</td><td>강전해질</td><td>수용액에서 완전히 이온화되는 물질 (예: NaCl, HCl, MgCl<sub>2</sub>)</td></tr>
+              <tr><td class="en">Weak Electrolyte</td><td>약전해질</td><td>수용액에서 부분적으로만 이온화되는 물질 (예: CH<sub>3</sub>COOH)</td></tr>
+              <tr><td class="en">Equilibrium Constant (K)</td><td>평형 상수</td><td>평형 시 생성물/반응물 농도비; 열역학적 K는 무차원</td></tr>
+              <tr><td class="en">K<sub>c</sub></td><td>농도 평형 상수</td><td>용액 반응에서 몰농도를 사용한 평형 상수 (단위 있음)</td></tr>
+              <tr><td class="en">K<sub>p</sub></td><td>압력 평형 상수</td><td>기체 반응에서 분압을 사용한 평형 상수 (단위 있음)</td></tr>
+              <tr><td class="en">Derived Units</td><td>유도 단위</td><td>기본 단위의 조합으로 표현되는 단위 (N, Pa, J, W 등)</td></tr>
+              <tr><td class="en">Conversion Factor</td><td>환산 인자</td><td>서로 다른 단위 간 변환에 사용되는 비율</td></tr>
+              <tr><td class="en">Density</td><td>밀도</td><td>단위 부피당 질량 (g/mL 또는 kg/L)</td></tr>
+              <tr><td class="en">Hydrate</td><td>수화물</td><td>결정수를 포함한 화합물 (예: CuSO<sub>4</sub>&middot;5H<sub>2</sub>O)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">시험 대비 최종 요약: (1) SI 기본 단위 7가지와 유도 단위의 기본 단위 환산을 반드시 숙지하세요. (2) wt% &rarr; M 환산 3단계(밀도&rarr;질량&rarr;몰수)를 공식처럼 외우세요. (3) 희석 공식 \(M_1V_1 = M_2V_2\)는 실험실의 기본입니다. (4) 포말농도(F)와 몰농도(M)의 차이를 설명할 수 있어야 합니다. (5) 열역학 평형 상수는 무차원임을 기억하세요.</div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '다크모드';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '라이트모드';
+      }
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>
