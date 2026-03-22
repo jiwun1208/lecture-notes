@@ -490,6 +490,52 @@ window.MathJax = {
             <strong>OF:</strong> signed overflow — (a&gt;0 &amp;&amp; b&gt;0 &amp;&amp; t&lt;0) || (a&lt;0 &amp;&amp; b&lt;0 &amp;&amp; t&gt;=0)
           </div>
           <div class="warning-box"><strong>leaq는 Condition Codes를 설정하지 않습니다!</strong> leaq는 주소 계산용이지 산술 연산이 아니기 때문입니다.</div>
+<div style="display:flex; justify-content:center; margin:18px 0;">
+<svg width="440" height="200" viewBox="0 0 440 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowCC" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="var(--accent)"/></marker>
+  </defs>
+  <text x="220" y="16" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="13" font-weight="500">ALU sets Condition Codes automatically</text>
+  <!-- Input A -->
+  <rect x="30" y="50" width="80" height="32" rx="5" stroke="var(--border)" stroke-width="1.5" fill="none"/>
+  <text x="70" y="71" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="11">Operand A</text>
+  <!-- Input B -->
+  <rect x="30" y="100" width="80" height="32" rx="5" stroke="var(--border)" stroke-width="1.5" fill="none"/>
+  <text x="70" y="121" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="11">Operand B</text>
+  <!-- ALU -->
+  <line x1="113" y1="66" x2="145" y2="66" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrowCC)"/>
+  <line x1="113" y1="116" x2="145" y2="116" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrowCC)"/>
+  <rect x="150" y="55" width="90" height="75" rx="8" stroke="var(--accent)" stroke-width="2" fill="var(--accent)" fill-opacity="0.1"/>
+  <text x="195" y="85" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="16" font-weight="700">ALU</text>
+  <text x="195" y="102" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">add, sub, and...</text>
+  <!-- Result output -->
+  <line x1="243" y1="90" x2="280" y2="90" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrowCC)"/>
+  <rect x="285" y="75" width="80" height="32" rx="5" stroke="var(--border)" stroke-width="1.5" fill="none"/>
+  <text x="325" y="96" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="11">Result t</text>
+  <!-- Condition Code outputs -->
+  <line x1="220" y1="133" x2="220" y2="148" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrowCC)"/>
+  <!-- Flag register -->
+  <rect x="80" y="155" width="70" height="30" rx="4" stroke="var(--accent)" stroke-width="1.5" fill="var(--accent)" fill-opacity="0.15"/>
+  <text x="115" y="175" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="600">CF</text>
+  <text x="115" y="195" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="8">Carry</text>
+  <rect x="155" y="155" width="70" height="30" rx="4" stroke="var(--accent)" stroke-width="1.5" fill="var(--accent)" fill-opacity="0.15"/>
+  <text x="190" y="175" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="600">ZF</text>
+  <text x="190" y="195" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="8">Zero</text>
+  <rect x="230" y="155" width="70" height="30" rx="4" stroke="var(--accent)" stroke-width="1.5" fill="var(--accent)" fill-opacity="0.15"/>
+  <text x="265" y="175" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="600">SF</text>
+  <text x="265" y="195" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="8">Sign</text>
+  <rect x="305" y="155" width="70" height="30" rx="4" stroke="var(--accent)" stroke-width="1.5" fill="var(--accent)" fill-opacity="0.15"/>
+  <text x="340" y="175" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="600">OF</text>
+  <text x="340" y="195" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="8">Overflow</text>
+  <!-- Lines from ALU to flags -->
+  <line x1="170" y1="133" x2="115" y2="153" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="190" y1="133" x2="190" y2="153" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="210" y1="133" x2="265" y2="153" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="225" y1="133" x2="340" y2="153" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3,2"/>
+  <!-- Labels -->
+  <text x="195" y="47" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="10">e.g. addq %rsi, %rdi</text>
+</svg>
+</div>
         </div>
       </section>
 
@@ -656,6 +702,46 @@ window.MathJax = {
     subq    %rdi, %rax    # result = y - x
     ret</pre>
           <div class="highlight-box">if의 조건(x > y)의 <strong>반대 조건</strong>(x &le; y)으로 점프합니다. 조건이 거짓일 때 else 블록으로 뛰는 것이 일반적인 패턴입니다.</div>
+<div style="display:flex; justify-content:center; margin:18px 0;">
+<svg width="340" height="300" viewBox="0 0 340 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowCF" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="var(--accent)"/></marker>
+    <marker id="arrowCFb" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="var(--border)"/></marker>
+  </defs>
+  <text x="170" y="16" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="13" font-weight="500">if-else Control Flow (Assembly)</text>
+  <!-- cmpq box -->
+  <rect x="105" y="30" width="130" height="32" rx="6" stroke="var(--accent)" stroke-width="2" fill="var(--accent)" fill-opacity="0.1"/>
+  <text x="170" y="51" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="500">cmpq %rsi, %rdi</text>
+  <!-- Diamond (condition) -->
+  <polygon points="170,80 240,110 170,140 100,110" stroke="var(--accent)" stroke-width="1.5" fill="none"/>
+  <text x="170" y="114" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="10">x &gt; y ?</text>
+  <!-- Arrow from cmpq to diamond -->
+  <line x1="170" y1="64" x2="170" y2="78" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrowCF)"/>
+  <!-- Yes (true) - left branch: Then -->
+  <line x1="100" y1="110" x2="60" y2="110" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="60" y1="110" x2="60" y2="160" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrowCF)"/>
+  <text x="55" y="102" text-anchor="end" fill="var(--accent)" font-family="inherit" font-size="10" font-weight="500">Yes</text>
+  <rect x="15" y="165" width="90" height="42" rx="5" stroke="var(--accent)" stroke-width="1.5" fill="var(--accent)" fill-opacity="0.1"/>
+  <text x="60" y="183" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="9" font-weight="500">result = x-y</text>
+  <text x="60" y="198" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">(Then block)</text>
+  <!-- No (false) - right branch: Else -->
+  <line x1="240" y1="110" x2="280" y2="110" stroke="var(--border)" stroke-width="1.5"/>
+  <line x1="280" y1="110" x2="280" y2="160" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrowCFb)"/>
+  <text x="285" y="102" fill="var(--text)" font-family="inherit" font-size="10">No (jle)</text>
+  <rect x="235" y="165" width="90" height="42" rx="5" stroke="var(--border)" stroke-width="1.5" fill="var(--border)" fill-opacity="0.1"/>
+  <text x="280" y="183" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="9">result = y-x</text>
+  <text x="280" y="198" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">(Else block)</text>
+  <!-- Merge arrows -->
+  <line x1="60" y1="209" x2="60" y2="240" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="60" y1="240" x2="170" y2="240" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="280" y1="209" x2="280" y2="240" stroke="var(--border)" stroke-width="1.5"/>
+  <line x1="280" y1="240" x2="170" y2="240" stroke="var(--border)" stroke-width="1.5"/>
+  <line x1="170" y1="240" x2="170" y2="255" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrowCF)"/>
+  <!-- Done / ret -->
+  <rect x="130" y="260" width="80" height="28" rx="5" stroke="var(--accent)" stroke-width="2" fill="var(--accent)" fill-opacity="0.1"/>
+  <text x="170" y="279" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="500">ret</text>
+</svg>
+</div>
         </div>
       </section>
 
@@ -1322,6 +1408,96 @@ case 3:
             <strong>Switch:</strong> Jump Table로 \(O(1)\) 다중 분기. 빠진 case는 default 주소, 공유 case는 같은 주소로 처리
           </div>
         </div>
+<div style="display:flex; justify-content:center; margin:18px 0;">
+<svg width="500" height="310" viewBox="0 0 500 310" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="250" y="16" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="13" font-weight="500">Function Call Stack Frame</text>
+  <!-- Stack frame -->
+  <g transform="translate(100,28)">
+    <!-- Higher addresses -->
+    <text x="-10" y="12" text-anchor="end" fill="var(--text)" font-family="inherit" font-size="9">High</text>
+    <!-- Caller's frame -->
+    <rect x="0" y="0" width="220" height="32" rx="3" stroke="var(--border)" stroke-width="1" fill="var(--border)" fill-opacity="0.08"/>
+    <text x="110" y="21" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="10">Caller's frame ...</text>
+    <!-- Arguments (if > 6) -->
+    <rect x="0" y="36" width="220" height="28" rx="3" stroke="var(--border)" stroke-width="1.5" fill="var(--border)" fill-opacity="0.06"/>
+    <text x="110" y="55" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="10">Argument 7, 8, ... (if any)</text>
+    <text x="235" y="55" fill="var(--text)" font-family="inherit" font-size="9">+16(%rsp)</text>
+    <!-- Return address -->
+    <rect x="0" y="68" width="220" height="28" rx="3" stroke="var(--accent)" stroke-width="2" fill="var(--accent)" fill-opacity="0.15"/>
+    <text x="110" y="87" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10" font-weight="600">Return Address</text>
+    <text x="235" y="87" fill="var(--accent)" font-family="inherit" font-size="9">pushed by call</text>
+    <!-- Saved registers -->
+    <rect x="0" y="100" width="220" height="28" rx="3" stroke="var(--border)" stroke-width="1.5" fill="var(--accent)" fill-opacity="0.06"/>
+    <text x="110" y="119" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="10">Saved Registers (callee-save)</text>
+    <text x="235" y="119" fill="var(--text)" font-family="inherit" font-size="9">%rbx, %rbp, ...</text>
+    <!-- Local variables -->
+    <rect x="0" y="132" width="220" height="40" rx="3" stroke="var(--border)" stroke-width="1.5" fill="var(--border)" fill-opacity="0.06"/>
+    <text x="110" y="157" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="10">Local Variables</text>
+    <!-- Argument build area -->
+    <rect x="0" y="176" width="220" height="28" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+    <text x="110" y="195" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="10">Arg Build (for callees)</text>
+    <!-- rsp pointer -->
+    <line x1="0" y1="210" x2="-25" y2="210" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="-55" y="214" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10" font-weight="500">%rsp</text>
+    <text x="-10" y="228" text-anchor="end" fill="var(--text)" font-family="inherit" font-size="9">Low</text>
+    <!-- Bracket for current frame -->
+    <line x1="225" y1="68" x2="230" y2="68" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="230" y1="68" x2="230" y2="206" stroke="var(--accent)" stroke-width="1.5"/>
+    <line x1="225" y1="206" x2="230" y2="206" stroke="var(--accent)" stroke-width="1"/>
+    <text x="245" y="140" fill="var(--accent)" font-family="inherit" font-size="10" transform="rotate(90,245,140)">Current Frame</text>
+  </g>
+  <!-- Caller/Callee Save Convention -->
+  </g>
+</svg>
+</div>
+<div style="display:flex; justify-content:center; margin:18px 0;">
+<svg width="500" height="200" viewBox="0 0 500 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="250" y="16" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="13" font-weight="500">Caller-save vs Callee-save Registers</text>
+  <!-- Caller-save section -->
+  <rect x="15" y="32" width="225" height="155" rx="8" stroke="var(--accent)" stroke-width="2" fill="var(--accent)" fill-opacity="0.06"/>
+  <text x="127" y="52" text-anchor="middle" fill="var(--accent)" font-family="inherit" font-size="12" font-weight="600">Caller-save</text>
+  <text x="127" y="66" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">Caller must save before call</text>
+  <!-- Caller-save register boxes -->
+  <rect x="25" y="76" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="52" y="93" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10">%rax</text>
+  <rect x="83" y="76" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="110" y="93" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10">%rcx</text>
+  <rect x="141" y="76" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="168" y="93" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10">%rdx</text>
+  <rect x="25" y="106" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="52" y="123" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10">%rsi</text>
+  <rect x="83" y="106" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="110" y="123" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10">%rdi</text>
+  <rect x="141" y="106" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="168" y="123" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10">%r8</text>
+  <rect x="25" y="136" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="52" y="153" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10">%r9</text>
+  <rect x="83" y="136" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="110" y="153" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10">%r10</text>
+  <rect x="141" y="136" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="168" y="153" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10">%r11</text>
+  <text x="127" y="178" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">May be overwritten by callee</text>
+  <!-- Callee-save section -->
+  <rect x="260" y="32" width="225" height="155" rx="8" stroke="var(--border)" stroke-width="2" fill="var(--border)" fill-opacity="0.06"/>
+  <text x="372" y="52" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="12" font-weight="600">Callee-save</text>
+  <text x="372" y="66" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">Callee must restore before ret</text>
+  <!-- Callee-save register boxes -->
+  <rect x="278" y="76" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="305" y="93" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="10">%rbx</text>
+  <rect x="336" y="76" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="363" y="93" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="10">%rbp</text>
+  <rect x="394" y="76" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="421" y="93" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="10">%r12</text>
+  <rect x="278" y="106" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="305" y="123" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="10">%r13</text>
+  <rect x="336" y="106" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="363" y="123" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="10">%r14</text>
+  <rect x="394" y="106" width="54" height="24" rx="3" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="421" y="123" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="10">%r15</text>
+  <text x="372" y="155" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">Preserved across function calls</text>
+  <text x="372" y="170" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">(push at entry, pop before ret)</text>
+</svg>
+</div>
       </section>
 
     </main>

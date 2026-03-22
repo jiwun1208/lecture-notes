@@ -555,6 +555,35 @@ window.MathJax = {
           </table>
           <pre>  [s] [  exp  ] [       frac        ]
    1    k bits        n bits</pre>
+<div style="display:flex; justify-content:center; margin:18px 0;">
+<svg width="520" height="120" viewBox="0 0 520 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="260" y="16" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="13" font-weight="500">IEEE 754 Single Precision (32-bit float)</text>
+  <!-- Sign bit -->
+  <rect x="10" y="30" width="40" height="42" rx="4" stroke="var(--accent)" stroke-width="2" fill="var(--accent)" fill-opacity="0.18"/>
+  <text x="30" y="56" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600">s</text>
+  <text x="30" y="88" text-anchor="middle" fill="var(--accent)" font-family="inherit" font-size="10" font-weight="500">1 bit</text>
+  <text x="30" y="102" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">Sign</text>
+  <!-- Exponent -->
+  <rect x="54" y="30" width="160" height="42" rx="4" stroke="var(--border)" stroke-width="2" fill="var(--bg)" fill-opacity="0.5"/>
+  <line x1="54" y1="30" x2="214" y2="30" stroke="var(--accent)" stroke-width="2"/>
+  <text x="134" y="56" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="500">exponent</text>
+  <text x="134" y="88" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="10" font-weight="500">8 bits</text>
+  <text x="134" y="102" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">Exp (biased)</text>
+  <!-- bit numbers on top -->
+  <text x="50" y="26" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="8">31</text>
+  <text x="70" y="26" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="8">30</text>
+  <text x="200" y="26" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="8">23</text>
+  <text x="230" y="26" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="8">22</text>
+  <text x="495" y="26" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="8">0</text>
+  <!-- Fraction -->
+  <rect x="218" y="30" width="290" height="42" rx="4" stroke="var(--border)" stroke-width="2" fill="var(--border)" fill-opacity="0.12"/>
+  <text x="363" y="56" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="500">fraction (mantissa)</text>
+  <text x="363" y="88" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="10" font-weight="500">23 bits</text>
+  <text x="363" y="102" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">M = 1.frac (normalized)</text>
+  <!-- Formula -->
+  <text x="260" y="118" text-anchor="middle" fill="var(--accent)" font-family="inherit" font-size="11" font-weight="500">v = (-1)^s x 1.fraction x 2^(exponent - 127)</text>
+</svg>
+</div>
         </div>
         <div class="warning-box"><strong>주의:</strong> exp 필드의 값이 직접 E가 아니고, frac 필드의 값이 직접 M이 아닙니다. 인코딩 규칙이 따로 있습니다.</div>
       </section>
@@ -736,6 +765,46 @@ window.MathJax = {
           </table>
         </div>
         <div class="key-point">Denormalized의 최대값(7/512)과 Normalized의 최소값(8/512)이 <strong>매끄럽게 이어집니다</strong>. \(E = 1 - Bias\) 규칙 덕분입니다.</div>
+<div style="display:flex; justify-content:center; margin:18px 0;">
+<svg width="480" height="140" viewBox="0 0 480 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="240" y="16" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="13" font-weight="500">Denormalized to Normalized Transition</text>
+  <!-- Number line -->
+  <line x1="30" y1="65" x2="460" y2="65" stroke="var(--border)" stroke-width="1.5"/>
+  <!-- Zero -->
+  <line x1="40" y1="55" x2="40" y2="75" stroke="var(--accent)" stroke-width="2"/>
+  <text x="40" y="90" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="10" font-weight="500">0</text>
+  <!-- Denormalized ticks (equispaced) -->
+  <line x1="75" y1="55" x2="75" y2="75" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="110" y1="55" x2="110" y2="75" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="145" y1="55" x2="145" y2="75" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="180" y1="55" x2="180" y2="75" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="215" y1="55" x2="215" y2="75" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="250" y1="55" x2="250" y2="75" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="285" y1="55" x2="285" y2="75" stroke="var(--accent)" stroke-width="1.5"/>
+  <!-- Transition point -->
+  <line x1="285" y1="50" x2="285" y2="80" stroke="var(--accent)" stroke-width="2.5"/>
+  <!-- Normalized ticks (increasing spacing) -->
+  <line x1="320" y1="55" x2="320" y2="75" stroke="var(--border)" stroke-width="1.5"/>
+  <line x1="355" y1="55" x2="355" y2="75" stroke="var(--border)" stroke-width="1.5"/>
+  <line x1="390" y1="55" x2="390" y2="75" stroke="var(--border)" stroke-width="1.5"/>
+  <line x1="425" y1="55" x2="425" y2="75" stroke="var(--border)" stroke-width="1.5"/>
+  <!-- Labels -->
+  <text x="75" y="100" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="8">1/512</text>
+  <text x="285" y="100" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="8">7/512</text>
+  <text x="320" y="100" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="8">8/512</text>
+  <!-- Brackets for regions -->
+  <line x1="40" y1="35" x2="285" y2="35" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="40" y1="35" x2="40" y2="40" stroke="var(--accent)" stroke-width="1.5"/>
+  <line x1="285" y1="35" x2="285" y2="40" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="162" y="30" text-anchor="middle" fill="var(--accent)" font-family="inherit" font-size="11" font-weight="500">Denormalized (equispaced)</text>
+  <line x1="285" y1="35" x2="460" y2="35" stroke="var(--border)" stroke-width="1.5"/>
+  <line x1="460" y1="35" x2="460" y2="40" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="372" y="30" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="11" font-weight="500">Normalized (spacing grows)</text>
+  <!-- Smooth transition annotation -->
+  <text x="285" y="125" text-anchor="middle" fill="var(--accent)" font-family="inherit" font-size="10">smooth transition (no gap!)</text>
+  <path d="M 285 118 L 285 108" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3,2"/>
+</svg>
+</div>
       </section>
 
       <!-- ==================== Page 22 ==================== -->
@@ -749,6 +818,64 @@ window.MathJax = {
          촘촘  ←   Denorm  Norm   →  듬성듬성</pre>
         </div>
         <div class="key-point"><strong>핵심 관찰:</strong> 0에 가까울수록 수들이 촘촘하게 분포하고, 멀어질수록 듬성듬성해집니다. 이것이 부동소수점의 핵심 특성입니다 &mdash; 절대 오차가 아닌 <strong>상대 오차</strong>를 일정하게 유지합니다.</div>
+<div style="display:flex; justify-content:center; margin:18px 0;">
+<svg width="500" height="120" viewBox="0 0 500 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="250" y="16" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="13" font-weight="500">Floating Point Number Distribution</text>
+  <!-- Number line -->
+  <line x1="20" y1="55" x2="480" y2="55" stroke="var(--border)" stroke-width="1.5"/>
+  <!-- 0 mark -->
+  <line x1="250" y1="45" x2="250" y2="65" stroke="var(--accent)" stroke-width="2"/>
+  <text x="250" y="80" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="500">0</text>
+  <!-- Dense ticks near 0 (positive) -->
+  <line x1="255" y1="50" x2="255" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="258" y1="50" x2="258" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="261" y1="50" x2="261" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="264" y1="50" x2="264" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="267" y1="50" x2="267" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="270" y1="50" x2="270" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="274" y1="50" x2="274" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="278" y1="50" x2="278" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="283" y1="50" x2="283" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="289" y1="50" x2="289" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="296" y1="50" x2="296" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="305" y1="50" x2="305" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="316" y1="50" x2="316" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="330" y1="50" x2="330" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="348" y1="50" x2="348" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="372" y1="50" x2="372" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="404" y1="50" x2="404" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="445" y1="50" x2="445" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <!-- Dense ticks near 0 (negative) -->
+  <line x1="245" y1="50" x2="245" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="242" y1="50" x2="242" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="239" y1="50" x2="239" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="236" y1="50" x2="236" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="233" y1="50" x2="233" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="230" y1="50" x2="230" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="226" y1="50" x2="226" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="222" y1="50" x2="222" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="217" y1="50" x2="217" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="211" y1="50" x2="211" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="204" y1="50" x2="204" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="195" y1="50" x2="195" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="184" y1="50" x2="184" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="170" y1="50" x2="170" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="152" y1="50" x2="152" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="128" y1="50" x2="128" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="96" y1="50" x2="96" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <line x1="55" y1="50" x2="55" y2="60" stroke="var(--text)" stroke-width="1"/>
+  <!-- Infinity markers -->
+  <text x="485" y="58" fill="var(--accent)" font-family="inherit" font-size="11">+inf</text>
+  <text x="5" y="58" fill="var(--accent)" font-family="inherit" font-size="11">-inf</text>
+  <!-- Annotations -->
+  <text x="262" y="100" text-anchor="middle" fill="var(--accent)" font-family="inherit" font-size="10" font-weight="500">dense near 0</text>
+  <path d="M 262 94 L 255 88" stroke="var(--accent)" stroke-width="1" fill="none"/>
+  <text x="410" y="100" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="10">sparse far from 0</text>
+  <path d="M 410 94 L 404 82" stroke="var(--border)" stroke-width="1" fill="none"/>
+  <text x="100" y="100" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="10">sparse far from 0</text>
+  <path d="M 100 94 L 96 82" stroke="var(--border)" stroke-width="1" fill="none"/>
+</svg>
+</div>
       </section>
 
       <!-- ==================== Page 23 ==================== -->
@@ -806,6 +933,52 @@ window.MathJax = {
           </table>
         </div>
         <div class="key-point"><strong>Round-to-Even</strong>이 기본(default) 모드입니다. 정확히 중간값(halfway)일 때 짝수 쪽으로 반올림합니다. 다른 방식은 통계적으로 편향(bias)이 있지만, Round-to-Even은 편향이 없습니다.</div>
+<div style="display:flex; justify-content:center; margin:18px 0;">
+<svg width="440" height="185" viewBox="0 0 440 185" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowRnd" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0,0 7,2.5 0,5" fill="var(--accent)"/></marker>
+  </defs>
+  <text x="220" y="16" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="13" font-weight="500">Round-to-Even (Nearest Even)</text>
+  <!-- Number line -->
+  <line x1="40" y1="55" x2="400" y2="55" stroke="var(--border)" stroke-width="1.5"/>
+  <!-- Representable values -->
+  <line x1="80" y1="45" x2="80" y2="65" stroke="var(--accent)" stroke-width="2.5"/>
+  <text x="80" y="80" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="500">2</text>
+  <text x="80" y="92" text-anchor="middle" fill="var(--accent)" font-family="inherit" font-size="9">(even)</text>
+  <line x1="220" y1="45" x2="220" y2="65" stroke="var(--border)" stroke-width="2"/>
+  <text x="220" y="80" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="11">2.5</text>
+  <text x="220" y="92" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">(halfway)</text>
+  <line x1="360" y1="45" x2="360" y2="65" stroke="var(--border)" stroke-width="2.5"/>
+  <text x="360" y="80" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="11">3</text>
+  <text x="360" y="92" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">(odd)</text>
+  <!-- Values to round -->
+  <!-- 2.3 -> rounds down to 2 -->
+  <circle cx="135" cy="55" r="4" fill="var(--accent)"/>
+  <text x="135" y="40" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="9">2.3</text>
+  <path d="M 128 50 Q 104 30 88 45" stroke="var(--accent)" stroke-width="1.2" fill="none" marker-end="url(#arrowRnd)"/>
+  <!-- 2.8 -> rounds up to 3 -->
+  <circle cx="305" cy="55" r="4" fill="var(--accent)"/>
+  <text x="305" y="40" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="9">2.8</text>
+  <path d="M 312 50 Q 336 30 352 45" stroke="var(--accent)" stroke-width="1.2" fill="none" marker-end="url(#arrowRnd)"/>
+  <!-- 2.5 -> rounds to 2 (even) -->
+  <path d="M 213 50 Q 146 20 88 45" stroke="var(--accent)" stroke-width="1.8" fill="none" stroke-dasharray="5,3" marker-end="url(#arrowRnd)"/>
+  <text x="150" y="25" text-anchor="middle" fill="var(--accent)" font-family="inherit" font-size="10" font-weight="500">to even!</text>
+  <!-- Second example line -->
+  <line x1="40" y1="130" x2="400" y2="130" stroke="var(--border)" stroke-width="1.5"/>
+  <line x1="80" y1="120" x2="80" y2="140" stroke="var(--border)" stroke-width="2.5"/>
+  <text x="80" y="155" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="11">3</text>
+  <text x="80" y="167" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">(odd)</text>
+  <line x1="220" y1="120" x2="220" y2="140" stroke="var(--border)" stroke-width="2"/>
+  <text x="220" y="155" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="11">3.5</text>
+  <text x="220" y="167" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="9">(halfway)</text>
+  <line x1="360" y1="120" x2="360" y2="140" stroke="var(--accent)" stroke-width="2.5"/>
+  <text x="360" y="155" text-anchor="middle" fill="var(--accent)" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="500">4</text>
+  <text x="360" y="167" text-anchor="middle" fill="var(--accent)" font-family="inherit" font-size="9">(even)</text>
+  <!-- 3.5 -> rounds to 4 (even) -->
+  <path d="M 227 125 Q 294 100 352 120" stroke="var(--accent)" stroke-width="1.8" fill="none" stroke-dasharray="5,3" marker-end="url(#arrowRnd)"/>
+  <text x="290" y="107" text-anchor="middle" fill="var(--accent)" font-family="inherit" font-size="10" font-weight="500">to even!</text>
+</svg>
+</div>
       </section>
 
       <!-- ==================== Page 27 ==================== -->
