@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 3: 산과 염기 (Acids & Bases)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    processEscapes: false
+  },
+  startup: {
+    ready: function() {
+      MathJax.startup.defaultReady();
+      window.mathJaxReady = true;
+    }
+  }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+    gap: 8px;
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  img { max-width: 100%; height: auto; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-top: 16px;
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    min-width: 0;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .page-section h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 24px 0 14px;
+    letter-spacing: -0.02em;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .math-block {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    overflow-x: auto;
+    font-size: 1.05em;
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+    max-width: 100%;
+  }
+
+  strong { color: var(--accent); font-weight: 500; }
+
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 8px 0 12px 20px; }
+  li { margin-bottom: 4px; }
+
+  .svg-diagram {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .svg-diagram svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .practice-box {
+    background: var(--code-bg);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .practice-box .practice-label {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 200px 1fr; }
+    .content { padding: 32px 32px 60px; }
+    .sidebar { padding: 20px 12px; }
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 28px 24px 60px; }
+  }
+
+  @media (max-width: 768px) {
+    .topbar { padding: 10px 16px; }
+    .topbar h1 { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60vw; }
+    .topbar .meta { font-size: 10px; }
+    .content { padding: 20px 16px 48px; }
+    .page-section h2 { font-size: 18px; }
+    .page-section h3 { font-size: 16px; }
+    .card { padding: 18px 16px; }
+    .summary-box { padding: 14px 16px; }
+  }
+
+  @media (max-width: 480px) {
+    .content { padding: 16px 12px 40px; }
+    .topbar h1 { font-size: 13px; max-width: 50vw; }
+    body { font-size: 14px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Ch 3: 산과 염기 (Acids &amp; Bases)</h1>
+      <div class="meta">Organic Chemistry &mdash; Lecture 4 Preclass</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">목차</div>
+      <div class="section-label">Ch 3. Acids &amp; Bases</div>
+      <a href="#p1">01 &mdash; 표지</a>
+      <a href="#p2">02 &mdash; 3.1 Bronsted-Lowry 산/염기</a>
+      <a href="#p3">03 &mdash; 3.2 곡선 화살표 표기법</a>
+      <a href="#p4">04 &mdash; 3.3 정량적 관점 (Ka, pKa)</a>
+      <a href="#p5">05 &mdash; 3.3 pKa 스케일</a>
+      <a href="#p6">06 &mdash; 3.3 평형과 짝염기</a>
+      <a href="#p7">07 &mdash; 3.4 정성적 관점 서론</a>
+      <a href="#p8">08 &mdash; 3.4 ARIO 인자 개요</a>
+      <a href="#p9">09 &mdash; 3.4 Factor 1: Atom</a>
+      <a href="#p10">10 &mdash; 3.4 Factor 3: Induction</a>
+      <a href="#p11">11 &mdash; 3.4 Factor 4: Orbitals</a>
+      <a href="#p12">12 &mdash; 3.4 Factor 2: Resonance</a>
+      <a href="#p13">13 &mdash; 3.4 ARIO 종합 정리</a>
+      <a href="#p14">14 &mdash; 3.5 양이온 산의 산도</a>
+      <a href="#p15">15 &mdash; 3.6 평형 위치와 시약 선택</a>
+      <a href="#p16">16 &mdash; 3.7 Leveling Effect</a>
+      <a href="#p17">17 &mdash; 3.8 Solvating Effects</a>
+      <a href="#p18">18 &mdash; 3.9 Counterions</a>
+      <a href="#p19">19 &mdash; 3.10 Lewis 산/염기</a>
+      <div class="section-label">Ch 4. Alkanes</div>
+      <a href="#p20">20 &mdash; 4.1 알케인 소개</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== Page 1 ==================== -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>Ch 3: 산과 염기 (Acids &amp; Bases)</h2>
+        <div class="summary-box">
+          유기화학에서 산-염기 반응은 가장 기본적이면서도 핵심적인 반응 유형이다. 이 장에서는 산과 염기의 정의, 정량적/정성적 분석 방법, 그리고 반응의 평형과 용매 효과까지 폭넓게 다룬다.
+        </div>
+        <div class="card">
+          <div class="card-label">강의 개요</div>
+          <p><strong>Baking Soda/Powder</strong>를 예시로 시작한다. 베이킹 소다(NaHCO<sub>3</sub>)와 산이 반응하면 CO<sub>2</sub>가 부산물로 발생하는데, 이것이 빵을 부풀게 하는 원리이다. 이 간단한 예시가 바로 <strong>산-염기 반응(Acid-Base Reaction)</strong>의 실생활 적용이다.</p>
+          <p>이 장에서는 다음 내용을 학습한다:</p>
+          <ol>
+            <li><strong>산과 염기의 세 가지 정의</strong> (Arrhenius, Bronsted-Lowry, Lewis)</li>
+            <li><strong>곡선 화살표 표기법</strong>으로 양성자 이동을 표현하는 방법</li>
+            <li><strong>정량적 분석</strong> &mdash; K<sub>a</sub>, pK<sub>a</sub>를 이용한 산도 비교</li>
+            <li><strong>정성적 분석 (ARIO)</strong> &mdash; 짝염기의 안정성을 판단하는 4가지 인자</li>
+            <li><strong>용매 효과, 상대이온, Lewis 산/염기</strong> 등 심화 주제</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ==================== Page 2 ==================== -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>3.1 Bronsted-Lowry 산과 염기 소개</h2>
+        <div class="summary-box">
+          산과 염기를 분류하는 세 가지 주요 정의가 있다: <strong>Arrhenius</strong>, <strong>Bronsted-Lowry</strong>, <strong>Lewis</strong>. 유기화학에서는 Bronsted-Lowry 정의가 가장 널리 사용된다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">산-염기 분류 (Classification)</div>
+
+          <h3>1. Arrhenius 정의</h3>
+          <p>가장 좁은 범위의 정의로, <strong>수용액(aqueous solution)</strong>에서만 적용된다:</p>
+          <ul>
+            <li><strong>산(Acid)</strong>: 물에 녹아 H<sub>3</sub>O<sup>+</sup> (히드로늄 이온)을 생성하는 물질</li>
+            <li><strong>염기(Base)</strong>: 물에 녹아 OH<sup>&minus;</sup> (수산화 이온)을 생성하는 물질</li>
+          </ul>
+          <div class="math-block">
+            \[ \text{HCl}(aq) + \text{H}_2\text{O}(l) \rightleftharpoons \text{H}_3\text{O}^+(aq) + \text{Cl}^-(aq) \]
+          </div>
+
+          <h3>2. Bronsted-Lowry 정의</h3>
+          <p>유기화학에서 가장 중요한 정의로, 수용액에 국한되지 않는다:</p>
+          <ul>
+            <li><strong>산(Acid)</strong>: 양성자(H<sup>+</sup>)를 <strong>제공하는</strong> 물질 (proton donor)</li>
+            <li><strong>염기(Base)</strong>: 양성자(H<sup>+</sup>)를 <strong>받아들이는</strong> 물질 (proton acceptor)</li>
+          </ul>
+          <p>예시: tert-부톡사이드(alkoxide)가 물과 반응하여 양성자를 받아들이는 반응</p>
+          <div class="math-block">
+            \[ (CH_3)_3CO^- + H_2O \rightleftharpoons (CH_3)_3COH + HO^- \]
+          </div>
+          <p>이 반응에서 <strong>H<sub>2</sub>O</strong>가 산(양성자 제공), <strong>(CH<sub>3</sub>)<sub>3</sub>CO<sup>&minus;</sup></strong>가 염기(양성자 수용) 역할을 한다. 반응 후 <strong>(CH<sub>3</sub>)<sub>3</sub>COH</strong>는 짝산(conjugate acid), <strong>HO<sup>&minus;</sup></strong>는 짝염기(conjugate base)가 된다.</p>
+
+          <h3>3. Lewis 정의</h3>
+          <p>가장 넓은 범위의 정의로, 양성자 이동 없이도 적용된다:</p>
+          <ul>
+            <li><strong>Lewis 산</strong>: 전자쌍을 <strong>받아들이는</strong> 물질 (electron pair acceptor)</li>
+            <li><strong>Lewis 염기</strong>: 전자쌍을 <strong>제공하는</strong> 물질 (electron pair donor)</li>
+          </ul>
+          <p>예시: 1,10-phenanthroline 리간드가 NiX<sub>2</sub>의 Ni 금속과 배위 결합을 형성하는 반응에서, 리간드(N 원자의 비공유 전자쌍)가 Lewis 염기, Ni<sup>2+</sup>가 Lewis 산이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Proton donor</td><td>양성자 제공자</td><td>Bronsted-Lowry 산의 정의</td></tr>
+              <tr><td class="en">Proton acceptor</td><td>양성자 수용자</td><td>Bronsted-Lowry 염기의 정의</td></tr>
+              <tr><td class="en">Conjugate acid</td><td>짝산</td><td>염기가 양성자를 받은 후의 형태</td></tr>
+              <tr><td class="en">Conjugate base</td><td>짝염기</td><td>산이 양성자를 잃은 후의 형태</td></tr>
+              <tr><td class="en">Lewis acid</td><td>루이스 산</td><td>전자쌍 수용체 (electron pair acceptor)</td></tr>
+              <tr><td class="en">Lewis base</td><td>루이스 염기</td><td>전자쌍 제공체 (electron pair donor)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">핵심: 유기화학에서는 <strong>Bronsted-Lowry 정의</strong>가 표준이다. 모든 Bronsted-Lowry 산/염기는 Lewis 산/염기이기도 하지만, 그 역은 성립하지 않는다 (예: BF<sub>3</sub>는 Lewis 산이지만 양성자를 제공하지 않으므로 Bronsted-Lowry 산이 아니다).</div>
+      </section>
+
+      <!-- ==================== Page 3 ==================== -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>3.2 전자 밀도의 흐름: 곡선 화살표 표기법</h2>
+        <div class="summary-box">
+          <strong>곡선 화살표(curved arrow)</strong>는 전자쌍의 이동을 나타내는 유기화학의 핵심 표기법이다. 산-염기 반응에서는 반드시 <strong>두 개의 곡선 화살표</strong>가 필요하다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">곡선 화살표의 규칙</div>
+          <p>산-염기 반응에서 전자의 흐름을 나타낼 때 <strong>double-barbed arrow(양갈래 화살표)</strong>를 사용한다. 이 화살표는 <strong>전자쌍(2개의 전자)</strong>의 이동을 나타낸다.</p>
+          <ul>
+            <li><strong>화살표의 꼬리(tail)</strong>: 전자쌍이 <strong>출발하는</strong> 위치 (비공유 전자쌍 또는 결합)</li>
+            <li><strong>화살표의 머리(head)</strong>: 전자쌍이 <strong>도착하는</strong> 위치 (새로운 결합 형성)</li>
+          </ul>
+
+          <h3>Skill Builder 3.1: 물과 메톡사이드의 반응</h3>
+          <div class="math-block">
+            \[ \text{H}_2\text{O} + \text{CH}_3\text{O}^- \rightleftharpoons \text{HO}^- + \text{CH}_3\text{OH} \]
+          </div>
+          <p>이 반응에서 두 개의 곡선 화살표가 필요하다:</p>
+          <ol>
+            <li><strong>첫 번째 화살표</strong>: CH<sub>3</sub>O<sup>&minus;</sup>의 비공유 전자쌍에서 H<sub>2</sub>O의 H 원자로 (새로운 O-H 결합 형성)</li>
+            <li><strong>두 번째 화살표</strong>: H<sub>2</sub>O의 O-H 결합에서 O 원자로 (결합이 끊어지며 비공유 전자쌍이 됨)</li>
+          </ol>
+
+          <!-- SVG: Curved Arrow Acid-Base Reaction -->
+          <div class="svg-diagram">
+            <svg width="620" height="200" viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg">
+              <style>
+                .mol-text { font: 500 16px 'Noto Sans KR', sans-serif; fill: var(--text, #2C2C2C); }
+                .mol-label { font: 400 12px 'Noto Sans KR', sans-serif; fill: var(--text-muted, #6B6B6B); }
+                .arrow-line { stroke: var(--accent, #C0583F); stroke-width: 2; fill: none; }
+                .bond-line { stroke: var(--text, #2C2C2C); stroke-width: 2; }
+                .charge { font: 700 14px 'JetBrains Mono', monospace; fill: #E07A5F; }
+              </style>
+              <!-- Reactants -->
+              <text x="40" y="90" class="mol-text">CH<tspan baseline-shift="sub" font-size="12">3</tspan>O</text>
+              <text x="105" y="78" class="charge">&minus;</text>
+              <!-- lone pair dots -->
+              <circle cx="98" cy="98" r="2" fill="var(--accent, #C0583F)"/>
+              <circle cx="104" cy="98" r="2" fill="var(--accent, #C0583F)"/>
+
+              <text x="140" y="90" class="mol-text" font-size="20">+</text>
+
+              <!-- H2O -->
+              <text x="180" y="90" class="mol-text">H</text>
+              <line x1="198" y1="85" x2="218" y2="85" class="bond-line"/>
+              <text x="222" y="90" class="mol-text">O</text>
+              <line x1="246" y1="85" x2="266" y2="85" class="bond-line"/>
+              <text x="270" y="90" class="mol-text">H</text>
+
+              <!-- Curved arrow 1: from CH3O- lone pair to H -->
+              <path d="M 101 100 Q 140 140 185 95" class="arrow-line" marker-end="url(#arrowhead1)"/>
+              <text x="110" y="150" class="mol-label">1. 염기의 비공유 전자쌍이 양성자를 공격</text>
+
+              <!-- Curved arrow 2: from O-H bond to O -->
+              <path d="M 216 80 Q 230 55 240 78" class="arrow-line" marker-end="url(#arrowhead1)"/>
+              <text x="200" y="50" class="mol-label">2. O-H 결합 전자가 O로 이동</text>
+
+              <!-- Equilibrium arrow -->
+              <line x1="300" y1="85" x2="350" y2="85" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <line x1="300" y1="90" x2="350" y2="90" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <polygon points="350,82 358,87.5 350,93" fill="var(--text, #2C2C2C)" opacity="0.7"/>
+              <polygon points="300,82 292,87.5 300,93" fill="var(--text, #2C2C2C)" opacity="0.7"/>
+
+              <!-- Products -->
+              <text x="380" y="90" class="mol-text">HO</text>
+              <text x="412" y="78" class="charge">&minus;</text>
+
+              <text x="440" y="90" class="mol-text" font-size="20">+</text>
+
+              <text x="475" y="90" class="mol-text">CH<tspan baseline-shift="sub" font-size="12">3</tspan>OH</text>
+
+              <!-- Labels -->
+              <text x="55" y="120" class="mol-label" fill="var(--accent, #C0583F)">Base</text>
+              <text x="205" y="120" class="mol-label" fill="var(--accent, #C0583F)">Acid</text>
+              <text x="370" y="120" class="mol-label" fill="var(--accent, #C0583F)">Conj. base</text>
+              <text x="480" y="120" class="mol-label" fill="var(--accent, #C0583F)">Conj. acid</text>
+
+              <defs>
+                <marker id="arrowhead1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="var(--accent, #C0583F)"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Apply the Skill 3.3</div>
+          <p><strong>Q:</strong> 모르핀(morphine) 유도체와 HBr이 반응할 때, 평형 상태에서의 주요 생성물의 구조는 무엇인가?</p>
+          <p>모르핀 구조에는 방향족 에터(-O-)와 3차 아민(-N-)이 있다. HBr은 강산이므로 양성자를 제공하는데, 이때 <strong>질소(N) 원자가 양성자를 받는다</strong>. 그 이유는 N이 O보다 염기성이 강하기 때문이다 (N은 비공유 전자쌍이 공명에 참여하지 않으므로).</p>
+        </div>
+
+        <div class="key-point">규칙: 곡선 화살표는 항상 <strong>전자가 풍부한 곳(nucleophile/base)</strong>에서 <strong>전자가 부족한 곳(electrophile/acid)</strong>으로 그린다. 양성자 이동 반응에서는 반드시 2개의 곡선 화살표가 필요하다.</div>
+      </section>
+
+      <!-- ==================== Page 4 ==================== -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>3.3 Bronsted-Lowry 산도: 정량적 관점</h2>
+        <div class="summary-box">
+          산의 세기를 정량적으로 나타내는 지표가 <strong>K<sub>a</sub>(산 해리 상수)</strong>와 <strong>pK<sub>a</sub></strong>이다. pK<sub>a</sub> 값이 <strong>작을수록 강한 산</strong>이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Ka와 pKa</div>
+          <p>Bronsted-Lowry 산의 세기는 물에서의 해리 평형으로 정량화한다:</p>
+          <div class="math-block">
+            \[ \text{HA}(aq) + \text{H}_2\text{O}(l) \rightleftharpoons \text{H}_3\text{O}^+(aq) + \text{A}^-(aq) \]
+          </div>
+          <div class="math-block">
+            \[ K_a = \frac{[\text{H}_3\text{O}^+][\text{A}^-]}{[\text{HA}]} \]
+          </div>
+          <p>K<sub>a</sub> 값은 매우 넓은 범위에 걸쳐 있어 비교가 어려우므로, 로그 스케일인 pK<sub>a</sub>를 사용한다:</p>
+          <div class="math-block">
+            \[ pK_a = -\log K_a \]
+          </div>
+          <ul>
+            <li>K<sub>a</sub>가 <strong>클수록</strong> &rarr; pK<sub>a</sub>가 <strong>작을수록</strong> &rarr; <strong>강한 산</strong></li>
+            <li>K<sub>a</sub>가 <strong>작을수록</strong> &rarr; pK<sub>a</sub>가 <strong>클수록</strong> &rarr; <strong>약한 산</strong></li>
+          </ul>
+        </div>
+
+        <!-- pKa Scale SVG -->
+        <div class="card">
+          <div class="card-label">pKa 스케일 (pKa Scale)</div>
+          <div class="svg-diagram">
+            <svg width="700" height="280" viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+              <style>
+                .scale-text { font: 500 13px 'Noto Sans KR', sans-serif; fill: var(--text, #2C2C2C); }
+                .scale-label { font: 400 11px 'Noto Sans KR', sans-serif; fill: var(--text-muted, #6B6B6B); }
+                .scale-val { font: 700 14px 'JetBrains Mono', monospace; fill: var(--text, #2C2C2C); }
+                .strong-color { fill: #C0583F; }
+                .weak-color { fill: #5B8C5A; }
+              </style>
+              <!-- Main scale bar -->
+              <defs>
+                <linearGradient id="scaleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#C0583F;stop-opacity:0.8"/>
+                  <stop offset="50%" style="stop-color:#D4A574;stop-opacity:0.6"/>
+                  <stop offset="100%" style="stop-color:#5B8C5A;stop-opacity:0.8"/>
+                </linearGradient>
+              </defs>
+              <rect x="50" y="60" width="600" height="16" rx="8" fill="url(#scaleGrad)"/>
+
+              <!-- Scale ticks and values -->
+              <line x1="50" y1="58" x2="50" y2="82" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <text x="50" y="98" text-anchor="middle" class="scale-val">-15</text>
+
+              <line x1="142" y1="58" x2="142" y2="82" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <text x="142" y="98" text-anchor="middle" class="scale-val">-5</text>
+
+              <line x1="188" y1="58" x2="188" y2="82" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <text x="188" y="98" text-anchor="middle" class="scale-val">0</text>
+
+              <line x1="280" y1="58" x2="280" y2="82" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <text x="280" y="98" text-anchor="middle" class="scale-val">10</text>
+
+              <line x1="372" y1="58" x2="372" y2="82" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <text x="372" y="98" text-anchor="middle" class="scale-val">20</text>
+
+              <line x1="464" y1="58" x2="464" y2="82" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <text x="464" y="98" text-anchor="middle" class="scale-val">30</text>
+
+              <line x1="556" y1="58" x2="556" y2="82" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <text x="556" y="98" text-anchor="middle" class="scale-val">40</text>
+
+              <line x1="650" y1="58" x2="650" y2="82" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <text x="650" y="98" text-anchor="middle" class="scale-val">50</text>
+
+              <!-- Arrow labels -->
+              <text x="90" y="40" text-anchor="middle" class="scale-text strong-color" font-weight="700">강한 산</text>
+              <text x="90" y="53" text-anchor="middle" class="scale-label">(Strongest acid)</text>
+              <text x="600" y="40" text-anchor="middle" class="scale-text weak-color" font-weight="700">약한 산</text>
+              <text x="600" y="53" text-anchor="middle" class="scale-label">(Weakest acid)</text>
+
+              <!-- Compound examples with lines -->
+              <!-- HI, pKa ~ -9 -->
+              <line x1="100" y1="82" x2="100" y2="120" stroke="var(--text-muted, #6B6B6B)" stroke-width="1" stroke-dasharray="3"/>
+              <text x="100" y="135" text-anchor="middle" class="scale-label">H<tspan baseline-shift="sub" font-size="9">2</tspan>SO<tspan baseline-shift="sub" font-size="9">4</tspan></text>
+              <text x="100" y="148" text-anchor="middle" class="scale-label">pK<tspan baseline-shift="sub" font-size="8">a</tspan> = -9</text>
+
+              <!-- HCl, pKa ~ -7 -->
+              <line x1="155" y1="82" x2="155" y2="155" stroke="var(--text-muted, #6B6B6B)" stroke-width="1" stroke-dasharray="3"/>
+              <text x="155" y="170" text-anchor="middle" class="scale-label">HCl</text>
+              <text x="155" y="183" text-anchor="middle" class="scale-label">pK<tspan baseline-shift="sub" font-size="8">a</tspan> = -7</text>
+
+              <!-- RCOOH, pKa ~ 5 -->
+              <line x1="234" y1="82" x2="234" y2="120" stroke="var(--text-muted, #6B6B6B)" stroke-width="1" stroke-dasharray="3"/>
+              <text x="234" y="135" text-anchor="middle" class="scale-label">RCOOH</text>
+              <text x="234" y="148" text-anchor="middle" class="scale-label">pK<tspan baseline-shift="sub" font-size="8">a</tspan> ~ 5</text>
+
+              <!-- ROH, pKa ~ 16 -->
+              <line x1="335" y1="82" x2="335" y2="155" stroke="var(--text-muted, #6B6B6B)" stroke-width="1" stroke-dasharray="3"/>
+              <text x="335" y="170" text-anchor="middle" class="scale-label">ROH</text>
+              <text x="335" y="183" text-anchor="middle" class="scale-label">pK<tspan baseline-shift="sub" font-size="8">a</tspan> ~ 16</text>
+
+              <!-- alkyne, pKa ~ 25 -->
+              <line x1="418" y1="82" x2="418" y2="120" stroke="var(--text-muted, #6B6B6B)" stroke-width="1" stroke-dasharray="3"/>
+              <text x="418" y="135" text-anchor="middle" class="scale-label">RC&equiv;CH</text>
+              <text x="418" y="148" text-anchor="middle" class="scale-label">pK<tspan baseline-shift="sub" font-size="8">a</tspan> = 25</text>
+
+              <!-- RNH2, pKa ~ 38 -->
+              <line x1="530" y1="82" x2="530" y2="155" stroke="var(--text-muted, #6B6B6B)" stroke-width="1" stroke-dasharray="3"/>
+              <text x="530" y="170" text-anchor="middle" class="scale-label">RNH<tspan baseline-shift="sub" font-size="9">2</tspan></text>
+              <text x="530" y="183" text-anchor="middle" class="scale-label">pK<tspan baseline-shift="sub" font-size="8">a</tspan> = 38</text>
+
+              <!-- alkene, pKa ~ 44 -->
+              <line x1="600" y1="82" x2="600" y2="120" stroke="var(--text-muted, #6B6B6B)" stroke-width="1" stroke-dasharray="3"/>
+              <text x="600" y="135" text-anchor="middle" class="scale-label">alkene</text>
+              <text x="600" y="148" text-anchor="middle" class="scale-label">pK<tspan baseline-shift="sub" font-size="8">a</tspan> = 44</text>
+
+              <!-- alkane, pKa ~ 50 -->
+              <line x1="650" y1="82" x2="650" y2="155" stroke="var(--text-muted, #6B6B6B)" stroke-width="1" stroke-dasharray="3"/>
+              <text x="650" y="170" text-anchor="middle" class="scale-label">alkane</text>
+              <text x="650" y="183" text-anchor="middle" class="scale-label">pK<tspan baseline-shift="sub" font-size="8">a</tspan> = 50</text>
+
+              <!-- Bottom note -->
+              <text x="350" y="220" text-anchor="middle" class="scale-text">pK<tspan baseline-shift="sub" font-size="11">a</tspan> 값이 작을수록 강한 산</text>
+              <text x="350" y="240" text-anchor="middle" class="scale-label">강한 산의 짝염기 = 약한 염기 / 약한 산의 짝염기 = 강한 염기</text>
+
+              <!-- Arrows at bottom -->
+              <line x1="80" y1="258" x2="300" y2="258" stroke="#C0583F" stroke-width="1.5" marker-end="url(#arrowR)"/>
+              <text x="190" y="273" text-anchor="middle" class="scale-label strong-color">약한 짝염기 (Weakest conj. base)</text>
+              <line x1="620" y1="258" x2="400" y2="258" stroke="#5B8C5A" stroke-width="1.5" marker-end="url(#arrowG)"/>
+              <text x="510" y="273" text-anchor="middle" class="scale-label weak-color">강한 짝염기 (Strongest conj. base)</text>
+              <defs>
+                <marker id="arrowR" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#C0583F"/>
+                </marker>
+                <marker id="arrowG" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#5B8C5A"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <p>위 스케일은 Table 3.1의 pK<sub>a</sub> 값을 요약한 것이다. 유기화학에서 자주 등장하는 화합물의 pK<sub>a</sub> 범위는 대략 <strong>-10 ~ 50</strong>이다.</p>
+        </div>
+
+        <div class="practice-box">
+          <div class="practice-label">Apply the Skill 3.5</div>
+          <p><strong>Q:</strong> 프로프라놀롤(Propranolol, 항고혈압제)에서 가장 산성이 강한 수소(most acidic H)는 어느 것인가?</p>
+          <p>구조 내에 -OH, -NH-, 방향족 C-H 등 여러 종류의 수소가 있다. pK<sub>a</sub> 값을 비교하면 <strong>-OH (알코올, pK<sub>a</sub> ~ 16)</strong>가 -NH- (아민, pK<sub>a</sub> ~ 38)보다 훨씬 산성이 강하므로, <strong>O-H 수소가 가장 산성이 강하다.</strong></p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 5 ==================== -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>3.3 정량적 관점: K<sub>a</sub>와 K<sub>b</sub>의 관계</h2>
+        <div class="summary-box">
+          산의 세기(K<sub>a</sub>)와 그 짝염기의 세기(K<sub>b</sub>)는 반비례 관계에 있다. <strong>강한 산의 짝염기는 약한 염기</strong>이고, <strong>약한 산의 짝염기는 강한 염기</strong>이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Ka와 Kb의 관계</div>
+          <p>산 HA와 그 짝염기 A<sup>&minus;</sup>에 대해:</p>
+          <div class="math-block">
+            \[ K_a \times K_b = K_w = 1.0 \times 10^{-14} \quad (\text{at } 25°C) \]
+          </div>
+          <div class="math-block">
+            \[ pK_a + pK_b = 14 \]
+          </div>
+          <p>따라서 HA<sub>1</sub>의 산도 > HA<sub>2</sub>의 산도 (K<sub>a1</sub> > K<sub>a2</sub>) 이면, A<sub>1</sub><sup>&minus;</sup>의 염기성 < A<sub>2</sub><sup>&minus;</sup>의 염기성 (K<sub>b1</sub> < K<sub>b2</sub>) 이다.</p>
+
+          <h3>Skill Builder 3.3: 1,3-다이카보닐 vs 케톤</h3>
+          <p>1,3-diketone(pK<sub>a</sub> = 9.0) vs ketone(pK<sub>a</sub> = 19.2):</p>
+          <ul>
+            <li>1,3-다이케톤이 더 강한 산이다 (pK<sub>a</sub>가 더 작으므로)</li>
+            <li>따라서 1,3-다이케톤의 짝염기(enolate)가 더 약한 염기이다</li>
+            <li>이는 짝염기의 음전하가 두 개의 카보닐기에 의해 <strong>공명 안정화</strong>되기 때문이다</li>
+          </ul>
+
+          <h3>Exercise: 어떤 N이 먼저 양성자화되는가?</h3>
+          <p>아크리딘(acridine) 유도체에 H<sub>2</sub>N-, H<sub>2</sub>N-, -N= 세 종류의 질소가 있을 때:</p>
+          <ul>
+            <li>피리딘형 N (=N-, pK<sub>a</sub> of conj. acid ~ 3.4): sp<sup>2</sup> 비공유 전자쌍, 공명에 참여하지 않음</li>
+            <li>1차 아민 -NH<sub>2</sub> (pK<sub>a</sub> of conj. acid ~ 3.8~10.5): 방향족 고리에 붙어있으면 비공유 전자쌍이 공명으로 비편재화</li>
+          </ul>
+          <p>가장 염기성이 강한 N이 먼저 양성자화된다. <strong>가장 pK<sub>a</sub> 값이 큰 짝산을 갖는 N이 가장 강한 염기</strong>이다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 6 ==================== -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>3.3 정량적 관점: 평형에서의 주요 생성물</h2>
+        <div class="summary-box">
+          pK<sub>a</sub> 값을 비교하면 평형에서 어느 쪽이 우세한지(major product) 예측할 수 있다. <strong>평형은 항상 약한 산 쪽으로 치우친다.</strong>
+        </div>
+
+        <div class="card">
+          <div class="card-label">평형의 방향 판단</div>
+          <p>다음 반응을 보자:</p>
+          <div class="math-block">
+            \[ (CH_3)_3CO^- + H_2O \rightleftharpoons (CH_3)_3COH + HO^- \]
+          </div>
+          <p>여기서:</p>
+          <ul>
+            <li>H<sub>2</sub>O의 pK<sub>a</sub> = <strong>15.7</strong> (산)</li>
+            <li>(CH<sub>3</sub>)<sub>3</sub>COH의 pK<sub>a</sub> = <strong>18</strong> (짝산)</li>
+          </ul>
+          <p><strong>평형은 pK<sub>a</sub>가 더 큰(더 약한 산) 쪽으로 치우친다.</strong> pK<sub>a</sub> 18 > 15.7이므로, 생성물 쪽이 major이다. 즉, 반응이 <strong>정방향(forward)</strong>으로 진행하는 것이 유리하다.</p>
+
+          <div class="key-point">규칙: 반응의 양쪽에서 산의 pK<sub>a</sub> 값을 비교한다. <strong>평형은 항상 pK<sub>a</sub>가 더 큰 쪽</strong>(= 더 약한 산이 있는 쪽)으로 치우친다. 즉, 더 강한 산이 양성자를 내놓는 방향이 유리하다.</div>
+
+          <h3>Practice the Skill 3.10(d)</h3>
+          <div class="math-block">
+            \[ HC \equiv CH + \ ^-NH_2 \rightleftharpoons HC \equiv C^- + NH_3 \]
+          </div>
+          <ul>
+            <li>아세틸렌(HC&equiv;CH)의 pK<sub>a</sub> = 25</li>
+            <li>NH<sub>3</sub>의 pK<sub>a</sub> = 38</li>
+          </ul>
+          <p>pK<sub>a</sub> 38 > 25이므로 평형은 <strong>생성물(오른쪽) 쪽으로 치우친다.</strong> 즉, NaNH<sub>2</sub>는 아세틸렌을 탈양성자화할 수 있는 충분히 강한 염기이다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 7 ==================== -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>3.4 Bronsted-Lowry 산도: 정성적 관점 서론</h2>
+        <div class="summary-box">
+          pK<sub>a</sub> 값을 모르는 경우에도 두 물질의 상대적 산도를 비교할 수 있다. 핵심은 <strong>짝염기(conjugate base)의 안정성</strong>을 비교하는 것이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">정성적 분석의 핵심 원리</div>
+          <p>HA<sub>1</sub>과 HA<sub>2</sub>의 pK<sub>a</sub> 정보가 없을 때, 어느 것이 더 강한 산인지 어떻게 판단할까?</p>
+          <p>핵심 원리: <strong>짝염기(A<sup>&minus;</sup>)가 더 안정할수록, 원래의 산(HA)은 더 강하다.</strong></p>
+          <p>즉, A<sub>1</sub><sup>&minus;</sup>과 A<sub>2</sub><sup>&minus;</sup>의 <strong>열역학적 안정성(thermodynamic stability)</strong>을 비교하면 된다. 더 안정한 짝염기를 만드는 산이 더 강한 산이다.</p>
+
+          <h3>[2024 중간고사 기출문제]</h3>
+          <p>아래 화합물에서 H<sub>1</sub>, H<sub>2</sub>, H<sub>3</sub>, H<sub>4</sub>를 pK<sub>a</sub> 값이 낮은 것부터 높은 순서대로 나열하고 그 이유를 설명하시오.</p>
+          <p>구조에 Cl 치환기가 있는 다양한 알코올(-OH)이 있을 때, 유도 효과(inductive effect)와 원자 효과(atom effect) 등을 종합적으로 고려해야 한다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 8 ==================== -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>3.4 ARIO 인자 개요</h2>
+        <div class="summary-box">
+          짝염기의 안정성에 영향을 미치는 4가지 인자를 <strong>ARIO</strong>라고 부른다. 이들은 우선순위가 있으며, 유기화학에서 산도를 정성적으로 분석하는 가장 중요한 도구이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">ARIO 인자</div>
+          <p>짝염기의 안정성을 결정하는 인자들은 크게 두 가지 범주로 나뉜다:</p>
+
+          <h3>전자적 효과 (Electronic Effects)</h3>
+          <ul>
+            <li><strong>유도 효과 (Inductive effect)</strong> &mdash; 전기음성도(electronegativity, &chi;)와 직접 관련
+              <ul>
+                <li>1. <strong>Atom</strong> &mdash; 어떤 원자가 전하를 지니는가?</li>
+                <li>3. <strong>Induction</strong> &mdash; 유도 효과로 전하를 안정화하는가?</li>
+                <li>4. <strong>Orbitals</strong> &mdash; 음전하가 어떤 오비탈에 있는가?</li>
+              </ul>
+            </li>
+            <li><strong>공명 효과 (Resonance effect)</strong>
+              <ul>
+                <li>2. <strong>Resonance</strong> &mdash; 공명 구조로 전하를 비편재화하는가?</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- ARIO Summary SVG -->
+        <div class="card">
+          <div class="card-label">ARIO 인자 요약 다이어그램</div>
+          <div class="svg-diagram">
+            <svg width="660" height="360" viewBox="0 0 660 360" xmlns="http://www.w3.org/2000/svg">
+              <style>
+                .ario-title { font: 700 16px 'Noto Sans KR', sans-serif; fill: white; }
+                .ario-num { font: 700 24px 'JetBrains Mono', monospace; fill: white; }
+                .ario-desc { font: 400 12px 'Noto Sans KR', sans-serif; fill: var(--text, #2C2C2C); }
+                .ario-q { font: 500 13px 'Noto Sans KR', sans-serif; fill: var(--text, #2C2C2C); }
+                .ario-ex { font: 400 11px 'JetBrains Mono', monospace; fill: var(--text-muted, #6B6B6B); }
+              </style>
+
+              <!-- Factor 1: Atom -->
+              <rect x="10" y="10" width="310" height="150" rx="10" fill="var(--bg-card, #fff)" stroke="var(--border, #E8E3DD)" stroke-width="1.5"/>
+              <rect x="10" y="10" width="310" height="38" rx="10" fill="#C0583F"/>
+              <rect x="10" y="38" width="310" height="10" fill="#C0583F"/>
+              <text x="25" y="35" class="ario-num">1</text>
+              <text x="55" y="35" class="ario-title">Atom (원자)</text>
+              <text x="25" y="75" class="ario-q">Q: 어떤 원자가 음전하를 지니는가?</text>
+              <text x="25" y="100" class="ario-desc">같은 주기: 전기음성도가 클수록 안정</text>
+              <text x="25" y="118" class="ario-desc">같은 족: 아래로 갈수록 (크기가 클수록) 안정</text>
+              <text x="25" y="145" class="ario-ex">C &lt; N &lt; O &lt; F (같은 주기) | F &lt; Cl &lt; Br &lt; I (같은 족)</text>
+
+              <!-- Factor 2: Resonance -->
+              <rect x="340" y="10" width="310" height="150" rx="10" fill="var(--bg-card, #fff)" stroke="var(--border, #E8E3DD)" stroke-width="1.5"/>
+              <rect x="340" y="10" width="310" height="38" rx="10" fill="#D4874B"/>
+              <rect x="340" y="38" width="310" height="10" fill="#D4874B"/>
+              <text x="355" y="35" class="ario-num">2</text>
+              <text x="385" y="35" class="ario-title">Resonance (공명)</text>
+              <text x="355" y="75" class="ario-q">Q: 공명으로 짝염기가 더 안정한가?</text>
+              <text x="355" y="100" class="ario-desc">음전하가 여러 원자에 비편재화되면 안정</text>
+              <text x="355" y="118" class="ario-desc">공명 구조가 많을수록 더 안정</text>
+              <text x="355" y="145" class="ario-ex">EtOH (pKa 16) vs AcOH (pKa 4.75)</text>
+
+              <!-- Factor 3: Induction -->
+              <rect x="10" y="180" width="310" height="150" rx="10" fill="var(--bg-card, #fff)" stroke="var(--border, #E8E3DD)" stroke-width="1.5"/>
+              <rect x="10" y="180" width="310" height="38" rx="10" fill="#5B8C5A"/>
+              <rect x="10" y="208" width="310" height="10" fill="#5B8C5A"/>
+              <text x="25" y="205" class="ario-num">3</text>
+              <text x="55" y="205" class="ario-title">Induction (유도)</text>
+              <text x="25" y="245" class="ario-q">Q: 전자 끌기 그룹이 전하를 안정화하는가?</text>
+              <text x="25" y="270" class="ario-desc">전기음성 원자(F, Cl 등)가 가까이 있으면</text>
+              <text x="25" y="288" class="ario-desc">음전하를 분산시켜 안정화 (through-bond)</text>
+              <text x="25" y="315" class="ario-ex">CH3COOH (4.75) &gt; ClCH2COOH (2.87)</text>
+              <text x="25" y="330" class="ario-ex">&gt; Cl2CHCOOH (1.25) &gt; Cl3CCOOH (0.70)</text>
+
+              <!-- Factor 4: Orbitals -->
+              <rect x="340" y="180" width="310" height="150" rx="10" fill="var(--bg-card, #fff)" stroke="var(--border, #E8E3DD)" stroke-width="1.5"/>
+              <rect x="340" y="180" width="310" height="38" rx="10" fill="#5A7CA8"/>
+              <rect x="340" y="208" width="310" height="10" fill="#5A7CA8"/>
+              <text x="355" y="205" class="ario-num">4</text>
+              <text x="385" y="205" class="ario-title">Orbitals (오비탈)</text>
+              <text x="355" y="245" class="ario-q">Q: 음전하가 어떤 오비탈에 있는가?</text>
+              <text x="355" y="270" class="ario-desc">s-character가 클수록 전자를 핵 가까이 보유</text>
+              <text x="355" y="288" class="ario-desc">sp &gt; sp2 &gt; sp3 순서로 안정</text>
+              <text x="355" y="315" class="ario-ex">sp3: pKa=50  sp2: pKa=44  sp: pKa=25</text>
+              <text x="355" y="330" class="ario-ex">(Ethane)    (Ethylene)  (Acetylene)</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="key-point">ARIO 우선순위: <strong>1. Atom > 2. Resonance > 3. Induction > 4. Orbitals</strong>. 여러 인자가 동시에 작용할 때는 이 순서대로 우선 적용한다. 단, 실제 문제에서는 상황에 따라 유연하게 판단해야 한다.</div>
+      </section>
+
+      <!-- ==================== Page 9 ==================== -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>3.4 Factor 1: Atom (원자 효과)</h2>
+        <div class="summary-box">
+          음전하를 지니는 <strong>원자의 종류</strong>에 따라 짝염기의 안정성이 달라진다. 같은 주기에서는 <strong>전기음성도</strong>가, 같은 족에서는 <strong>원자 크기</strong>가 핵심이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">같은 주기 비교 (Across a period)</div>
+          <p>같은 주기에서는 <strong>전기음성도가 큰 원자</strong>가 음전하를 더 잘 수용하므로, 그 원자에 H가 붙은 결합이 더 쉽게 끊어진다(= 더 강한 산):</p>
+          <div class="math-block">
+            \[ \text{C-H} < \text{N-H} < \text{O-H} < \text{F-H} \]
+            \[ \text{산도 증가} \rightarrow \]
+          </div>
+          <p>예시: 같은 탄소 골격에서 -NH (아민)의 H보다 -OH (알코올)의 H가 더 산성이 강하다. 이는 O가 N보다 전기음성도가 크기 때문이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">같은 족 비교 (Down a group)</div>
+          <p>같은 족에서는 <strong>원자 크기가 큰 원자</strong>가 음전하를 더 넓은 공간에 분산시키므로 안정:</p>
+          <div class="math-block">
+            \[ \text{H-F} < \text{H-Cl} < \text{H-Br} < \text{H-I} \]
+            \[ \text{산도 증가} \rightarrow \]
+          </div>
+          <p>대표적 비교:</p>
+          <ul>
+            <li>H<sub>2</sub>O: pK<sub>a</sub> = 15.7 vs H<sub>2</sub>S: pK<sub>a</sub> = 7.0</li>
+            <li>S는 O보다 원자가 크므로 S<sup>&minus;</sup>가 O<sup>&minus;</sup>보다 안정 &rarr; H<sub>2</sub>S가 더 강한 산</li>
+          </ul>
+
+          <h3>주기율표에서의 산도 경향</h3>
+          <table class="terms-table">
+            <thead><tr><th>2주기</th><th>3주기</th><th>경향</th></tr></thead>
+            <tbody>
+              <tr><td>C</td><td>Si</td><td rowspan="4" style="vertical-align:middle;">아래로 갈수록<br/>산도 증가<br/>(원자 크기 효과)</td></tr>
+              <tr><td>N</td><td>P</td></tr>
+              <tr><td>O</td><td>S</td></tr>
+              <tr><td>F</td><td>Cl</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">Skill Builder 3.5: 같은 주기 내에서 전기음성도 차이에 의한 산도 비교를 연습한다. 핵심은 "어떤 원자가 음전하를 지니게 되는가?"를 파악하는 것이다.</div>
+      </section>
+
+      <!-- ==================== Page 10 ==================== -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>3.4 Factor 3: Induction (유도 효과)</h2>
+        <div class="summary-box">
+          <strong>전자 끌기 그룹(electron-withdrawing group, EWG)</strong>이 가까이 있으면 짝염기의 음전하를 안정화하여 산도를 높인다. 이것이 <strong>유도 효과(inductive effect)</strong>이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">유도 효과의 원리</div>
+          <p>유도 효과는 <strong>시그마 결합(sigma bond)을 통한 전자 밀도의 이동</strong>이다. 전기음성도가 큰 원자나 그룹이 결합을 통해 전자를 끌어당기면, 짝염기의 음전하가 분산되어 안정화된다.</p>
+
+          <h3>클로로아세트산의 비교</h3>
+          <table class="terms-table">
+            <thead><tr><th>화합물</th><th>pK<sub>a</sub></th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">CH<sub>3</sub>COOH</td><td>4.75</td><td>아세트산 (기준)</td></tr>
+              <tr><td class="en">ClCH<sub>2</sub>COOH</td><td>2.87</td><td>Cl 1개 &rarr; 산도 증가</td></tr>
+              <tr><td class="en">Cl<sub>2</sub>CHCOOH</td><td>1.25</td><td>Cl 2개 &rarr; 더 증가</td></tr>
+              <tr><td class="en">Cl<sub>3</sub>CCOOH</td><td>0.70</td><td>Cl 3개 &rarr; 가장 강한 산</td></tr>
+            </tbody>
+          </table>
+          <p>Cl 원자가 많을수록 짝염기(카복실레이트)의 음전하가 더 많이 안정화되므로 산도가 증가한다.</p>
+
+          <h3>유도 효과의 특성</h3>
+          <ul>
+            <li><strong>거리 의존적</strong>: 전자 끌기 그룹이 산성 수소에 가까울수록 효과가 크다</li>
+            <li><strong>누적 효과</strong>: EWG의 수가 많을수록 효과가 크다</li>
+            <li><strong>through-bond effect</strong>: 시그마 결합을 통해 전달된다</li>
+          </ul>
+
+          <h3>Skill Builder 3.7</h3>
+          <p>예시: CF<sub>3</sub> 그룹이 있는 다이올(diol)에서 어느 OH가 더 산성인가? CF<sub>3</sub>에 <strong>가까운</strong> OH가 유도 효과를 더 많이 받으므로 더 강한 산이다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 11 ==================== -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>3.4 Factor 4: Orbitals (오비탈 효과)</h2>
+        <div class="summary-box">
+          음전하가 위치한 오비탈의 <strong>s-character(s 성격 비율)</strong>가 클수록 전자를 핵 가까이에 안정하게 수용하므로 짝염기가 더 안정하다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">혼성 오비탈과 산도</div>
+          <p>탄소의 혼성 상태에 따른 C-H 결합의 산도 비교:</p>
+          <table class="terms-table">
+            <thead><tr><th>혼성</th><th>s-character</th><th>화합물</th><th>pK<sub>a</sub></th></tr></thead>
+            <tbody>
+              <tr><td class="en">sp<sup>3</sup></td><td>25%</td><td>에테인 (Ethane, C<sub>2</sub>H<sub>6</sub>)</td><td>50</td></tr>
+              <tr><td class="en">sp<sup>2</sup></td><td>33%</td><td>에틸렌 (Ethylene, C<sub>2</sub>H<sub>4</sub>)</td><td>44</td></tr>
+              <tr><td class="en">sp</td><td>50%</td><td>아세틸렌 (Acetylene, C<sub>2</sub>H<sub>2</sub>)</td><td>25</td></tr>
+            </tbody>
+          </table>
+
+          <p><strong>s-character가 클수록</strong> 전자가 핵에 더 가까이 위치하므로, 음전하가 더 안정하게 수용된다. 따라서:</p>
+          <div class="math-block">
+            \[ \text{sp}^3\ (25\%\ s) < \text{sp}^2\ (33\%\ s) < \text{sp}\ (50\%\ s) \]
+            \[ \text{짝염기 안정성 증가} \rightarrow \quad \text{산도 증가} \rightarrow \]
+          </div>
+
+          <p>아세틸렌(sp, pK<sub>a</sub>=25)이 에테인(sp<sup>3</sup>, pK<sub>a</sub>=50)보다 <strong>10<sup>25</sup>배</strong> 더 강한 산인 이유가 바로 이 오비탈 효과 때문이다.</p>
+        </div>
+
+        <div class="key-point">시험 포인트: 오비탈 효과는 다른 인자(Atom, Resonance, Induction)로 설명이 안 되는 경우에 적용한다. 특히 <strong>C-H 결합</strong>의 산도 비교에서 자주 등장한다.</div>
+      </section>
+
+      <!-- ==================== Page 12 ==================== -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>3.4 Factor 2: Resonance (공명 효과)</h2>
+        <div class="summary-box">
+          짝염기의 음전하가 <strong>공명 구조(resonance structures)</strong>를 통해 여러 원자에 비편재화(delocalization)되면 안정성이 증가하고, 원래 산의 산도가 높아진다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">공명 효과의 대표 예시</div>
+
+          <h3>에탄올 vs 아세트산</h3>
+          <table class="terms-table">
+            <thead><tr><th>화합물</th><th>pK<sub>a</sub></th><th>짝염기 공명 구조</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Ethanol (CH<sub>3</sub>CH<sub>2</sub>OH)</td><td>16</td><td>에톡사이드(CH<sub>3</sub>CH<sub>2</sub>O<sup>&minus;</sup>): 공명 불가, 음전하가 O 하나에 집중</td></tr>
+              <tr><td class="en">Acetic acid (CH<sub>3</sub>COOH)</td><td>4.75</td><td>아세테이트(CH<sub>3</sub>COO<sup>&minus;</sup>): <strong>2개의 동등한 공명 구조</strong>, 음전하가 2개의 O에 분산</td></tr>
+            </tbody>
+          </table>
+          <p>아세트산이 에탄올보다 약 <strong>10<sup>11</sup>배</strong> 더 강한 산인 이유는 짝염기인 아세테이트 이온에서 음전하가 공명으로 비편재화되기 때문이다.</p>
+
+          <h3>아마이드 N-H vs 아민 N-H</h3>
+          <p>아마이드(-CONH-)의 N-H가 아민(-NH-)보다 더 산성인 이유도 공명 효과 때문이다. 아마이드의 짝염기에서 음전하가 N과 인접한 C=O의 O에 비편재화될 수 있다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">[2024 중간고사] 비타민 C에서 가장 산성인 양성자</div>
+          <p>비타민 C(아스코르브산, ascorbic acid)에는 여러 개의 OH가 있다. 이 중 가장 산성이 강한 OH는 <strong>이중결합에 인접한(enol 위치의) OH</strong>이다.</p>
+          <p>이유: 해당 OH의 짝염기에서 음전하가 인접한 C=C-C=O 시스템을 통해 <strong>공명으로 비편재화</strong>될 수 있기 때문이다. 일반 알코올 OH는 공명 안정화가 불가능하다.</p>
+        </div>
+
+        <div class="tip">Skill Builder 3.6, 3.15, 3.17 연습 권장: 공명 효과는 ARIO 중 2순위이지만, 실제 문제에서 가장 빈번하게 출제되는 인자이다.</div>
+      </section>
+
+      <!-- ==================== Page 13 ==================== -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>3.4 ARIO 인자 종합 정리 및 적용</h2>
+        <div class="summary-box">
+          ARIO 4가지 인자의 우선순위를 종합적으로 적용하여 산도를 비교하는 연습을 한다. 대부분의 시험 문제는 <strong>여러 인자를 동시에 고려</strong>해야 한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">ARIO 우선순위 재확인</div>
+          <ol>
+            <li><strong>Atom</strong> &mdash; 어떤 원자가 전하를 지니는가? (가장 우선)</li>
+            <li><strong>Resonance</strong> &mdash; 공명 효과가 짝염기를 더 안정하게 만드는가?</li>
+            <li><strong>Induction</strong> &mdash; 유도 효과가 짝염기를 안정화하는가?</li>
+            <li><strong>Orbital</strong> &mdash; 음전하가 어떤 오비탈에 있는가? (s-character)</li>
+          </ol>
+          <p>일반적으로 인자들은 위 순서로 우선 적용한다. 같은 인자가 작용하는 경우에만 다음 순위의 인자를 고려한다.</p>
+
+          <h3>Skill Builder 3.9 예시</h3>
+          <p>다음 화합물의 두 C-H에서 어느 것이 더 산성인가?</p>
+          <div class="math-block">
+            \[ \text{H-CH}_2\text{COOCH}_2\text{COOH} \quad \text{vs} \quad \text{CCl}_3\text{COCH}_2\text{COO-H} \]
+          </div>
+          <p>분석 순서:</p>
+          <ol>
+            <li><strong>Atom</strong>: 두 H 모두 같은 원자(O 또는 C)에 붙어있는 경우, 이 인자로는 구분 불가</li>
+            <li><strong>Resonance</strong>: 짝염기의 공명 안정화 정도를 비교</li>
+            <li><strong>Induction</strong>: CCl<sub>3</sub> 같은 EWG의 유도 효과를 비교</li>
+          </ol>
+        </div>
+
+        <div class="practice-box">
+          <div class="practice-label">Practice the Skill 3.21</div>
+          <p>다양한 화합물의 산도를 비교할 때 ARIO를 체계적으로 적용해 보라. 먼저 <strong>어떤 수소가 떨어져 나가는지</strong> 확인하고, <strong>생성되는 짝염기의 안정성</strong>을 ARIO 순서대로 분석한다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 14 ==================== -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>3.5 양이온 산의 상대적 산도</h2>
+        <div class="summary-box">
+          양이온(cation)도 산으로 작용할 수 있다. 양이온 산의 짝염기는 중성 분자이므로, <strong>중성 염기의 염기성 비교</strong>로 산도를 판단한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">양이온 산의 이해</div>
+          <p><strong>Q: NH<sub>3</sub>와 H<sub>2</sub>O 중 어느 것이 더 강한 염기인가?</strong></p>
+          <p>NH<sub>3</sub>가 양성자를 받으면 NH<sub>4</sub><sup>+</sup> (pK<sub>a</sub> ~ 9.2), H<sub>2</sub>O가 양성자를 받으면 H<sub>3</sub>O<sup>+</sup> (pK<sub>a</sub> ~ -1.7)가 된다.</p>
+          <ul>
+            <li>NH<sub>4</sub><sup>+</sup>의 pK<sub>a</sub>(9.2) > H<sub>3</sub>O<sup>+</sup>의 pK<sub>a</sub>(-1.7)</li>
+            <li>NH<sub>4</sub><sup>+</sup>가 더 약한 산 &rarr; <strong>NH<sub>3</sub>가 더 강한 염기</strong></li>
+          </ul>
+          <p>이것은 Atom 효과(N은 O보다 전기음성도가 작으므로 비공유 전자쌍을 더 쉽게 내놓음)로 설명된다.</p>
+
+          <h3>공명의 영향: 알킬아민 vs 아릴아민</h3>
+          <p>아닐린(-NH<sub>2</sub> on benzene ring)은 알킬아민(-NH<sub>2</sub> on alkyl)보다 염기성이 약하다:</p>
+          <ul>
+            <li><strong>알킬아민</strong>: N의 비공유 전자쌍이 온전히 사용 가능</li>
+            <li><strong>아닐린</strong>: N의 비공유 전자쌍이 방향족 고리와 <strong>공명</strong>으로 비편재화 &rarr; 양성자를 받기 어려움 &rarr; 더 약한 염기</li>
+          </ul>
+        </div>
+
+        <div class="key-point">원칙: 양이온 산의 산도를 비교하려면, 짝염기(중성 분자)의 <strong>염기성</strong>을 비교한다. 더 강한 염기가 양성자를 더 잘 받으므로, 그 짝산은 더 약한 산(pK<sub>a</sub>가 더 큰)이다.</div>
+      </section>
+
+      <!-- ==================== Page 15 ==================== -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>3.6 평형의 위치와 시약의 선택</h2>
+        <div class="summary-box">
+          HA를 탈양성자화(deprotonate)하려면 적절한 염기 B<sup>&minus;</sup>를 선택해야 한다. <strong>pK<sub>a</sub> 비교</strong>를 통해 반응이 정방향으로 진행하는지 확인할 수 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">시약 선택의 원리</div>
+          <div class="math-block">
+            \[ \text{HA} + \text{B}^- \rightleftharpoons \text{HB} + \text{A}^- \]
+          </div>
+          <p>반응이 정방향으로 진행하려면 (A<sup>&minus;</sup>를 생성하려면):</p>
+          <ul>
+            <li>HB의 pK<sub>a</sub> > HA의 pK<sub>a</sub> 이어야 한다</li>
+            <li>즉, <strong>B<sup>&minus;</sup>는 A<sup>&minus;</sup>보다 강한 염기</strong>여야 한다</li>
+          </ul>
+
+          <h3>실전 예시: 카복실산과 클로로카복실레이트</h3>
+          <div class="math-block">
+            \[ \text{CH}_3\text{COOH} + \text{ClCH}_2\text{COO}^- \rightleftharpoons \text{CH}_3\text{COO}^- + \text{ClCH}_2\text{COOH} \]
+          </div>
+          <p>CH<sub>3</sub>COOH의 pK<sub>a</sub> = 4.75, ClCH<sub>2</sub>COOH의 pK<sub>a</sub> = 2.87이므로, 생성물 쪽의 산(ClCH<sub>2</sub>COOH)이 더 강한 산이다. 따라서 평형은 <strong>역방향(backward)</strong>으로 치우친다.</p>
+
+          <h3>Q: 1-Propyne의 탈양성자화에 가장 좋은 염기는?</h3>
+          <p>1-Propyne(RC&equiv;CH)의 pK<sub>a</sub> = 25. 다음 중 어느 염기가 적합한가?</p>
+          <ul>
+            <li>a. NaOH &mdash; 짝산 H<sub>2</sub>O의 pK<sub>a</sub> = 15.7 (25보다 작음 &rarr; 부적합)</li>
+            <li>b. <strong>NaNH<sub>2</sub></strong> &mdash; 짝산 NH<sub>3</sub>의 pK<sub>a</sub> = 38 (25보다 큼 &rarr; <strong>적합!</strong>)</li>
+            <li>c. n-BuLi &mdash; 짝산 butane의 pK<sub>a</sub> = 50 (25보다 큼 &rarr; 적합, 하지만 과도하게 강함)</li>
+          </ul>
+        </div>
+
+        <div class="key-point">시약 선택 규칙: 산 HA를 탈양성자화하려면, 사용하는 염기의 짝산(HB)의 pK<sub>a</sub>가 HA의 pK<sub>a</sub>보다 <strong>최소 5 이상 커야</strong> 사실상 완전한 탈양성자화가 가능하다.</div>
+      </section>
+
+      <!-- ==================== Page 16 ==================== -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>3.7 Leveling Effect (균등화 효과)</h2>
+        <div class="summary-box">
+          용매가 산이나 염기의 세기를 <strong>제한</strong>하는 현상을 <strong>Leveling Effect(균등화 효과)</strong>라고 한다. 용매보다 강한 산/염기는 용매와 즉시 반응하여 용매의 짝산/짝염기로 "균등화"된다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">염기 반응에서의 Leveling Effect</div>
+          <p><strong>Q: NH<sub>2</sub><sup>&minus;</sup>를 염기로 사용할 때, H<sub>2</sub>O는 좋은 용매인가?</strong></p>
+          <div class="math-block">
+            \[ ^-\text{NH}_2 + \text{H}_2\text{O} \longrightarrow \text{NH}_3 + \text{HO}^- \]
+          </div>
+          <p>NH<sub>2</sub><sup>&minus;</sup>는 매우 강한 염기이므로 물과 즉시 반응하여 OH<sup>&minus;</sup>로 변환된다. 따라서 수용액에서 NH<sub>2</sub><sup>&minus;</sup>는 사실상 <strong>존재할 수 없다.</strong></p>
+
+          <div class="warning-box">
+            <strong>Leveling 원리 (염기)</strong>: "수용액에서 염기의 세기는 <strong>용매의 짝염기(OH<sup>&minus;</sup>)</strong>보다 강할 수 없다." 즉, 물에서 사용할 수 있는 가장 강한 염기는 OH<sup>&minus;</sup>이다.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">산 반응에서의 Leveling Effect</div>
+          <p><strong>Q: H<sub>2</sub>SO<sub>4</sub>를 산으로 사용할 때, H<sub>2</sub>O는 좋은 용매인가?</strong></p>
+          <div class="math-block">
+            \[ \text{H}_2\text{SO}_4 + \text{H}_2\text{O} \rightleftharpoons \text{HSO}_4^- + \text{H}_3\text{O}^+ \]
+          </div>
+          <p>H<sub>2</sub>SO<sub>4</sub>(pK<sub>a</sub> = -9)는 물보다 훨씬 강한 산이므로 물과 즉시 반응하여 H<sub>3</sub>O<sup>+</sup>를 생성한다.</p>
+
+          <div class="warning-box">
+            <strong>Leveling 원리 (산)</strong>: "수용액에서 산의 세기는 <strong>용매의 짝산(H<sub>3</sub>O<sup>+</sup>)</strong>보다 강할 수 없다." 즉, HCl, H<sub>2</sub>SO<sub>4</sub> 등 강산의 수용액은 사실상 H<sub>3</sub>O<sup>+</sup> 수용액이다.
+          </div>
+        </div>
+
+        <!-- SVG: Leveling Effect Illustration -->
+        <div class="card">
+          <div class="card-label">Leveling Effect 다이어그램</div>
+          <div class="svg-diagram">
+            <svg width="600" height="220" viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+              <style>
+                .lev-text { font: 500 13px 'Noto Sans KR', sans-serif; fill: var(--text, #2C2C2C); }
+                .lev-small { font: 400 11px 'Noto Sans KR', sans-serif; fill: var(--text-muted, #6B6B6B); }
+                .lev-bold { font: 700 14px 'Noto Sans KR', sans-serif; }
+              </style>
+
+              <!-- Water box in center -->
+              <rect x="200" y="50" width="200" height="120" rx="10" fill="var(--bg-aside, #F5F0EB)" stroke="var(--accent, #C0583F)" stroke-width="2"/>
+              <text x="300" y="90" text-anchor="middle" class="lev-bold" fill="var(--accent, #C0583F)">H<tspan baseline-shift="sub" font-size="10">2</tspan>O (용매)</text>
+              <text x="300" y="115" text-anchor="middle" class="lev-small">수용액에서의 범위</text>
+              <text x="300" y="135" text-anchor="middle" class="lev-small">pH 0 ~ 14</text>
+              <text x="300" y="155" text-anchor="middle" class="lev-small">H<tspan baseline-shift="sub" font-size="8">3</tspan>O<tspan baseline-shift="super" font-size="8">+</tspan> ~ OH<tspan baseline-shift="super" font-size="8">&minus;</tspan></text>
+
+              <!-- Left: Strong acids leveled -->
+              <rect x="10" y="70" width="170" height="80" rx="8" fill="#FFF5F5" stroke="#F5CDCD" stroke-width="1"/>
+              <text x="95" y="95" text-anchor="middle" class="lev-text">HCl, H<tspan baseline-shift="sub" font-size="10">2</tspan>SO<tspan baseline-shift="sub" font-size="10">4</tspan>, HBr...</text>
+              <text x="95" y="115" text-anchor="middle" class="lev-small">모두 H<tspan baseline-shift="sub" font-size="8">3</tspan>O<tspan baseline-shift="super" font-size="8">+</tspan>로 균등화</text>
+              <text x="95" y="135" text-anchor="middle" class="lev-small" fill="var(--accent, #C0583F)">구분 불가!</text>
+
+              <!-- Right: Strong bases leveled -->
+              <rect x="420" y="70" width="170" height="80" rx="8" fill="#F0F5FF" stroke="#C5D5F0" stroke-width="1"/>
+              <text x="505" y="95" text-anchor="middle" class="lev-text">NH<tspan baseline-shift="sub" font-size="10">2</tspan><tspan baseline-shift="super" font-size="10">&minus;</tspan>, H<tspan baseline-shift="super" font-size="10">&minus;</tspan>, R<tspan baseline-shift="super" font-size="10">&minus;</tspan>...</text>
+              <text x="505" y="115" text-anchor="middle" class="lev-small">모두 OH<tspan baseline-shift="super" font-size="8">&minus;</tspan>로 균등화</text>
+              <text x="505" y="135" text-anchor="middle" class="lev-small" fill="#5A7CA8">구분 불가!</text>
+
+              <!-- Arrows -->
+              <line x1="180" y1="110" x2="200" y2="110" stroke="var(--text-muted, #6B6B6B)" stroke-width="1.5" marker-end="url(#arrowLev)"/>
+              <line x1="420" y1="110" x2="400" y2="110" stroke="var(--text-muted, #6B6B6B)" stroke-width="1.5" marker-end="url(#arrowLev)"/>
+
+              <!-- Bottom labels -->
+              <text x="95" y="195" text-anchor="middle" class="lev-bold" fill="#C0583F">강산 영역</text>
+              <text x="300" y="195" text-anchor="middle" class="lev-bold" fill="var(--text, #2C2C2C)">수용액 범위</text>
+              <text x="505" y="195" text-anchor="middle" class="lev-bold" fill="#5A7CA8">강염기 영역</text>
+
+              <defs>
+                <marker id="arrowLev" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="var(--text-muted, #6B6B6B)"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+        </div>
+
+        <div class="key-point">실전 응용: 강한 염기(NaNH<sub>2</sub>, n-BuLi 등)를 사용할 때는 물 대신 <strong>비양성자성 용매</strong>(THF, diethyl ether 등)를 사용해야 한다. 강산(super acid)의 세기를 비교하려면 물 대신 더 약한 산성 용매를 사용해야 한다.</div>
+      </section>
+
+      <!-- ==================== Page 17 ==================== -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>3.8 Solvating Effects (용매화 효과)</h2>
+        <div class="summary-box">
+          용매 분자가 짝염기를 <strong>용매화(solvation)</strong>하는 정도에 따라 산도가 달라진다. 용매화가 잘 될수록 짝염기가 안정화되어 산도가 증가한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">에탄올 vs tert-부탄올</div>
+          <table class="terms-table">
+            <thead><tr><th>화합물</th><th>pK<sub>a</sub></th><th>짝염기</th><th>용매화</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Ethanol (CH<sub>3</sub>CH<sub>2</sub>OH)</td><td>16</td><td>Ethoxide (CH<sub>3</sub>CH<sub>2</sub>O<sup>&minus;</sup>)</td><td>용매 분자가 접근하기 쉬움</td></tr>
+              <tr><td class="en">tert-Butanol ((CH<sub>3</sub>)<sub>3</sub>COH)</td><td>18</td><td>tert-Butoxide ((CH<sub>3</sub>)<sub>3</sub>CO<sup>&minus;</sup>)</td><td>벌키한 메틸기가 용매 접근을 방해</td></tr>
+            </tbody>
+          </table>
+          <p>에탄올(pK<sub>a</sub> = 16)이 tert-부탄올(pK<sub>a</sub> = 18)보다 더 강한 산이다. 그 이유:</p>
+          <ul>
+            <li>에톡사이드(ethoxide)는 주변에 작은 수소와 메틸기만 있어 <strong>용매 분자가 쉽게 접근</strong>하여 음전하를 안정화할 수 있다</li>
+            <li>tert-부톡사이드(tert-butoxide)는 세 개의 벌키한 메틸기가 산소 주위를 가리고 있어 <strong>용매화가 방해</strong>된다</li>
+          </ul>
+          <p>즉, 용매화가 잘 되는 에톡사이드가 더 안정하므로 에탄올이 더 강한 산이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">알코올의 산도 비교 연습</div>
+          <p><strong>Exercise:</strong> 다음 알코올 중 가장 산성이 강한 것은?</p>
+          <ol>
+            <li>Methanol (CH<sub>3</sub>OH)</li>
+            <li>Ethanol (CH<sub>3</sub>CH<sub>2</sub>OH)</li>
+            <li>Isopropanol ((CH<sub>3</sub>)<sub>2</sub>CHOH)</li>
+            <li>tert-Butanol ((CH<sub>3</sub>)<sub>3</sub>COH)</li>
+          </ol>
+          <p>답: <strong>1번 Methanol</strong>. 알킬기가 적을수록 용매화가 더 잘 되므로 산도가 증가한다. 또한, 알킬기의 전자 밀어내기(electron-donating) 유도 효과도 산도를 감소시킨다.</p>
+        </div>
+
+        <div class="tip">주의: 용매화 효과는 <strong>용액 상태(solution phase)</strong>에서만 적용된다. 기체 상태(gas phase)에서는 용매화가 없으므로 산도 순서가 달라질 수 있다. 시험에서는 특별한 언급이 없으면 용액 상태를 가정한다.</div>
+      </section>
+
+      <!-- ==================== Page 18 ==================== -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>3.9 Counterions (상대이온)</h2>
+        <div class="summary-box">
+          이온성 시약에는 반드시 <strong>상대이온(counterion)</strong>이 동반된다. 상대이온은 주로 <strong>구경꾼 이온(spectator ion)</strong>으로서 반응에 직접 참여하지 않지만, 시약의 형태를 결정한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상대이온의 개념</div>
+          <p>음이온(anion)은 자연에서 단독으로 존재할 수 없다. 반드시 양이온(cation)과 짝을 이루어야 한다:</p>
+          <div class="math-block">
+            \[ ^-\text{NH}_2 + \text{H}_2\text{O} \longrightarrow \text{NH}_3 + \ ^-\text{OH} \]
+          </div>
+          <p>NH<sub>2</sub><sup>&minus;</sup>는 단독으로 존재할 수 없으므로, <strong>Na<sup>+</sup></strong>와 짝을 이루어 <strong>NaNH<sub>2</sub></strong>(sodium amide)라는 시약 형태로 사용한다.</p>
+          <ul>
+            <li><strong>Na<sup>+</sup></strong>: 상대이온 (counterion) = 구경꾼 이온 (spectator ion)</li>
+            <li><strong>NaNH<sub>2</sub></strong>: 시약 (reagent)</li>
+          </ul>
+          <p>Na<sup>+</sup>는 반응에 직접 참여하지 않고, 실제 반응하는 것은 NH<sub>2</sub><sup>&minus;</sup>이다. 하지만 시약을 표기할 때는 NaNH<sub>2</sub>로 쓴다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">자주 사용되는 시약과 상대이온</div>
+          <table class="terms-table">
+            <thead><tr><th>시약</th><th>활성 이온</th><th>상대이온</th><th>짝산의 pK<sub>a</sub></th></tr></thead>
+            <tbody>
+              <tr><td class="en">NaOH</td><td>OH<sup>&minus;</sup></td><td>Na<sup>+</sup></td><td>15.7</td></tr>
+              <tr><td class="en">NaNH<sub>2</sub></td><td>NH<sub>2</sub><sup>&minus;</sup></td><td>Na<sup>+</sup></td><td>38</td></tr>
+              <tr><td class="en">n-BuLi</td><td>Bu<sup>&minus;</sup></td><td>Li<sup>+</sup></td><td>50</td></tr>
+              <tr><td class="en">NaH</td><td>H<sup>&minus;</sup></td><td>Na<sup>+</sup></td><td>35</td></tr>
+              <tr><td class="en">NaOCH<sub>3</sub></td><td>CH<sub>3</sub>O<sup>&minus;</sup></td><td>Na<sup>+</sup></td><td>15.5</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 19 ==================== -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 19</span>
+        <h2>3.10 Lewis 산과 Lewis 염기</h2>
+        <div class="summary-box">
+          Lewis 정의는 산-염기 개념을 양성자 이동 없이도 적용할 수 있게 확장한다. <strong>Lewis 산</strong>은 빈 오비탈을 가진 전자쌍 수용체이고, <strong>Lewis 염기</strong>는 비공유 전자쌍을 제공하는 물질이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Lewis 산-염기 반응</div>
+          <p>대표적 예시: <strong>BF<sub>3</sub> + H<sub>2</sub>O</strong></p>
+          <div class="math-block">
+            \[ \text{H}_2\text{O} + \text{BF}_3 \rightleftharpoons \text{H}_2\overset{+}{\text{O}}\text{-}\overset{-}{\text{B}}\text{F}_3 \]
+          </div>
+          <ul>
+            <li><strong>H<sub>2</sub>O</strong> = Lewis 염기 (O의 비공유 전자쌍을 제공)</li>
+            <li><strong>BF<sub>3</sub></strong> = Lewis 산 (B의 빈 p 오비탈이 전자쌍을 받음)</li>
+          </ul>
+          <p>BF<sub>3</sub>의 붕소(B)는 전자가 6개뿐이어서(옥텟 미완성) 빈 p 오비탈을 가지고 있다. 이 빈 오비탈이 Lewis 산으로서 전자쌍을 받아들일 수 있다.</p>
+        </div>
+
+        <!-- SVG: Lewis Acid-Base BF3 + H2O -->
+        <div class="card">
+          <div class="card-label">Lewis 산-염기 반응 다이어그램 (BF3 + H2O)</div>
+          <div class="svg-diagram">
+            <svg width="620" height="200" viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg">
+              <style>
+                .lewis-text { font: 500 16px 'Noto Sans KR', sans-serif; fill: var(--text, #2C2C2C); }
+                .lewis-label { font: 400 12px 'Noto Sans KR', sans-serif; fill: var(--text-muted, #6B6B6B); }
+                .lewis-charge { font: 700 14px 'JetBrains Mono', monospace; }
+              </style>
+
+              <!-- H2O structure -->
+              <text x="30" y="85" class="lewis-text">H</text>
+              <line x1="48" y1="80" x2="68" y2="70" stroke="var(--text, #2C2C2C)" stroke-width="2"/>
+              <text x="70" y="72" class="lewis-text" fill="#5A7CA8">O</text>
+              <line x1="88" y1="67" x2="108" y2="77" stroke="var(--text, #2C2C2C)" stroke-width="2"/>
+              <text x="110" y="85" class="lewis-text">H</text>
+              <!-- Lone pairs on O -->
+              <circle cx="72" cy="52" r="2" fill="#5A7CA8"/>
+              <circle cx="78" cy="52" r="2" fill="#5A7CA8"/>
+              <circle cx="85" cy="55" r="2" fill="#5A7CA8"/>
+              <circle cx="91" cy="55" r="2" fill="#5A7CA8"/>
+              <text x="70" y="115" class="lewis-label" fill="#5A7CA8">Lewis 염기</text>
+              <text x="60" y="130" class="lewis-label">(전자쌍 제공)</text>
+
+              <!-- Plus -->
+              <text x="145" y="80" class="lewis-text" font-size="22">+</text>
+
+              <!-- BF3 structure -->
+              <text x="210" y="55" class="lewis-text">F</text>
+              <line x1="222" y1="58" x2="242" y2="72" stroke="var(--text, #2C2C2C)" stroke-width="2"/>
+              <text x="240" y="82" class="lewis-text" fill="#C0583F">B</text>
+              <line x1="258" y1="72" x2="278" y2="58" stroke="var(--text, #2C2C2C)" stroke-width="2"/>
+              <text x="280" y="55" class="lewis-text">F</text>
+              <line x1="248" y1="88" x2="248" y2="110" stroke="var(--text, #2C2C2C)" stroke-width="2"/>
+              <text x="240" y="125" class="lewis-text">F</text>
+              <!-- Empty p orbital indication -->
+              <rect x="233" y="62" width="5" height="5" fill="none" stroke="#C0583F" stroke-width="1" stroke-dasharray="2"/>
+              <text x="215" y="150" class="lewis-label" fill="#C0583F">Lewis 산</text>
+              <text x="207" y="165" class="lewis-label">(빈 오비탈 보유)</text>
+
+              <!-- Arrow -->
+              <line x1="310" y1="80" x2="370" y2="80" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <line x1="310" y1="85" x2="370" y2="85" stroke="var(--text, #2C2C2C)" stroke-width="1.5"/>
+              <polygon points="370,77 380,82.5 370,88" fill="var(--text, #2C2C2C)" opacity="0.7"/>
+              <polygon points="310,77 300,82.5 310,88" fill="var(--text, #2C2C2C)" opacity="0.7"/>
+
+              <!-- Product -->
+              <text x="400" y="65" class="lewis-text">H</text>
+              <line x1="418" y1="60" x2="438" y2="60" stroke="var(--text, #2C2C2C)" stroke-width="2"/>
+              <text x="440" y="65" class="lewis-charge" fill="#5A7CA8">O</text>
+              <text x="460" y="55" class="lewis-charge" fill="#5A7CA8">+</text>
+              <line x1="458" y1="62" x2="478" y2="62" stroke="var(--text, #2C2C2C)" stroke-width="2"/>
+              <text x="400" y="82" class="lewis-text">H</text>
+              <line x1="418" y1="77" x2="440" y2="67" stroke="var(--text, #2C2C2C)" stroke-width="2"/>
+
+              <!-- B part of product -->
+              <text x="480" y="65" class="lewis-charge" fill="#C0583F">B</text>
+              <text x="498" y="55" class="lewis-charge" fill="#C0583F">&minus;</text>
+              <line x1="495" y1="57" x2="515" y2="47" stroke="var(--text, #2C2C2C)" stroke-width="2"/>
+              <text x="518" y="48" class="lewis-text">F</text>
+              <line x1="498" y1="67" x2="518" y2="77" stroke="var(--text, #2C2C2C)" stroke-width="2"/>
+              <text x="520" y="85" class="lewis-text">F</text>
+              <line x1="488" y1="72" x2="488" y2="95" stroke="var(--text, #2C2C2C)" stroke-width="2"/>
+              <text x="480" y="110" class="lewis-text">F</text>
+
+              <text x="440" y="145" class="lewis-label">배위 결합 (coordinate bond) 형성</text>
+              <!-- Curved arrow from O lone pair to B -->
+              <path d="M 82 54 Q 160 15 240 65" stroke="var(--accent, #C0583F)" stroke-width="2" fill="none" marker-end="url(#arrowLewis)" stroke-dasharray="6,3"/>
+              <text x="135" y="25" class="lewis-label" fill="var(--accent, #C0583F)">전자쌍 이동</text>
+
+              <defs>
+                <marker id="arrowLewis" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="var(--accent, #C0583F)"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Lewis 산의 대표적 예시</div>
+          <table class="terms-table">
+            <thead><tr><th>Lewis 산</th><th>특징</th><th>용도</th></tr></thead>
+            <tbody>
+              <tr><td class="en">BF<sub>3</sub></td><td>B의 빈 p 오비탈</td><td>Friedel-Crafts 반응 촉매</td></tr>
+              <tr><td class="en">AlCl<sub>3</sub></td><td>Al의 빈 오비탈</td><td>Friedel-Crafts 반응 촉매</td></tr>
+              <tr><td class="en">FeCl<sub>3</sub></td><td>Fe의 빈 d 오비탈</td><td>방향족 할로겐화 촉매</td></tr>
+              <tr><td class="en">H<sup>+</sup></td><td>빈 1s 오비탈</td><td>양성자 (Bronsted 산이기도 함)</td></tr>
+              <tr><td class="en">금속 이온 (Ni<sup>2+</sup> 등)</td><td>빈 d 오비탈</td><td>배위 화학, 촉매</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">기억: 모든 <strong>Bronsted-Lowry 산-염기 반응은 Lewis 산-염기 반응이기도 하다.</strong> H<sup>+</sup>는 빈 1s 오비탈을 가진 Lewis 산이고, 염기의 비공유 전자쌍이 H<sup>+</sup>와 새로운 결합을 형성한다. 하지만 Lewis 산-염기 반응은 양성자 이동 없이도 일어날 수 있다는 점에서 더 넓은 개념이다.</div>
+      </section>
+
+      <!-- ==================== Page 20 ==================== -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 20</span>
+        <h2>4.1 알케인 소개 (Introduction to Alkanes)</h2>
+        <div class="summary-box">
+          Ch 4에서는 <strong>알케인(Alkanes)</strong>과 사이클로알케인(Cycloalkanes)을 다룬다. 탄화수소(hydrocarbon)의 분류와 알케인의 기본 성질, 명명법, 그리고 구조를 학습한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">탄화수소의 분류</div>
+          <p>유기 화합물(organic compounds) 중 탄소(C)와 수소(H)만으로 이루어진 물질을 <strong>탄화수소(hydrocarbons)</strong>라고 한다. 탄소 골격(skeleton)의 결합 형태에 따라 분류한다:</p>
+          <table class="terms-table">
+            <thead><tr><th>분류</th><th>결합</th><th>특징</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Alkanes (알케인)</td><td>C-C 단일결합</td><td>포화 탄화수소 (saturated)</td></tr>
+              <tr><td class="en">Alkenes (알켄)</td><td>C=C 이중결합</td><td>불포화 탄화수소</td></tr>
+              <tr><td class="en">Alkynes (알카인)</td><td>C&equiv;C 삼중결합</td><td>불포화 탄화수소</td></tr>
+              <tr><td class="en">Arenes (아렌)</td><td>conjugate pi system</td><td>방향족 화합물 (Huckel rule)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-label">알케인의 특성</div>
+          <ul>
+            <li><strong>분자식</strong>: C<sub>n</sub>H<sub>2n+2</sub></li>
+            <li><strong>결합</strong>: pi 결합 없이 <strong>sigma 결합만</strong> 존재</li>
+            <li><strong>포화(Saturated)</strong> 탄화수소: 수소가 최대로 결합되어 있음</li>
+            <li>명명법에서 접미사 <strong>-ane</strong>을 사용: Prop<strong>ane</strong>, But<strong>ane</strong>, Pent<strong>ane</strong></li>
+          </ul>
+          <p>Ch 4에서 다룰 주요 주제:</p>
+          <ol>
+            <li><strong>Nature of Alkanes and Cycloalkanes</strong> &mdash; 물리적/화학적 성질</li>
+            <li><strong>Nomenclature</strong> &mdash; IUPAC 명명법</li>
+            <li><strong>Conformations</strong> &mdash; Newman projection, 의자형 배좌 등</li>
+          </ol>
+        </div>
+
+        <div class="tip">다음 강의 예고: Ch 4에서는 Newman projection을 이용한 배좌 분석(conformational analysis)과 사이클로헥세인의 의자형(chair conformation)에서의 axial/equatorial 위치를 집중적으로 학습한다.</div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '다크모드';
+        localStorage.setItem('theme', 'light');
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '라이트모드';
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Load saved theme
+    (function() {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        document.querySelector('.theme-toggle').textContent = '라이트모드';
+      }
+    })();
+
+    // Sidebar active link on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const id = entry.target.id;
+          const link = document.querySelector(`.sidebar a[href="#${id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>

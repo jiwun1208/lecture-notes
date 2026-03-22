@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 3.4-4.2: 산-염기 심화 & 알케인 명명법</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    processEscapes: false
+  },
+  startup: {
+    ready: function() {
+      MathJax.startup.defaultReady();
+      window.mathJaxReady = true;
+    }
+  }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+    gap: 8px;
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  img { max-width: 100%; height: auto; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-top: 16px;
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    min-width: 0;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .page-section h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 24px 0 14px;
+    letter-spacing: -0.02em;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .math-block {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    overflow-x: auto;
+    font-size: 1.05em;
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+    max-width: 100%;
+  }
+
+  strong { color: var(--accent); font-weight: 500; }
+
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 8px 0 12px 20px; }
+  li { margin-bottom: 4px; }
+
+  .svg-diagram {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .svg-diagram svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 200px 1fr; }
+    .content { padding: 32px 32px 60px; }
+    .sidebar { padding: 20px 12px; }
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 28px 24px 60px; }
+  }
+
+  @media (max-width: 768px) {
+    .topbar { padding: 10px 16px; }
+    .topbar h1 { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60vw; }
+    .topbar .meta { font-size: 10px; }
+    .content { padding: 20px 16px 48px; }
+    .page-section h2 { font-size: 18px; }
+    .page-section h3 { font-size: 16px; }
+    .card { padding: 18px 16px; }
+    .summary-box { padding: 14px 16px; }
+  }
+
+  @media (max-width: 480px) {
+    .content { padding: 16px 12px 40px; }
+    .topbar h1 { font-size: 13px; max-width: 50vw; }
+    body { font-size: 14px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Ch 3.4-4.2: 산-염기 심화 &amp; 알케인 명명법</h1>
+      <div class="meta">Organic Chemistry &mdash; Lecture 5 Preclass</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">페이지 목록</div>
+      <div class="section-label">Ch 3.4-3.8 산-염기 심화</div>
+      <a href="#p1">01 &mdash; ARIO 순위 매기기</a>
+      <a href="#p2">02 &mdash; 양이온산의 산도 비교</a>
+      <a href="#p3">03 &mdash; 평형 위치와 시약 선택</a>
+      <a href="#p4">04 &mdash; 수평화 효과 (염기)</a>
+      <a href="#p5">05 &mdash; 수평화 효과 (산)</a>
+      <a href="#p6">06 &mdash; 용매화 효과</a>
+      <a href="#p7">07 &mdash; 산도 순위 연습</a>
+      <div class="section-label">Ch 3.9-3.10</div>
+      <a href="#p8">08 &mdash; 짝이온 &amp; Lewis 산-염기</a>
+      <div class="section-label">Ch 4 알케인</div>
+      <a href="#p9">09 &mdash; Ch 4 개요</a>
+      <a href="#p10">10 &mdash; 4.1 알케인 소개</a>
+      <a href="#p11">11 &mdash; 4.2 명명법: 관용명</a>
+      <a href="#p12">12 &mdash; 명명법: 직쇄 알케인</a>
+      <a href="#p13">13 &mdash; 명명법: 가지달린 알케인</a>
+      <a href="#p14">14 &mdash; 치환기 명명법</a>
+      <a href="#p15">15 &mdash; 알킬 치환기 종류</a>
+      <a href="#p16">16 &mdash; 탄소 분류 (1-4차)</a>
+      <a href="#p17">17 &mdash; 사이클로알케인 명명법</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== Page 1 ==================== -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>3.4 Bronsted-Lowry 산도: 정성적 관점 &mdash; ARIO 순위</h2>
+        <div class="summary-box">
+          산의 세기를 정성적으로 비교할 때 사용하는 <strong>ARIO</strong> 기준의 우선순위와 적용 방법을 학습한다. 이 네 가지 인자는 <strong>짝염기의 안정성</strong>을 비교하여 산도를 판단하는 핵심 도구이다.
+        </div>
+        <div class="card">
+          <div class="card-label">ARIO 우선순위 (Klein 제안)</div>
+          <p>두 산의 세기를 비교할 때, 각 산의 <strong>짝염기(conjugate base)</strong>를 비교하여 더 안정한 짝염기를 가진 쪽이 더 강한 산이다. 이때 사용하는 4가지 인자의 <strong>우선순위</strong>는 다음과 같다:</p>
+          <ol>
+            <li><strong>Atom (원자)</strong> &mdash; 어떤 원자가 음전하를 지니는가? (같은 주기: 전기음성도 / 같은 족: 원자 크기)</li>
+            <li><strong>Resonance (공명)</strong> &mdash; 공명 효과로 짝염기의 음전하를 비편재화(delocalize)할 수 있는가?</li>
+            <li><strong>Induction (유도 효과)</strong> &mdash; 전기음성 원자가 결합을 통해 전자를 끌어당겨 짝염기를 안정화하는가?</li>
+            <li><strong>Orbital (오비탈)</strong> &mdash; 음전하가 어떤 오비탈에 위치하는가? (sp > sp\(^2\) > sp\(^3\))</li>
+          </ol>
+          <p>일반적으로 <strong>인자의 우선순위는 제시된 순서</strong>(A > R > I > O)를 따른다. 즉, Atom 효과가 가장 크고, Orbital 효과가 가장 작다.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Skill Builder 3.9 &mdash; 적용 예시</div>
+          <p>다음 두 산 중 어느 것이 더 강한 산인지 ARIO를 적용하여 비교한다:</p>
+          <div class="math-block">
+            트리클로로아세트산 (CCl\(_3\)COOH) vs 옥살산의 모노에스터
+          </div>
+          <p><strong>풀이 접근:</strong> 두 산 모두 O-H 결합을 끊으므로 Atom 인자는 같다. 공명(R)과 유도 효과(I)를 비교해야 한다. CCl\(_3\) 그룹은 강한 <strong>유도 효과(electron-withdrawing inductive effect)</strong>를 가지므로, 짝염기의 음전하를 안정화시킨다.</p>
+        </div>
+        <div class="key-point">
+          핵심: ARIO는 <strong>짝염기의 안정성</strong>을 비교하는 도구이다. 짝염기가 안정할수록 원래 산은 강한 산이다. 인자 간 충돌 시 우선순위가 높은 인자가 결정한다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 2 ==================== -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>3.5 양이온산(Cationic Acid)의 상대적 산도</h2>
+        <div class="summary-box">
+          양이온산의 산도를 비교하려면, 산이 양성자를 잃은 후 남는 <strong>중성 짝염기</strong>의 염기 세기를 비교하면 된다. 더 약한 염기가 더 안정하므로, 그 짝산이 더 강한 산이다.
+        </div>
+        <div class="card">
+          <div class="card-label">예제: NH\(_3\) vs H\(_2\)O &mdash; 어느 것이 더 강한 염기인가?</div>
+          <p>NH\(_3\)와 H\(_2\)O를 비교할 때, <strong>Atom 인자</strong>를 적용한다:</p>
+          <ul>
+            <li>N과 O는 같은 주기(2주기)에 있으므로 <strong>전기음성도</strong>로 비교한다.</li>
+            <li>O가 N보다 전기음성도가 크므로, O 위의 비공유 전자쌍을 덜 쉽게 내놓는다.</li>
+            <li>따라서 <strong>NH\(_3\)가 더 강한 염기</strong>이고, H\(_2\)O가 더 약한 염기이다.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">예제: \(-\text{NH}_2\) vs 아닐린(\(\text{C}_6\text{H}_5\text{-NH}_2\))</div>
+          <p>알킬 아민(\(-\text{NH}_2\))과 아닐린(방향족 아민)의 염기 세기를 비교하면:</p>
+          <ul>
+            <li>아닐린의 질소 위 비공유 전자쌍은 벤젠 고리와 <strong>공명</strong>에 참여하여 비편재화된다.</li>
+            <li>공명에 의해 전자쌍이 분산되므로, 아닐린은 <strong>더 약한 염기</strong>이다.</li>
+            <li>알킬 아민의 질소 전자쌍은 공명 없이 집중되어 있어 <strong>더 강한 염기</strong>이다.</li>
+          </ul>
+          <p>여기서는 <strong>Resonance 인자</strong>가 결정적 역할을 한다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 3 ==================== -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>3.6 평형 위치와 시약의 선택</h2>
+        <div class="summary-box">
+          산-염기 반응에서 원하는 생성물(짝염기 \(\text{A}^-\))을 효율적으로 얻으려면, 평형이 <strong>오른쪽으로 크게 치우치도록</strong> 적절한 염기를 선택해야 한다.
+        </div>
+        <div class="card">
+          <div class="card-label">반응식과 목표</div>
+          <div class="math-block">
+            \[\text{HA} + \text{B}^- \rightleftharpoons \text{HB} + \text{A}^-\]
+          </div>
+          <p>우리의 목표:</p>
+          <ol>
+            <li>짝염기 \(\text{A}^-\)의 생성</li>
+            <li>평형이 <strong>극도로 오른쪽</strong>에 치우칠 것</li>
+          </ol>
+          <p>평형이 오른쪽으로 치우치려면, 반응물 쪽에 <strong>더 강한 산과 더 강한 염기</strong>가 있어야 한다. 즉, 사용하는 염기 \(\text{B}^-\)의 짝산 \(\text{HB}\)의 p\(K_a\)가 \(\text{HA}\)의 p\(K_a\)보다 더 커야 한다.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">예제: 1-Propyne의 탈양성자화</div>
+          <p>1-프로파인(\(\text{HC}\equiv\text{C-CH}_3\))에서 말단 수소를 제거하려면 어떤 염기가 적합한가?</p>
+          <ul>
+            <li><strong>a. NaOH</strong> &mdash; \(\text{OH}^-\)는 약한 염기. 알카인 C-H (p\(K_a\) ~ 25)를 탈양성자화하기엔 충분히 강하지 않다.</li>
+            <li><strong>b. NaNH\(_2\)</strong> &mdash; \(\text{NH}_2^-\)의 짝산 NH\(_3\)의 p\(K_a\) ~ 38. 알카인 C-H (p\(K_a\) ~ 25)보다 훨씬 크므로, 평형이 <strong>오른쪽으로 크게 치우친다</strong>. 적합!</li>
+            <li><strong>c. n-BuLi</strong> &mdash; 매우 강한 염기로, 역시 가능하지만 과도하게 강할 수 있다.</li>
+          </ul>
+        </div>
+        <div class="key-point">
+          핵심 원칙: 사용할 염기의 짝산 p\(K_a\)가 제거하려는 수소의 p\(K_a\)보다 <strong>최소 10 이상 클 때</strong> 평형이 오른쪽으로 완전히 치우친다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 4 ==================== -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>3.7 수평화 효과 (Leveling Effect) &mdash; 염기</h2>
+        <div class="summary-box">
+          용매(solvent)는 산-염기 반응에서 단순히 화합물을 녹이는 역할만 하는 것이 아니라, 사용할 수 있는 <strong>염기(또는 산)의 세기에 상한선</strong>을 설정한다. 이것이 <strong>수평화 효과(leveling effect)</strong>이다.
+        </div>
+        <div class="card">
+          <div class="card-label">용매의 역할</div>
+          <p>용매의 기본 역할은 반응에 참여하는 모든 화합물을 <strong>용해(dissolving)</strong>시키는 것이다. 그러나 용매 자체도 산 또는 염기로 작용할 수 있다.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">염기의 수평화 효과</div>
+          <p>\(\text{NH}_2^-\)를 사용하여 HA에서 \(\text{A}^-\)를 만들고 싶다고 하자:</p>
+          <div class="math-block">
+            \[\text{NH}_2^- + \text{HA} \longrightarrow \text{NH}_3 + \text{A}^-\]
+          </div>
+          <p><strong>에탄올을 용매로 사용하면?</strong></p>
+          <ul>
+            <li>에탄올(p\(K_a\) ~ 16)은 \(\text{NH}_2^-\)보다 훨씬 강한 산이다.</li>
+            <li>\(\text{NH}_2^-\)는 HA와 반응하기 전에 <strong>용매인 에탄올</strong>과 먼저 반응해 버린다.</li>
+            <li>결과적으로 \(\text{NH}_2^-\)는 즉시 \(\text{EtO}^-\)(에톡사이드)로 전환된다.</li>
+            <li>에탄올 용매에서 사용할 수 있는 가장 강한 염기는 \(\text{EtO}^-\)이다 &mdash; 이것이 <strong>수평화 효과</strong>이다.</li>
+          </ul>
+          <p>따라서 \(\text{NH}_2^-\)를 실제로 사용하려면, 에탄올이 아닌 <strong>NH\(_3\)(액체 암모니아)</strong>를 용매로 사용해야 한다.</p>
+        </div>
+        <div class="warning-box">
+          주의: 용매보다 강한 염기는 용매와 먼저 반응하므로, 해당 용매에서는 그 염기를 사용할 수 없다. 용매의 짝염기가 그 용매에서의 최강 염기가 된다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 5 ==================== -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>3.7 수평화 효과 (Leveling Effect) &mdash; 산</h2>
+        <div class="summary-box">
+          수평화 효과는 염기뿐만 아니라 <strong>산</strong>에 대해서도 동일하게 적용된다. 용매가 설정하는 산의 세기 상한선을 이해한다.
+        </div>
+        <div class="card">
+          <div class="card-label">산의 수평화 효과</div>
+          <p>화합물의 짝산을 만들고 싶을 때:</p>
+          <div class="math-block">
+            \[\text{HCl} + \text{A} \longrightarrow \text{Cl}^- + \text{HA}^+\]
+          </div>
+          <p><strong>에탄올을 용매로 사용하면?</strong></p>
+          <ul>
+            <li>HCl은 에탄올보다 훨씬 강한 산이다.</li>
+            <li>HCl은 목표 화합물 A와 반응하기 전에, <strong>용매인 에탄올</strong>에 양성자를 전달한다.</li>
+            <li>에탄올이 양성자를 받아 \(\text{EtOH}_2^+\)가 생성된다.</li>
+            <li>따라서 에탄올 용매에서 존재할 수 있는 <strong>가장 강한 산은 \(\text{EtOH}_2^+\)</strong>(protonated ethanol)이다.</li>
+          </ul>
+        </div>
+        <div class="key-point">
+          수평화 효과 정리: 어떤 용매 S에서<br>
+          - 사용 가능한 <strong>최강 염기</strong> = \(\text{S}^-\) (용매의 짝염기)<br>
+          - 사용 가능한 <strong>최강 산</strong> = \(\text{HS}^+\) (용매의 짝산)
+        </div>
+      </section>
+
+      <!-- ==================== Page 6 ==================== -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>3.8 용매화 효과 (Solvating Effects)</h2>
+        <div class="summary-box">
+          용매가 짝염기를 둘러싸서 안정화(solvation)시키는 정도가 산도에 영향을 미친다. <strong>작고 접근이 쉬운 짝염기</strong>일수록 더 잘 용매화되어 안정해진다.
+        </div>
+        <div class="card">
+          <div class="card-label">에탄올 vs tert-부탄올의 산도 비교</div>
+          <p>두 알코올의 p\(K_a\) 값을 비교하면:</p>
+          <ul>
+            <li><strong>에탄올(Ethanol)</strong>: p\(K_a\) = 16</li>
+            <li><strong>tert-부탄올(tert-Butanol)</strong>: p\(K_a\) = 18</li>
+          </ul>
+          <p>에탄올이 더 강한 산이다. 왜 그런가?</p>
+          <ul>
+            <li>에탄올의 짝염기 에톡사이드(\(\text{EtO}^-\))는 <strong>입체 장애가 적어</strong> 용매 분자가 쉽게 접근하여 둘러쌀 수 있다.</li>
+            <li>tert-부톡사이드(\(\text{t-BuO}^-\))는 세 개의 메틸기로 인해 <strong>입체적으로 막혀 있어</strong> 용매화가 잘 되지 않는다.</li>
+            <li>용매화가 잘 되는 짝염기가 더 안정 &rarr; 원래 산이 더 강한 산</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">연습 문제</div>
+          <p>다음 알코올 중 가장 산성인 양성자를 가진 것은?</p>
+          <ol>
+            <li>메탄올 (CH\(_3\)OH)</li>
+            <li>에탄올 (CH\(_3\)CH\(_2\)OH)</li>
+            <li>이소프로판올 ((CH\(_3\))\(_2\)CHOH)</li>
+            <li>tert-부탄올 ((CH\(_3\))\(_3\)COH)</li>
+          </ol>
+          <p><strong>정답: 1번 메탄올</strong> &mdash; 짝염기(CH\(_3\)O\(^-\))가 가장 작아서 용매화가 가장 잘 되며, 유도 효과(electron-donating alkyl group)도 가장 적다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 7 ==================== -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>3.8 산도 순위 매기기 연습 [2024 중간고사]</h2>
+        <div class="summary-box">
+          복잡한 분자에서 여러 O-H 결합의 산도를 비교하는 문제이다. <strong>ARIO의 모든 인자</strong>를 종합적으로 적용하는 연습이다.
+        </div>
+        <div class="card">
+          <div class="card-label">문제</div>
+          <p>아래 화합물에서 H\(_1\)~H\(_5\)를 p\(K_a\) 값이 낮은 것(가장 산성)부터 높은 것(가장 덜 산성) 순서대로 나열하시오. (8점)</p>
+          <p>이 문제에서 고려해야 할 인자들:</p>
+          <ul>
+            <li><strong>유도 효과(Induction)</strong>: Cl 원자가 가까이 있으면 전자를 끌어당겨 짝염기를 안정화 &rarr; 산도 증가</li>
+            <li><strong>거리 효과</strong>: 전자 끌개(electron-withdrawing group)와의 거리가 가까울수록 유도 효과가 강하다</li>
+            <li><strong>공명 효과(Resonance)</strong>: 인접한 카보닐이나 방향족 고리와 공명이 가능한지 확인</li>
+            <li><strong>용매화 효과(Solvating)</strong>: 입체 장애가 적을수록 용매화가 잘 된다</li>
+          </ul>
+        </div>
+        <div class="tip">
+          시험 전략: 다수의 OH가 있는 분자에서 산도를 비교할 때, (1) 먼저 Atom 인자로 거를 수 있는지 확인, (2) 유도 효과의 방향과 거리, (3) 공명 가능 여부, (4) 용매화/입체 효과 순서로 분석하라.
+        </div>
+      </section>
+
+      <!-- ==================== Page 8 ==================== -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>3.9 짝이온 (Counterions) &amp; 3.10 Lewis 산-염기</h2>
+        <div class="summary-box">
+          이온 화합물이 자연에서 존재하려면 <strong>짝이온(counterion)</strong>이 필요하다. 또한 Bronsted-Lowry 정의를 넘어서는 <strong>Lewis 산-염기</strong> 개념을 학습한다.
+        </div>
+
+        <h3>3.9 짝이온 (Counterions)</h3>
+        <div class="card">
+          <div class="card-label">짝이온이란?</div>
+          <p>\(\text{NH}_2^-\)는 자연에서 단독으로 존재할 수 있을까? <strong>아니다.</strong></p>
+          <ul>
+            <li>\(\text{NH}_2^-\)는 음이온이므로, 반드시 양이온 짝이온(counterion)과 함께 <strong>이온 화합물</strong> 형태로 존재한다.</li>
+            <li>예: <strong>Na\(^+\)</strong>가 짝이온 &rarr; NaNH\(_2\) (소듐 아마이드)</li>
+            <li>Na\(^+\)는 반응에 직접 참여하지 않는 <strong>구경꾼 이온(spectator ion)</strong>이다.</li>
+          </ul>
+        </div>
+        <div class="warning-box">
+          시험 주의: 반응식에서 \(\text{NH}_2^-\)가 필요할 때는 반드시 <strong>NaNH\(_2\)</strong>와 같이 자연에 존재하는 시약 형태로 적어야 한다. \(\text{NH}_2^-\)만 단독으로 쓰면 감점!
+        </div>
+
+        <h3>3.10 Lewis 산-염기</h3>
+        <div class="card">
+          <div class="card-label">Lewis 산-염기 정의</div>
+          <p>Lewis의 정의는 Bronsted-Lowry보다 <strong>더 넓은 범위</strong>의 산-염기 반응을 설명한다:</p>
+          <ul>
+            <li><strong>Lewis 염기</strong>: 비공유 전자쌍을 <strong>제공(donate)</strong>하는 물질 (= 전자쌍 주개)</li>
+            <li><strong>Lewis 산</strong>: 비공유 전자쌍을 <strong>받아들이는(accept)</strong> 물질 (= 전자쌍 받개)</li>
+          </ul>
+        </div>
+
+        <!-- Lewis acid-base BF3 + NH3 diagram -->
+        <div class="card">
+          <div class="card-label">BF\(_3\) + H\(_2\)O 반응 다이어그램</div>
+          <div class="svg-diagram">
+            <svg viewBox="0 0 700 220" width="700" xmlns="http://www.w3.org/2000/svg" style="font-family:'Noto Sans KR',sans-serif">
+              <!-- H2O (Lewis base) -->
+              <g transform="translate(60,110)">
+                <text x="0" y="0" font-size="22" fill="#2C2C2C" font-weight="700" text-anchor="middle">O</text>
+                <text x="-36" y="16" font-size="18" fill="#2C2C2C">H</text>
+                <text x="20" y="28" font-size="18" fill="#2C2C2C">H</text>
+                <line x1="-10" y1="-2" x2="-30" y2="8" stroke="#2C2C2C" stroke-width="2"/>
+                <line x1="10" y1="5" x2="22" y2="18" stroke="#2C2C2C" stroke-width="2"/>
+                <!-- lone pairs -->
+                <text x="-8" y="-16" font-size="10" fill="#C0583F">..</text>
+                <text x="6" y="-16" font-size="10" fill="#C0583F">..</text>
+              </g>
+              <text x="60" y="170" font-size="13" fill="#C0583F" text-anchor="middle" font-weight="500">Lewis 염기</text>
+              <text x="60" y="188" font-size="12" fill="#6B6B6B" text-anchor="middle">(전자쌍 주개)</text>
+
+              <!-- Plus sign -->
+              <text x="140" y="115" font-size="28" fill="#2C2C2C" text-anchor="middle" font-weight="700">+</text>
+
+              <!-- BF3 (Lewis acid) -->
+              <g transform="translate(240,110)">
+                <text x="0" y="0" font-size="22" fill="#2C2C2C" font-weight="700" text-anchor="middle">B</text>
+                <text x="0" y="-50" font-size="18" fill="#2C2C2C" text-anchor="middle">F</text>
+                <text x="-45" y="30" font-size="18" fill="#2C2C2C" text-anchor="middle">F</text>
+                <text x="45" y="30" font-size="18" fill="#2C2C2C" text-anchor="middle">F</text>
+                <line x1="0" y1="-10" x2="0" y2="-36" stroke="#2C2C2C" stroke-width="2"/>
+                <line x1="-10" y1="6" x2="-35" y2="20" stroke="#2C2C2C" stroke-width="2"/>
+                <line x1="10" y1="6" x2="35" y2="20" stroke="#2C2C2C" stroke-width="2"/>
+              </g>
+              <text x="240" y="170" font-size="13" fill="#C0583F" text-anchor="middle" font-weight="500">Lewis 산</text>
+              <text x="240" y="188" font-size="12" fill="#6B6B6B" text-anchor="middle">(빈 p 오비탈)</text>
+
+              <!-- Arrow -->
+              <line x1="320" y1="105" x2="400" y2="105" stroke="#C0583F" stroke-width="3" marker-end="url(#arrowhead)"/>
+              <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#C0583F"/>
+                </marker>
+              </defs>
+
+              <!-- Product: coordinate complex -->
+              <g transform="translate(520,100)">
+                <text x="0" y="0" font-size="20" fill="#2C2C2C" font-weight="700" text-anchor="middle">O</text>
+                <text x="60" y="0" font-size="20" fill="#2C2C2C" font-weight="700" text-anchor="middle">B</text>
+                <!-- O-B dative bond -->
+                <line x1="14" y1="-4" x2="44" y2="-4" stroke="#C0583F" stroke-width="2.5"/>
+                <!-- H on O -->
+                <text x="-30" y="-18" font-size="16" fill="#2C2C2C">H</text>
+                <text x="-30" y="20" font-size="16" fill="#2C2C2C">H</text>
+                <line x1="-10" y1="-6" x2="-24" y2="-12" stroke="#2C2C2C" stroke-width="2"/>
+                <line x1="-10" y1="4" x2="-24" y2="12" stroke="#2C2C2C" stroke-width="2"/>
+                <!-- F on B -->
+                <text x="60" y="-42" font-size="16" fill="#2C2C2C" text-anchor="middle">F</text>
+                <text x="98" y="18" font-size="16" fill="#2C2C2C" text-anchor="middle">F</text>
+                <text x="98" y="-18" font-size="16" fill="#2C2C2C" text-anchor="middle">F</text>
+                <line x1="60" y1="-10" x2="60" y2="-30" stroke="#2C2C2C" stroke-width="2"/>
+                <line x1="72" y1="4" x2="88" y2="10" stroke="#2C2C2C" stroke-width="2"/>
+                <line x1="72" y1="-8" x2="88" y2="-14" stroke="#2C2C2C" stroke-width="2"/>
+                <!-- charges -->
+                <circle cx="-4" cy="-20" r="10" fill="none" stroke="#C0583F" stroke-width="1.5"/>
+                <text x="-4" y="-16" font-size="13" fill="#C0583F" text-anchor="middle" font-weight="700">+</text>
+                <circle cx="64" cy="24" r="10" fill="none" stroke="#2563EB" stroke-width="1.5"/>
+                <text x="64" y="28" font-size="13" fill="#2563EB" text-anchor="middle" font-weight="700">&minus;</text>
+              </g>
+              <text x="520" y="170" font-size="13" fill="#C0583F" text-anchor="middle" font-weight="500">배위 착물</text>
+              <text x="520" y="188" font-size="12" fill="#6B6B6B" text-anchor="middle">(coordinate complex)</text>
+            </svg>
+          </div>
+          <p>BF\(_3\)는 붕소가 <strong>빈 p 오비탈</strong>을 가지고 있어(옥텟 불만족) 전자쌍을 받을 수 있는 Lewis 산이다. H\(_2\)O의 산소는 비공유 전자쌍을 BF\(_3\)의 붕소에 제공하여 <strong>배위 결합(dative bond)</strong>을 형성한다. 생성물은 <strong>배위 착물(coordinate complex molecule, 착물)</strong>이다.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Counterion</td><td>짝이온</td><td>반대 전하의 이온. 반응에 직접 참여하지 않는 구경꾼 이온</td></tr>
+              <tr><td class="en">Spectator ion</td><td>구경꾼 이온</td><td>반응 전후에 변하지 않는 이온</td></tr>
+              <tr><td class="en">Lewis acid</td><td>루이스 산</td><td>전자쌍을 받아들이는 물질 (빈 오비탈 보유)</td></tr>
+              <tr><td class="en">Lewis base</td><td>루이스 염기</td><td>전자쌍을 제공하는 물질 (비공유 전자쌍 보유)</td></tr>
+              <tr><td class="en">Dative bond</td><td>배위 결합</td><td>한쪽에서만 전자쌍을 제공하여 형성되는 결합</td></tr>
+              <tr><td class="en">Coordinate complex</td><td>배위 착물</td><td>배위 결합으로 형성된 분자</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 9 ==================== -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>Chapter 4: 알케인과 사이클로알케인 개요</h2>
+        <div class="summary-box">
+          Chapter 4에서는 가장 단순한 유기 화합물인 <strong>알케인(alkane)과 사이클로알케인(cycloalkane)</strong>의 성질, 명명법, 그리고 입체배좌(conformation)를 학습한다.
+        </div>
+        <div class="card">
+          <div class="card-label">Chapter 4 주요 내용</div>
+          <ol>
+            <li><strong>알케인과 사이클로알케인의 성질(Nature)</strong> &mdash; 탄화수소의 분류, 분자식</li>
+            <li><strong>명명법(Nomenclature)</strong> &mdash; IUPAC 체계적 명명법, 치환기 명명</li>
+            <li><strong>입체배좌(Conformations)</strong> &mdash; Newman 투영, 에너지 장벽 (다음 강의)</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ==================== Page 10 ==================== -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>4.1 알케인 소개 (Introduction to Alkanes)</h2>
+        <div class="summary-box">
+          유기 화합물은 탄소(C) 원자를 기반으로 하며, 탄소와 수소로만 이루어진 화합물을 <strong>탄화수소(hydrocarbon)</strong>라 한다. 탄화수소는 골격(skeleton) 구조에 따라 4가지로 분류된다.
+        </div>
+
+        <!-- Hydrocarbon classification tree SVG -->
+        <div class="card">
+          <div class="card-label">탄화수소의 분류</div>
+          <div class="svg-diagram">
+            <svg viewBox="0 0 700 320" width="700" xmlns="http://www.w3.org/2000/svg" style="font-family:'Noto Sans KR',sans-serif">
+              <!-- Root -->
+              <rect x="240" y="10" width="220" height="40" rx="8" fill="#C0583F" opacity="0.15" stroke="#C0583F" stroke-width="1.5"/>
+              <text x="350" y="36" font-size="16" fill="#C0583F" text-anchor="middle" font-weight="700">탄화수소 (Hydrocarbons)</text>
+
+              <!-- Lines from root -->
+              <line x1="200" y1="50" x2="200" y2="80" stroke="#C0583F" stroke-width="1.5"/>
+              <line x1="350" y1="50" x2="350" y2="80" stroke="#C0583F" stroke-width="1.5"/>
+              <line x1="500" y1="50" x2="500" y2="80" stroke="#C0583F" stroke-width="1.5"/>
+              <line x1="630" y1="50" x2="630" y2="80" stroke="#C0583F" stroke-width="1.5"/>
+              <line x1="200" y1="50" x2="630" y2="50" stroke="#C0583F" stroke-width="1.5"/>
+
+              <!-- Alkane -->
+              <rect x="120" y="80" width="160" height="40" rx="8" fill="var(--bg-card)" stroke="#C0583F" stroke-width="1.5"/>
+              <text x="200" y="106" font-size="15" fill="#2C2C2C" text-anchor="middle" font-weight="500">알케인 (Alkane)</text>
+              <text x="200" y="140" font-size="13" fill="#6B6B6B" text-anchor="middle">C&mdash;C 단일결합</text>
+              <text x="200" y="160" font-size="13" fill="#C0583F" text-anchor="middle" font-weight="500">포화 탄화수소</text>
+              <text x="200" y="182" font-size="14" fill="#2C2C2C" text-anchor="middle" font-weight="500">C<tspan font-size="10" dy="4">n</tspan><tspan dy="-4">H</tspan><tspan font-size="10" dy="4">2n+2</tspan></text>
+
+              <!-- Alkene -->
+              <rect x="270" y="80" width="160" height="40" rx="8" fill="var(--bg-card)" stroke="#C0583F" stroke-width="1.5"/>
+              <text x="350" y="106" font-size="15" fill="#2C2C2C" text-anchor="middle" font-weight="500">알켄 (Alkene)</text>
+              <text x="350" y="140" font-size="13" fill="#6B6B6B" text-anchor="middle">C=C 이중결합</text>
+              <text x="350" y="160" font-size="13" fill="#C0583F" text-anchor="middle" font-weight="500">불포화 탄화수소</text>
+
+              <!-- Alkyne -->
+              <rect x="420" y="80" width="160" height="40" rx="8" fill="var(--bg-card)" stroke="#C0583F" stroke-width="1.5"/>
+              <text x="500" y="106" font-size="15" fill="#2C2C2C" text-anchor="middle" font-weight="500">알카인 (Alkyne)</text>
+              <text x="500" y="140" font-size="13" fill="#6B6B6B" text-anchor="middle">C&#8801;C 삼중결합</text>
+              <text x="500" y="160" font-size="13" fill="#C0583F" text-anchor="middle" font-weight="500">불포화 탄화수소</text>
+
+              <!-- Aromatic -->
+              <rect x="555" y="80" width="150" height="40" rx="8" fill="var(--bg-card)" stroke="#C0583F" stroke-width="1.5"/>
+              <text x="630" y="106" font-size="15" fill="#2C2C2C" text-anchor="middle" font-weight="500">방향족 (Arene)</text>
+              <text x="630" y="140" font-size="13" fill="#6B6B6B" text-anchor="middle">공액 pi 시스템</text>
+              <text x="630" y="160" font-size="13" fill="#C0583F" text-anchor="middle" font-weight="500">Huckel 규칙</text>
+
+              <!-- Structural formulas -->
+              <!-- Alkane C-C -->
+              <line x1="175" y1="210" x2="225" y2="210" stroke="#2C2C2C" stroke-width="3"/>
+              <text x="200" y="240" font-size="12" fill="#6B6B6B" text-anchor="middle">sigma 결합만</text>
+
+              <!-- Alkene C=C -->
+              <line x1="325" y1="205" x2="375" y2="205" stroke="#2C2C2C" stroke-width="3"/>
+              <line x1="325" y1="215" x2="375" y2="215" stroke="#2C2C2C" stroke-width="3"/>
+              <text x="350" y="240" font-size="12" fill="#6B6B6B" text-anchor="middle">pi 결합 1개</text>
+
+              <!-- Alkyne C≡C -->
+              <line x1="475" y1="202" x2="525" y2="202" stroke="#2C2C2C" stroke-width="2.5"/>
+              <line x1="475" y1="210" x2="525" y2="210" stroke="#2C2C2C" stroke-width="2.5"/>
+              <line x1="475" y1="218" x2="525" y2="218" stroke="#2C2C2C" stroke-width="2.5"/>
+              <text x="500" y="240" font-size="12" fill="#6B6B6B" text-anchor="middle">pi 결합 2개</text>
+
+              <!-- Aromatic ring -->
+              <polygon points="630,195 650,206 650,228 630,239 610,228 610,206" fill="none" stroke="#2C2C2C" stroke-width="2"/>
+              <circle cx="630" cy="217" r="10" fill="none" stroke="#2C2C2C" stroke-width="1.5"/>
+              <text x="630" y="265" font-size="12" fill="#6B6B6B" text-anchor="middle">4n+2 pi 전자</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">알케인의 특징</div>
+          <ul>
+            <li><strong>분자식</strong>: C\(_n\)H\(_{2n+2}\)</li>
+            <li>\(\pi\) 결합이 없고, <strong>\(\sigma\) 결합만</strong> 존재한다.</li>
+            <li><strong>포화 탄화수소(saturated hydrocarbon)</strong>: 수소를 최대한 가지고 있다.</li>
+            <li>접미사: <strong>-ane</strong> (예: prop<strong>ane</strong>, but<strong>ane</strong>, pent<strong>ane</strong>)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 11 ==================== -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>4.2 알케인의 명명법 &mdash; 관용명 vs IUPAC</h2>
+        <div class="summary-box">
+          20세기 이전에는 발견자의 재량으로 이름을 지었다(관용명, common name). 하지만 화합물 수가 급증하면서 <strong>체계적인 IUPAC 명명법(Geneva rules)</strong>이 필수가 되었다.
+        </div>
+        <div class="card">
+          <div class="card-label">관용명(Common Name)의 예</div>
+          <table class="terms-table">
+            <thead><tr><th>관용명</th><th>유래</th></tr></thead>
+            <tbody>
+              <tr><td class="en">Formic acid</td><td>개미(라틴어 formica)에서 분리 &rarr; 개미산</td></tr>
+              <tr><td class="en">Urea</td><td>소변(urine)에서 분리 &rarr; 요소</td></tr>
+              <tr><td class="en">Morphine</td><td>그리스 꿈의 신 Morpheus &rarr; 진통제</td></tr>
+              <tr><td class="en">Barbituric acid</td><td>Adolf von Baeyer가 Barbara라는 여성의 이름을 따서 명명</td></tr>
+            </tbody>
+          </table>
+          <p>이러한 관용명은 구조에 대한 정보를 전혀 담고 있지 않아, 새로운 화합물에 적용하기 어렵다. 이것이 <strong>IUPAC 체계적 명명법</strong>이 필요한 이유이다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 12 ==================== -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>4.2 명명법: Case #1 &mdash; 직쇄 알케인 (가지 없음)</h2>
+        <div class="summary-box">
+          가지(branch)가 없는 직쇄 알케인의 명명은 가장 간단하다. <strong>가장 긴 탄소 사슬(parent chain)</strong>을 찾고, 탄소 수에 해당하는 <strong>그리스어 접두사 + -ane</strong>을 붙인다.
+        </div>
+        <div class="card">
+          <div class="card-label">알케인의 모체 이름 (Parent Names)</div>
+          <table class="terms-table">
+            <thead><tr><th>탄소 수</th><th>접두사(Greek)</th><th>이름</th><th>탄소 수</th><th>접두사</th><th>이름</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td class="en">meth</td><td>methane</td><td>11</td><td class="en">undec</td><td>undecane</td></tr>
+              <tr><td>2</td><td class="en">eth</td><td>ethane</td><td>12</td><td class="en">dodec</td><td>dodecane</td></tr>
+              <tr><td>3</td><td class="en">prop</td><td>propane</td><td>13</td><td class="en">tridec</td><td>tridecane</td></tr>
+              <tr><td>4</td><td class="en">but</td><td>butane</td><td>14</td><td class="en">tetradec</td><td>tetradecane</td></tr>
+              <tr><td>5</td><td class="en">pent</td><td>pentane</td><td>15</td><td class="en">pentadec</td><td>pentadecane</td></tr>
+              <tr><td>6</td><td class="en">hex</td><td>hexane</td><td>20</td><td class="en">eicos</td><td>eicosane</td></tr>
+              <tr><td>7</td><td class="en">hept</td><td>heptane</td><td>30</td><td class="en">triacont</td><td>triacontane</td></tr>
+              <tr><td>8</td><td class="en">oct</td><td>octane</td><td>40</td><td class="en">tetracont</td><td>tetracontane</td></tr>
+              <tr><td>9</td><td class="en">non</td><td>nonane</td><td>50</td><td class="en">pentacont</td><td>pentacontane</td></tr>
+              <tr><td>10</td><td class="en">dec</td><td>decane</td><td>100</td><td class="en">hect</td><td>hectane</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="key-point">
+          암기 포인트: 탄소 1~4는 관용적 접두사(meth, eth, prop, but), 5 이상은 그리스어 숫자 접두사(pent, hex, hept, oct, non, dec)를 사용한다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 13 ==================== -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>4.2 명명법: Case #2 &mdash; 가지달린 알케인 (IUPAC 4단계)</h2>
+        <div class="summary-box">
+          가지(branch)가 있는 알케인의 IUPAC 명명은 <strong>4단계</strong>를 따른다. 이 절차를 정확히 숙지하는 것이 유기화학 명명법의 핵심이다.
+        </div>
+
+        <!-- IUPAC nomenclature step-by-step SVG -->
+        <div class="card">
+          <div class="card-label">IUPAC 명명법 4단계</div>
+          <div class="svg-diagram">
+            <svg viewBox="0 0 680 380" width="680" xmlns="http://www.w3.org/2000/svg" style="font-family:'Noto Sans KR',sans-serif">
+              <!-- Step 1 -->
+              <rect x="20" y="10" width="300" height="75" rx="10" fill="#C0583F" opacity="0.1" stroke="#C0583F" stroke-width="1.5"/>
+              <circle cx="46" cy="30" r="16" fill="#C0583F"/>
+              <text x="46" y="35" font-size="14" fill="white" text-anchor="middle" font-weight="700">1</text>
+              <text x="72" y="35" font-size="15" fill="#2C2C2C" font-weight="700">모체 사슬(Parent chain) 찾기</text>
+              <text x="72" y="58" font-size="13" fill="#6B6B6B">가장 긴 연속 탄소 사슬을 찾아 이름 붙인다</text>
+              <text x="72" y="75" font-size="13" fill="#C0583F" font-weight="500">Greek 접두사 + -ane</text>
+
+              <!-- Step 2 -->
+              <rect x="360" y="10" width="300" height="75" rx="10" fill="#C0583F" opacity="0.1" stroke="#C0583F" stroke-width="1.5"/>
+              <circle cx="386" cy="30" r="16" fill="#C0583F"/>
+              <text x="386" y="35" font-size="14" fill="white" text-anchor="middle" font-weight="700">2</text>
+              <text x="412" y="35" font-size="15" fill="#2C2C2C" font-weight="700">1번 탄소 결정 (번호 매기기)</text>
+              <text x="412" y="58" font-size="13" fill="#6B6B6B">치환기에 가장 낮은 번호를 부여하는 방향</text>
+              <text x="412" y="75" font-size="13" fill="#C0583F" font-weight="500">First Point of Difference 원칙</text>
+
+              <!-- Arrow 1->2 -->
+              <line x1="325" y1="47" x2="355" y2="47" stroke="#C0583F" stroke-width="2" marker-end="url(#arrowhead2)"/>
+
+              <!-- Step 3 -->
+              <rect x="20" y="120" width="300" height="95" rx="10" fill="#C0583F" opacity="0.1" stroke="#C0583F" stroke-width="1.5"/>
+              <circle cx="46" cy="140" r="16" fill="#C0583F"/>
+              <text x="46" y="145" font-size="14" fill="white" text-anchor="middle" font-weight="700">3</text>
+              <text x="72" y="145" font-size="15" fill="#2C2C2C" font-weight="700">치환기 확인 및 명명</text>
+              <text x="72" y="168" font-size="13" fill="#6B6B6B">모체에 붙은 원자/그룹 = 치환기(substituent)</text>
+              <text x="72" y="188" font-size="13" fill="#C0583F" font-weight="500">알케인: -ane / 치환기: -yl</text>
+              <text x="72" y="206" font-size="12" fill="#6B6B6B">할로겐: -F(fluoro), -Cl(chloro), -Br(bromo), -I(iodo)</text>
+
+              <!-- Step 4 -->
+              <rect x="360" y="120" width="300" height="95" rx="10" fill="#C0583F" opacity="0.1" stroke="#C0583F" stroke-width="1.5"/>
+              <circle cx="386" cy="140" r="16" fill="#C0583F"/>
+              <text x="386" y="145" font-size="14" fill="white" text-anchor="middle" font-weight="700">4</text>
+              <text x="412" y="145" font-size="15" fill="#2C2C2C" font-weight="700">조합하여 이름 완성</text>
+              <text x="412" y="168" font-size="13" fill="#6B6B6B">1) 반복 치환기: di-, tri-, tetra-</text>
+              <text x="412" y="188" font-size="13" fill="#6B6B6B">2) 치환기는 알파벳 순서로 나열</text>
+              <text x="412" y="206" font-size="13" fill="#C0583F" font-weight="500">3) di, tri, tetra는 알파벳 순서에 미포함</text>
+
+              <!-- Arrow 2->3 (down) -->
+              <path d="M510 90 L510 100 Q510 110 500 115 L325 115" fill="none" stroke="#C0583F" stroke-width="2" marker-end="url(#arrowhead2)"/>
+
+              <!-- Arrow 3->4 -->
+              <line x1="325" y1="167" x2="355" y2="167" stroke="#C0583F" stroke-width="2" marker-end="url(#arrowhead2)"/>
+
+              <defs>
+                <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#C0583F"/>
+                </marker>
+              </defs>
+
+              <!-- Example -->
+              <rect x="20" y="250" width="640" height="120" rx="10" fill="var(--bg-card)" stroke="#C0583F" stroke-width="1.2"/>
+              <text x="40" y="278" font-size="14" fill="#C0583F" font-weight="700">예시: 4-ethyl-2,4-dimethylheptane</text>
+
+              <!-- Skeleton structure -->
+              <line x1="60" y1="320" x2="100" y2="300" stroke="#2C2C2C" stroke-width="2.5"/>
+              <line x1="100" y1="300" x2="140" y2="320" stroke="#2C2C2C" stroke-width="2.5"/>
+              <line x1="140" y1="320" x2="180" y2="300" stroke="#2C2C2C" stroke-width="2.5"/>
+              <line x1="180" y1="300" x2="220" y2="320" stroke="#2C2C2C" stroke-width="2.5"/>
+              <line x1="220" y1="320" x2="260" y2="300" stroke="#2C2C2C" stroke-width="2.5"/>
+              <line x1="260" y1="300" x2="300" y2="320" stroke="#2C2C2C" stroke-width="2.5"/>
+              <!-- methyl branch at C2 -->
+              <line x1="100" y1="300" x2="100" y2="270" stroke="#C0583F" stroke-width="2.5"/>
+              <text x="100" y="264" font-size="12" fill="#C0583F" text-anchor="middle" font-weight="500">CH\(_3\)</text>
+              <!-- ethyl + methyl at C4 -->
+              <line x1="180" y1="300" x2="180" y2="270" stroke="#C0583F" stroke-width="2.5"/>
+              <line x1="180" y1="270" x2="210" y2="255" stroke="#C0583F" stroke-width="2.5"/>
+              <text x="170" y="264" font-size="12" fill="#C0583F" text-anchor="end" font-weight="500">CH\(_3\)</text>
+              <text x="218" y="252" font-size="12" fill="#C0583F" font-weight="500">CH\(_3\)</text>
+
+              <!-- Carbon numbers -->
+              <text x="56" y="340" font-size="11" fill="#6B6B6B" text-anchor="middle">C1</text>
+              <text x="100" y="340" font-size="11" fill="#6B6B6B" text-anchor="middle">C2</text>
+              <text x="140" y="340" font-size="11" fill="#6B6B6B" text-anchor="middle">C3</text>
+              <text x="180" y="340" font-size="11" fill="#6B6B6B" text-anchor="middle">C4</text>
+              <text x="220" y="340" font-size="11" fill="#6B6B6B" text-anchor="middle">C5</text>
+              <text x="260" y="340" font-size="11" fill="#6B6B6B" text-anchor="middle">C6</text>
+              <text x="300" y="340" font-size="11" fill="#6B6B6B" text-anchor="middle">C7</text>
+
+              <!-- Name breakdown -->
+              <text x="380" y="300" font-size="14" fill="#2C2C2C" font-weight="500">4-ethyl-2,4-dimethylheptane</text>
+              <text x="380" y="320" font-size="12" fill="#6B6B6B">모체: heptane (C7)</text>
+              <text x="380" y="338" font-size="12" fill="#6B6B6B">치환기: ethyl(C4), methyl(C2,C4)</text>
+              <text x="380" y="356" font-size="12" fill="#C0583F">알파벳순: e(thyl) &lt; m(ethyl)</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">추가 치환기: 할로겐과 나이트로</div>
+          <table class="terms-table">
+            <thead><tr><th>치환기</th><th>접두사</th></tr></thead>
+            <tbody>
+              <tr><td>-F</td><td class="en">fluoro</td></tr>
+              <tr><td>-Cl</td><td class="en">chloro</td></tr>
+              <tr><td>-Br</td><td class="en">bromo</td></tr>
+              <tr><td>-I</td><td class="en">iodo</td></tr>
+              <tr><td>-NO\(_2\)</td><td class="en">nitro</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 14 ==================== -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>4.2 치환기의 명명법 (Naming Substituents)</h2>
+        <div class="summary-box">
+          치환기(substituent) 자체가 복잡한 구조를 가질 때, 치환기 내부에서도 동일한 명명 규칙을 적용한다. 치환기 안에 또 다른 가지가 있으면 괄호를 사용한다.
+        </div>
+        <div class="card">
+          <div class="card-label">복잡한 치환기 명명 4단계</div>
+          <ol>
+            <li><strong>Step 1</strong>: 치환기 내에서 <strong>가장 긴 사슬(parent chain)</strong>을 찾아 이름 붙인다.</li>
+            <li><strong>Step 2</strong>: 치환기 내에서 <strong>1번 탄소를 결정</strong>한다. (모체 사슬과 연결된 탄소가 1번)</li>
+            <li><strong>Step 3</strong>: 치환기 안의 추가 치환기를 찾아 이름 붙인다.</li>
+            <li><strong>Step 4</strong>: 치환기 이름에 번호나 di-, tri- 등이 포함되면 <strong>괄호( )</strong>로 묶는다.</li>
+          </ol>
+          <p>예를 들어, 치환기가 "1-methylethyl"이면, 전체 이름에서 <strong>(1-methylethyl)</strong>로 괄호를 씌워 모체 이름과 구분한다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 15 ==================== -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>4.2 알킬 치환기의 종류 (C\(_3\), C\(_4\))</h2>
+        <div class="summary-box">
+          같은 탄소 수를 가진 알킬 치환기라도 <strong>연결 위치와 가지 구조</strong>에 따라 여러 종류가 존재한다. IUPAC 이름과 관용명을 모두 알아야 한다.
+        </div>
+        <div class="card">
+          <div class="card-label">C\(_3\) 알킬 치환기</div>
+          <table class="terms-table">
+            <thead><tr><th>구조</th><th>IUPAC 이름</th><th>관용명</th></tr></thead>
+            <tbody>
+              <tr><td>CH\(_3\)CH\(_2\)CH\(_2\)&mdash;</td><td class="en">propyl</td><td>n-propyl</td></tr>
+              <tr><td>(CH\(_3\))\(_2\)CH&mdash;</td><td class="en">(1-methylethyl)</td><td>isopropyl</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-label">C\(_4\) 알킬 치환기</div>
+          <table class="terms-table">
+            <thead><tr><th>구조</th><th>IUPAC 이름</th><th>관용명</th></tr></thead>
+            <tbody>
+              <tr><td>CH\(_3\)CH\(_2\)CH\(_2\)CH\(_2\)&mdash;</td><td class="en">butyl</td><td>n-butyl</td></tr>
+              <tr><td>(CH\(_3\))\(_2\)CHCH\(_2\)&mdash;</td><td class="en">(2-methylpropyl)</td><td>isobutyl</td></tr>
+              <tr><td>CH\(_3\)CH\(_2\)CH(CH\(_3\))&mdash;</td><td class="en">(1-methylpropyl)</td><td>sec-butyl</td></tr>
+              <tr><td>(CH\(_3\))\(_3\)C&mdash;</td><td class="en">(1,1-dimethylethyl)</td><td>tert-butyl</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="key-point">
+          시험 포인트: tert-butyl의 IUPAC 이름은 <strong>(1,1-dimethylethyl)</strong>이다. 관용명과 IUPAC 이름 모두 숙지해야 한다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 16 ==================== -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>4.2 탄소의 분류 (1차/2차/3차/4차)</h2>
+        <div class="summary-box">
+          알케인에서 각 탄소는 <strong>이웃한 탄소의 수</strong>에 따라 1차(primary), 2차(secondary), 3차(tertiary), 4차(quaternary)로 분류된다. 이 분류는 반응성을 이해하는 데 매우 중요하다.
+        </div>
+
+        <!-- Carbon classification SVG -->
+        <div class="card">
+          <div class="card-label">탄소 분류 다이어그램</div>
+          <div class="svg-diagram">
+            <svg viewBox="0 0 680 280" width="680" xmlns="http://www.w3.org/2000/svg" style="font-family:'Noto Sans KR',sans-serif">
+              <!-- 1 degree -->
+              <g transform="translate(80,60)">
+                <rect x="-65" y="-45" width="130" height="90" rx="10" fill="#C0583F" opacity="0.08" stroke="#C0583F" stroke-width="1.2"/>
+                <text x="0" y="-22" font-size="15" fill="#C0583F" text-anchor="middle" font-weight="700">1차 (Primary)</text>
+                <circle cx="0" cy="10" r="18" fill="#C0583F" opacity="0.2" stroke="#C0583F" stroke-width="2"/>
+                <text x="0" y="15" font-size="14" fill="#C0583F" text-anchor="middle" font-weight="700">C</text>
+                <line x1="18" y1="10" x2="45" y2="10" stroke="#6B6B6B" stroke-width="2"/>
+                <text x="55" y="15" font-size="13" fill="#6B6B6B">C</text>
+                <text x="0" y="55" font-size="12" fill="#6B6B6B" text-anchor="middle">이웃 C: 1개</text>
+              </g>
+
+              <!-- 2 degree -->
+              <g transform="translate(250,60)">
+                <rect x="-65" y="-45" width="130" height="90" rx="10" fill="#C0583F" opacity="0.08" stroke="#C0583F" stroke-width="1.2"/>
+                <text x="0" y="-22" font-size="15" fill="#C0583F" text-anchor="middle" font-weight="700">2차 (Secondary)</text>
+                <text x="-55" y="15" font-size="13" fill="#6B6B6B">C</text>
+                <line x1="-42" y1="10" x2="-18" y2="10" stroke="#6B6B6B" stroke-width="2"/>
+                <circle cx="0" cy="10" r="18" fill="#C0583F" opacity="0.2" stroke="#C0583F" stroke-width="2"/>
+                <text x="0" y="15" font-size="14" fill="#C0583F" text-anchor="middle" font-weight="700">C</text>
+                <line x1="18" y1="10" x2="45" y2="10" stroke="#6B6B6B" stroke-width="2"/>
+                <text x="55" y="15" font-size="13" fill="#6B6B6B">C</text>
+                <text x="0" y="55" font-size="12" fill="#6B6B6B" text-anchor="middle">이웃 C: 2개</text>
+              </g>
+
+              <!-- 3 degree -->
+              <g transform="translate(420,60)">
+                <rect x="-65" y="-45" width="130" height="90" rx="10" fill="#C0583F" opacity="0.08" stroke="#C0583F" stroke-width="1.2"/>
+                <text x="0" y="-22" font-size="15" fill="#C0583F" text-anchor="middle" font-weight="700">3차 (Tertiary)</text>
+                <text x="-55" y="15" font-size="13" fill="#6B6B6B">C</text>
+                <line x1="-42" y1="10" x2="-18" y2="10" stroke="#6B6B6B" stroke-width="2"/>
+                <circle cx="0" cy="10" r="18" fill="#C0583F" opacity="0.2" stroke="#C0583F" stroke-width="2"/>
+                <text x="0" y="15" font-size="14" fill="#C0583F" text-anchor="middle" font-weight="700">C</text>
+                <line x1="18" y1="10" x2="45" y2="10" stroke="#6B6B6B" stroke-width="2"/>
+                <text x="55" y="15" font-size="13" fill="#6B6B6B">C</text>
+                <line x1="0" y1="28" x2="0" y2="45" stroke="#6B6B6B" stroke-width="2"/>
+                <text x="0" y="58" font-size="13" fill="#6B6B6B" text-anchor="middle">C</text>
+                <text x="0" y="78" font-size="12" fill="#6B6B6B" text-anchor="middle">이웃 C: 3개</text>
+              </g>
+
+              <!-- 4 degree -->
+              <g transform="translate(590,60)">
+                <rect x="-65" y="-45" width="130" height="90" rx="10" fill="#C0583F" opacity="0.08" stroke="#C0583F" stroke-width="1.2"/>
+                <text x="0" y="-22" font-size="15" fill="#C0583F" text-anchor="middle" font-weight="700">4차 (Quaternary)</text>
+                <text x="-55" y="15" font-size="13" fill="#6B6B6B">C</text>
+                <line x1="-42" y1="10" x2="-18" y2="10" stroke="#6B6B6B" stroke-width="2"/>
+                <circle cx="0" cy="10" r="18" fill="#C0583F" opacity="0.2" stroke="#C0583F" stroke-width="2"/>
+                <text x="0" y="15" font-size="14" fill="#C0583F" text-anchor="middle" font-weight="700">C</text>
+                <line x1="18" y1="10" x2="45" y2="10" stroke="#6B6B6B" stroke-width="2"/>
+                <text x="55" y="15" font-size="13" fill="#6B6B6B">C</text>
+                <line x1="0" y1="28" x2="0" y2="45" stroke="#6B6B6B" stroke-width="2"/>
+                <text x="0" y="58" font-size="13" fill="#6B6B6B" text-anchor="middle">C</text>
+                <line x1="0" y1="-8" x2="0" y2="-30" stroke="#6B6B6B" stroke-width="2"/>
+                <text x="0" y="-34" font-size="13" fill="#6B6B6B" text-anchor="middle">C</text>
+                <text x="0" y="78" font-size="12" fill="#6B6B6B" text-anchor="middle">이웃 C: 4개</text>
+              </g>
+
+              <!-- 수소 분류 설명 -->
+              <rect x="20" y="170" width="640" height="95" rx="10" fill="var(--bg-card)" stroke="#C0583F" stroke-width="1.2"/>
+              <text x="40" y="195" font-size="15" fill="#C0583F" font-weight="700">C-H 결합의 분류</text>
+              <text x="40" y="220" font-size="14" fill="#2C2C2C">1차 탄소에 붙은 H = <tspan fill="#C0583F" font-weight="500">1차 수소 (primary H)</tspan></text>
+              <text x="40" y="242" font-size="14" fill="#2C2C2C">2차 탄소에 붙은 H = <tspan fill="#C0583F" font-weight="500">2차 수소 (secondary H)</tspan></text>
+              <text x="40" y="260" font-size="14" fill="#2C2C2C">3차 탄소에 붙은 H = <tspan fill="#C0583F" font-weight="500">3차 수소 (tertiary H)</tspan>  |  4차 탄소에는 H 없음!</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 개념</div>
+          <ul>
+            <li><strong>1차 탄소 (1\(^\circ\))</strong>: 다른 탄소 <strong>1개</strong>와 결합 (말단 CH\(_3\))</li>
+            <li><strong>2차 탄소 (2\(^\circ\))</strong>: 다른 탄소 <strong>2개</strong>와 결합 (사슬 중간 CH\(_2\))</li>
+            <li><strong>3차 탄소 (3\(^\circ\))</strong>: 다른 탄소 <strong>3개</strong>와 결합 (가지점 CH)</li>
+            <li><strong>4차 탄소 (4\(^\circ\))</strong>: 다른 탄소 <strong>4개</strong>와 결합 (수소 없음, C만)</li>
+          </ul>
+          <p>이 분류는 이후 <strong>치환 반응(substitution)</strong>과 <strong>제거 반응(elimination)</strong>의 반응성을 예측할 때 핵심적으로 사용된다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 17 ==================== -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>4.2 명명법: Case #3 &mdash; 사이클로알케인 (Cycloalkanes)</h2>
+        <div class="summary-box">
+          탄소 사슬이 고리를 이루면 <strong>사이클로알케인</strong>이라 한다. 분자식은 \(\text{C}_n\text{H}_{2n}\)으로, 직쇄 알케인보다 수소가 2개 적다(고리를 닫기 위해 2개의 H를 잃음).
+        </div>
+
+        <!-- Cycloalkane naming SVG -->
+        <div class="card">
+          <div class="card-label">사이클로알케인 기하 구조</div>
+          <div class="svg-diagram">
+            <svg viewBox="0 0 680 140" width="680" xmlns="http://www.w3.org/2000/svg" style="font-family:'Noto Sans KR',sans-serif">
+              <!-- Cyclopropane (triangle) -->
+              <g transform="translate(60,70)">
+                <polygon points="0,-30 26,15 -26,15" fill="none" stroke="#2C2C2C" stroke-width="2.5"/>
+                <text x="0" y="40" font-size="12" fill="#6B6B6B" text-anchor="middle">cyclopropane</text>
+                <text x="0" y="55" font-size="11" fill="#C0583F" text-anchor="middle">C\(_3\)</text>
+              </g>
+              <!-- Cyclobutane (square) -->
+              <g transform="translate(170,70)">
+                <rect x="-22" y="-22" width="44" height="44" fill="none" stroke="#2C2C2C" stroke-width="2.5"/>
+                <text x="0" y="40" font-size="12" fill="#6B6B6B" text-anchor="middle">cyclobutane</text>
+                <text x="0" y="55" font-size="11" fill="#C0583F" text-anchor="middle">C\(_4\)</text>
+              </g>
+              <!-- Cyclopentane (pentagon) -->
+              <g transform="translate(290,70)">
+                <polygon points="0,-28 27,-9 17,23 -17,23 -27,-9" fill="none" stroke="#2C2C2C" stroke-width="2.5"/>
+                <text x="0" y="45" font-size="12" fill="#6B6B6B" text-anchor="middle">cyclopentane</text>
+                <text x="0" y="60" font-size="11" fill="#C0583F" text-anchor="middle">C\(_5\)</text>
+              </g>
+              <!-- Cyclohexane (hexagon) -->
+              <g transform="translate(420,70)">
+                <polygon points="0,-30 26,-15 26,15 0,30 -26,15 -26,-15" fill="none" stroke="#2C2C2C" stroke-width="2.5"/>
+                <text x="0" y="50" font-size="12" fill="#6B6B6B" text-anchor="middle">cyclohexane</text>
+                <text x="0" y="65" font-size="11" fill="#C0583F" text-anchor="middle">C\(_6\)</text>
+              </g>
+              <!-- Formula -->
+              <g transform="translate(580,50)">
+                <rect x="-60" y="-30" width="160" height="60" rx="8" fill="#C0583F" opacity="0.1" stroke="#C0583F" stroke-width="1.2"/>
+                <text x="20" y="-5" font-size="16" fill="#C0583F" text-anchor="middle" font-weight="700">분자식</text>
+                <text x="20" y="20" font-size="18" fill="#2C2C2C" text-anchor="middle" font-weight="500">C<tspan font-size="12" dy="4">n</tspan><tspan dy="-4">H</tspan><tspan font-size="12" dy="4">2n</tspan></text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">사이클로알케인 명명 규칙</div>
+          <ul>
+            <li>명명: <strong>Cyclo + 그리스어 접두사 + -ane</strong> (예: cyclohexane)</li>
+            <li>치환기가 있을 때, <strong>고리와 사슬 중 탄소 수가 더 많은 쪽이 모체(parent)</strong>가 된다.</li>
+            <li>고리가 모체이면: 치환기 이름 + cyclo + 모체 이름</li>
+            <li>사슬이 모체이면: cyclo 부분이 치환기가 됨 (예: cyclopropyl)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">예제: 치환 사이클로펜테인 명명</div>
+          <div class="svg-diagram">
+            <svg viewBox="0 0 500 200" width="500" xmlns="http://www.w3.org/2000/svg" style="font-family:'Noto Sans KR',sans-serif">
+              <!-- Cyclopentane ring -->
+              <g transform="translate(120,100)">
+                <polygon points="0,-40 38,-12 24,32 -24,32 -38,-12" fill="none" stroke="#2C2C2C" stroke-width="2.5"/>
+                <!-- C1 top - Cl -->
+                <text x="12" y="-48" font-size="16" fill="#2563EB" font-weight="500">Cl</text>
+                <line x1="4" y1="-42" x2="10" y2="-48" stroke="#2563EB" stroke-width="2"/>
+                <!-- C2 - CH3 -->
+                <line x1="-38" y1="-12" x2="-62" y2="-20" stroke="#C0583F" stroke-width="2"/>
+                <text x="-80" y="-15" font-size="14" fill="#C0583F" font-weight="500">H\(_3\)C</text>
+                <!-- C4 - propyl -->
+                <line x1="24" y1="32" x2="50" y2="46" stroke="#C0583F" stroke-width="2"/>
+                <line x1="50" y1="46" x2="80" y2="36" stroke="#2C2C2C" stroke-width="2"/>
+                <line x1="80" y1="36" x2="110" y2="46" stroke="#2C2C2C" stroke-width="2"/>
+                <!-- Labels -->
+                <text x="0" y="-5" font-size="11" fill="#6B6B6B" text-anchor="middle">1</text>
+                <text x="-42" y="2" font-size="11" fill="#6B6B6B">2</text>
+                <text x="-30" y="38" font-size="11" fill="#6B6B6B">3</text>
+                <text x="30" y="38" font-size="11" fill="#6B6B6B">4</text>
+                <text x="42" y="2" font-size="11" fill="#6B6B6B">5</text>
+              </g>
+
+              <!-- Answer -->
+              <g transform="translate(320,60)">
+                <rect x="0" y="0" width="170" height="120" rx="8" fill="#C0583F" opacity="0.1" stroke="#C0583F" stroke-width="1.2"/>
+                <text x="85" y="28" font-size="13" fill="#C0583F" text-anchor="middle" font-weight="700">IUPAC 이름</text>
+                <text x="85" y="55" font-size="14" fill="#2C2C2C" text-anchor="middle" font-weight="500">1-chloro-2-methyl-</text>
+                <text x="85" y="78" font-size="14" fill="#2C2C2C" text-anchor="middle" font-weight="500">4-propylcyclopentane</text>
+                <text x="85" y="105" font-size="12" fill="#6B6B6B" text-anchor="middle">고리(C5) = 모체</text>
+              </g>
+            </svg>
+          </div>
+          <p>사이클로펜테인(C\(_5\) 고리)에 Cl, CH\(_3\), propyl 치환기가 붙어 있다. 고리 탄소(5개)가 propyl 사슬(3개)보다 많으므로 <strong>고리가 모체</strong>이다. 치환기에 가장 낮은 번호를 부여하는 방향으로 번호를 매기고, 알파벳 순서로 조합한다.</p>
+        </div>
+
+        <div class="key-point">
+          사이클로알케인 명명 핵심:<br>
+          1) 고리 vs 사슬 중 <strong>탄소 수가 많은 쪽이 모체</strong><br>
+          2) 치환기가 하나만 있으면 번호 불필요 (자동으로 1번)<br>
+          3) 치환기가 여러 개면 <strong>가장 낮은 번호 조합</strong>을 부여
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '다크모드';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '라이트모드';
+      }
+    }
+
+    // Sidebar active state on scroll
+    const sections = document.querySelectorAll('.page-section');
+    const navLinks = document.querySelectorAll('.sidebar a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 80;
+        if (window.scrollY >= top) current = sec.id;
+      });
+      navLinks.forEach(a => {
+        a.classList.remove('active');
+        if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -37,6 +37,10 @@
   --c-ml: #DB2777;
   --c-ml-light: #FDF2F8;
   --c-ml-border: #FBCFE8;
+
+  --c-oc: #0D9488;
+  --c-oc-light: #F0FDFA;
+  --c-oc-border: #99F6E4;
 }
 
 [data-theme="dark"] {
@@ -64,6 +68,9 @@
 
   --c-ml-light: rgba(219,39,119,0.12);
   --c-ml-border: rgba(219,39,119,0.3);
+
+  --c-oc-light: rgba(13,148,136,0.12);
+  --c-oc-border: rgba(13,148,136,0.3);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -231,6 +238,10 @@ body {
 .card-link.ml::before { background: var(--c-ml); }
 .card-link.ml:hover { border-color: var(--c-ml-border); background: var(--c-ml-light); }
 .card-link.ml .card-tag { color: var(--c-ml); background: var(--c-ml-light); border: 1px solid var(--c-ml-border); }
+
+.card-link.oc::before { background: var(--c-oc); }
+.card-link.oc:hover { border-color: var(--c-oc-border); background: var(--c-oc-light); }
+.card-link.oc .card-tag { color: var(--c-oc); background: var(--c-oc-light); border: 1px solid var(--c-oc-border); }
 
 .card-num {
   font-family: 'JetBrains Mono', monospace;
@@ -517,6 +528,30 @@ const DEFAULT_COURSES = [
         title: "Linear Regression",
         desc: "선형 회귀, 경사하강법, 정규방정식",
         file: "linear_regression_lecture_kor.html"
+      }
+    ]
+  },
+  {
+    name: "유기화학",
+    color: "oc",
+    lectures: [
+      {
+        num: "03",
+        title: "공명 (Resonance) & Curved Arrows",
+        desc: "Ch 2.7-2.8: 공명 구조, 공명 혼성체, 곡선 화살표 표기법",
+        file: "OC_3_Resonance_lecture.html"
+      },
+      {
+        num: "04",
+        title: "산과 염기 (Acids & Bases)",
+        desc: "Ch 3: Brønsted-Lowry, pKa, ARIO 인자, Lewis 산-염기",
+        file: "OC_4_AcidBase_lecture.html"
+      },
+      {
+        num: "05",
+        title: "산-염기 심화 & 알케인 명명법",
+        desc: "Ch 3.4-4.2: ARIO 심화, 알케인, IUPAC 명명법",
+        file: "OC_5_Alkanes_lecture.html"
       }
     ]
   }
