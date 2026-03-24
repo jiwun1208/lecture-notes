@@ -312,6 +312,24 @@ window.MathJax = {
     body { font-size: 14px; }
   }
 
+  .diagram-box {
+    background: var(--bg-aside);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .diagram-box .diagram-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
   @media print {
     .topbar, .sidebar, .theme-toggle { display: none; }
     .layout { display: block; }
@@ -463,6 +481,14 @@ window.MathJax = {
             \(= 8 + 0 + 2 + 1 + 0.5 + 0 + 0.125 = 11.625\)
           </div>
           <p>소수점 왼쪽은 \(2^0, 2^1, 2^2, \ldots\) (정수 부분), 오른쪽은 \(2^{-1}, 2^{-2}, 2^{-3}, \ldots\) (소수 부분)입니다.</p>
+          <div class="diagram-box">
+            <div class="diagram-label">Figure &mdash; 이진 소수점 자릿값 배치도</div>
+            각 비트 위치의 자릿값(weight)을 왼쪽부터 오른쪽으로 나열하면 다음과 같습니다:<br><br>
+            <code>&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;.&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1</code><br>
+            <code>&nbsp;2^3&nbsp;&nbsp;2^2&nbsp;&nbsp;2^1&nbsp;&nbsp;2^0&nbsp;&nbsp;&nbsp;2^-1&nbsp;2^-2&nbsp;2^-3</code><br>
+            <code>&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;0.5&nbsp;&nbsp;0.25&nbsp;0.125</code><br><br>
+            소수점(binary point)은 정수 부분과 소수 부분의 경계입니다. 왼쪽으로 갈수록 2배씩 커지고, 오른쪽으로 갈수록 1/2씩 작아집니다. 십진법의 소수점과 완전히 동일한 원리이며, 밑(base)만 10에서 2로 바뀐 것입니다.
+          </div>
         </div>
       </section>
 
@@ -512,6 +538,18 @@ window.MathJax = {
 1/10 = 0.0001100110011[0011]...₂</pre>
         </div>
         <div class="warning-box"><strong>0.1</strong>을 이진수로 정확히 표현할 수 없습니다! 이것이 0.1 + 0.2 ≠ 0.3 문제의 근본 원인입니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure &mdash; 고정 소수점 vs 부동 소수점 표현 범위</div>
+          <strong>고정 소수점 (Fixed Point):</strong> 소수점 위치가 고정되어 있어 표현 범위가 제한적입니다.<br>
+          예) 8비트, 소수점 위치 4번째: <code>XXXX.YYYY</code><br>
+          &nbsp;&nbsp;정수부 최대 = 15, 소수부 최소 단위 = 1/16 = 0.0625<br>
+          &nbsp;&nbsp;표현 범위: 0 ~ 15.9375 (매우 좁음)<br><br>
+          <strong>부동 소수점 (Floating Point):</strong> 소수점이 "떠다니므로" 지수에 따라 위치가 변합니다.<br>
+          &nbsp;&nbsp;작은 수: 1.001 x 2^(-10) = 0.000977...<br>
+          &nbsp;&nbsp;큰 수: &nbsp;1.001 x 2^(+10) = 1025.0<br>
+          &nbsp;&nbsp;같은 비트 수로도 훨씬 넓은 범위를 커버할 수 있습니다.<br><br>
+          핵심 아이디어: 지수(exponent)를 사용하여 소수점 위치를 동적으로 조정함으로써, 매우 작은 수와 매우 큰 수를 모두 표현합니다.
+        </div>
         <div class="card">
           <p><strong>한계 2: 고정된 소수점 위치</strong></p>
           <p>w비트 내에서 소수점 위치가 고정되면, 표현 가능한 수의 범위가 매우 제한됩니다. 아주 작은 수나 아주 큰 수를 동시에 표현할 수 없습니다. &rarr; 이것이 <strong>부동(floating) 소수점</strong>이 필요한 이유!</p>
@@ -586,6 +624,21 @@ window.MathJax = {
 </div>
         </div>
         <div class="warning-box"><strong>주의:</strong> exp 필드의 값이 직접 E가 아니고, frac 필드의 값이 직접 M이 아닙니다. 인코딩 규칙이 따로 있습니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure &mdash; IEEE 754 Single vs Double 비트 레이아웃 비교</div>
+          <strong>Single Precision (32-bit float):</strong><br>
+          <code>[1 sign] [8 exponent] [23 mantissa/fraction]</code><br>
+          &nbsp;&nbsp;Bias = 127, E 범위 = -126 ~ +127<br>
+          &nbsp;&nbsp;유효숫자 = 24비트 (23 + 암묵적 1), 약 7.2자리 십진수 정밀도<br><br>
+          <strong>Double Precision (64-bit double):</strong><br>
+          <code>[1 sign] [11 exponent] [52 mantissa/fraction]</code><br>
+          &nbsp;&nbsp;Bias = 1023, E 범위 = -1022 ~ +1023<br>
+          &nbsp;&nbsp;유효숫자 = 53비트 (52 + 암묵적 1), 약 15.9자리 십진수 정밀도<br><br>
+          <strong>인코딩 관계 정리:</strong><br>
+          &nbsp;&nbsp;실제 지수 E = exp필드값 - Bias (Normalized일 때)<br>
+          &nbsp;&nbsp;실제 유효숫자 M = 1.frac (Normalized일 때, 암묵적 선행 1 포함)<br>
+          &nbsp;&nbsp;exp 필드가 0이면 Denormalized, 모두 1이면 Special (Inf/NaN)
+        </div>
       </section>
 
       <!-- ==================== Page 12 ==================== -->
@@ -604,6 +657,19 @@ window.MathJax = {
           <strong>Single (float):</strong> 약 7자리 십진수 정밀도<br>
           <strong>Double (double):</strong> 약 15~16자리 십진수 정밀도<br>
           Extended는 Intel 전용이며 long double에 해당합니다.
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure &mdash; 정밀도별 표현 능력 비교</div>
+          <strong>정밀도가 의미하는 것:</strong> mantissa(fraction) 비트 수가 많을수록 연속된 두 표현 가능한 수 사이의 간격이 좁아집니다.<br><br>
+          <strong>Single (23비트 frac):</strong><br>
+          &nbsp;&nbsp;1.0 다음으로 표현 가능한 수 = 1.0 + 2^(-23) = 1.00000011920928...<br>
+          &nbsp;&nbsp;간격(ULP at 1.0) = 약 1.19 x 10^(-7)<br>
+          &nbsp;&nbsp;16,777,216 (= 2^24) 이상의 정수는 정확히 표현 불가<br><br>
+          <strong>Double (52비트 frac):</strong><br>
+          &nbsp;&nbsp;1.0 다음으로 표현 가능한 수 = 1.0 + 2^(-52) = 1.00000000000000022...<br>
+          &nbsp;&nbsp;간격(ULP at 1.0) = 약 2.22 x 10^(-16)<br>
+          &nbsp;&nbsp;9,007,199,254,740,992 (= 2^53) 이상의 정수는 정확히 표현 불가<br><br>
+          ULP(Unit in the Last Place)은 주어진 지수 범위에서 가장 작은 차이 단위입니다. 지수가 커지면 ULP도 함께 커져서 절대 간격이 넓어집니다.
         </div>
       </section>
 
@@ -628,6 +694,18 @@ window.MathJax = {
             \(M = 1.xxx\ldots x_2\) (frac 필드가 xxx...x)
           </div>
           <p>frac = 000...0이면 \(M = 1.0\), frac = 111...1이면 \(M = 2.0 - \varepsilon\). "공짜로" 1비트를 더 얻는 셈입니다!</p>
+          <div class="diagram-box">
+            <div class="diagram-label">Figure &mdash; Normalized 인코딩의 Bias 메커니즘</div>
+            <strong>Bias 방식을 사용하는 이유:</strong> 지수를 Two's Complement 대신 Bias 형식으로 저장하면, 비트 패턴을 unsigned 정수로 비교할 때 순서가 자연스럽게 유지됩니다.<br><br>
+            <strong>Single Precision 예시 (k=8, Bias=127):</strong><br>
+            <code>exp = 00000001 (=1)&nbsp;&nbsp;&nbsp;→ E = 1 - 127 = -126&nbsp;&nbsp;(최소 정규화 지수)</code><br>
+            <code>exp = 01111111 (=127) → E = 127 - 127 = 0</code><br>
+            <code>exp = 10000000 (=128) → E = 128 - 127 = +1</code><br>
+            <code>exp = 11111110 (=254) → E = 254 - 127 = +127&nbsp;&nbsp;(최대 정규화 지수)</code><br><br>
+            <strong>Significand의 암묵적 1:</strong><br>
+            저장: frac = <code>10100...0</code> → 실제 M = <code>1.10100...0</code><br>
+            1비트를 저장하지 않고도 사용하므로 실질적으로 정밀도가 1비트 증가합니다. 23비트 frac 필드로 24비트의 유효숫자를 표현하는 것입니다.
+          </div>
         </div>
       </section>
 
@@ -651,6 +729,23 @@ window.MathJax = {
           </div>
           <pre>결과: 0  10001100  11011011011010000000000
       s    exp              frac</pre>
+          <div class="diagram-box">
+            <div class="diagram-label">Figure &mdash; Decimal-to-IEEE 754 인코딩 단계별 과정</div>
+            <strong>Step 1: 십진수를 이진수로 변환</strong><br>
+            &nbsp;&nbsp;15213 = 8192 + 4096 + 512 + 256 + 128 + 16 + 8 + 4 + 1<br>
+            &nbsp;&nbsp;= 2^13 + 2^12 + 2^9 + 2^8 + 2^7 + 2^4 + 2^3 + 2^2 + 2^0<br>
+            &nbsp;&nbsp;= <code>11101101101101</code>₂<br><br>
+            <strong>Step 2: 정규화 (1.xxxx x 2^E 형태로 만들기)</strong><br>
+            &nbsp;&nbsp;<code>11101101101101</code>₂ = <code>1.1101101101101</code>₂ x 2^13<br>
+            &nbsp;&nbsp;소수점을 왼쪽으로 13자리 이동 → E = 13<br><br>
+            <strong>Step 3: 각 필드 결정</strong><br>
+            &nbsp;&nbsp;s = 0 (양수)<br>
+            &nbsp;&nbsp;exp = E + Bias = 13 + 127 = 140 = <code>10001100</code>₂<br>
+            &nbsp;&nbsp;frac = 소수점 뒤 부분을 23비트로 패딩: <code>11011011011010000000000</code><br><br>
+            <strong>Step 4: 최종 조립</strong><br>
+            &nbsp;&nbsp;<code>0 10001100 11011011011010000000000</code><br>
+            &nbsp;&nbsp;16진수: <code>0x4669B400</code>
+          </div>
         </div>
       </section>
 
@@ -671,6 +766,22 @@ window.MathJax = {
           <p>이 값들은 등간격(equispaced)으로 분포합니다.</p>
         </div>
         <div class="key-point">Denormalized의 존재 이유: Normalized로는 0에 가까운 수를 표현할 수 없습니다. \(E = 1 - Bias\) 규칙 덕분에 Denormalized → Normalized 전환이 매끄럽게 이어집니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure &mdash; Denormalized vs Normalized 규칙 비교</div>
+          <strong>Normalized (exp != 0 and exp != 111...1):</strong><br>
+          &nbsp;&nbsp;E = exp - Bias<br>
+          &nbsp;&nbsp;M = 1.frac (암묵적 선행 1)<br>
+          &nbsp;&nbsp;최소 양수 Normalized = 1.0 x 2^(-126) ≈ 1.18 x 10^(-38) (Single)<br><br>
+          <strong>Denormalized (exp = 000...0):</strong><br>
+          &nbsp;&nbsp;E = 1 - Bias (0 - Bias가 아님!)<br>
+          &nbsp;&nbsp;M = 0.frac (선행 0, 암묵적 1 없음)<br>
+          &nbsp;&nbsp;최소 양수 Denorm = 0.000...1 x 2^(-126) = 2^(-149) ≈ 1.4 x 10^(-45) (Single)<br><br>
+          <strong>왜 E = 1 - Bias인가?</strong><br>
+          만약 E = 0 - Bias = -127로 했다면, Denorm 최대값과 Norm 최소값 사이에 간격(gap)이 생깁니다.<br>
+          &nbsp;&nbsp;Denorm 최대: 0.111...1 x 2^(-127)<br>
+          &nbsp;&nbsp;Norm 최소: &nbsp;1.000...0 x 2^(-126) = 0.100...0 x 2^(-125)<br>
+          이 사이에 표현 불가능한 구간이 생기는 것을 방지하기 위해 E = 1 - Bias를 사용하여 두 영역이 매끄럽게 연결됩니다.
+        </div>
       </section>
 
       <!-- ==================== Page 16 ==================== -->
@@ -686,6 +797,19 @@ window.MathJax = {
           </table>
         </div>
         <div class="warning-box">NaN은 자기 자신과도 같지 않습니다: <strong>NaN == NaN</strong>은 <strong>false</strong>입니다! C에서 NaN 검사는 <strong>x != x</strong>로 합니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure &mdash; Special Values의 비트 패턴 정리</div>
+          <strong>Single Precision (32-bit) 기준:</strong><br><br>
+          <code>+0&nbsp;&nbsp;&nbsp;: 0 00000000 00000000000000000000000</code><br>
+          <code>-0&nbsp;&nbsp;&nbsp;: 1 00000000 00000000000000000000000</code><br>
+          <code>+inf : 0 11111111 00000000000000000000000</code> (= <code>0x7F800000</code>)<br>
+          <code>-inf : 1 11111111 00000000000000000000000</code> (= <code>0xFF800000</code>)<br>
+          <code>NaN&nbsp;&nbsp;: ? 11111111 ?????????????????????</code> (frac != 0, 임의 패턴)<br><br>
+          <strong>NaN의 종류:</strong><br>
+          &nbsp;&nbsp;Quiet NaN (QNaN): frac의 최상위 비트 = 1. 연산 시 조용히 전파됨.<br>
+          &nbsp;&nbsp;Signaling NaN (SNaN): frac의 최상위 비트 = 0 (frac != 0). 사용 시 예외(exception) 발생.<br><br>
+          <strong>+0 vs -0:</strong> IEEE 754에서 +0 == -0은 true입니다. 하지만 1/(+0) = +inf, 1/(-0) = -inf로 부호 정보가 보존됩니다.
+        </div>
       </section>
 
       <!-- ==================== Page 17 ==================== -->
@@ -703,6 +827,16 @@ window.MathJax = {
           &bull; Normalized: 대부분의 수 (0에서 멀어질수록 간격이 넓어짐)<br>
           &bull; ±∞: 양/음의 무한대<br>
           &bull; NaN: 숫자가 아닌 값
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure &mdash; 부동소수점 수직선 전체 구조</div>
+          exp 필드의 값에 따라 수직선 위의 영역이 결정됩니다:<br><br>
+          <code>exp=000...0, frac=0&nbsp;&nbsp;&nbsp;: ±0 (원점)</code><br>
+          <code>exp=000...0, frac!=0 : Denormalized (0 바로 옆, 등간격)</code><br>
+          <code>exp=000...1~111...0 : Normalized (대부분의 실수, 간격 점점 증가)</code><br>
+          <code>exp=111...1, frac=0&nbsp;&nbsp;: ±Infinity (양/음 끝점)</code><br>
+          <code>exp=111...1, frac!=0 : NaN (수직선 밖의 특수값)</code><br><br>
+          <strong>간격의 변화:</strong> Denormalized 영역에서는 모든 인접 수의 간격이 동일합니다 (= 2^(1-Bias) x 2^(-n)). Normalized 영역으로 넘어가면 지수가 1 증가할 때마다 간격이 2배로 커집니다. 이것이 "0에 가까울수록 촘촘하고, 멀수록 듬성듬성"한 이유입니다.
         </div>
       </section>
 
@@ -742,6 +876,23 @@ window.MathJax = {
           <pre>  [s] [exp ] [frac]
    1   4bit   3bit     Bias = 2⁴⁻¹ - 1 = 7</pre>
           <p>IEEE 754와 동일한 규칙을 적용합니다: Normalized, Denormalized, ±0, ±∞, NaN 모두 존재.</p>
+          <div class="diagram-box">
+            <div class="diagram-label">Figure &mdash; 8비트 Tiny FP 비트 레이아웃</div>
+            <code>[1 sign] [4 exponent] [3 fraction]</code><br><br>
+            <strong>파라미터:</strong><br>
+            &nbsp;&nbsp;k = 4 (exp 비트), n = 3 (frac 비트)<br>
+            &nbsp;&nbsp;Bias = 2^(4-1) - 1 = 7<br>
+            &nbsp;&nbsp;Normalized E 범위: 1-7 = -6 ~ 14-7 = +7<br>
+            &nbsp;&nbsp;Denormalized E = 1 - 7 = -6<br><br>
+            <strong>인코딩 예시 (양수 5.0):</strong><br>
+            &nbsp;&nbsp;5.0 = 101.0₂ = 1.010₂ x 2^2<br>
+            &nbsp;&nbsp;s=0, E=2, exp=2+7=9=1001₂, frac=010<br>
+            &nbsp;&nbsp;비트패턴: <code>0 1001 010</code><br><br>
+            <strong>인코딩 예시 (작은 양수 1/512):</strong><br>
+            &nbsp;&nbsp;1/512 = 2^(-9) = 0.001₂ x 2^(-6) (Denormalized)<br>
+            &nbsp;&nbsp;s=0, exp=0000, frac=001<br>
+            &nbsp;&nbsp;비트패턴: <code>0 0000 001</code> (최소 양수)
+          </div>
         </div>
       </section>
 
@@ -888,6 +1039,20 @@ window.MathJax = {
    |--------|--------|--------|--------|
         Denorm 영역이 특히 촘촘</pre>
           <p>Denormalized 값들은 0 주변에 <strong>등간격</strong>으로 분포합니다. Normalized로 넘어가면 간격이 점점 벌어집니다.</p>
+          <div class="diagram-box">
+            <div class="diagram-label">Figure &mdash; 정밀도와 간격의 관계 (수직선 확대)</div>
+            8비트 Tiny FP에서 0~1 구간을 확대하면:<br><br>
+            <code>Denorm 영역 (E=-6, M=0.xxx):</code><br>
+            <code>&nbsp;&nbsp;간격 = 2^(-6) x 2^(-3) = 1/512</code><br>
+            <code>&nbsp;&nbsp;0, 1/512, 2/512, 3/512, 4/512, 5/512, 6/512, 7/512</code><br><br>
+            <code>Norm 영역 (E=-6, M=1.xxx):</code><br>
+            <code>&nbsp;&nbsp;간격 = 2^(-6) x 2^(-3) = 1/512</code><br>
+            <code>&nbsp;&nbsp;8/512, 9/512, 10/512, ... 15/512</code><br><br>
+            <code>Norm 영역 (E=-5, M=1.xxx):</code><br>
+            <code>&nbsp;&nbsp;간격 = 2^(-5) x 2^(-3) = 2/512&nbsp;&nbsp;← 간격 2배로 증가!</code><br>
+            <code>&nbsp;&nbsp;16/512, 18/512, 20/512, ... 30/512</code><br><br>
+            지수가 1 증가할 때마다 인접한 수 사이의 간격이 2배로 넓어집니다. 이것이 0에서 멀어질수록 절대 정밀도가 떨어지는 이유이며, 동시에 상대 정밀도를 일정하게 유지하는 메커니즘입니다.
+          </div>
         </div>
       </section>
 
@@ -933,6 +1098,17 @@ window.MathJax = {
           </table>
         </div>
         <div class="key-point"><strong>Round-to-Even</strong>이 기본(default) 모드입니다. 정확히 중간값(halfway)일 때 짝수 쪽으로 반올림합니다. 다른 방식은 통계적으로 편향(bias)이 있지만, Round-to-Even은 편향이 없습니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure &mdash; 4가지 Rounding Mode 동작 비교</div>
+          표현 가능한 두 수 A와 B 사이에 정확한 결과 x가 있을 때 (A &lt; x &lt; B):<br><br>
+          <code>A ─────────── x ─────────── B</code><br><br>
+          <strong>Towards Zero:</strong> 항상 0 방향으로 → 양수면 A, 음수면 B 선택. 크기를 줄이는 방향으로 편향됨.<br>
+          <strong>Round Down (-inf):</strong> 항상 왼쪽(작은 쪽) → A 선택. 음의 방향으로 편향됨.<br>
+          <strong>Round Up (+inf):</strong> 항상 오른쪽(큰 쪽) → B 선택. 양의 방향으로 편향됨.<br>
+          <strong>Round-to-Even:</strong> 가까운 쪽으로. 정확히 중간이면 LSB가 0인 쪽(짝수)으로. 통계적으로 편향 없음.<br><br>
+          <strong>왜 Round-to-Even이 기본인가?</strong><br>
+          반올림이 반복되면 편향이 누적됩니다. "항상 올림" 또는 "항상 내림"은 평균적으로 값을 한 방향으로 밀어냅니다. Round-to-Even은 중간값 case에서 50%는 올림, 50%는 내림하므로 장기적으로 편향이 상쇄됩니다.
+        </div>
 <div style="display:flex; justify-content:center; margin:18px 0;">
 <svg width="440" height="185" viewBox="0 0 440 185" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -1007,6 +1183,19 @@ window.MathJax = {
             <tr><td>2 7/8</td><td class="en">10.11100₂</td><td class="en">11.00₂</td><td>=1/2 → 짝수(올림)</td><td>3</td></tr>
             <tr><td>2 5/8</td><td class="en">10.10100₂</td><td class="en">10.10₂</td><td>=1/2 → 짝수(내림)</td><td>2 1/2</td></tr>
           </table>
+          <div class="diagram-box">
+            <div class="diagram-label">Figure &mdash; 이진수 반올림 판정 규칙 상세</div>
+            소수점 이하 2비트까지 유지한다고 가정할 때, 3번째 비트부터가 반올림 대상입니다:<br><br>
+            <code>XX.XX | YZZ...&nbsp;&nbsp;← | 이후가 반올림 대상</code><br><br>
+            <strong>판정 기준:</strong><br>
+            &nbsp;&nbsp;Y=0이면 (0.0xx...): 항상 내림 (&lt; 1/2 지점)<br>
+            &nbsp;&nbsp;Y=1이고 ZZ...에 1이 있으면 (0.1xx...1xx): 항상 올림 (&gt; 1/2 지점)<br>
+            &nbsp;&nbsp;Y=1이고 ZZ...=00...0 (정확히 0.100...0 = 1/2 지점): Round-to-Even 적용<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;→ X(LSB)가 0이면 이미 짝수 → 내림<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;→ X(LSB)가 1이면 홀수 → 올림하여 짝수로 만듦<br><br>
+            <strong>2 7/8 = 10.111₂ 예제 상세:</strong><br>
+            <code>10.11 | 100</code> → 정확히 중간, LSB=1(홀수) → 올림 → <code>11.00</code> = 3
+          </div>
         </div>
       </section>
 
@@ -1026,6 +1215,17 @@ window.MathJax = {
           </div>
         </div>
         <div class="warning-box">정렬 과정에서 작은 수의 하위 비트가 사라질 수 있습니다. 이것이 <strong>1e20 + 3.14 = 1e20</strong>이 되는 이유입니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure &mdash; FP 덧셈의 정렬(Align) 과정에서 비트 손실</div>
+          <strong>예제: 1.0 x 2^10 + 1.011 x 2^2 를 4비트 frac으로 계산</strong><br><br>
+          Step 1 — 정렬: 작은 지수의 수를 큰 지수에 맞춤 (오른쪽 시프트 8회)<br>
+          <code>&nbsp;&nbsp;1.0000 x 2^10</code><br>
+          <code>+ 0.00000001011 x 2^10&nbsp;&nbsp;← 하위 비트들이 frac 범위 밖으로 밀려남!</code><br><br>
+          Step 2 — 덧셈:<br>
+          <code>&nbsp;&nbsp;1.00000000... x 2^10 (4비트 frac으로 자르면 거의 변하지 않음)</code><br><br>
+          <strong>이것이 1e20 + 3.14 = 1e20이 되는 이유입니다:</strong><br>
+          1e20의 지수가 너무 커서 3.14를 정렬하면 모든 유효 비트가 frac 범위 밖으로 밀려나 0이 됩니다. 큰 수와 작은 수를 더할 때 작은 수가 "흡수(absorption)"되는 현상입니다.
+        </div>
       </section>
 
       <!-- ==================== Page 30 ==================== -->
@@ -1103,6 +1303,19 @@ window.MathJax = {
         </div>
         <div class="warning-box">
           <strong>int → float</strong> 변환에서 정밀도 손실이 발생할 수 있습니다! 32비트 int는 최대 \(2^{31}\)까지인데, float의 significand는 24비트(23+1)뿐이므로 큰 정수는 반올림됩니다.
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure &mdash; int/float/double 변환 시 정밀도 손실 예시</div>
+          <strong>int → float 손실 예제:</strong><br>
+          <code>int x = 16777217;&nbsp;&nbsp;// = 2^24 + 1</code><br>
+          <code>float f = (float)x;&nbsp;&nbsp;// f = 16777216.0 (= 2^24)</code><br>
+          <code>(int)f = 16777216&nbsp;&nbsp;// x != (int)(float)x !</code><br><br>
+          이유: float의 유효숫자는 24비트이므로 2^24 + 1 = <code>1.00000000000000000000001</code>₂ x 2^24에서 25번째 비트가 잘려나갑니다.<br><br>
+          <strong>int → double은 안전:</strong><br>
+          double의 유효숫자 53비트 > int의 32비트이므로 모든 int가 정확히 표현됩니다.<br><br>
+          <strong>double → float 손실 예제:</strong><br>
+          <code>double d = 1.0000000000001;&nbsp;&nbsp;// 소수점 아래 13자리</code><br>
+          <code>float f = (float)d;&nbsp;&nbsp;// f = 1.0 (7자리 정밀도 초과 부분 손실)</code>
         </div>
       </section>
 

@@ -317,6 +317,24 @@ window.MathJax = {
     body { font-size: 14px; }
   }
 
+  .diagram-box {
+    background: var(--bg-aside);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .diagram-box .diagram-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
   @media print {
     .topbar, .sidebar, .theme-toggle { display: none; }
     .layout { display: block; }
@@ -408,6 +426,7 @@ window.MathJax = {
       </div>
       <p>이 강의는 C 코드가 <strong>기계어(Machine Code)</strong>로 변환되는 과정과, x86-64 어셈블리의 기초를 다룹니다.</p>
       <p>C 언어 뒤에서 실제로 어떤 일이 일어나는지를 배웁니다. 컴파일러가 C 코드를 어떻게 어셈블리 명령어로 변환하는지, CPU의 레지스터와 메모리를 어떻게 사용하는지를 이해합니다.</p>
+      <p>구체적으로, 다음 네 가지 핵심 질문에 답할 수 있게 됩니다: (1) C의 변수는 어셈블리에서 어떻게 표현되는가? — 레지스터와 메모리 주소로 매핑됩니다. (2) C의 포인터 역참조(<code>*p</code>)는 어셈블리에서 어떻게 구현되는가? — 간접 주소 지정 모드 <code>(%reg)</code>로 표현됩니다. (3) 함수 호출은 어떻게 이루어지는가? — <code>call</code>과 <code>ret</code> 명령어, 그리고 스택과 레지스터 기반 인자 전달 규약을 사용합니다. (4) 컴파일러는 왜 곱셈 대신 shift와 leaq를 사용하는가? — 곱셈 명령어보다 훨씬 빠르기 때문입니다.</p>
     </section>
 
     <!-- 2. 로드맵 -->
@@ -445,6 +464,7 @@ window.MathJax = {
         </table>
       </div>
       <div class="key-point">현재 <strong>RISC 르네상스</strong>: ARM(모바일), RISC-V(오픈소스)가 저전력 시장에서 부상 중입니다.</div>
+      <p>재미있는 사실: 현대 x86 프로세서는 내부적으로 CISC 명령어를 micro-ops(RISC 스타일의 작은 연산)로 분해하여 실행합니다. 즉, 외부는 CISC이지만 내부 실행 엔진은 사실상 RISC입니다. Intel은 이 방식으로 복잡한 명령어 세트의 호환성을 유지하면서도 파이프라인 효율을 극대화합니다.</p>
     </section>
 
     <!-- 4. Intel 마일스톤 -->
@@ -501,6 +521,7 @@ window.MathJax = {
         </table>
       </div>
       <div class="key-point"><strong>ISA 예시:</strong> Intel x86/x86-64, ARM (거의 모든 스마트폰에 사용)</div>
+      <p><strong>Architecture vs Microarchitecture</strong>의 구분이 중요합니다. 같은 x86-64 ISA를 구현하더라도, Intel Core i7과 AMD Ryzen은 microarchitecture가 완전히 다릅니다. 캐시 크기, 파이프라인 단계 수, 분기 예측 알고리즘 등이 각 제조사의 독자적 설계입니다. 프로그래머는 ISA 수준만 알면 되고, microarchitecture는 하드웨어 엔지니어의 영역입니다. 그러나 성능 최적화를 위해서는 microarchitecture에 대한 이해도 필요합니다.</p>
     </section>
 
     <!-- 8. CPU 상태 -->
@@ -516,6 +537,16 @@ window.MathJax = {
           <tr><td class="en">Condition Codes</td><td>가장 최근 산술/논리 연산의 상태 정보. 조건 분기에 사용</td></tr>
           <tr><td class="en">Memory</td><td>바이트 단위로 주소 지정. 코드, 데이터, 스택 저장</td></tr>
         </table>
+      </div>
+      <div class="diagram-box">
+        <div class="diagram-label">Figure — CPU Programmer-Visible State 다이어그램</div>
+        CPU 내부 상태 구조:<br>
+        <strong>[PC (%rip)]</strong> ──→ 다음 실행할 명령어의 메모리 주소를 가리킴<br>
+        <strong>[Register File]</strong> ──→ 16개 범용 레지스터 (%rax, %rbx, ..., %r15), 각 64비트<br>
+        <strong>[Condition Codes]</strong> ──→ CF(Carry), ZF(Zero), SF(Sign), OF(Overflow) 플래그<br>
+        <strong>[Memory]</strong> ──→ 가상 주소 공간: Code(텍스트) | Data(전역) | Heap(동적) | Stack(함수)<br><br>
+        실행 흐름: PC가 가리키는 주소에서 명령어를 fetch → 명령어 decode → 레지스터/메모리에서 operand 읽기 → ALU 실행 → 결과를 레지스터/메모리에 write → PC 업데이트 (다음 명령어 또는 분기 대상)<br><br>
+        Condition Codes는 <code>addq</code>, <code>subq</code> 등의 산술 연산 후 자동으로 설정됩니다. 예를 들어 <code>subq %rax, %rbx</code> 실행 후 결과가 0이면 ZF=1, 음수이면 SF=1이 됩니다. 이 플래그들은 <code>je</code>(ZF=1이면 점프), <code>jl</code>(SF!=OF이면 점프) 등의 조건 분기에서 사용됩니다.
       </div>
     </section>
 
@@ -533,6 +564,24 @@ Object program (p1.o, p2.o)    [바이너리]
         ↓  Linker (ld)         + Static libraries (.a)
 Executable program (p)         [바이너리]</pre>
       <div class="highlight-box"><strong>-Og</strong>: 디버깅에 적합한 기본 최적화. 어셈블리를 읽기 쉽게 만듦. -O2나 -O3는 적극적 최적화로 읽기 어려운 코드 생성.</div>
+      <div class="diagram-box">
+        <div class="diagram-label">Figure — 컴파일 파이프라인 상세</div>
+        <strong>[p1.c, p2.c]</strong> (C 소스, 텍스트)<br>
+        &nbsp;&nbsp;│ <em>Preprocessor (cpp)</em>: #include 확장, #define 매크로 치환, 조건부 컴파일 처리<br>
+        &nbsp;&nbsp;▼<br>
+        <strong>[p1.i, p2.i]</strong> (전처리된 C 소스, 텍스트)<br>
+        &nbsp;&nbsp;│ <em>Compiler (cc1)</em>: 구문 분석 → AST → 중간 표현(IR) → 최적화 → 코드 생성<br>
+        &nbsp;&nbsp;▼<br>
+        <strong>[p1.s, p2.s]</strong> (어셈블리, 텍스트) — 사람이 읽을 수 있는 마지막 단계<br>
+        &nbsp;&nbsp;│ <em>Assembler (as)</em>: 니모닉을 바이너리 인코딩으로 변환. 심볼 테이블 생성<br>
+        &nbsp;&nbsp;▼<br>
+        <strong>[p1.o, p2.o]</strong> (오브젝트 파일, 바이너리) — ELF 형식. 재배치 가능(relocatable)<br>
+        &nbsp;&nbsp;│ <em>Linker (ld)</em>: 심볼 해결, 주소 재배치, 라이브러리(.a/.so) 결합<br>
+        &nbsp;&nbsp;▼<br>
+        <strong>[p]</strong> (실행 파일, 바이너리) — 최종 ELF 실행 파일. 절대 주소 확정<br><br>
+        각 단계를 개별 확인하는 명령어:<br>
+        <code>gcc -E sum.c -o sum.i</code> (전처리만) → <code>gcc -S sum.c -o sum.s</code> (어셈블리까지) → <code>gcc -c sum.c -o sum.o</code> (오브젝트까지) → <code>gcc sum.o -o sum</code> (링킹)
+      </div>
 <div style="display:flex; justify-content:center; margin:18px 0;">
 <svg width="540" height="100" viewBox="0 0 540 100" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -609,6 +658,14 @@ void sumstore(long x, long y, long *dest) {
     ret                    # 반환</pre>
       </div>
       <div class="key-point">C의 6줄 함수가 어셈블리 6줄 명령어로 변환되었습니다. 각 줄이 CPU가 실행하는 하나의 동작에 대응합니다.</div>
+      <p><strong>System V AMD64 ABI 호출 규약</strong>에 따른 레지스터 매핑을 확인합시다:</p>
+      <ul>
+        <li><code>%rdi</code> = 첫 번째 인자 <code>x</code></li>
+        <li><code>%rsi</code> = 두 번째 인자 <code>y</code></li>
+        <li><code>%rdx</code> = 세 번째 인자 <code>*dest</code> (포인터)</li>
+        <li><code>%rax</code> = 함수 반환값 (plus의 결과 t)</li>
+      </ul>
+      <p><code>pushq %rbx</code> / <code>popq %rbx</code>가 필요한 이유: <code>%rbx</code>는 <strong>callee-saved 레지스터</strong>입니다. sumstore가 <code>%rbx</code>를 사용하기 전에 원래 값을 스택에 백업하고, 함수 끝에서 복원해야 합니다. 만약 이를 하지 않으면 sumstore를 호출한 함수의 <code>%rbx</code> 값이 손상됩니다. <code>%rdx</code>(dest)를 <code>%rbx</code>에 복사하는 이유는, <code>call plus</code>가 <code>%rdx</code>를 덮어쓸 수 있기 때문입니다 (<code>%rdx</code>는 caller-saved).</p>
     </section>
 
     <!-- 11. 어셈블리 데이터 타입 -->
@@ -659,6 +716,20 @@ ret                  →  0xc3             (1 바이트)
                                  총 14 바이트</pre>
       </div>
       <div class="key-point">각 명령어는 <strong>1, 3, 또는 5 바이트</strong>로 인코딩됩니다. CISC의 특징 — 명령어마다 길이가 다릅니다. (RISC는 보통 고정 4바이트)</div>
+      <div class="diagram-box">
+        <div class="diagram-label">Figure — 명령어 인코딩 구조 상세</div>
+        x86-64 명령어 바이트 분해:<br><br>
+        <strong>pushq %rbx → 0x53 (1바이트)</strong><br>
+        &nbsp;&nbsp;0x50 = push 기본 opcode + 0x03 = %rbx 레지스터 번호. push/pop은 레지스터 번호가 opcode에 내장되어 1바이트로 인코딩됩니다.<br><br>
+        <strong>movq %rdx, %rbx → 0x48 0x89 0xd3 (3바이트)</strong><br>
+        &nbsp;&nbsp;0x48 = REX.W prefix (64비트 오퍼랜드 크기 지정)<br>
+        &nbsp;&nbsp;0x89 = MOV r/m64, r64 opcode<br>
+        &nbsp;&nbsp;0xd3 = ModR/M 바이트 (mod=11 레지스터→레지스터, reg=010 %rdx, rm=011 %rbx)<br><br>
+        <strong>call plus → 0xe8 0xf2 0xff 0xff 0xff (5바이트)</strong><br>
+        &nbsp;&nbsp;0xe8 = CALL rel32 opcode<br>
+        &nbsp;&nbsp;0xfffffff2 = -14 (little-endian). 현재 PC 기준 상대 오프셋으로 plus 함수의 위치를 지정<br><br>
+        가변 길이 인코딩의 장점: 자주 쓰는 명령어(push, pop, ret)는 1바이트로 짧게 인코딩되어 코드 크기가 작아집니다. 단점: CPU가 명령어 경계를 찾기 어려워 디코딩이 복잡합니다.
+      </div>
     </section>
 
     <!-- 14. 링킹 -->
@@ -673,6 +744,12 @@ ret                  →  0xc3             (1 바이트)
           <li>일부 라이브러리는 <strong>동적 링킹</strong> — 프로그램 실행 시점에 연결</li>
         </ul>
       </div>
+      <p><strong>정적 링킹 vs 동적 링킹:</strong></p>
+      <ul>
+        <li><strong>정적 링킹(.a)</strong>: 라이브러리 코드가 실행 파일에 복사됨. 실행 파일 크기가 커지지만 독립적으로 실행 가능.</li>
+        <li><strong>동적 링킹(.so/.dll)</strong>: 실행 시점에 공유 라이브러리를 메모리에 매핑. 여러 프로그램이 같은 라이브러리를 공유하여 메모리 절약. <code>ldd</code> 명령어로 실행 파일이 의존하는 공유 라이브러리를 확인할 수 있습니다.</li>
+      </ul>
+      <p>링커가 해결하는 구체적 문제: <code>sumstore</code>에서 <code>call plus</code>를 실행할 때, 어셈블러 단계에서는 plus 함수의 최종 주소를 알 수 없습니다 (다른 .o 파일에 있으므로). 링커가 모든 .o 파일을 결합하면서 plus의 실제 주소를 계산하고, call 명령어의 상대 오프셋을 패치합니다.</p>
     </section>
 
     <!-- 15. 기계어 명령어 예제 -->
@@ -695,7 +772,7 @@ ret                  →  0xc3             (1 바이트)
     <section class="page-section" id="disassemble">
       <div class="page-num">Page 16</div>
       <h2>디스어셈블리 — objdump</h2>
-      <p><strong>디스어셈블러</strong>: 기계어 바이트를 어셈블리 코드로 역변환합니다.</p>
+      <p><strong>디스어셈블러</strong>: 기계어 바이트를 어셈블리 코드로 역변환합니다. 디스어셈블러는 x86의 가변 길이 명령어를 바이트 단위로 파싱하여 니모닉으로 변환합니다. 이 과정은 100% 기계적이며, 바이트 패턴만으로 원래 명령어를 복원할 수 있습니다.</p>
       <div class="card">
         <div class="card-label">objdump -d 출력</div>
         <pre>$ objdump -d sum
@@ -709,6 +786,7 @@ ret                  →  0xc3             (1 바이트)
   4005a2: c3                retq</pre>
       </div>
       <p>실행 파일(.out)이나 오브젝트 파일(.o) 모두에 사용 가능합니다.</p>
+      <p><strong>objdump 출력 읽는 법:</strong> 각 줄은 <code>[주소]: [바이트들] [명령어]</code> 형식입니다. 예를 들어 <code>400596: 48 89 d3  mov %rdx,%rbx</code>에서 — <code>400596</code>은 이 명령어가 메모리에 위치하는 가상 주소, <code>48 89 d3</code>은 실제 바이너리 인코딩(3바이트), <code>mov %rdx,%rbx</code>는 사람이 읽을 수 있는 어셈블리 표현입니다. 다음 명령어의 주소가 400599인 것으로 이 명령어가 3바이트임을 확인할 수 있습니다 (0x400599 - 0x400596 = 3).</p>
     </section>
 
     <!-- 17. GDB 디스어셈블리 -->
@@ -792,6 +870,26 @@ ret                  →  0xc3             (1 바이트)
 </svg>
 </div>
       <div class="key-point"><strong>%rsp</strong>는 스택 포인터로 특수 용도. 나머지도 함수 호출 규약에 따라 역할이 있지만 (rdi=1번째 인자, rsi=2번째 등), 기본적으로 범용입니다.</div>
+      <div class="diagram-box">
+        <div class="diagram-label">Figure — x86-64 레지스터 전체 레이아웃 (16개)</div>
+        System V AMD64 ABI 기준 레지스터 용도:<br><br>
+        <strong>함수 인자 전달 (caller-saved):</strong><br>
+        &nbsp;&nbsp;%rdi = 1번째 인자 | %rsi = 2번째 | %rdx = 3번째 | %rcx = 4번째 | %r8 = 5번째 | %r9 = 6번째<br>
+        &nbsp;&nbsp;(7번째 인자부터는 스택을 통해 전달됩니다)<br><br>
+        <strong>반환값:</strong> %rax (함수의 return 값이 저장됨)<br><br>
+        <strong>Callee-saved (함수가 보존해야 함):</strong><br>
+        &nbsp;&nbsp;%rbx, %rbp, %r12, %r13, %r14, %r15<br>
+        &nbsp;&nbsp;→ 이 레지스터를 사용하려면 함수 시작 시 push, 끝에서 pop 필요<br><br>
+        <strong>Caller-saved (호출자가 백업 책임):</strong><br>
+        &nbsp;&nbsp;%rax, %rcx, %rdx, %rsi, %rdi, %r8, %r9, %r10, %r11<br>
+        &nbsp;&nbsp;→ call 명령어 이후 값이 변경될 수 있음<br><br>
+        <strong>특수 용도:</strong><br>
+        &nbsp;&nbsp;%rsp = 스택 포인터 (항상 스택 top을 가리킴, 직접 수정 금지)<br>
+        &nbsp;&nbsp;%rbp = 프레임 포인터 (선택적, -fomit-frame-pointer로 생략 가능)<br><br>
+        <strong>서브레지스터 접근 규칙:</strong><br>
+        &nbsp;&nbsp;32비트(%eax 등)에 쓰면 상위 32비트가 자동으로 0으로 클리어됨<br>
+        &nbsp;&nbsp;16비트(%ax)나 8비트(%al)에 쓰면 나머지 비트는 변경되지 않음
+      </div>
     </section>
 
     <!-- 21. 레지스터 역사 -->
@@ -845,6 +943,20 @@ ret                  →  0xc3             (1 바이트)
         </table>
       </div>
       <div class="warning-box"><strong>Memory → Memory 직접 전송은 불가!</strong> 반드시 레지스터를 거쳐야 합니다. 이것이 CISC인 x86에서도 지키는 제약입니다.</div>
+      <div class="diagram-box">
+        <div class="diagram-label">Figure — movq 데이터 이동 방향 다이어그램</div>
+        세 가지 오퍼랜드 공간 사이의 허용/불허 이동:<br><br>
+        <strong>[Immediate $val]</strong> ──→ <strong>[Register %reg]</strong> ──→ <strong>[Memory (%reg)]</strong><br>
+        <strong>[Immediate $val]</strong> ──→ <strong>[Memory (%reg)]</strong><br>
+        <strong>[Memory (%reg)]</strong> ──→ <strong>[Register %reg]</strong><br>
+        <strong>[Register %reg]</strong> ←──→ <strong>[Register %reg]</strong><br><br>
+        <strong>금지:</strong> Memory → Memory 직접 이동 (X)<br>
+        <strong>금지:</strong> Immediate → Immediate (의미 없음)<br><br>
+        Memory → Memory를 수행하려면 두 단계가 필요합니다:<br>
+        <code>movq (%rax), %rcx</code>&nbsp;&nbsp;&nbsp;# Memory → Register (load)<br>
+        <code>movq %rcx, (%rdx)</code>&nbsp;&nbsp;&nbsp;# Register → Memory (store)<br><br>
+        이 제약이 존재하는 이유: CPU는 한 클럭 사이클에 하나의 메모리 접근만 효율적으로 수행할 수 있습니다. Memory→Memory는 read와 write, 두 번의 메모리 접근이 필요하므로 단일 명령어로 구현하기 어렵습니다.
+      </div>
     </section>
 
     <!-- 24. 메모리 주소 지정 모드 -->
@@ -856,6 +968,21 @@ ret                  →  0xc3             (1 바이트)
       <p><strong>Displacement: D(R)</strong> → Mem[Reg[R] + D]</p>
       <pre>movq 8(%rbp), %rdx   # rbp + 8 위치에서 읽기 = *(rbp+8)</pre>
       <p>(R)은 C의 <strong>*ptr</strong>, D(R)은 <strong>*(ptr + offset)</strong>에 해당합니다. 구조체 멤버 접근이나 스택 변수 접근에 사용됩니다.</p>
+      <div class="diagram-box">
+        <div class="diagram-label">Figure — 메모리 주소 지정 모드의 실제 사용 예</div>
+        <strong>Normal (R) — 포인터 역참조:</strong><br>
+        &nbsp;&nbsp;C: <code>int val = *ptr;</code><br>
+        &nbsp;&nbsp;ASM: <code>movq (%rdi), %rax</code> — %rdi가 가리키는 메모리 주소에서 8바이트를 읽어 %rax에 저장<br>
+        &nbsp;&nbsp;%rdi = 0x7fff1000이면 → M[0x7fff1000]의 값을 읽음<br><br>
+        <strong>Displacement D(R) — 구조체 멤버 접근:</strong><br>
+        &nbsp;&nbsp;C: <code>struct { long a; long b; } *s; ... s->b;</code><br>
+        &nbsp;&nbsp;ASM: <code>movq 8(%rdi), %rax</code> — %rdi(구조체 시작 주소)에서 8바이트 오프셋의 멤버 b를 읽음<br>
+        &nbsp;&nbsp;%rdi = 0x7fff1000이면 → M[0x7fff1000 + 8] = M[0x7fff1008]의 값을 읽음<br><br>
+        <strong>Displacement D(R) — 스택 변수 접근:</strong><br>
+        &nbsp;&nbsp;C: 지역 변수가 스택에 할당된 경우<br>
+        &nbsp;&nbsp;ASM: <code>movq -16(%rbp), %rax</code> — 프레임 포인터(%rbp) 기준 -16 오프셋의 지역 변수 읽기<br>
+        &nbsp;&nbsp;%rbp = 0x7fff2000이면 → M[0x7fff2000 - 16] = M[0x7fff1ff0]의 값을 읽음
+      </div>
     </section>
 
     <!-- 25. swap 예제 -->
@@ -908,6 +1035,25 @@ ret                  →  0xc3             (1 바이트)
         </table>
       </div>
       <div class="key-point">레지스터를 임시 저장소로 사용하여 두 메모리 값을 교환합니다. C에서 temp 변수를 쓰는 것과 같은 원리입니다.</div>
+      <div class="diagram-box">
+        <div class="diagram-label">Figure — swap 실행 시 메모리와 레지스터 상태 변화</div>
+        초기 상태: %rdi = 0x120 (xp), %rsi = 0x100 (yp)<br>
+        &nbsp;&nbsp;M[0x120] = 123, M[0x100] = 456<br><br>
+        <strong>Step 1: movq (%rdi), %rax</strong><br>
+        &nbsp;&nbsp;M[0x120]에서 값 123을 읽어 %rax에 저장<br>
+        &nbsp;&nbsp;[Registers] %rax = 123 | [Memory] 변화 없음<br><br>
+        <strong>Step 2: movq (%rsi), %rdx</strong><br>
+        &nbsp;&nbsp;M[0x100]에서 값 456을 읽어 %rdx에 저장<br>
+        &nbsp;&nbsp;[Registers] %rax = 123, %rdx = 456 | [Memory] 변화 없음<br><br>
+        <strong>Step 3: movq %rdx, (%rdi)</strong><br>
+        &nbsp;&nbsp;%rdx의 값 456을 M[0x120]에 기록 (store)<br>
+        &nbsp;&nbsp;[Memory] M[0x120] = 456 ← 변경됨!<br><br>
+        <strong>Step 4: movq %rax, (%rsi)</strong><br>
+        &nbsp;&nbsp;%rax의 값 123을 M[0x100]에 기록 (store)<br>
+        &nbsp;&nbsp;[Memory] M[0x100] = 123 ← 변경됨!<br><br>
+        최종: M[0x120] = 456, M[0x100] = 123 → 교환 완료!<br>
+        핵심 포인트: Memory→Memory 직접 이동이 불가능하므로 반드시 레지스터(%rax, %rdx)를 경유해야 합니다.
+      </div>
 <div style="display:flex; justify-content:center; margin:18px 0;">
 <svg width="360" height="250" viewBox="0 0 360 250" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -1002,6 +1148,24 @@ ret                  →  0xc3             (1 바이트)
 </svg>
 </div>
       <div class="highlight-box"><strong>배열 접근 패턴:</strong> <strong>A[i]</strong> → M[&amp;A + S*i] → 어셈블리에서 (%rbx,%rcx,S) 형태로 표현</div>
+      <div class="diagram-box">
+        <div class="diagram-label">Figure — 주소 지정 모드와 C 코드의 매핑</div>
+        각 주소 지정 모드가 C에서 어떤 패턴에 대응하는지:<br><br>
+        <strong>(Rb) = M[Reg[Rb]]</strong><br>
+        &nbsp;&nbsp;C 패턴: <code>*p</code> (단순 포인터 역참조)<br>
+        &nbsp;&nbsp;예: <code>movq (%rax), %rdx</code> → <code>val = *p;</code><br><br>
+        <strong>D(Rb) = M[Reg[Rb] + D]</strong><br>
+        &nbsp;&nbsp;C 패턴: <code>p->field</code> 또는 <code>array[constant]</code><br>
+        &nbsp;&nbsp;예: <code>movq 16(%rdi), %rax</code> → <code>val = s->third_field;</code> (세 번째 long 멤버)<br><br>
+        <strong>(Rb,Ri) = M[Reg[Rb] + Reg[Ri]]</strong><br>
+        &nbsp;&nbsp;C 패턴: <code>*(base + offset)</code> — 가변 오프셋<br>
+        &nbsp;&nbsp;예: <code>movq (%rdi,%rsi), %rax</code> → <code>val = *(char_array + index);</code><br><br>
+        <strong>D(Rb,Ri,S) = M[Reg[Rb] + S*Reg[Ri] + D]</strong><br>
+        &nbsp;&nbsp;C 패턴: <code>a[i].field</code> — 구조체 배열의 멤버 접근<br>
+        &nbsp;&nbsp;예: <code>movq 8(%rdi,%rsi,16), %rax</code> → 크기 16바이트인 구조체 배열에서 i번째 원소의 오프셋 8 멤버 접근<br><br>
+        <strong>Scale S 값과 데이터 타입:</strong><br>
+        &nbsp;&nbsp;S=1: char/byte 배열 | S=2: short 배열 | S=4: int/float 배열 | S=8: long/double/포인터 배열
+      </div>
     </section>
 
     <!-- 28. 주소 계산 예제 -->
@@ -1045,6 +1209,25 @@ leaq (%rdi,%rdi,2), %rax    # rax = x + x*2 = 3x
 salq $2, %rax                # rax = 3x &lt;&lt; 2 = 3x * 4 = 12x</pre>
       </div>
       <div class="key-point">leaq는 메모리를 읽지 않습니다! 주소 계산 회로를 "빌려서" 빠른 곱셈(×3, ×5, ×9 등)에 활용하는 것입니다.</div>
+      <div class="diagram-box">
+        <div class="diagram-label">Figure — leaq vs movq 동작 비교</div>
+        %rdi = 0x100일 때 두 명령어의 차이:<br><br>
+        <strong>movq (%rdi), %rax</strong><br>
+        &nbsp;&nbsp;1. %rdi의 값 0x100을 주소로 사용<br>
+        &nbsp;&nbsp;2. 메모리 M[0x100]에 접근하여 값을 읽음<br>
+        &nbsp;&nbsp;3. 읽은 값을 %rax에 저장<br>
+        &nbsp;&nbsp;→ %rax = M[0x100]의 내용 (메모리 접근 발생!)<br><br>
+        <strong>leaq (%rdi), %rax</strong><br>
+        &nbsp;&nbsp;1. 주소 계산: 0x100<br>
+        &nbsp;&nbsp;2. 계산된 주소 자체를 %rax에 저장 (메모리 접근 없음!)<br>
+        &nbsp;&nbsp;→ %rax = 0x100 (주소 값 자체)<br><br>
+        <strong>컴파일러의 leaq 활용 패턴 (산술 계산):</strong><br>
+        &nbsp;&nbsp;<code>leaq (%rdi,%rdi,2), %rax</code> → %rax = %rdi + %rdi*2 = 3 * %rdi (×3 곱셈)<br>
+        &nbsp;&nbsp;<code>leaq (%rdi,%rdi,4), %rax</code> → %rax = %rdi + %rdi*4 = 5 * %rdi (×5 곱셈)<br>
+        &nbsp;&nbsp;<code>leaq (%rdi,%rdi,8), %rax</code> → %rax = %rdi + %rdi*8 = 9 * %rdi (×9 곱셈)<br>
+        &nbsp;&nbsp;<code>leaq 7(%rdi,%rsi,4), %rax</code> → %rax = %rdi + 4*%rsi + 7 (복합 계산)<br><br>
+        leaq가 빠른 이유: CPU의 AGU(Address Generation Unit)를 사용하므로 ALU와 병렬로 실행 가능하고, 조건 코드(CF, ZF 등)를 변경하지 않습니다.
+      </div>
     </section>
 
     <!-- 31. 2-오퍼랜드 명령어 -->
@@ -1066,6 +1249,12 @@ salq $2, %rax                # rax = 3x &lt;&lt; 2 = 3x * 4 = 12x</pre>
         </table>
       </div>
       <div class="warning-box"><strong>인자 순서 주의!</strong> AT&amp;T 문법에서 결과는 두 번째 오퍼랜드에 저장됩니다. Intel 문법과 반대!<br>signed/unsigned 구분 없음 — Two's Complement 덕분에 비트 연산이 동일합니다.</div>
+      <p><strong>AT&amp;T vs Intel 문법 비교:</strong></p>
+      <ul>
+        <li>AT&amp;T (GCC 기본): <code>addq %rsi, %rdi</code> → %rdi = %rdi + %rsi (Src, Dest 순서)</li>
+        <li>Intel (NASM, Windows): <code>add rdi, rsi</code> → rdi = rdi + rsi (Dest, Src 순서, % 없음)</li>
+      </ul>
+      <p><strong>산술 시프트(SAR) vs 논리 시프트(SHR) 차이:</strong> 오른쪽 시프트에서만 차이가 있습니다. SAR은 부호 비트를 유지하며 복사(음수 유지), SHR은 항상 0을 채움. 예를 들어 -8(0xFFF...F8)을 1비트 오른쪽 시프트하면: SAR → -4(0xFFF...FC), SHR → 매우 큰 양수(0x7FF...FC).</p>
     </section>
 
     <!-- 32. 1-오퍼랜드 명령어 -->
@@ -1081,6 +1270,12 @@ salq $2, %rax                # rax = 3x &lt;&lt; 2 = 3x * 4 = 12x</pre>
           <tr><td class="en">notq Dest</td><td>Dest = ~Dest (비트 반전)</td></tr>
         </table>
       </div>
+      <p><strong>negq vs notq의 차이:</strong> <code>negq</code>는 2의 보수 부호 반전 (-x = ~x + 1)이고, <code>notq</code>는 비트 단위 반전(1의 보수)입니다. 예를 들어 %rax = 5 (0x0000...0005)일 때:</p>
+      <ul>
+        <li><code>negq %rax</code> → %rax = -5 (0xFFFF...FFFB)</li>
+        <li><code>notq %rax</code> → %rax = -6 (0xFFFF...FFFA) — 모든 비트 반전</li>
+      </ul>
+      <p><code>incq</code>와 <code>decq</code>는 <code>addq $1</code>, <code>subq $1</code>과 결과는 같지만, 인코딩이 더 짧고(1~3바이트 vs 3~4바이트) CF(carry flag)를 변경하지 않는다는 차이가 있습니다.</p>
     </section>
 
     <!-- 33. 산술 표현식 예제 -->
@@ -1111,6 +1306,29 @@ salq $2, %rax                # rax = 3x &lt;&lt; 2 = 3x * 4 = 12x</pre>
   ret</pre>
       </div>
       <div class="key-point"><strong>C에는 곱셈이 2개</strong>(y*48, t2*t5)이지만, <strong>어셈블리에는 imulq가 1개</strong>뿐입니다. y*48은 leaq + salq로 대체되었습니다:<br>48 = 3 × 16 → leaq로 ×3, salq $4로 ×16</div>
+      <div class="diagram-box">
+        <div class="diagram-label">Figure — 산술 표현식의 레지스터 추적</div>
+        인자 매핑: %rdi = x, %rsi = y, %rdx = z<br><br>
+        <strong>Step 1: leaq (%rdi,%rsi), %rax</strong><br>
+        &nbsp;&nbsp;%rax = x + y = t1<br>
+        &nbsp;&nbsp;레지스터 상태: %rax=t1, %rdi=x, %rsi=y, %rdx=z<br><br>
+        <strong>Step 2: addq %rdx, %rax</strong><br>
+        &nbsp;&nbsp;%rax = %rax + z = t1 + z = t2<br>
+        &nbsp;&nbsp;레지스터 상태: %rax=t2, %rdi=x, %rsi=y, %rdx=z<br><br>
+        <strong>Step 3: leaq (%rsi,%rsi,2), %rdx</strong><br>
+        &nbsp;&nbsp;%rdx = y + 2*y = 3y (주의: 원래 %rdx에 있던 z는 더 이상 필요 없으므로 덮어씀)<br>
+        &nbsp;&nbsp;레지스터 상태: %rax=t2, %rdi=x, %rsi=y, %rdx=3y<br><br>
+        <strong>Step 4: salq $4, %rdx</strong><br>
+        &nbsp;&nbsp;%rdx = 3y &lt;&lt; 4 = 3y * 16 = 48y = t4<br>
+        &nbsp;&nbsp;레지스터 상태: %rax=t2, %rdi=x, %rdx=t4<br><br>
+        <strong>Step 5: leaq 4(%rdi,%rdx), %rcx</strong><br>
+        &nbsp;&nbsp;%rcx = x + 48y + 4 = (x+4) + t4 = t3 + t4 = t5<br>
+        &nbsp;&nbsp;컴파일러가 t3 = x+4를 별도로 계산하지 않고 이 leaq에 통합! (최적화)<br><br>
+        <strong>Step 6: imulq %rcx, %rax</strong><br>
+        &nbsp;&nbsp;%rax = t2 * t5 = rval<br>
+        &nbsp;&nbsp;ret에 의해 %rax가 반환값으로 사용됨<br><br>
+        컴파일러 최적화 포인트: 6개의 C 연산을 6개의 어셈블리 명령어로 1:1 매핑하면서도, 곱셈 하나를 leaq+salq로 대체하고, 덧셈 두 개를 하나의 leaq로 합쳤습니다.
+      </div>
     </section>
 
     <!-- 34. 요약 -->

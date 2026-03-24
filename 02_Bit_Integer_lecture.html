@@ -319,6 +319,24 @@ window.MathJax = {
     body { font-size: 14px; }
   }
 
+  .diagram-box {
+    background: var(--bg-aside);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .diagram-box .diagram-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
   @media print {
     .topbar, .sidebar, .theme-toggle { display: none; }
     .layout { display: block; }
@@ -532,6 +550,19 @@ window.MathJax = {
           <p>정확한 전압값(예: 0.93V vs 1.05V)은 중요하지 않습니다. <strong>"높다" 또는 "낮다"</strong>만 구분하면 됩니다. 이것이 <strong>추상화(Abstraction)</strong>입니다.</p>
         </div>
         <div class="key-point">추상화 덕분에 전선에 잡음이 섞여도, 임계값만 넘으면 1, 밑이면 0으로 안정적으로 신호를 전달할 수 있습니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — 전압 구간과 논리값 매핑</div>
+          실제 전선의 전압 범위를 논리값으로 추상화하는 과정:<br><br>
+          <code>1.1V ┬──────────────── &nbsp;논리 1 (High)</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp; │&nbsp; 유효 구간 &nbsp;&nbsp;&nbsp;&nbsp;</code><br>
+          <code>0.9V ┴──────────────── </code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp; │&nbsp; 금지 구간 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &larr; 이 영역의 전압은 사용하지 않음</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp; │&nbsp; (불확실) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><br>
+          <code>0.2V ┬──────────────── </code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp; │&nbsp; 유효 구간 &nbsp;&nbsp;&nbsp;&nbsp;</code><br>
+          <code>0.0V ┴──────────────── &nbsp;논리 0 (Low)</code><br><br>
+          금지 구간(0.2V~0.9V) 덕분에 약간의 잡음(noise margin)이 있어도 0과 1을 안정적으로 구분할 수 있습니다. 이것이 디지털 회로가 아날로그보다 신뢰성 높은 이유입니다.
+        </div>
       </section>
 
       <!-- ==================== Page 5 ==================== -->
@@ -561,6 +592,15 @@ window.MathJax = {
           </table>
         </div>
         <div class="warning-box"><strong>같은 비트 패턴이 완전히 다른 의미를 가질 수 있습니다.</strong> 차이는 오직 해석 방식(encoding)뿐입니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — 동일 비트 패턴의 다중 해석</div>
+          비트 패턴 <code>01000001</code> (8비트)의 해석 예시:<br><br>
+          &bull; <strong>CPU 명령어</strong>로 해석: x86의 INC ECX (ECX 레지스터 1 증가) 등 특정 연산 코드<br>
+          &bull; <strong>Unsigned 정수</strong>로 해석: 0&times;2<sup>7</sup> + 1&times;2<sup>6</sup> + 0&times;2<sup>5</sup> + ... + 1&times;2<sup>0</sup> = 64 + 1 = <strong>65</strong><br>
+          &bull; <strong>ASCII 문자</strong>로 해석: 코드 65 = 문자 <strong>'A'</strong><br>
+          &bull; <strong>Signed 정수</strong>로 해석: MSB가 0이므로 양수, 값은 동일하게 <strong>65</strong><br><br>
+          메모리에는 오직 비트만 존재합니다. 프로그램의 타입 시스템과 컨텍스트가 "이 비트를 어떻게 읽을 것인가"를 결정합니다. C에서 <code>char c = 65;</code>와 <code>char c = 'A';</code>는 메모리에 완전히 동일한 비트를 저장합니다.
+        </div>
       </section>
 
       <!-- ==================== Page 6 ==================== -->
@@ -622,6 +662,18 @@ window.MathJax = {
           </table>
           <p>C 언어에서 16진수 표기: <code>0xFA1D37B</code> 또는 <code>0xfa1d37b</code> (대소문자 무관)</p>
         </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — 바이트 비트 레이아웃 (MSB to LSB)</div>
+          1바이트(8비트)의 구조를 MSB(Most Significant Bit)부터 LSB(Least Significant Bit)까지 나타낸 것입니다:<br><br>
+          <code>[ bit7 | bit6 | bit5 | bit4 | bit3 | bit2 | bit1 | bit0 ]</code><br>
+          <code>&nbsp; 2^7 &nbsp;&nbsp; 2^6 &nbsp;&nbsp; 2^5 &nbsp;&nbsp; 2^4 &nbsp;&nbsp; 2^3 &nbsp;&nbsp; 2^2 &nbsp;&nbsp; 2^1 &nbsp;&nbsp; 2^0</code><br>
+          <code>&nbsp; 128 &nbsp;&nbsp;&nbsp;64 &nbsp;&nbsp;&nbsp; 32 &nbsp;&nbsp;&nbsp; 16 &nbsp;&nbsp;&nbsp;&nbsp; 8 &nbsp;&nbsp;&nbsp;&nbsp; 4 &nbsp;&nbsp;&nbsp;&nbsp; 2 &nbsp;&nbsp;&nbsp;&nbsp; 1</code><br><br>
+          왼쪽 4비트(bit7~bit4)가 상위 니블(upper nibble) = 16진수 1자리<br>
+          오른쪽 4비트(bit3~bit0)가 하위 니블(lower nibble) = 16진수 1자리<br><br>
+          예: 바이트 값 0x3B = 0011 1011<br>
+          &nbsp;&nbsp; 상위 니블: 0011 = 3, 하위 니블: 1011 = B<br>
+          &nbsp;&nbsp; 십진수: 0+0+16+8+0+2+1 = 59
+        </div>
       </section>
 
       <!-- ==================== Page 8 ==================== -->
@@ -664,6 +716,22 @@ window.MathJax = {
           </table>
         </div>
         <div class="key-point">이 네 가지 연산이 디지털 회로의 모든 기반입니다. 컴퓨터의 모든 계산은 궁극적으로 이 연산들의 조합입니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — Boolean 연산 진리표 다이어그램</div>
+          네 가지 기본 연산의 입출력을 체계적으로 정리합니다:<br><br>
+          <strong>AND (&amp;)</strong> — 두 입력 모두 1이어야 출력 1<br>
+          &nbsp;&nbsp; A=0,B=0 &rarr; 0 | A=0,B=1 &rarr; 0 | A=1,B=0 &rarr; 0 | A=1,B=1 &rarr; <strong>1</strong><br>
+          &nbsp;&nbsp; 용도: 특정 비트를 0으로 만드는 마스킹. 예: <code>x &amp; 0x0F</code>는 상위 4비트를 지움<br><br>
+          <strong>OR (|)</strong> — 하나라도 1이면 출력 1<br>
+          &nbsp;&nbsp; A=0,B=0 &rarr; 0 | A=0,B=1 &rarr; <strong>1</strong> | A=1,B=0 &rarr; <strong>1</strong> | A=1,B=1 &rarr; <strong>1</strong><br>
+          &nbsp;&nbsp; 용도: 특정 비트를 1로 설정. 예: <code>x | 0x80</code>은 bit7을 1로 설정<br><br>
+          <strong>XOR (^)</strong> — 서로 다를 때만 출력 1<br>
+          &nbsp;&nbsp; A=0,B=0 &rarr; 0 | A=0,B=1 &rarr; <strong>1</strong> | A=1,B=0 &rarr; <strong>1</strong> | A=1,B=1 &rarr; 0<br>
+          &nbsp;&nbsp; 용도: 특정 비트를 토글(반전). 예: <code>x ^ 0xFF</code>는 모든 비트 반전 (~x와 동일)<br><br>
+          <strong>NOT (~)</strong> — 단항 연산, 모든 비트 반전<br>
+          &nbsp;&nbsp; A=0 &rarr; <strong>1</strong> | A=1 &rarr; <strong>0</strong><br>
+          &nbsp;&nbsp; 용도: 비트 마스크의 보수. 예: <code>~0x0F</code> = <code>0xF0</code>
+        </div>
       </section>
 
       <!-- ==================== Page 10 ==================== -->
@@ -682,6 +750,17 @@ window.MathJax = {
           <p>각 열을 보면, 해당 위치의 비트끼리 AND/OR/XOR/NOT 연산을 한 것입니다.</p>
         </div>
         <div class="key-point">Boolean 대수의 모든 성질(교환법칙, 결합법칙, 분배법칙 등)이 비트 벡터 연산에도 그대로 적용됩니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — 비트 벡터 연산 단계별 과정</div>
+          두 8비트 벡터 A = 01101001, B = 01010101에 대해 AND 연산을 비트별로 수행하는 과정:<br><br>
+          <code>위치:&nbsp; 7 6 5 4 3 2 1 0</code><br>
+          <code>A &nbsp;&nbsp;:&nbsp; 0 1 1 0 1 0 0 1</code><br>
+          <code>B &nbsp;&nbsp;:&nbsp; 0 1 0 1 0 1 0 1</code><br>
+          <code>─────────────────────</code><br>
+          <code>A&amp;B :&nbsp; 0 1 0 0 0 0 0 1</code><br><br>
+          각 열을 독립적으로 계산합니다. 위치 6: 1&amp;1=1, 위치 5: 1&amp;0=0, 위치 0: 1&amp;1=1. 나머지 위치는 하나 이상이 0이므로 결과가 0입니다.<br><br>
+          결과: 0x69 &amp; 0x55 = 0x41. 16진수로 검증하면: 6&amp;5=4 (0110&amp;0101=0100), 9&amp;5=1 (1001&amp;0101=0001) &rarr; 0x41.
+        </div>
       </section>
 
       <!-- ==================== Page 11 ==================== -->
@@ -975,6 +1054,22 @@ Arith. x &gt;&gt; 2 →  11101000   (MSB=1이므로 1로 채움!)</pre>
 short int y = -15213;  →  Hex: C4 93  →  Binary: 11000100 10010011</pre>
         </div>
         <div class="key-point">부호 비트가 0이면 양수(또는 0), 1이면 음수입니다. 이것이 Two's Complement의 핵심입니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — Unsigned vs Two's Complement 인코딩 비교</div>
+          16비트(w=16) 기준으로 동일한 비트 패턴이 어떻게 다르게 해석되는지 보여줍니다:<br><br>
+          <strong>Unsigned (B2U):</strong> 모든 비트가 양수 가중치<br>
+          <code>[x15][x14]...[x1][x0]</code><br>
+          <code>+2^15 +2^14 ... +2^1 +2^0</code><br>
+          &rarr; 범위: 0 ~ 65,535<br><br>
+          <strong>Two's Complement (B2T):</strong> MSB만 음수 가중치, 나머지는 양수<br>
+          <code>[x15][x14]...[x1][x0]</code><br>
+          <code><strong>-2^15</strong> +2^14 ... +2^1 +2^0</code><br>
+          &rarr; 범위: -32,768 ~ +32,767<br><br>
+          구체적 계산 예 — 비트 패턴 <code>1100 0100 1001 0011</code>:<br>
+          &bull; Unsigned: 1&times;32768 + 1&times;16384 + ... = <strong>50,323</strong><br>
+          &bull; Signed: <strong>-1</strong>&times;32768 + 1&times;16384 + ... = -32768 + 17555 = <strong>-15,213</strong><br>
+          차이는 오직 MSB(bit 15)의 가중치: +32768 vs -32768. 그 차이 = 65536 = 2^16.
+        </div>
 <div style="display:flex; justify-content:center; margin:18px 0;">
 <svg width="340" height="340" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
   <text x="170" y="18" text-anchor="middle" fill="var(--text)" font-family="inherit" font-size="13" font-weight="500">4-bit Two's Complement Number Line</text>
@@ -1069,6 +1164,24 @@ short int y = -15213;  →  Hex: C4 93  →  Binary: 11000100 10010011</pre>
           </div>
         </div>
         <div class="key-point">이 규칙은 Two's Complement의 가장 우아한 성질입니다. 하드웨어에서 뺄셈을 덧셈 회로로 구현할 수 있게 해줍니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — 부호 반전(Negation) 단계별 과정</div>
+          8비트에서 93(=0x5D)의 부호를 반전하여 -93을 구하는 과정:<br><br>
+          <strong>Step 1: 비트 반전 (~x)</strong><br>
+          <code>&nbsp; x &nbsp;= 01011101 &nbsp;(93)</code><br>
+          <code>&nbsp;~x &nbsp;= 10100010 &nbsp;(모든 비트 뒤집기)</code><br><br>
+          <strong>Step 2: 1을 더하기 (~x + 1)</strong><br>
+          <code>&nbsp;~x &nbsp;&nbsp;= 10100010</code><br>
+          <code>+ &nbsp;1 &nbsp;= 00000001</code><br>
+          <code>────────────────</code><br>
+          <code>&nbsp;-x &nbsp;&nbsp;= 10100011 &nbsp;(-93 = 0xA3)</code><br><br>
+          <strong>검증:</strong> 93 + (-93)을 더하면?<br>
+          <code>&nbsp; 01011101 &nbsp;(93)</code><br>
+          <code>+ 10100011 &nbsp;(-93)</code><br>
+          <code>────────────────</code><br>
+          <code>= 00000000 &nbsp;(0, carry 1은 버림)</code><br><br>
+          <strong>특수 케이스:</strong> TMin(-128 = 10000000)의 부호 반전: ~10000000 + 1 = 01111111 + 1 = 10000000 = -128. 즉, <strong>-TMin = TMin</strong>! 이것은 |TMin| &gt; TMax이기 때문입니다.
+        </div>
       </section>
 
       <!-- ==================== Page 18 ==================== -->
@@ -1120,6 +1233,20 @@ TMin = -32768   (0x8000)   1000000000000000
         <div class="warning-box">
           <strong>비대칭:</strong> \(|TMin| = TMax + 1\). 즉, 음수 쪽이 양수보다 하나 더 많습니다. -32768은 있지만 +32768은 없습니다!
           또한: \(UMax = 2 \times TMax + 1\)
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — Two's Complement 수직 수선 (16비트 범위)</div>
+          16비트 Two's Complement의 전체 범위를 수직선으로 표현합니다:<br><br>
+          <code>&nbsp; -32768 (TMin) = 1000 0000 0000 0000 &nbsp; &larr; 음수 한계</code><br>
+          <code>&nbsp; -32767 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 1000 0000 0000 0001</code><br>
+          <code>&nbsp; &nbsp;&nbsp;... </code><br>
+          <code>&nbsp; &nbsp;&nbsp; -1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 1111 1111 1111 1111 &nbsp; &larr; 모든 비트 1</code><br>
+          <code>&nbsp; &nbsp;&nbsp;&nbsp; 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 0000 0000 0000 0000</code><br>
+          <code>&nbsp; &nbsp;&nbsp;&nbsp; 1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 0000 0000 0000 0001</code><br>
+          <code>&nbsp; &nbsp;&nbsp;...</code><br>
+          <code>&nbsp; +32767 (TMax) = 0111 1111 1111 1111 &nbsp; &larr; 양수 한계</code><br><br>
+          주목할 패턴: TMin의 비트 패턴(1000...0)은 MSB만 1이고 나머지 0. TMax(0111...1)은 MSB만 0이고 나머지 1. -1(1111...1)은 모든 비트가 1입니다. 이 세 값은 경계 조건(edge case) 테스트에서 매우 중요합니다.<br><br>
+          <strong>비대칭의 이유:</strong> 0이 양수 쪽에 포함되므로 양수는 0~32767 (32768개), 음수는 -32768~-1 (32768개)로, 음수의 절대값 범위가 1 더 큽니다.
         </div>
       </section>
 
@@ -1231,6 +1358,19 @@ LONG_MIN   // signed long의 최소값</pre>
           </div>
         </div>
         <div class="key-point">음수를 unsigned로 캐스팅하면 \(2^w\)가 더해져 <strong>매우 큰 양수</strong>가 됩니다. 예: 32비트에서 -1 &rarr; 4,294,967,295 (UMax)</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — Signed to Unsigned 매핑 시각화 (4비트)</div>
+          4비트 기준으로 Signed 값이 Unsigned로 어떻게 매핑되는지:<br><br>
+          <code>Signed: &nbsp;-8 -7 -6 -5 -4 -3 -2 -1 | 0 &nbsp;1 &nbsp;2 &nbsp;3 &nbsp;4 &nbsp;5 &nbsp;6 &nbsp;7</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &darr; &nbsp;&darr; &nbsp;&darr; &nbsp;&darr; &nbsp;&darr; &nbsp;&darr; &nbsp;&darr; &nbsp;&darr; | &darr; &nbsp;&darr; &nbsp;&darr; &nbsp;&darr; &nbsp;&darr; &nbsp;&darr; &nbsp;&darr; &nbsp;&darr;</code><br>
+          <code>Unsigned: 8 &nbsp;9 10 11 12 13 14 15 | 0 &nbsp;1 &nbsp;2 &nbsp;3 &nbsp;4 &nbsp;5 &nbsp;6 &nbsp;7</code><br><br>
+          양수 영역(0~7): 비트 패턴 0000~0111 &rarr; 값 변화 없음<br>
+          음수 영역(-8~-1): 비트 패턴 1000~1111 &rarr; 값에 +16(=2^4) 더해짐<br><br>
+          <strong>단계별 예제:</strong> -5를 unsigned로 변환<br>
+          1. -5의 비트 패턴: 1011 (4비트 Two's Complement)<br>
+          2. 같은 비트 1011을 unsigned로 해석: 1&times;8 + 0&times;4 + 1&times;2 + 1&times;1 = 11<br>
+          3. 검증: -5 + 16 = 11 (맞음)
+        </div>
       </section>
 
       <!-- ==================== Page 25 ==================== -->
@@ -1273,6 +1413,20 @@ LONG_MIN   // signed long의 최소값</pre>
           <p>음수였던 값들(TMin ~ -1)이 unsigned에서는 TMax+1 ~ UMax로 매핑됩니다. 즉, <strong>작은 음수가 큰 양수</strong>가 됩니다.</p>
         </div>
         <div class="warning-box">이 순서 뒤집힘이 signed/unsigned를 혼합하여 비교할 때 버그를 만드는 근본 원인입니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — Signed/Unsigned 순서 뒤집힘 시각화</div>
+          Two's Complement와 Unsigned의 수직선을 나란히 놓고 매핑을 보여줍니다:<br><br>
+          <code>Two's Complement &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Unsigned</code><br>
+          <code>───────────── &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ─────────</code><br>
+          <code>&nbsp; TMax (+7) ─────────────&rarr; 7</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ... &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 ─────────────&rarr; 0</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -1 ──── +2^w ──&rarr; UMax (15)</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -2 ──── +2^w ──&rarr; 14</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ... &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</code><br>
+          <code>&nbsp; TMin (-8) ──── +2^w ──&rarr; 8</code><br><br>
+          핵심: -1(가장 큰 음수, 즉 0에 가장 가까운 음수)이 UMax(가장 큰 unsigned)로 매핑됩니다. 직관과 완전히 반대입니다! 이것이 <code>-1 &gt; 0U</code>가 참이 되는 이유입니다.
+        </div>
       </section>
 
       <!-- ==================== Page 27 ==================== -->
@@ -1327,6 +1481,18 @@ uy = ty;   // 암시적 캐스팅: signed → unsigned</pre>
           </table>
         </div>
         <div class="warning-box"><strong>-1 &gt; 0U</strong>가 참이라니! -1이 unsigned로 캐스팅되면 4,294,967,295(UMax)가 되기 때문입니다. 이것이 signed/unsigned 혼합의 가장 흔한 버그 원인입니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — Casting 함정 단계별 추적: -1 vs 0U</div>
+          표현식 <code>-1 &gt; 0U</code>가 왜 참(1)인지 비트 수준에서 추적합니다:<br><br>
+          1. 좌변 -1은 <code>int</code> (signed), 우변 0U는 <code>unsigned int</code><br>
+          2. C 규칙: signed와 unsigned가 혼합되면 signed가 unsigned로 암시적 캐스팅<br>
+          3. -1의 32비트 표현: <code>1111 1111 1111 1111 1111 1111 1111 1111</code><br>
+          4. 같은 비트를 unsigned로 재해석: 2^32 - 1 = <strong>4,294,967,295</strong><br>
+          5. 비교: 4,294,967,295 &gt; 0 &rarr; <strong>참(True)</strong><br><br>
+          같은 원리로 <code>2147483647U &lt; -2147483648</code>도 참입니다:<br>
+          &bull; -2147483648의 비트: <code>1000...0</code> &rarr; unsigned로는 2,147,483,648<br>
+          &bull; 2,147,483,647 &lt; 2,147,483,648 &rarr; 참
+        </div>
       </section>
 
       <!-- ==================== Page 29 ==================== -->
@@ -1510,6 +1676,18 @@ unsigned short sy = (unsigned short) y;</pre>
           </div>
         </div>
         <div class="warning-box">Truncation은 <strong>mod 연산</strong>입니다. 값이 크게 변할 수 있으므로 항상 범위를 확인해야 합니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — Truncation 비트 잘라내기 과정</div>
+          32비트 값 107981을 16비트로 truncate하는 과정:<br><br>
+          <code>32비트: [00000000] [00000001] [10100101] [11001101]</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--- 버려짐 --- &nbsp;&nbsp;|&nbsp; --- 유지됨 (하위 16비트) ---</code><br>
+          <code>16비트: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [10100101] [11001101]</code><br><br>
+          유지된 비트 패턴 A5 CD의 해석:<br>
+          &bull; <strong>unsigned short</strong>: MSB(bit15)=1의 가중치 +32768 &rarr; 32768+8192+...+8+4+1 = <strong>42,445</strong><br>
+          &bull; <strong>short (signed)</strong>: MSB(bit15)=1의 가중치 -32768 &rarr; -32768+8192+...+8+4+1 = <strong>-23,091</strong><br><br>
+          수학적 관계: 107981 mod 65536 = 107981 - 1&times;65536 = 42,445 (unsigned 결과와 일치)<br>
+          signed 결과: 42,445 - 65,536 = -23,091
+        </div>
       </section>
 
       <!-- ==================== Page 34 ==================== -->
@@ -1564,6 +1742,24 @@ unsigned short sy = (unsigned short) y;</pre>
           <p>예: 8비트에서 200 + 100 = 300이지만, \(300 \mod 256 = 44\). 즉, 300이 아니라 44가 됩니다!</p>
         </div>
         <div class="highlight-box">\(u + v \geq 2^w\)이면 <strong>오버플로우</strong>가 발생합니다. 결과에서 \(2^w\)를 빼는 것과 같습니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — Unsigned 덧셈 오버플로우 (원형 수선)</div>
+          8비트 unsigned의 덧셈을 원형 수선(circular number line)으로 시각화합니다:<br><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ╱&nbsp;&nbsp; &nbsp; &nbsp;╲</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp; 240 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16</code><br>
+          <code>&nbsp;&nbsp;&nbsp; │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │</code><br>
+          <code>&nbsp;&nbsp;&nbsp; 200 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 56</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ╲&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ╱</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 128</code><br><br>
+          200 + 100 = 300의 계산: 0에서 시작하여 시계 방향으로 200칸 이동, 다시 100칸 이동. 256을 지나면(overflow!) 다시 0부터 시작 &rarr; 300 - 256 = <strong>44</strong>에 도착.<br><br>
+          <strong>비트 수준 이해:</strong><br>
+          <code>&nbsp; 200 = 11001000</code><br>
+          <code>+ 100 = 01100100</code><br>
+          <code>──────────────</code><br>
+          <code>= 300 = 1 00101100 &nbsp;(9비트)</code><br>
+          <code>&nbsp;&nbsp; 44 = &nbsp; 00101100 &nbsp;(상위 1비트 carry 버림)</code>
+        </div>
       </section>
 
       <!-- ==================== Page 37 ==================== -->
@@ -1613,6 +1809,23 @@ t = u + v;
           <strong>-128 + (-1) = 127?</strong> 음수끼리 더했는데 양수가 됨 &rarr; Negative Overflow<br>
           <strong>127 + 1 = -128?</strong> 양수끼리 더했는데 음수가 됨 &rarr; Positive Overflow
         </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — Signed 오버플로우 래핑 동작</div>
+          8비트 signed의 Positive Overflow를 비트 수준에서 추적합니다:<br><br>
+          <code>&nbsp; 127 = 01111111 &nbsp; (TMax)</code><br>
+          <code>+ &nbsp; 1 = 00000001</code><br>
+          <code>────────────────</code><br>
+          <code>&nbsp; 128 = 10000000 &nbsp; (비트 결과)</code><br><br>
+          비트 10000000을 signed로 해석하면: -1&times;128 + 0 = <strong>-128</strong> (TMin!)<br>
+          TMax에 1을 더하면 TMin으로 "래핑(wrap around)"됩니다.<br><br>
+          Negative Overflow 추적:<br>
+          <code>&nbsp;-128 = 10000000 &nbsp; (TMin)</code><br>
+          <code>+ &nbsp;-1 = 11111111</code><br>
+          <code>────────────────</code><br>
+          <code>&nbsp;-129 = 1 01111111 &nbsp;(9비트, carry 발생)</code><br>
+          <code>&nbsp;&nbsp;127 = &nbsp; 01111111 &nbsp;(carry 버림 = TMax!)</code><br><br>
+          <strong>판별 규칙:</strong> 같은 부호끼리 더했는데 결과의 부호가 바뀌면 오버플로우입니다. 다른 부호끼리의 덧셈에서는 절대 오버플로우가 발생하지 않습니다(두 값이 서로를 상쇄하므로).
+        </div>
       </section>
 
       <!-- ==================== Page 39 ==================== -->
@@ -1638,6 +1851,19 @@ t = u + v;
           &bull; 양수 + 양수 &rarr; 음수: Positive Overflow<br>
           &bull; 음수 + 음수 &rarr; 양수: Negative Overflow<br>
           &bull; 양수 + 음수: 절대 오버플로우 안 함 (두 값의 크기가 서로 상쇄)
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — Signed 덧셈 결과 영역 (TAdd 함수 그래프)</div>
+          w비트 signed 덧셈 TAdd(u,v)의 결과를 true sum 기준으로 세 영역으로 나눕니다:<br><br>
+          <code>True Sum &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TAdd 결과</code><br>
+          <code>─────────────────────── &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ──────────────</code><br>
+          <code>s &ge; +2^(w-1) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s - 2^w &nbsp;(음수!) &nbsp;&nbsp; [Positive Overflow]</code><br>
+          <code>-2^(w-1) &le; s &lt; +2^(w-1) &nbsp;&nbsp;&nbsp;&nbsp; s &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (정상) &nbsp;&nbsp; [정상 범위]</code><br>
+          <code>s &lt; -2^(w-1) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s + 2^w &nbsp;(양수!) &nbsp;&nbsp; [Negative Overflow]</code><br><br>
+          8비트 구체적 수치 (범위: -128 ~ +127):<br>
+          &bull; True sum = 200 (예: 100+100): 200 - 256 = <strong>-56</strong> (Positive Overflow)<br>
+          &bull; True sum = 50 (예: 30+20): <strong>50</strong> (정상)<br>
+          &bull; True sum = -200 (예: -100+(-100)): -200 + 256 = <strong>56</strong> (Negative Overflow)
         </div>
       </section>
 
@@ -1686,6 +1912,19 @@ void *memcpy(void *dest, const void *src, size_t num);
 //                              num은 unsigned!</pre>
         </div>
         <div class="warning-box"><strong>memcpy</strong>의 세 번째 인자 <code>num</code>은 <em>size_t</em> = <em>unsigned int</em>입니다. 만약 len이 음수라면? signed &rarr; unsigned 캐스팅이 발생합니다!</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — 보안 취약점의 비트 수준 분석</div>
+          maxlen = -528이 memcpy에 전달될 때 어떤 일이 발생하는지:<br><br>
+          <strong>Step 1:</strong> len = maxlen = -528 (signed int)<br>
+          <code>-528의 32비트 표현: 1111 1111 1111 1111 1111 1101 1111 0000</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 0xFFFFFDF0</code><br><br>
+          <strong>Step 2:</strong> memcpy의 num 파라미터는 size_t (unsigned)<br>
+          같은 비트 0xFFFFFDF0을 unsigned로 해석:<br>
+          <code>-528 + 2^32 = -528 + 4,294,967,296 = <strong>4,294,966,768</strong></code><br>
+          &rarr; 약 4GB의 데이터를 복사하라는 명령!<br><br>
+          <strong>결과:</strong> 커널의 kbuf(1024바이트) 뒤에 있는 모든 커널 메모리가 사용자 공간으로 복사됩니다. 비밀번호, 암호화 키, 다른 프로세스의 데이터 등이 유출될 수 있습니다.<br><br>
+          <strong>수정 방법:</strong> <code>if (maxlen &lt; 0) return -1;</code> 를 추가하거나, maxlen의 타입을 <code>size_t</code>로 변경
+        </div>
       </section>
 
       <!-- ==================== Page 42 ==================== -->
@@ -1818,6 +2057,18 @@ void getstuff() {
           <strong>컴파일러 최적화 예:</strong><br>
           <code>x * 24</code> &rarr; <code>(x &lt;&lt; 5) - (x &lt;&lt; 3)</code><br>
           <code>x * 7</code> &rarr; <code>(x &lt;&lt; 3) - x</code>
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — 시프트 곱셈 단계별 계산</div>
+          x = 5일 때 <code>x * 24</code>를 시프트와 뺄셈으로 계산하는 과정:<br><br>
+          <strong>방법: 24 = 32 - 8 = 2^5 - 2^3</strong><br>
+          따라서 x * 24 = x * 32 - x * 8 = (x &lt;&lt; 5) - (x &lt;&lt; 3)<br><br>
+          <code>x &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 00000101 &nbsp;(5)</code><br>
+          <code>x &lt;&lt; 5 &nbsp;= 10100000 &nbsp;(5 &times; 32 = 160)</code><br>
+          <code>x &lt;&lt; 3 &nbsp;= 00101000 &nbsp;(5 &times; 8 = 40)</code><br>
+          <code>────────────────────</code><br>
+          <code>결과 &nbsp;&nbsp;&nbsp;= 01111000 &nbsp;(160 - 40 = 120 = 5 &times; 24)</code><br><br>
+          <strong>성능 비교:</strong> 일반적인 CPU에서 정수 곱셈(IMUL)은 3~5 클럭 사이클이 필요하지만, 시프트(SHL)와 덧셈/뺄셈(ADD/SUB)은 각각 1 클럭 사이클이면 충분합니다. 컴파일러는 상수 곱셈을 자동으로 이런 형태로 변환합니다.
         </div>
       </section>
 
@@ -2047,6 +2298,19 @@ for (i = cnt-2; i &lt; cnt; i--)
           </div>
         </div>
         <div class="key-point">메모리의 최소 접근 단위는 <strong>1바이트(8비트)</strong>입니다. 비트 하나를 직접 주소로 접근할 수는 없습니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — 바이트 단위 메모리 구조</div>
+          프로그램이 바라보는 메모리의 개념적 구조 (선형 바이트 배열):<br><br>
+          <code>주소: &nbsp; 0x0000 &nbsp; 0x0001 &nbsp; 0x0002 &nbsp; 0x0003 &nbsp; 0x0004 &nbsp; ...</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ┌──────┬──────┬──────┬──────┬──────┬────</code><br>
+          <code>값: &nbsp;&nbsp; │ 0xFF │ 0x3B │ 0x00 │ 0xA5 │ 0x12 │ ...</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └──────┴──────┴──────┴──────┴──────┴────</code><br><br>
+          &bull; 각 칸 = 1바이트 = 8비트 = 0x00~0xFF (0~255)<br>
+          &bull; 각 칸에는 고유한 주소(address)가 배정됨<br>
+          &bull; 포인터(pointer)는 이 주소를 값으로 가지는 변수<br>
+          &bull; 4바이트 int가 주소 0x0001에서 시작하면, 바이트 0x0001~0x0004를 차지<br><br>
+          실제 하드웨어의 메모리는 DRAM 칩, 캐시 계층, 가상 메모리 등으로 복잡하지만, 프로그래머에게는 이 "바이트 배열" 추상화가 제공됩니다.
+        </div>
       </section>
 
       <!-- ==================== Page 59 ==================== -->
@@ -2181,6 +2445,23 @@ Little Endian:  0x100  0x101  0x102  0x103
 </div>
         </div>
         <div class="key-point"><strong>Little Endian</strong>은 "작은 쪽(Least Significant)이 먼저"라고 기억하세요. 현재 대부분의 PC/모바일은 Little Endian입니다.</div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — Endianness 메모리 레이아웃 상세 분석</div>
+          32비트 정수 0x01234567을 메모리 주소 0x100에 저장할 때:<br><br>
+          값을 바이트 단위로 분해: <code>01</code>(MSB) <code>23</code> <code>45</code> <code>67</code>(LSB)<br><br>
+          <strong>Big Endian (네트워크 바이트 순서):</strong><br>
+          <code>주소: &nbsp;0x100 &nbsp;0x101 &nbsp;0x102 &nbsp;0x103</code><br>
+          <code>값: &nbsp;&nbsp;&nbsp; 01 &nbsp;&nbsp;&nbsp; 23 &nbsp;&nbsp;&nbsp; 45 &nbsp;&nbsp;&nbsp; 67</code><br>
+          &rarr; 사람이 읽는 순서와 동일. 주소를 순서대로 읽으면 "01 23 45 67" = 0x01234567<br><br>
+          <strong>Little Endian (x86/ARM):</strong><br>
+          <code>주소: &nbsp;0x100 &nbsp;0x101 &nbsp;0x102 &nbsp;0x103</code><br>
+          <code>값: &nbsp;&nbsp;&nbsp; 67 &nbsp;&nbsp;&nbsp; 45 &nbsp;&nbsp;&nbsp; 23 &nbsp;&nbsp;&nbsp; 01</code><br>
+          &rarr; LSB가 가장 낮은 주소에. 메모리 덤프를 읽으면 "67 45 23 01"로 보임<br><br>
+          <strong>실무적 영향:</strong><br>
+          &bull; 디버거에서 메모리를 볼 때 바이트 순서가 뒤집혀 보일 수 있음<br>
+          &bull; 네트워크 통신 시 Big Endian(표준)으로 변환 필요: <code>htonl()</code>, <code>ntohl()</code><br>
+          &bull; 파일 포맷에서 endianness를 명시해야 함 (예: BMP = Little, JPEG = Big)
+        </div>
       </section>
 
       <!-- ==================== Page 63 ==================== -->
@@ -2292,6 +2573,18 @@ int *P = &amp;B;
         </div>
         <div class="key-point">
           문자열은 바이트 단위로 저장되므로 <strong>Endian에 영향을 받지 않습니다</strong>. 이것이 텍스트 데이터가 플랫폼 간에 호환되는 이유입니다.
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure — 문자열 vs 정수의 메모리 표현 비교</div>
+          문자열 "18213"과 정수 18213이 메모리에 저장되는 방식의 차이:<br><br>
+          <strong>문자열 char S[6] = "18213" (Big/Little Endian 모두 동일):</strong><br>
+          <code>주소: &nbsp; +0 &nbsp;&nbsp; +1 &nbsp;&nbsp; +2 &nbsp;&nbsp; +3 &nbsp;&nbsp; +4 &nbsp;&nbsp; +5</code><br>
+          <code>값: &nbsp;&nbsp; 0x31 &nbsp;0x38 &nbsp;0x32 &nbsp;0x31 &nbsp;0x33 &nbsp;0x00</code><br>
+          <code>문자: &nbsp; '1' &nbsp;&nbsp;'8' &nbsp;&nbsp;'2' &nbsp;&nbsp;'1' &nbsp;&nbsp;'3' &nbsp;&nbsp;'\0'</code><br><br>
+          <strong>정수 int N = 18213 (=0x00004725):</strong><br>
+          <code>Little Endian: &nbsp; 25 &nbsp; 47 &nbsp; 00 &nbsp; 00 &nbsp;(LSB first)</code><br>
+          <code>Big Endian: &nbsp;&nbsp;&nbsp; 00 &nbsp; 00 &nbsp; 47 &nbsp; 25 &nbsp;(MSB first)</code><br><br>
+          문자열은 각 문자가 독립적인 1바이트이므로 항상 같은 순서로 저장됩니다. 반면 정수는 멀티바이트 단위이므로 endian에 따라 바이트 순서가 달라집니다. 이것이 텍스트 파일은 플랫폼 간 호환되지만, 바이너리 파일은 주의가 필요한 이유입니다.
         </div>
       </section>
 
