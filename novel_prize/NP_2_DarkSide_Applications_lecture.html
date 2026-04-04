@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이중나선의 어둠과 DNA 혁명의 응용</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar a {
+    display: block;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 600;
+    padding: 12px 12px 4px;
+    margin-top: 8px;
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .diagram-box {
+    background: var(--bg-aside);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .diagram-box .diagram-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .truth-table { width: auto; border-collapse: collapse; font-size: 14px; margin: 12px 0; font-family: 'JetBrains Mono', monospace; }
+  .truth-table th { background: var(--accent); color: white; padding: 8px 16px; font-size: 12px; text-align: center; }
+  .truth-table td { padding: 6px 16px; border: 1px solid var(--border); text-align: center; }
+  .truth-table tr:nth-child(even) { background: var(--bg-aside); }
+
+  strong { color: var(--accent); font-weight: 500; }
+
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 12px 18px;
+    margin: 12px 0;
+    font-style: italic;
+    color: var(--text-muted);
+    background: var(--bg-aside);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .page-section h2 { font-size: 20px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>이중나선의 어둠과 DNA 혁명의 응용</h1>
+      <div class="meta">노벨 생리의학상 1962 -- Byung-Hoon Lee -- DGIST</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">페이지 목록</div>
+      <div class="section-label">Part 1: The Dark Side</div>
+      <a href="#p1" class="active">01 -- 표지</a>
+      <a href="#p2">02 -- 1962 노벨상</a>
+      <a href="#p3">03 -- 구조 경쟁</a>
+      <a href="#p4">04 -- 로잘린드 프랭클린</a>
+      <a href="#p5">05 -- X선 결정학</a>
+      <a href="#p6">06 -- Photo 51</a>
+      <a href="#p7">07 -- 킹스 칼리지 라이벌</a>
+      <a href="#p8">08 -- 무단 전달</a>
+      <a href="#p9">09 -- 더럽혀진 깨달음</a>
+      <a href="#p10">10 -- 레이먼드 고슬링</a>
+      <a href="#p11">11 -- 노벨상 배제</a>
+      <a href="#p12">12 -- 60년의 비밀</a>
+      <a href="#p13">13 -- 신화와 증거</a>
+      <a href="#p14">14 -- 파리의 반전</a>
+      <a href="#p15">15 -- 알려지지 않은 개척자</a>
+      <a href="#p16">16 -- 왓슨의 몰락</a>
+      <a href="#p17">17 -- 역사의 경매</a>
+      <a href="#p18">18 -- 선행주의의 위험</a>
+      <a href="#p19">19 -- 허젠쿠이 사건</a>
+      <a href="#p20">20 -- 과학적 정의</a>
+      <a href="#p21">21 -- 그림자의 해부</a>
+      <a href="#p22">22 -- 제2의 혁명</a>
+      <a href="#p23">23 -- 토론</a>
+      <a href="#p24">24 -- 요약 인포그래픽</a>
+      <div class="section-label">Part 2: Applications & Future</div>
+      <a href="#p25">25 -- DNA 응용 표지</a>
+      <a href="#p26">26 -- 혁명 1.0: 코드 읽기</a>
+      <a href="#p27">27 -- 유산: 새로운 세계</a>
+      <a href="#p28">28 -- 인간 게놈 프로젝트</a>
+      <a href="#p29">29 -- 유전체학의 무어 법칙</a>
+      <a href="#p30">30 -- 바이오테크 시대</a>
+      <a href="#p31">31 -- 혁명 2.0: 코드 쓰기</a>
+      <a href="#p32">32 -- CRISPR 아기</a>
+      <a href="#p33">33 -- DNA 지문감식</a>
+      <a href="#p34">34 -- 유전공학과 농업</a>
+      <a href="#p35">35 -- mRNA 백신</a>
+      <a href="#p36">36 -- 맞춤 의학</a>
+      <a href="#p37">37 -- 안젤리나 졸리 사례</a>
+      <a href="#p38">38 -- 합성생물학과 윤리</a>
+      <a href="#p39">39 -- 코드의 수호자</a>
+      <a href="#p40">40 -- 유전체 세기</a>
+      <a href="#p41">41 -- 최종 인포그래픽</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== PART 1: THE DARK SIDE ==================== -->
+
+      <!-- Page 1 -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>The Double Helix & The Dark Side</h2>
+
+        <div class="summary-box">
+          이 강의의 Part 1은 현대 생물학 제1차 혁명인 DNA 이중나선 구조 발견의 이면에 숨겨진 <strong>윤리적 스캔들</strong>을 다룬다. 부제 "Genius, Hubris, and Erasure"가 암시하듯, 천재성 뒤에 숨은 오만과 지워진 공로의 이야기이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">강의 배경</div>
+          <p>1953년 DNA 이중나선(Double Helix) 구조의 발견은 현대 생물학의 가장 위대한 성과 중 하나로 꼽힌다. 그러나 이 발견 뒤에는 <strong>데이터 도용(Theft)</strong>, <strong>성차별(Sexism)</strong>, <strong>인종주의(Racism)</strong>, 그리고 <strong>오만(Hubris)</strong>이라는 어두운 그림자가 드리워져 있다. Byung-Hoon Lee 교수(DGIST 신물질생물학과)의 이 강의는 과학적 발견의 빛나는 성과와 그 이면의 인간적 결함을 함께 조명한다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">Double Helix</td>
+                <td>이중나선</td>
+                <td>DNA의 두 가닥이 서로 꼬여 사다리 모양을 이루는 구조</td>
+              </tr>
+              <tr>
+                <td class="en">Hubris</td>
+                <td>오만, 자만</td>
+                <td>자신의 능력을 과신하여 윤리적 한계를 넘는 행위</td>
+              </tr>
+              <tr>
+                <td class="en">Erasure</td>
+                <td>지움, 삭제</td>
+                <td>특정 인물의 공로를 역사에서 의도적으로 배제하는 것</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Page 2 -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>1962년 노벨 생리의학상</h2>
+
+        <div class="summary-box">
+          "핵산의 분자 구조에 관한 발견(discoveries concerning the molecular structure of nucleic acids)"으로 Francis Crick, James Watson, Maurice Wilkins가 수상했으나, 결정적 기여를 한 <strong>Rosalind Franklin</strong>은 배제되었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수상자 3인</div>
+          <p><strong>Francis Crick</strong> -- 케임브리지 대학의 물리학자 출신. Watson과 함께 DNA 구조 모델을 구축했다. 분자생물학의 "센트럴 도그마(Central Dogma)" 개념도 제안한 인물이다.</p>
+          <p style="margin-top:10px"><strong>James Watson</strong> -- 미국 출신 생물학자. 불과 25세의 나이에 Crick과 협력하여 이중나선 모델을 완성했다. 후에 Cold Spring Harbor 연구소 소장, 인간 게놈 프로젝트(Human Genome Project) 발족 등을 이끌었다.</p>
+          <p style="margin-top:10px"><strong>Maurice Wilkins</strong> -- 킹스 칼리지 런던(King's College London)의 물리학자. X선 회절(X-ray Diffraction) 데이터를 Watson에게 보여줌으로써 모델 완성에 핵심적 역할을 했으나, 동시에 논란의 중심에 섰다.</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>인정받지 못한 기여자 (The Unrecognized Contributor)</strong><br>
+          Rosalind Franklin은 1958년 난소암으로 37세에 사망했다. 노벨상은 사후 수여가 불가능하므로(Nobel Prizes are not awarded posthumously), 그녀의 결정적 데이터 기여에도 불구하고 수상 대상에 포함되지 않았다. 그녀의 데이터가 없었다면 이중나선 모델은 완성될 수 없었을 것이라는 점에서 이 배제는 과학사에서 가장 유명한 불공정 사례 중 하나로 남아있다.
+        </div>
+      </section>
+
+      <!-- Page 3 -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>구조 경쟁: 세 연구실, 세 접근법, 하나의 상</h2>
+
+        <div class="summary-box">
+          1950년대 초, 세 개의 연구실이 DNA 구조 규명을 놓고 치열한 경쟁을 벌였다. 각기 다른 접근법을 사용했지만, 궁극적으로 하나의 노벨상만이 주어졌다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">세 연구실의 경쟁 구도</div>
+          <strong>Cambridge, UK -- Cavendish Laboratory</strong><br>
+          &nbsp;&nbsp;James Watson (생물학자) & Francis Crick (물리학자)<br>
+          &nbsp;&nbsp;접근법: <strong>모델 빌딩 (Model Building)</strong><br>
+          &nbsp;&nbsp;금속 조각과 판지를 이용해 분자 모형을 만들어가며 구조를 추론하는 방식<br><br>
+
+          <strong>London, UK -- King's College</strong><br>
+          &nbsp;&nbsp;Maurice Wilkins & <strong>Rosalind Franklin</strong> (동그라미 강조)<br>
+          &nbsp;&nbsp;접근법: <strong>X선 결정학 (X-ray Crystallography)</strong><br>
+          &nbsp;&nbsp;실험적 데이터로 구조를 밝혀내는 정밀한 물리적 방법<br><br>
+
+          <strong>Pasadena, USA -- Caltech</strong><br>
+          &nbsp;&nbsp;Linus Pauling<br>
+          &nbsp;&nbsp;접근법: 세계 최고의 화학자로서 단백질 알파나선 구조를 이미 밝힌 경험<br>
+          &nbsp;&nbsp;라이벌 (The Rival) -- 그의 참여가 캠브리지 팀에 시간적 압박을 가했다
+        </div>
+
+        <div class="tip">
+          Linus Pauling은 DNA가 3중 나선(triple helix)이라는 잘못된 모델을 발표했는데, 이 실수가 Watson과 Crick에게 "아직 기회가 있다"는 확신을 주어 경쟁을 가속화했다.
+        </div>
+      </section>
+
+      <!-- Page 4 -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>DNA의 "Dark Lady": Rosalind Franklin</h2>
+
+        <div class="summary-box">
+          킹스 칼리지 런던의 X선 결정학 전문가 Rosalind Franklin은 주도적 과학자(lead scientist)였지, 조수(assistant)가 아니었다. Watson의 회고록이 만들어낸 "Rosy" 신화와 실제 인물 사이의 괴리를 이해하는 것이 중요하다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">과학자로서의 프랭클린 (THE SCIENTIST)</div>
+          <p>Rosalind Franklin(1920-1958)은 킹스 칼리지 런던(King's College London)의 전문 결정학자(Expert Crystallographer)였다. 캠브리지에서 물리화학 박사학위를 받고, 파리에서 X선 결정학 기술을 연마한 뒤 킹스 칼리지에 합류했다. 그녀는 석탄과 흑연의 미세구조 연구에서 이미 명성을 쌓은 독립적인 연구자였다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">실체 (THE REALITY)</div>
+          <p>Franklin은 조수가 아닌 <strong>주도적 과학자(lead scientist)</strong>였다. 그녀의 핵심 업적은 DNA의 <strong>A형(건조 형태, dry form)</strong>과 <strong>B형(습윤 형태, wet form)</strong>을 분리하여 식별한 것이다. 이것은 당시 다른 누구도 해내지 못한 기술적 돌파구였다. DNA가 두 가지 구조적 형태를 가진다는 발견은 이중나선 모델을 이해하는 데 결정적인 전환점이 되었다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">신화 (THE MYTH)</div>
+          <p>Watson은 1968년 출판한 회고록 <strong>"The Double Helix"</strong>에서 Franklin을 <strong>"Rosy"</strong>라는 별명으로 부르며, 적대적이고(hostile) 상상력이 없는(unimaginative) 하급자(subordinate)로 묘사했다. 이 별명 자체가 무례한 것이었다 -- Franklin은 자신을 "Rosy"라고 부르는 것을 허용한 적이 없다. 실제로 그녀는 추측(speculation)보다 <strong>데이터를 우선시하는 꼼꼼한 실험주의자(meticulous experimentalist)</strong>였다. Watson의 회고록은 베스트셀러가 되었고, 이 왜곡된 이미지는 수십 년간 대중의 인식을 지배했다.</p>
+        </div>
+
+        <div class="tip">
+          "Dark Lady"라는 표현은 Franklin이 X선의 "어둠" 속에서 일했다는 의미와, 역사적으로 그녀의 공로가 "어둠 속에 묻혔다"는 이중적 의미를 담고 있다.
+        </div>
+      </section>
+
+      <!-- Page 5 -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>X선 결정학의 기술 (The Art of X-Ray Crystallography)</h2>
+
+        <div class="summary-box">
+          X선 결정학은 결정화된 시료에 X선을 쏘아 회절 패턴을 분석함으로써 분자의 3차원 구조를 밝혀내는 기법이다. Franklin은 이 기법을 통해 DNA의 핵심 구조적 특성을 증명했다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">X선 결정학 과정</div>
+          1. <strong>X선 빔 소스 (X-Ray Beam Source)</strong><br>
+          &nbsp;&nbsp;&nbsp;강력한 X선을 시료에 조사한다<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&darr;<br>
+          2. <strong>결정화된 DNA 섬유 (Crystallized DNA Fiber)</strong><br>
+          &nbsp;&nbsp;&nbsp;DNA를 섬유 형태로 정렬시킨 시료<br>
+          &nbsp;&nbsp;&nbsp;&darr; [3D 수학적 분석]<br>
+          3. <strong>필름 위의 회절 패턴 (Diffraction Pattern on Film)</strong><br>
+          &nbsp;&nbsp;&nbsp;X선이 시료를 통과하며 산란되어 필름에 독특한 패턴을 남긴다
+        </div>
+
+        <div class="card">
+          <div class="card-label">원리 설명</div>
+          <p>X선 결정학(X-ray Crystallography)의 원리는 <strong>브래그의 법칙(Bragg's Law)</strong>에 기반한다. X선이 규칙적으로 배열된 원자들을 통과할 때 회절(diffraction)이 일어나며, 이 회절 패턴을 수학적으로 분석하면 원자들의 3차원 배치를 역산할 수 있다. 이때 필요한 수학은 <strong>푸리에 변환(Fourier Transform)</strong>으로, 회절 강도와 각도 데이터를 실제 전자 밀도 분포로 변환하는 3D 수학적 과정이 핵심이다.</p>
+        </div>
+
+        <div class="key-point">
+          <strong>THE FRANKLIN INSIGHT (프랭클린의 통찰)</strong><br>
+          Franklin은 DNA를 "건조(dry)" A형과 "습윤(wet)" B형으로 성공적으로 분리했다. 이전 연구자들은 이 두 형태가 섞인 시료로 작업했기 때문에 선명한 회절 패턴을 얻지 못했다. Franklin의 B형 DNA 데이터는 <strong>인산-당 골격(phosphate-sugar backbone)이 분자의 바깥쪽(OUTSIDE)에 위치</strong>한다는 것을 증명했다 -- 이것은 Watson과 Crick의 초기 모델(골격이 안쪽에 있는 모델)이 틀렸음을 보여주는 결정적 증거였다.
+        </div>
+      </section>
+
+      <!-- Page 6 -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>단서 #2: X선 서명 -- Photo 51 (1952)</h2>
+
+        <div class="summary-box">
+          1952년 촬영된 <strong>Photo 51</strong>은 DNA가 나선 구조임을 보여주는 결정적 X선 회절 사진이다. 이 한 장의 사진이 분자생물학의 역사를 바꾸었다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Photo 51의 해석</div>
+          <strong>X자 패턴 = 나선 구조 (Helix)</strong><br>
+          &nbsp;&nbsp;회절 패턴에서 뚜렷한 X자 모양이 보인다면, 그것은 시료가 나선형임을 나타낸다<br><br>
+          <strong>상하 다이아몬드 모양 = 인산-당 골격이 바깥쪽</strong><br>
+          &nbsp;&nbsp;패턴 상하의 강한 반점은 골격이 외부에 있음을 시사<br><br>
+          <strong>규칙적으로 간격을 둔 가로줄 = 규칙적 간격의 "사다리 발판"</strong><br>
+          &nbsp;&nbsp;염기쌍(base pairs)이 일정한 간격으로 반복됨<br><br>
+          <strong>일정한 직경 = 다중 가닥 골격 (Multi-stranded)</strong><br>
+          &nbsp;&nbsp;X선 회절이 일정한 밀도와 직경을 보여줌으로써 단일 가닥이 아닌 다중 가닥 구조를 암시
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p>Photo 51은 Franklin의 대학원생 <strong>Raymond Gosling</strong>이 1952년 5월에 Franklin의 감독 하에 촬영한 B형 DNA의 X선 회절 사진이다. 이 사진이 특별한 이유는 이전의 어떤 DNA 사진보다도 선명하게 나선 구조의 특징을 보여주었기 때문이다. X선 결정학에서 <strong>X자 형태의 회절 패턴은 나선 구조의 전형적 신호(signature)</strong>이다 -- 이것은 1950년대 Alexander Stokes가 수학적으로 예측한 것과 정확히 일치했다.</p>
+        </div>
+
+        <div class="tip">
+          Photo 51은 노출 시간이 62시간이나 걸린 사진이다. 이것은 Franklin의 실험 기술이 얼마나 정교했는지를 보여준다 -- 긴 노출 동안 DNA 시료와 장비를 완벽하게 안정적으로 유지해야 했기 때문이다.
+        </div>
+      </section>
+
+      <!-- Page 7 -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>킹스 칼리지의 라이벌: Wilkins vs. Franklin</h2>
+
+        <div class="summary-box">
+          킹스 칼리지 런던에서 Wilkins와 Franklin 사이의 성격 충돌과 소통 실패가 발견을 지연시켰다. 이 갈등의 근본에는 성차별적 제도와 잘못된 역할 인식이 있었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Maurice Wilkins -- 동료 (The Colleague)</div>
+          <p>Wilkins는 Franklin이 킹스 칼리지에 합류했을 때 그녀를 <strong>자신의 조수(assistant)로 여겼다</strong>. 실제로 Franklin은 독립적인 연구원(independent researcher)으로 고용된 것이었지만, Wilkins는 이를 제대로 인지하지 못했다. 그는 협력(collaboration)을 선호했지만 소통(communication)에 어려움을 겪었다. 이 오해는 1950년대 영국 학계의 성차별적 문화가 만든 산물이기도 했다 -- 당시 킹스 칼리지에는 남성 전용 교수 식당이 있었고, 여성 연구자는 별도의 공간을 사용해야 했다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Rosalind Franklin -- 전문가 (The Expert)</div>
+          <p>Franklin은 탁월한 X선 결정학자(Brilliant X-ray Crystallographer)로, 추측보다 <strong>엄밀한 데이터를 선호</strong>했다. 그녀는 홀로 작업하는 것을 선호했는데(worked in isolation), 이것은 반사회적이었기 때문이 아니라 과학적 정밀성을 추구하는 그녀의 작업 방식이었다. 그녀는 데이터가 충분히 축적될 때까지 결론을 내리지 않는 신중한 태도를 견지했다.</p>
+        </div>
+
+        <div class="key-point">
+          이 <strong>성격 충돌(clash of personalities)</strong>이 발견의 길을 늦추었다(slowed the path to discovery). 만약 두 사람이 효과적으로 협력했다면, 킹스 칼리지 팀이 먼저 이중나선 구조를 발표했을 가능성이 높다. 아이러니하게도 이 갈등이 Watson과 Crick에게 기회를 제공한 셈이 되었다.
+        </div>
+      </section>
+
+      <!-- Page 8 -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>무단 전달 (The Unauthorized Transfer)</h2>
+
+        <div class="summary-box">
+          1953년 초, Wilkins가 Franklin의 동의 없이 Photo 51을 Watson에게 보여준 사건은 과학 윤리 역사에서 가장 논쟁적인 순간 중 하나이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">위반 (THE BREACH)</div>
+          <p>1953년 초, Maurice Wilkins는 <strong>Rosalind Franklin의 동의나 인지 없이(without Franklin's knowledge)</strong> Photo 51을 James Watson에게 보여주었다. 이것은 현대 과학 윤리 기준으로 보면 명백한 <strong>지적 재산권 침해(intellectual property breach)</strong>에 해당한다. 당시에는 이러한 데이터 공유에 대한 공식적 규정이 없었지만, 동료 연구자의 미발표 데이터를 본인 허락 없이 경쟁 연구팀에 보여주는 것은 어떤 시대에서든 비윤리적인 행위였다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">반응 (THE REACTION)</div>
+          <blockquote>
+            "The instant I saw the picture my mouth fell open and my pulse began to race."<br>
+            (그 사진을 본 순간, 나의 입은 벌어졌고 맥박이 빨라지기 시작했다.)<br>
+            -- James Watson
+          </blockquote>
+          <p>Watson은 Photo 51을 보는 즉시 그 의미를 파악했다. X자 패턴이 나선 구조를 확증하고, 사진에서 읽어낼 수 있는 수치적 데이터(나선의 지름, 반복 단위의 간격 등)가 모델 구축에 필요한 핵심 치수(crucial dimensions)를 제공했다.</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>영향 (THE IMPACT)</strong><br>
+          이 한 장의 사진이 Watson과 Crick에게 모델 구축에 필요한 <strong>결정적 치수(crucial dimensions)</strong>를 제공했다. 나선의 지름(약 20A), 한 회전당 거리(34A), 염기쌍 간격(3.4A) 등의 정보가 Photo 51에서 직접 추출될 수 있었다. 이 데이터 없이는 정확한 모델 구축이 불가능했을 것이다.
+        </div>
+      </section>
+
+      <!-- Page 9 -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>더럽혀진 깨달음 (The Tainted Epiphany)</h2>
+
+        <div class="summary-box">
+          Watson은 Photo 51의 중요성을 즉시 인식했지만, Franklin은 같은 데이터를 더 신중하게 분석하고 있었다. 이 불평등한 상황에서 Watson은 Franklin의 원시 데이터를 이용해 결승선을 먼저 통과했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">불평등 (THE INEQUALITY)</div>
+          <p>여기서 핵심적 불공정이 드러난다. Franklin은 자신의 데이터를 <strong>신중하게(with caution) 분석</strong>하고 있었다 -- 그녀는 데이터가 완전히 분석될 때까지 결론을 서두르지 않는 과학적 엄밀성을 추구했다. 반면 Watson은 그녀의 <strong>원시 데이터(raw data)</strong>를 무단으로 활용하여 결승선을 먼저 통과했다. Wilkins와 Gosling이 데이터의 의미를 놓고 망설이는(hesitated) 동안, Watson은 그 데이터의 진정한 의미(true significance)를 즉각 인식했다.</p>
+          <p style="margin-top:10px">이것은 과학적 능력의 차이가 아니라, <strong>정보 접근의 불평등</strong>에서 비롯된 결과였다. Franklin은 자기 데이터를 가지고 올바른 과학적 절차를 밟고 있었고, Watson은 그 데이터를 훔쳐본 것이었다.</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>비극 (THE TRAGEDY)</strong><br>
+          Franklin은 1958년에 사망했으며, 자신의 데이터가 어떻게 사용되었는지의 전모를 결코 알지 못했다(never knowing the true extent of how her data was used). Watson이 1968년 회고록 "The Double Helix"를 출판하기 전에 이미 세상을 떠난 것이다.
+        </div>
+      </section>
+
+      <!-- Page 10 -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>잊혀진 학생: Raymond Gosling (사례 연구)</h2>
+
+        <div class="summary-box">
+          Franklin의 박사과정 학생이었던 Raymond Gosling은 실제로 Photo 51을 직접 촬영한 인물이지만, 역사의 뒤안길로 사라졌다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">역할과 기여</div>
+          <p><strong>Raymond Gosling</strong>은 킹스 칼리지에서 Franklin의 박사과정 학생(PhD student)이었다. 그의 기여는 과학사에서 충분히 인정받지 못했다.</p>
+          <p style="margin-top:10px"><strong>기여 (CONTRIBUTION)</strong>: Gosling은 최초로 유전자를 결정화한 인물(first to crystallize genes)이다. 그는 1952년 5월, Franklin의 감독 하에 직접 Photo 51을 촬영했다. 즉, 역사를 바꾼 사진을 물리적으로 찍은 것은 Gosling의 손이었다.</p>
+          <p style="margin-top:10px"><strong>유산 (LEGACY)</strong>: 안타깝게도 Gosling은 박사학위 이후 학계에서 자리를 잡는 데 어려움을 겪었고(struggled post-PhD), 결국 해당 분야를 떠났다. 노벨상 수상자들과 달리 학계에서의 안정적 경력을 확보하지 못한 것이다.</p>
+        </div>
+
+        <div class="key-point">
+          <blockquote>
+            "In a sense, Wilkins and I were looking for the same thing... but I had the data, and they had the model."<br>
+            (어떤 의미에서 Wilkins와 나는 같은 것을 찾고 있었습니다... 하지만 나에게는 데이터가 있었고, 그들에게는 모델이 있었습니다.)<br>
+            -- Raymond Gosling
+          </blockquote>
+          <p>이 인용문은 과학 발견에서 <strong>데이터(실험)와 이론(모델)</strong>의 관계, 그리고 공로 배분의 불공정을 날카롭게 요약한다.</p>
+        </div>
+      </section>
+
+      <!-- Page 11 -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>노벨상 배제 (The Nobel Exclusion)</h2>
+
+        <div class="summary-box">
+          Franklin의 노벨상 배제는 비극(사망), 규칙(사후 수상 불가), 정치("3인 규칙"), 그리고 뒤늦은 인정이라는 네 가지 차원에서 이해할 수 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">네 가지 측면</div>
+          <p><strong>THE TRAGEDY (비극)</strong>: Rosalind Franklin은 1958년 난소암(ovarian cancer)으로 37세에 사망했다. 그녀의 암은 장기간 X선에 노출된 것과 관련이 있을 수 있다는 추측이 있다 -- 당시에는 방사선 방호 기준이 현재보다 훨씬 느슨했다.</p>
+          <p style="margin-top:10px"><strong>THE RULE (규칙)</strong>: 노벨상은 <strong>절대로 사후에 수여되지 않는다(never awarded posthumously)</strong>. 이 규칙은 1974년에 공식화되었지만, 관행적으로 그 이전부터 적용되었다.</p>
+          <p style="margin-top:10px"><strong>THE POLITICS (정치)</strong>: 노벨상에는 <strong>"3인 규칙(Rule of Three)"</strong>이 있어, 한 분야에서 최대 3명까지만 공동 수상할 수 있다. Franklin이 살아 있었다면 Watson, Crick, Wilkins, Franklin 4명 사이에서 누구를 제외할지 결정해야 하는 정치적 난제가 발생했을 것이다.</p>
+          <p style="margin-top:10px"><strong>THE RECOGNITION (인정)</strong>: Franklin의 기여가 제대로 알려지기 시작한 것은 Watson이 수년 후 출판한 회고록 "The Double Helix"(1968) 때문이다. 역설적으로 그녀를 폄하하려던 서술이 오히려 그녀의 기여를 세상에 알리는 계기가 되었다.</p>
+        </div>
+      </section>
+
+      <!-- Page 12 -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>DNA 노벨상 뒤의 60년간의 비밀</h2>
+
+        <div class="summary-box">
+          Gann & Witkowski가 2013년 <em>Nature</em>에 발표한 논문은 1962년 노벨상 수여 과정에 숨겨진 비밀을 밝혀냈다. 공식 역사에는 눈에 띄는 누락(glaring omission)이 있었고, 진실은 분실된 편지(missing letter)에 묻혀 있었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">발견의 배경</div>
+          <p>수십 년간 1962년 노벨 생리의학상의 공식 서사(official story)는 비교적 단순했다: Watson, Crick, Wilkins가 DNA 구조를 밝혔고 수상했다. 그러나 과학사학자 <strong>Alexander Gann</strong>과 <strong>Jan Witkowski</strong>는 2013년 <em>Nature</em> 저널에 발표한 서신(Correspondence)에서, 이 공식 이야기에 <strong>눈에 띄는 누락</strong>이 있음을 밝혀냈다. 진실의 열쇠는 수십 년간 분실되어 있던 한 통의 편지에 있었다.</p>
+        </div>
+
+        <div class="tip">
+          노벨상 기록 보관소(Nobel Archives)는 수상 후 50년이 지나면 공개된다. 이 규칙 덕분에 2012년 이후 1962년 수상 관련 문서를 연구할 수 있게 되었고, Gann & Witkowski의 발견이 가능해졌다.
+        </div>
+      </section>
+
+      <!-- Page 13 -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>신화와 사라진 증거 (The Myth and the Missing Evidence)</h2>
+
+        <div class="summary-box">
+          Crick이 Monod에게 보낸 9페이지 요약서, Watson의 주장, 그리고 노벨 기록 보관소에서 발견되지 않은 추천서 -- 이 세 가지 요소가 미스터리를 구성한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">사건의 경위</div>
+          <p>1961년 12월, <strong>Francis Crick</strong>은 프랑스 생화학자 <strong>Jacques Monod</strong>(1965년 노벨 생리의학상 수상자)에게 DNA 발견에 대한 <strong>9페이지 분량의 요약서</strong>를 보냈다. Watson은 Monod가 이 요약서를 바탕으로 1962년 노벨 생리의학상 추천서(nomination)를 준비하고 있었다고 주장했다.</p>
+          <p style="margin-top:10px">그러나 역사가들이 이를 검증하기 위해 노벨 기록 보관소를 조사했을 때, <strong>Monod의 추천서는 존재하지 않았다(simply wasn't there)</strong>.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">노벨 생리의학상 추천 기록</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>추천인</th><th>제출일</th><th>수상년도</th><th>피추천인</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Michael Stoker</td><td>1960.01.22</td><td>1960</td><td>Francis Crick & James Watson</td></tr>
+              <tr><td>George Beadle</td><td>1960.11.19</td><td>1961</td><td>Crick & Watson; Wilkins 추가 추천</td></tr>
+              <tr><td>Albert Szent-Gyorgyi</td><td>1960.12.06</td><td>1961</td><td>Crick & Watson</td></tr>
+              <tr><td>Gilbert Mudge</td><td>1961.02.23</td><td>1961</td><td>Crick & Watson</td></tr>
+              <tr><td>Charles Stuart-Harris</td><td>1961.11.06</td><td>1962</td><td>Crick, Watson & Wilkins</td></tr>
+              <tr><td>George Beadle</td><td>1961.11.07</td><td>1962</td><td>Crick & Watson; Wilkins 추가 추천</td></tr>
+            </tbody>
+          </table>
+          <p style="margin-top:10px">이 표에서 주목할 점: Jacques Monod의 이름은 어디에도 없다. 또한 <strong>Rosalind Franklin의 이름도 어떤 추천 목록에도 등장하지 않는다.</strong></p>
+        </div>
+      </section>
+
+      <!-- Page 14 -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>파리의 반전 (The Archival Twist in Paris)</h2>
+
+        <div class="summary-box">
+          분실된 편지가 파리 파스퇴르 연구소에서 발견되었다. 놀랍게도 Monod는 생리의학상이 아닌 <strong>화학상(Chemistry)</strong>으로 추천했다. 이 사실은 당시 노벨 위원회 내부의 학문 분야 간 갈등을 드러낸다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">반전의 내용</div>
+          <p>분실된 편지는 결국 파리의 <strong>파스퇴르 연구소(Pasteur Institute)</strong>에서 추적, 발견되었다. 편지의 내용은 기존 서사를 완전히 뒤집었다.</p>
+          <blockquote>
+            "In answer to your kind request of September 1961... I would like to nominate for the Nobel Prize in <strong>Chemistry</strong>, jointly: Drs. Francis Crick, of Cambridge University, J.D. Watson, of Harvard University, and M. Wilkins, of King's College, University of London, for their discovery of the structure of deoxyribose nucleic acid."
+          </blockquote>
+          <p style="margin-top:10px"><strong>THE TWIST (반전)</strong>: Monod는 실제로 그들을 <strong>화학상(Chemistry)</strong>에 추천했지, 생리의학상(Physiology or Medicine)이 아니었다. 이것이 추천서가 생리의학상 기록 보관소에서 발견되지 않은 이유였다.</p>
+          <p style="margin-top:10px">이 사실은 노벨 위원회에 딜레마를 만들었다 -- DNA 구조 발견은 화학과 의학 두 분야에 걸쳐 있었기 때문이다. 1958년 노벨상 수상자 <strong>George Beadle</strong>은 의학 위원회에 촉구했다: <em>"it is so important for biology that it should be recognized by the Prize in Physiol. & Med. if the chemists do not do so"</em> (이것은 생물학에 너무 중요하여, 만약 화학 위원회가 인정하지 않는다면 생리의학상으로라도 인정해야 한다).</p>
+        </div>
+      </section>
+
+      <!-- Page 15 -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>알려지지 않은 개척자 (The Unsung Pioneer)</h2>
+
+        <div class="summary-box">
+          Crick 자신이 1961년 Monod에게 보낸 요약서에서 Franklin의 X선 데이터의 중요성을 명시적으로 인정했음에도, 그녀는 어떤 추천 명단에도 포함되지 않았다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">인정과 배제의 역설</div>
+          <p>Crick이 1961년 Monod에게 보낸 9페이지 요약서에는 Franklin의 X선 데이터가 발견에 얼마나 핵심적이었는지가 <strong>명시적으로 인정(explicitly acknowledged)</strong>되어 있었다. 그렇다면 왜 그녀는 추천 명단에 이름을 올리지 못했는가?</p>
+          <p style="margin-top:10px">답은 명확하다: Franklin은 1958년에 사망했고, 노벨 규정은 사후 수여를 엄격히 금지한다(strictly forbid posthumous awards). 따라서 1960년 첫 추천이 이루어졌을 때 이미 그녀는 법적으로 수상 대상이 될 수 없었다.</p>
+          <p style="margin-top:10px">하지만 더 깊은 질문이 남는다: 1958년 이전에는 왜 아무도 Franklin을 추천하지 않았는가? 그녀가 살아 있을 때 이루어진 추천은 단 한 건도 없었다. 이것은 제도적 성차별과 킹스 칼리지 내부의 갈등이 얼마나 깊었는지를 보여준다.</p>
+        </div>
+
+        <div class="key-point">
+          모든 과학적 승리 뒤에는 <strong>엄격한 제도적 규칙(strict institutional rules)</strong>, <strong>학문 분야 간 경쟁(disciplinary battles)</strong>, 그리고 <strong>깊이 인간적인 이야기(deeply human stories)</strong>가 숨어 있다는 교훈을 잊지 말아야 한다.
+        </div>
+      </section>
+
+      <!-- Page 16 -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>거인의 몰락: James Watson</h2>
+
+        <div class="summary-box">
+          DNA 구조 발견 이후 수십 년간 과학계의 중심에 서 있던 Watson은 2007년 인종차별적 발언으로 인해 모든 것을 잃었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">DNA의 얼굴 (1960s-1990s)</div>
+          <p>Watson은 노벨상 수상 이후 <strong>Cold Spring Harbor Laboratory (CSHL)</strong>의 소장(Director)을 역임하며 미국 분자생물학의 중심에 서 있었다. 그는 또한 <strong>인간 게놈 프로젝트(Human Genome Project)</strong>의 발족을 이끌며, 인류 유전체의 전체 서열을 해독하는 대규모 국제 프로젝트를 시작했다. 이 시기의 Watson은 명실상부한 과학계의 거인이었다.</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>2007년: 몰락 (The Unraveling)</strong><br>
+          Watson은 <em>Sunday Times</em>와의 인터뷰에서 아프리카의 전망에 대해 <strong>"본질적으로 비관적(Inherently gloomy about the prospect of Africa)"</strong>이라고 말하며, 지능에 대한 인종차별적 주장을 펼쳤다. 그는 모든 인간이 동등한 지적 능력을 가진다는 전제로 만들어진 사회정책이 잘못된 가정에 기반한다고 시사했다.<br><br>
+          <strong>결과</strong>: CSHL에서 사임, 명예 직함들이 박탈되었다. DNA의 구조를 발견한 사람이 인간의 근본적 평등성을 부정하는 모순 -- 인간 게놈 프로젝트의 핵심 발견 중 하나가 바로 <strong>인종 간 유전적 차이가 생물학적으로 무의미할 정도로 미미하다</strong>는 것이었다는 점에서 더욱 아이러니하다.
+        </div>
+      </section>
+
+      <!-- Page 17 -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>역사의 경매 (Auctioning the History)</h2>
+
+        <div class="summary-box">
+          2014년, Watson은 생존한 노벨상 수상자로서는 최초로 자신의 메달을 경매에 내놓았다. 410만 달러에 낙찰된 이 사건은 과학적 영광과 인간적 결함의 교차점을 상징한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">사건 상세</div>
+          <p><strong>THE EVENT</strong>: 2014년, James Watson은 살아있는 노벨상 수상자 중 최초로(first living laureate) 자신의 메달을 경매에 부쳤다.</p>
+          <p style="margin-top:10px"><strong>THE PRICE</strong>: <strong>410만 달러($4.1 Million)</strong>에 낙찰. 구매자는 러시아 억만장자 Alisher Usmanov으로, 그는 메달을 Watson에게 반환하기까지 했다.</p>
+          <p style="margin-top:10px"><strong>THE REASON</strong>: Watson은 자신의 발언 이후 과학 공동체에서 <strong>"비인격(unperson)"</strong>이 되었다고 주장했다. 강연 초청이 끊기고, 학회에서 배제되었으며, 연구비를 확보할 수 없게 되었다고 말했다.</p>
+        </div>
+
+        <div class="key-point">
+          <strong>THE IRONY (아이러니)</strong>: 생명의 코드(code of life)를 발견한 사람이 그 코드 안에 담긴 <strong>인간성(humanity)</strong>을 존중하지 못했다. DNA 서열 분석이 보여주는 것은 인류의 유전적 다양성이 극히 작으며(전체 게놈의 0.1% 미만의 차이), 인종은 생물학적 범주가 아닌 사회적 구성물이라는 것이다.
+        </div>
+      </section>
+
+      <!-- Page 18 -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>메아리: 선행주의(Proactionary)의 위험</h2>
+
+        <div class="summary-box">
+          1953년의 "영광을 향한 경주"가 현대 생명공학에서 그대로 반복되고 있다. 2018년 허젠쿠이(He Jiankui)의 "CRISPR 아기" 사건이 그 대표적 예이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">평행선 (THE PARALLEL)</div>
+          <p>1953년 DNA 구조 발견을 둘러싼 "영광을 향한 경주(race for glory)" 패턴이 현대 생명공학(biotech)에서도 반복되고 있다. "먼저 하는 것이 옳은 것보다 중요하다"는 태도는 <strong>선행주의 원칙(Proactionary Principle)</strong>이라 불리는데, 이는 사전예방 원칙(Precautionary Principle)의 반대 개념으로, 위험이 완전히 이해되기 전에 먼저 행동하는 것을 정당화한다.</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>THE INCIDENT (사건)</strong>: 2018년, 중국 과학자 <strong>허젠쿠이(He Jiankui)</strong>가 CRISPR-Cas9 유전자 편집 기술을 사용하여 HIV에 저항하도록 유전자를 편집한 쌍둥이 <strong>나나(Nana)와 루루(Lulu)</strong>의 출생을 발표했다. 이것은 세계 최초의 유전자 편집 인간이었다.<br><br>
+          <strong>THE VIOLATION (위반)</strong>: 윤리 심사를 위조하고(forged ethical reviews), 환자를 속였으며(misled patients), 과학계의 합의(consensus)를 무시했다. 생식세포 편집(germline editing)은 변경된 유전자가 다음 세대로 전달되므로, 국제 합의에 의해 금지되어 있었다.<br><br>
+          <strong>THE COST (대가)</strong>: <strong>3년 징역형</strong>. 그러나 나나와 루루에게 남겨진 알 수 없는 유전적 위험(unknown genetic risks)은 그 어떤 처벌로도 되돌릴 수 없다. CRISPR 편집은 의도하지 않은 오프타겟 효과(off-target effects)를 초래할 수 있으며, 이 아이들이 향후 어떤 건강 문제를 겪게 될지는 아직 알 수 없다.
+        </div>
+      </section>
+
+      <!-- Page 19 -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 19</span>
+        <h2>허젠쿠이 사건: 후속 보도</h2>
+
+        <div class="summary-box">
+          <em>Science</em> 저널의 보도와 허젠쿠이 본인의 SNS 발언을 통해 이 사건의 여파와 그의 태도를 살펴본다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Science 보도</div>
+          <p><em>Science</em> 저널은 "Chinese scientist who produced genetically altered babies sentenced to 3 years in jail"이라는 제목으로 허젠쿠이의 판결을 보도했다. 심천 법원은 그와 두 명의 공범이 <strong>"불법 의료 행위(illegal medical practices)"</strong>에 해당하는 유죄 판결을 받았다고 확인했다. 법원은 피고인들이 의도적으로 국가 생물의학 연구 및 의료 윤리 규정을 위반하고, 유전자 편집 기술을 인간 생식의학에 무모하게 적용했다고 판시했다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">허젠쿠이의 반응</div>
+          <p>2022년 출소 후, 허젠쿠이는 유전자 치료를 위한 새로운 연구소를 설립했다. 더 충격적인 것은 그의 2024년 10월 SNS 발언이다:</p>
+          <blockquote>
+            "I will apologize for the gene edited baby experiment, only if their parents have requested it. However, they are happy with the results now."<br>
+            (유전자 편집 아기 실험에 대해 사과하겠습니다만, 부모가 요청한 경우에만요. 하지만 그들은 현재 결과에 만족하고 있습니다.)<br>
+            -- @Jiankui_He, 2024.10.23 (조회수 120만)
+          </blockquote>
+          <p>이 발언은 과학적 윤리 위반에 대한 <strong>반성의 부재</strong>와, "결과가 좋으면 과정은 정당화된다"는 위험한 논리를 보여준다.</p>
+        </div>
+      </section>
+
+      <!-- Page 20 -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 20</span>
+        <h2>과학적 정의: 응보 vs. 회복 (Retribution vs. Restoration)</h2>
+
+        <div class="summary-box">
+          허젠쿠이 사건을 계기로 "과학적 윤리 위반자를 어떻게 다루어야 하는가"에 대한 두 가지 대립적 관점이 제시된다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">두 가지 정의관</div>
+          <strong>응보적 정의 (Retribution)</strong><br>
+          &nbsp;&nbsp;처벌: 영구 추방 (Permanent Ban)<br>
+          &nbsp;&nbsp;근거: 무모한 행위자로부터 과학 분야를 보호<br>
+          &nbsp;&nbsp;장점: 강력한 억제력, 명확한 메시지<br>
+          &nbsp;&nbsp;단점: 인재 손실, 회복 기회 차단<br><br>
+
+          <strong>회복적 정의 (Restoration)</strong><br>
+          &nbsp;&nbsp;처벌: 재활 (Rehabilitation)<br>
+          &nbsp;&nbsp;실제 사례: 허젠쿠이는 2022년 출소 후 유전자 치료를 위한 새 연구소를 설립<br>
+          &nbsp;&nbsp;장점: 전문성 활용, 사회 복귀 기회<br>
+          &nbsp;&nbsp;단점: 선례 설정 우려, 피해 경시 가능성
+        </div>
+
+        <div class="warning-box">
+          <strong>THE LESSON (교훈)</strong><br>
+          우리는 유전자 편집을 기존의 기술(conventional tech)처럼 규제하고 있지만, 이것은 <strong>'선행주의 원칙(Proactionary Principle)' 함정</strong>을 무시하는 것이다. 유전자 편집, 특히 생식세포 편집은 <strong>미래 세대에 영구적으로 영향을 미칠 수 있는 위험(risks that can affect future generations forever)</strong>을 수반한다. 한번 편집된 유전자는 되돌릴 수 없으며, 그 영향은 영구히 유전된다는 점에서 다른 어떤 기술적 실수와도 본질적으로 다르다.
+        </div>
+      </section>
+
+      <!-- Page 21 -->
+      <section class="page-section" id="p21">
+        <span class="page-num">Page 21</span>
+        <h2>그림자의 해부 (Anatomy of the Shadows)</h2>
+
+        <div class="summary-box">
+          DNA 발견의 이면에 드리워진 네 가지 그림자를 체계적으로 정리한다: 도용, 성차별, 인종주의, 오만.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">네 가지 경고 (Four Alerts)</div>
+          <strong style="color:#C0583F">THEFT (도용)</strong><br>
+          &nbsp;&nbsp;Photo 51의 무단 공유 (1953)<br>
+          &nbsp;&nbsp;동의 없이 동료의 미발표 실험 데이터를 경쟁팀에 제공<br><br>
+
+          <strong style="color:#C0583F">SEXISM (성차별)</strong><br>
+          &nbsp;&nbsp;"Rosy" 캐리커처와 체계적 과소평가<br>
+          &nbsp;&nbsp;남성 전용 교수 식당, 여성 연구자에 대한 구조적 배제<br><br>
+
+          <strong style="color:#C0583F">RACISM (인종주의)</strong><br>
+          &nbsp;&nbsp;Watson의 우생학적 관점 vs. 인간 게놈의 실제 가르침<br>
+          &nbsp;&nbsp;게놈 데이터가 보여주는 인종 간 유전적 차이의 미미함을 부정<br><br>
+
+          <strong style="color:#C0583F">HUBRIS (오만)</strong><br>
+          &nbsp;&nbsp;"올바른 것(Right)" 보다 "최초(First)"를 우선시<br>
+          &nbsp;&nbsp;DNA 발견에서 CRISPR 아기까지 이어지는 패턴
+        </div>
+
+        <div class="tip">
+          이 네 가지 그림자는 개별적인 사건이 아니라 서로 연결된 구조적 문제이다. 도용이 가능했던 것은 성차별적 환경이 Franklin을 보호하지 못했기 때문이고, 오만은 인종주의적 사고로 이어졌다.
+        </div>
+      </section>
+
+      <!-- Page 22 -->
+      <section class="page-section" id="p22">
+        <span class="page-num">Page 22</span>
+        <h2>제2의 혁명 (The Second Revolution)</h2>
+
+        <div class="summary-box">
+          1953년이 생명의 지도(MAP)를 제공했다면, 현재의 제2혁명(유전자 편집)에는 도덕적 나침반(MORAL COMPASS)이 필요하다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 메시지</div>
+          <p><strong>1953년의 제1혁명</strong>은 우리에게 생명의 <strong>지도(MAP)</strong>를 주었다 -- DNA 이중나선 구조의 발견은 생명이 어떻게 코딩되어 있는지를 처음으로 보여주었다.</p>
+          <p style="margin-top:10px"><strong>현재의 제2혁명</strong>, 즉 <strong>유전자 편집(Gene Editing)</strong> 시대에는 <strong>도덕적 나침반(MORAL COMPASS)</strong>이 필요하다. 지도만으로는 올바른 방향을 찾을 수 없다 -- 기술적 능력에 윤리적 판단이 반드시 동반되어야 한다.</p>
+          <p style="margin-top:10px">과학은 인간에 의해 수행되며(Science is done by humans), 인간의 결함에 종속된다(subject to flaws). 우리는 <strong>발견(discovery)과 발견자(discoverer)를 분리</strong>해야 하지만, 그 과정에서 치러진 <strong>대가(cost)를 결코 잊어서는 안 된다</strong>.</p>
+        </div>
+
+        <div class="key-point">
+          이중나선 안에 새겨진 이름들 -- Franklin, Gosling, Watson, Crick, He Jiankui, Nana, Lulu -- 은 과학적 발견이 항상 인간의 이야기이며, 그 이야기에는 빛과 어둠이 공존한다는 것을 상기시킨다.
+        </div>
+      </section>
+
+      <!-- Page 23 -->
+      <section class="page-section" id="p23">
+        <span class="page-num">Page 23</span>
+        <h2>토론: 발견과 발견자를 분리할 수 있는가?</h2>
+
+        <div class="summary-box">
+          "Can we separate the Discovery from the Discoverer?" -- 이것은 과학 윤리의 근본적 질문이자 이 강의의 핵심 토론 주제이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">토론 포인트</div>
+          <p>이 질문은 여러 층위에서 생각해볼 수 있다:</p>
+          <p style="margin-top:10px"><strong>1. Watson의 경우</strong>: DNA 이중나선 구조의 발견은 객관적 과학적 사실이다. Watson의 인종차별적 발언이 이 발견의 가치를 훼손하는가? 그의 과학적 업적은 인정하되 그의 사상은 거부할 수 있는가?</p>
+          <p style="margin-top:10px"><strong>2. Franklin의 경우</strong>: 발견의 공로를 인정하는 방식이 발견자의 정체성(성별, 지위 등)에 의해 왜곡될 때, 과학의 객관성이라는 이상은 어디에 있는가?</p>
+          <p style="margin-top:10px"><strong>3. 허젠쿠이의 경우</strong>: 비윤리적으로 얻어진 과학적 데이터(유전자 편집 아기들의 건강 추적 데이터 등)를 활용하는 것은 윤리적인가?</p>
+          <p style="margin-top:10px"><strong>4. 보편적 질문</strong>: 과학적 발견은 발견자의 인품과 독립적으로 존재할 수 있는가, 아니면 발견의 맥락(누가, 어떻게, 어떤 대가로)이 발견 자체의 일부인가?</p>
+        </div>
+      </section>
+
+      <!-- Page 24 -->
+      <section class="page-section" id="p24">
+        <span class="page-num">Page 24</span>
+        <h2>Part 1 요약: DNA의 어두운 면</h2>
+
+        <div class="summary-box">
+          "DNA's Dark Side: The Scandals Behind the Secret of Life" -- Part 1의 모든 내용을 종합하는 인포그래픽 요약이다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">종합 인포그래픽 -- DNA의 어두운 면</div>
+          <strong>Rosalind Franklin의 소외</strong><br>
+          &nbsp;&nbsp;-- "Photo 51": Wilkins가 Franklin의 핵심 X선 데이터를 무단 공유<br>
+          &nbsp;&nbsp;-- "Rosy" 캐리커처: Watson의 회고록이 만들어낸 왜곡된 이미지<br>
+          &nbsp;&nbsp;-- 킹스 칼리지의 제도적 성차별: 남녀 분리된 공용실<br><br>
+
+          <strong>노벨상 수상 vs. 실제 기여</strong><br>
+          &nbsp;&nbsp;-- Watson: 모델 구축 & 이론 (공유)<br>
+          &nbsp;&nbsp;-- Crick: 모델 구축 & 이론 (공유)<br>
+          &nbsp;&nbsp;-- Wilkins: 실험적 증거 (공유)<br>
+          &nbsp;&nbsp;-- Franklin: 핵심 X선 결정학 데이터 (사망/배제)<br><br>
+
+          <strong>James Watson: 천재의 추락</strong><br>
+          &nbsp;&nbsp;-- 과학적 권위의 오용: 인종과 지능에 대한 근거 없는 주장<br>
+          &nbsp;&nbsp;-- 명예 직함 박탈, CSHL 사임<br>
+          &nbsp;&nbsp;-- 유전적 본질주의(Genetic Essentialism)의 위험성
+        </div>
+      </section>
+
+      <!-- ==================== PART 2: APPLICATIONS & FUTURE ==================== -->
+
+      <!-- Page 25 -->
+      <section class="page-section" id="p25">
+        <span class="page-num">Page 25</span>
+        <h2>DNA Discovery: 응용, 혁신, 그리고 제2혁명</h2>
+
+        <div class="summary-box">
+          Part 2는 DNA 구조 발견이 어떻게 실용적 응용으로 이어졌는지, 그리고 유전공학의 미래를 다룬다. 1962년 노벨 생리의학상 수상자: Crick, Watson, Wilkins.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Part 2 개요</div>
+          <p>Part 1에서 DNA 발견의 윤리적 어둠(Dark Side)을 살펴보았다면, Part 2에서는 같은 발견이 가져온 <strong>과학적, 의학적, 사회적 혁명</strong>을 탐구한다. DNA 구조 발견(1953)은 단순한 학술적 성취에 그치지 않고, 유전공학, 맞춤 의학, 법의학, 농업, 그리고 mRNA 백신에 이르기까지 인류의 삶 전반을 변화시켰다.</p>
+          <p style="margin-top:10px">이 변화의 역사는 크게 <strong>두 차례의 혁명</strong>으로 나뉜다:</p>
+          <p>-- <strong>혁명 1.0 (Reading the Code)</strong>: DNA를 읽고 해독하는 시대</p>
+          <p>-- <strong>혁명 2.0 (Writing the Code)</strong>: DNA를 편집하고 설계하는 시대</p>
+        </div>
+      </section>
+
+      <!-- Page 26 -->
+      <section class="page-section" id="p26">
+        <span class="page-num">Page 26</span>
+        <h2>혁명 1.0: 코드 읽기 (Reading the Code)</h2>
+
+        <div class="summary-box">
+          DNA 구조 발견 이후 첫 번째 혁명은 유전 정보를 "읽는" 기술의 발전이었다. 센트럴 도그마(Central Dogma), 유전 코드 해독, 생어 시퀀싱, 생명공학 산업의 탄생으로 이어진다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">센트럴 도그마 (Central Dogma)</div>
+          <strong>DNA</strong> --[전사 Transcription]--&gt; <strong>RNA</strong> --[번역 Translation]--&gt; <strong>PROTEIN</strong><br><br>
+          유전 정보는 DNA에서 RNA로 전사되고, RNA는 리보솜에서 단백질로 번역된다.<br>
+          이 단방향 흐름이 생명 정보 전달의 기본 원리이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 이정표</div>
+          <p><strong>1960년대: 유전 코드 해독 (Cracking the Genetic Code)</strong><br>
+          Marshall Nirenberg, Har Gobind Khorana 등이 DNA/RNA의 3개 염기 조합(triplet codon)이 하나의 아미노산을 지정한다는 것을 밝혀냈다. 64개의 코돈이 20개의 아미노산과 정지 신호를 코딩한다는 "유전 코드표"가 완성되었다 (1968년 노벨상 수상).</p>
+          <p style="margin-top:10px"><strong>1977년: 생어 시퀀싱 (Sanger Sequencing)</strong><br>
+          Frederick Sanger가 개발한 DNA 염기서열 결정법. 디디옥시 체인 종결법(dideoxy chain termination method)을 이용하여 DNA 서열을 글자 하나하나 읽을 수 있게 되었다. 이것은 인간 게놈 프로젝트의 기술적 기반이 되었다.</p>
+          <p style="margin-top:10px"><strong>1980년대: 바이오테크 붐 (Biotech Boom)</strong><br>
+          <strong>Genentech</strong>이 재조합 DNA 기술을 이용하여 인간 인슐린(human insulin)을 합성하는 데 성공(1982). 이전까지 당뇨 환자들은 돼지나 소의 인슐린에 의존해야 했다. 이것은 유전공학이 산업적 가치를 가진다는 것을 증명한 최초의 사례였다.</p>
+        </div>
+      </section>
+
+      <!-- Page 27 -->
+      <section class="page-section" id="p27">
+        <span class="page-num">Page 27</span>
+        <h2>유산: 새로운 세계 (The Legacy: A New World)</h2>
+
+        <div class="summary-box">
+          1953년 DNA 구조 발견에서 오늘날 CRISPR와 맞춤 의학까지, 반세기에 걸친 DNA 과학의 발전을 타임라인으로 조망한다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">DNA 과학 발전 타임라인</div>
+          <strong>1953</strong> -- The Structure: Watson & Crick이 이중나선 구조 발표<br>
+          &nbsp;&nbsp;&darr;<br>
+          <strong>1970s</strong> -- Recombinant DNA: 재조합 DNA 기술 등장, 유전자를 자르고 붙이는 것이 가능해짐<br>
+          &nbsp;&nbsp;&darr;<br>
+          <strong>2003</strong> -- Human Genome Project: 인간 게놈 30억 염기쌍 완전 해독<br>
+          &nbsp;&nbsp;&darr;<br>
+          <strong>Today</strong> -- CRISPR & Personalized Medicine: 유전자 편집과 개인 맞춤 의학 시대
+        </div>
+
+        <div class="key-point">
+          <blockquote>
+            "We can... see the first glimpses of a new world."<br>
+            (우리는... 새로운 세계의 첫 번째 모습을 볼 수 있습니다.)<br>
+            -- 노벨상 시상식 연설 (Nobel Ceremony Speech)
+          </blockquote>
+          <p>이 인용문은 1962년 노벨 시상식에서 발표된 것으로, DNA 구조 발견이 단순한 과학적 발견을 넘어 인류 문명의 새로운 장을 열 것이라는 예언적 선언이었다. 60년이 지난 지금, 그 예언은 현실이 되었다.</p>
+        </div>
+      </section>
+
+      <!-- Page 28 -->
+      <section class="page-section" id="p28">
+        <span class="page-num">Page 28</span>
+        <h2>인간 게놈 프로젝트 (1990-2003)</h2>
+
+        <div class="summary-box">
+          인간의 전체 DNA 서열 30억 염기쌍을 해독한 대규모 국제 프로젝트. "달착륙(Moonshot)"에 비견되는 생물학 역사상 가장 야심찬 프로젝트였다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">프로젝트 상세</div>
+          <p><strong>목표 (The Moonshot)</strong>: 인간 DNA의 전체 <strong>30억 염기쌍(3 billion base pairs)</strong>을 지도화(mapping)하는 것. 프로젝트명의 "Moonshot"이라는 비유는 1960년대 아폴로 달 착륙 프로젝트에서 따온 것으로, 그만큼 대담하고 전례 없는 과학적 도전이었다.</p>
+          <p style="margin-top:10px"><strong>놀라운 발견 (The Surprise)</strong>: 인간의 유전자 수는 예상(약 10만 개)보다 훨씬 적은 약 <strong>20,000개</strong>에 불과했다. 이것은 초파리의 유전자 수(약 14,000개)와 크게 다르지 않은 수치였다. 이 발견은 생물학적 복잡성이 유전자 수가 아닌 <strong>유전자 조절(regulation)</strong>에서 비롯된다는 패러다임 전환을 가져왔다. 선택적 스플라이싱(alternative splicing), 후성유전학(epigenetics), 비코딩 RNA 등의 조절 메커니즘이 복잡성의 열쇠였다.</p>
+          <p style="margin-top:10px"><strong>영향 (Impact)</strong>: 생물학을 소규모 관찰(small-scale observation)에서 <strong>빅 데이터 과학(Big Data science)</strong>으로 전환시켰다. 이후 생물정보학(bioinformatics), 시스템 생물학(systems biology) 등 새로운 학문 분야가 등장했다.</p>
+        </div>
+
+        <div class="tip">
+          인간 게놈 프로젝트에는 약 27억 달러가 투입되었고, 6개국 20개 기관이 참여했다. 이 프로젝트의 공개 데이터 정책(모든 서열 데이터를 24시간 내에 공개)은 이후 과학 데이터 공유의 모범이 되었다.
+        </div>
+      </section>
+
+      <!-- Page 29 -->
+      <section class="page-section" id="p29">
+        <span class="page-num">Page 29</span>
+        <h2>유전체학의 무어 법칙 (Moore's Law of Genomics)</h2>
+
+        <div class="summary-box">
+          유전체 시퀀싱 비용은 컴퓨팅 비용보다 더 빠르게 하락했다. 이 급격한 비용 감소가 DNA에 대한 접근을 민주화하고 있다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">시퀀싱 비용의 급격한 하락</div>
+          <strong>$100M (2001)</strong> ||||||||||||||||||||||||||||||||<br>
+          <strong>$10k (2010)</strong>&nbsp; ||||||||<br>
+          <strong>$200 (2024)</strong>&nbsp;&nbsp; |<br><br>
+          비용 하락률: 약 50만 배 감소 (23년간)
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>무어의 법칙(Moore's Law)</strong>은 반도체 집적회로의 트랜지스터 수가 약 2년마다 2배로 증가한다는 관찰이다. 유전체학의 비용 하락은 이 법칙보다 <strong>훨씬 더 빠르게</strong> 진행되었다.</p>
+          <p style="margin-top:10px">2001년 인간 게놈 프로젝트 완료 시점에서 한 사람의 게놈을 시퀀싱하는 비용은 약 <strong>1억 달러</strong>였다. 차세대 시퀀싱(Next-Generation Sequencing, NGS) 기술의 등장으로 2010년에는 <strong>1만 달러</strong>까지 떨어졌고, 2024년 현재는 <strong>200달러</strong> 수준이다.</p>
+          <p style="margin-top:10px">이 가격 하락은 DNA 접근을 <strong>민주화(democratizing)</strong>하고 있다. 이전에는 대형 연구기관만 가능했던 게놈 분석이 이제 개인도 가능해졌고, 개발도상국의 연구자들도 유전체 연구에 참여할 수 있게 되었다. 23andMe 같은 소비자 유전체 분석 서비스가 등장한 것도 이 비용 혁명 덕분이다.</p>
+        </div>
+      </section>
+
+      <!-- Page 30 -->
+      <section class="page-section" id="p30">
+        <span class="page-num">Page 30</span>
+        <h2>바이오테크 시대 (The Biotech Era): 읽기에서 쓰기로</h2>
+
+        <div class="summary-box">
+          1953년의 DNA 구조 발견은 DNA를 "관찰하는 분자"에서 "조작하는 도구"로 변모시켰다. 재조합 DNA, 유전자 치료, CRISPR-Cas9으로 이어지는 기술 발전의 궤적을 살펴본다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">읽기에서 쓰기로 (READING TO WRITING)</div>
+          <p><strong>재조합 DNA (Recombinant DNA)</strong>: 한 생물체의 DNA를 다른 생물체에 삽입하는 기술. GMO(유전자 변형 생물)와 인슐린 생산의 기반이 되었다. 1970년대 Stanley Cohen과 Herbert Boyer가 개발했으며, 생명공학 산업의 출발점이었다.</p>
+          <p style="margin-top:10px"><strong>유전자 치료 (Gene Therapy)</strong>: 결함이 있는 유전자를 정상 유전자로 교체하거나 보완하여 유전 질환을 치료하는 접근법. 1990년대 첫 임상시험이 시작되었으나 초기에는 안전성 문제로 어려움을 겪었다. 현재는 척수 근위축증(SMA), 혈우병 등에 대한 유전자 치료제가 승인되어 사용되고 있다.</p>
+          <p style="margin-top:10px"><strong>CRISPR-Cas9</strong>: 정밀하고 빠른 유전자 편집(precise, rapid gene editing) 기술. 이전의 유전공학 기술에 비해 비용이 저렴하고 사용이 간편하며 정확도가 높아 "유전자 편집의 민주화"라고 불린다.</p>
+        </div>
+
+        <div class="key-point">
+          1953년의 발견은 DNA를 <strong>관찰의 대상(molecule to be observed)</strong>에서 <strong>공학의 도구(tool to be engineered)</strong>로 변환시켰다. 이 전환은 생물학의 성격 자체를 바꾸어 놓았다 -- 생물학은 더 이상 순수한 관찰 과학이 아니라, 설계와 조작이 가능한 공학적 학문이 되었다.
+        </div>
+      </section>
+
+      <!-- Page 31 -->
+      <section class="page-section" id="p31">
+        <span class="page-num">Page 31</span>
+        <h2>혁명 2.0: 코드 쓰기 (Writing the Code)</h2>
+
+        <div class="summary-box">
+          CRISPR-Cas9은 "프로그래밍 가능한 분자 가위(programmable molecular scissors)"로, 유전 정보의 "찾기 및 바꾸기(Find and Replace)"를 가능하게 한다. 2020년 노벨 화학상 수상 기술이다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">CRISPR-Cas9 작동 원리</div>
+          <strong>Guide RNA</strong> -- 목표 DNA 서열을 인식하는 안내 RNA<br>
+          &nbsp;&nbsp;&darr; (결합)<br>
+          <strong>CRISPR-Cas9 Protein</strong> -- 분자 가위 역할<br>
+          &nbsp;&nbsp;&darr; (절단)<br>
+          <strong>DNA Strand</strong> --[Cut Site]--> 원하는 위치에서 DNA를 절단<br>
+          &nbsp;&nbsp;&darr; (수선/삽입)<br>
+          세포의 자연적 수선 기작을 이용하여 유전자를 제거, 수정, 또는 삽입
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 요소</div>
+          <p><strong>도구 (The Tool)</strong>: CRISPR-Cas9은 <strong>프로그래밍 가능한 분자 가위(programmable molecular scissors)</strong>이다. 원래 세균(bacteria)이 바이러스 침입에 대항하는 면역 메커니즘에서 발견되었다. 세균은 과거에 침입한 바이러스의 DNA 조각을 자신의 게놈에 "기억"해 두고(CRISPR 배열), 같은 바이러스가 다시 침입하면 Cas9 단백질을 이용해 바이러스 DNA를 절단한다.</p>
+          <p style="margin-top:10px"><strong>응용 (The Application)</strong>: 유전적 오류에 대한 <strong>"찾기 및 바꾸기(Find and Replace)"</strong> 기능. 예를 들어 낫 모양 적혈구 질환(Sickle Cell Disease)은 헤모글로빈 유전자의 단일 염기 변이로 발생하는데, CRISPR으로 이 변이를 교정하면 질병을 치료할 수 있다. 2023년 영국에서 최초의 CRISPR 기반 치료제 Casgevy가 승인되었다.</p>
+          <p style="margin-top:10px"><strong>전환점 (The Shift)</strong>: 2020년 <strong>노벨 화학상</strong>이 <strong>Emmanuelle Charpentier</strong>와 <strong>Jennifer Doudna</strong>에게 수여되었다. 1962년 DNA 구조 발견 이후 가장 중요한 유전학 노벨상으로 평가된다. 두 여성 과학자의 수상은 Franklin의 역사와 대비되어 더욱 상징적이다.</p>
+        </div>
+      </section>
+
+      <!-- Page 32 -->
+      <section class="page-section" id="p32">
+        <span class="page-num">Page 32</span>
+        <h2>현대의 그림자: CRISPR 아기 (The Modern Shadow)</h2>
+
+        <div class="summary-box">
+          2018년 허젠쿠이의 유전자 편집 쌍둥이 탄생은 CRISPR 기술의 윤리적 경계를 무너뜨린 사건이다. 생식세포 편집(germline editing)의 위험성이 현실로 드러났다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">사건 요약 (Applications 관점에서)</div>
+          <p><strong>2018 스캔들</strong>: He Jiankui(허젠쿠이)가 유전자 편집 쌍둥이 "루루(Lulu)"와 "나나(Nana)"의 출생을 발표했다.</p>
+          <p style="margin-top:10px"><strong>위반 (The Violation)</strong>: 그가 수행한 것은 <strong>생식세포 편집(germline editing)</strong>이었다 -- 이는 수정란 단계에서 유전자를 편집하는 것으로, 변경된 유전자가 다음 세대로 유전될 수 있다. 이것이 체세포 유전자 치료(somatic gene therapy, 해당 개인에게만 영향)와 근본적으로 다른 점이다. HIV 감염을 예방하기 위해 CCR5 유전자를 비활성화했지만, CCR5 유전자는 면역 기능에도 관여하므로 예기치 않은 부작용의 가능성이 있다.</p>
+          <p style="margin-top:10px"><strong>결과 (Outcome)</strong>: 전 세계적 비난(global condemnation), 징역형(prison sentence), 그리고 생명윤리에 대한 논쟁의 재점화(reignited debate on bioethics). 이 사건은 CRISPR 기술 자체의 문제가 아니라, 기술을 다루는 인간의 판단력과 윤리 체계의 문제를 부각시켰다.</p>
+        </div>
+      </section>
+
+      <!-- Page 33 -->
+      <section class="page-section" id="p33">
+        <span class="page-num">Page 33</span>
+        <h2>오늘날의 DNA: 법의학 -- DNA 지문감식</h2>
+
+        <div class="summary-box">
+          1984년 Alec Jeffreys가 개발한 DNA 지문감식(DNA Fingerprinting)은 범죄 수사와 친자 확인을 혁명적으로 변화시켰다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">DNA 지문감식 (DNA Fingerprinting)</div>
+          <p><strong>Alec Jeffreys</strong>(레스터 대학)가 1984년에 개발한 이 기술은 DNA의 반복 서열 변이(short tandem repeats, STR)를 분석하여 개인을 <strong>거의 확실하게(near-certainty) 식별</strong>할 수 있게 한다. 동일한 쌍둥이를 제외하면, 두 사람이 동일한 DNA 프로필을 가질 확률은 수십억분의 1에 불과하다.</p>
+          <p style="margin-top:10px"><strong>형사 사법 혁명</strong>: DNA 증거는 범죄 수사를 근본적으로 바꾸었다. 가장 유명한 사례는 <strong>골든 스테이트 킬러(Golden State Killer)</strong> 사건으로, 40년 이상 미해결이던 연쇄 범죄가 유전자 계보 분석(genetic genealogy)을 통해 해결되었다(2018). 범인의 친척이 올린 DNA 데이터베이스 정보를 역추적하여 용의자를 특정했다.</p>
+          <p style="margin-top:10px"><strong>친자 확인(Paternity Testing)</strong>에도 널리 사용되며, 실종자 식별, 재난 피해자 신원 확인 등에도 활용된다.</p>
+        </div>
+
+        <div class="tip">
+          DNA 지문감식의 윤리적 문제도 존재한다. 유전자 데이터베이스의 확대는 프라이버시 침해 우려를 낳으며, 골든 스테이트 킬러 사건에서 사용된 가계 DNA 분석은 범인이 아닌 친척의 DNA가 동의 없이 수사에 활용된 것이어서 논란이 되었다.
+        </div>
+      </section>
+
+      <!-- Page 34 -->
+      <section class="page-section" id="p34">
+        <span class="page-num">Page 34</span>
+        <h2>오늘날의 DNA: 유전공학, 농업, 조상 추적</h2>
+
+        <div class="summary-box">
+          DNA 기술은 법의학을 넘어 유전공학, CRISPR 농업, 유전자 조상 분석 등 사회 전반에 걸쳐 광범위하게 활용되고 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">세 가지 응용 영역</div>
+          <p><strong>유전공학 (Genetic Engineering)</strong>: 한 생물체에서 다른 생물체로 DNA를 잘라 붙이는(cutting and pasting) 기술. 형광 단백질 유전자를 삽입한 형광 물고기, 인간 인슐린을 생산하는 대장균, 거미 실크 단백질을 만드는 염소 등이 그 예이다.</p>
+          <p style="margin-top:10px"><strong>농업 (Agriculture)</strong>: <strong>CRISPR으로 개발한 가뭄 저항성 작물</strong>은 2050년까지 <strong>100억 명</strong>에 달할 것으로 예상되는 세계 인구를 먹여 살리기 위한 핵심 기술이다. 기존 GMO와 달리 CRISPR 편집 작물은 외래 유전자를 삽입하지 않고 기존 유전자를 편집하므로 규제적, 윤리적 논란이 상대적으로 적다.</p>
+          <p style="margin-top:10px"><strong>조상 추적 (Ancestry)</strong>: 수백만 명이 23andMe, AncestryDNA 등의 유전체 데이터베이스를 통해 자신의 <strong>뿌리를 추적</strong>하고 있다. 이 서비스들은 미토콘드리아 DNA(모계 유전)와 Y염색체(부계 유전)를 분석하여 수천 년 전의 조상 이동 경로를 추적할 수 있게 한다.</p>
+        </div>
+      </section>
+
+      <!-- Page 35 -->
+      <section class="page-section" id="p35">
+        <span class="page-num">Page 35</span>
+        <h2>실시간 영향: mRNA 백신</h2>
+
+        <div class="summary-box">
+          1953년 DNA 구조 발견에서 시작된 분자생물학의 흐름이 2020년 COVID-19 mRNA 백신이라는 실시간 응용으로 결실을 맺었다. 바이러스 서열 공개 후 며칠 만에 백신이 설계되었다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">mRNA 백신의 계보</div>
+          <strong>1953</strong> DNA 구조 발견<br>
+          &nbsp;&nbsp;&darr;<br>
+          <strong>1961</strong> mRNA 발견 (Brenner, Jacob, Meselson)<br>
+          &nbsp;&nbsp;&darr;<br>
+          <strong>2020</strong> COVID-19 mRNA 백신 (BioNTech/Pfizer, Moderna)
+        </div>
+
+        <div class="card">
+          <div class="card-label">기술적 원리</div>
+          <p><strong>속도 (The Speed)</strong>: 2020년 1월 SARS-CoV-2 바이러스의 전체 유전체 서열이 공개된 후, 백신은 <strong>며칠 만에 설계(vaccine designed in days)</strong>되었다. 이것은 기존 백신 개발(보통 10-15년)과 비교하면 혁명적 속도였다.</p>
+          <p style="margin-top:10px"><strong>개념 (The Concept)</strong>: mRNA 백신은 <strong>인체를 바이오리액터(bioreactor)로 활용</strong>한다. 바이러스의 스파이크 단백질(Spike Protein)을 코딩하는 mRNA를 지질 나노입자(lipid nanoparticle)에 감싸 주입하면, 인체 세포가 이 mRNA를 읽어 스파이크 단백질을 생산하고, 면역 체계가 이 단백질에 대한 항체를 만든다. 실제 바이러스가 침입했을 때 면역 체계가 이미 준비되어 있으므로 빠르게 대응할 수 있다.</p>
+          <p style="margin-top:10px"><strong>구조</strong>: 지질 나노입자 외피(Lipid Outer Shell) 안에 코일 형태의 mRNA 가닥(Coiled mRNA Strand)이 담겨 있는 구조이다.</p>
+        </div>
+
+        <div class="tip">
+          mRNA 백신의 핵심 기여자인 Katalin Kariko와 Drew Weissman은 수십 년간 학계에서 인정받지 못한 채 연구를 지속했다. 2023년 노벨 생리의학상을 수상한 이들의 이야기는 Franklin의 경우와 유사하면서도 다른 결말을 보여준다.
+        </div>
+      </section>
+
+      <!-- Page 36 -->
+      <section class="page-section" id="p36">
+        <span class="page-num">Page 36</span>
+        <h2>맞춤 의학과 약리유전체학 (Personalized Medicine & Pharmacogenomics)</h2>
+
+        <div class="summary-box">
+          의학의 패러다임이 "모든 사람에게 동일한 치료(one size fits all)"에서 "개인의 유전 프로필에 기반한 치료"로 전환되고 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">두 가지 핵심 응용</div>
+          <p><strong>종양학 (Oncology)</strong>: 암을 발생 <strong>장기(organ)</strong>가 아닌 <strong>유전자 변이(mutations)</strong>에 기반하여 치료하는 접근. 예를 들어 <strong>BRCA 유전자 변이</strong>가 있는 환자는 발생 장기(유방, 난소, 전립선 등)에 관계없이 PARP 억제제라는 동일한 표적 치료를 받을 수 있다. 이것은 "유방암 환자"가 아닌 "BRCA 변이 환자"로 분류하는 새로운 패러다임이다.</p>
+          <p style="margin-top:10px"><strong>약리유전체학 (Pharmacogenomics)</strong>: 개인의 <strong>대사 효소(metabolic enzymes)</strong> 유전 변이에 따라 약물 용량을 조절하는 접근. 예를 들어 CYP2D6 유전자 변이에 따라 같은 약이 어떤 사람에게는 효과가 없고, 다른 사람에게는 독성을 나타낼 수 있다. 유전자 검사를 통해 개인에게 최적의 약과 용량을 결정할 수 있다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">패러다임 전환</div>
+          <strong>구 패러다임 (Old Paradigm)</strong>: 모든 사람에게 동일한 치료 (One size fits all)<br>
+          &nbsp;&nbsp;&darr; 전환<br>
+          <strong>신 패러다임 (New Paradigm)</strong>: 개인의 고유한 유전적 프로필에 기반한 치료 (Treatment based on your unique genetic profile)
+        </div>
+      </section>
+
+      <!-- Page 37 -->
+      <section class="page-section" id="p37">
+        <span class="page-num">Page 37</span>
+        <h2>유전체 기반 맞춤 의학의 실제: 안젤리나 졸리 사례</h2>
+
+        <div class="summary-box">
+          배우 Angelina Jolie가 BRCA1 유전자 변이 보유 사실을 공개하고 예방적 이중 유방절제술을 받은 사건은 유전체 기반 의학의 대중적 인지도를 비약적으로 높였다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">사례 상세</div>
+          <p>2013년 5월 14일, <em>New York Times</em>에 "My Medical Choice"라는 제목의 기고문이 실렸다. 배우 <strong>Angelina Jolie</strong>는 자신이 <strong>BRCA1 유전자 변이</strong>를 보유하고 있으며, 의사들이 추정한 암 발병 위험은 다음과 같다고 밝혔다:</p>
+          <p style="margin-top:10px">-- 유방암 위험: <strong>87%</strong></p>
+          <p>-- 난소암 위험: <strong>50%</strong></p>
+          <p style="margin-top:10px">이 높은 위험에 기반하여 그녀는 <strong>예방적 이중 유방절제술(double mastectomy)</strong>을 받기로 결정했다. 이 결정은 유전체 분석 결과에 의학적 행동을 직접적으로 연결한 <strong>맞춤 의학(personalized medicine)의 대표적 실제 사례</strong>이다.</p>
+          <p style="margin-top:10px">Jolie의 공개적 결정은 전 세계적으로 BRCA 유전자 검사에 대한 관심을 폭발적으로 증가시켰으며, 이 현상은 <strong>"Angelina Effect"</strong>라고 불린다. 유전 상담(genetic counseling) 의뢰가 몇 주 만에 수배로 증가했다.</p>
+        </div>
+
+        <div class="tip">
+          BRCA1/BRCA2는 종양 억제 유전자(tumor suppressor genes)로, 정상적으로는 DNA 손상 수선에 관여한다. 이 유전자에 변이가 있으면 DNA 수선 기능이 약화되어 암 발생 위험이 크게 증가한다. BRCA 검사는 가족력이 있는 경우 특히 권장된다.
+        </div>
+      </section>
+
+      <!-- Page 38 -->
+      <section class="page-section" id="p38">
+        <span class="page-num">Page 38</span>
+        <h2>미래 비전: 합성생물학과 생명윤리</h2>
+
+        <div class="summary-box">
+          DNA를 데이터 저장소로 사용하고, 새로운 기능을 가진 생물체를 설계하는 합성생물학(Synthetic Biology)이 등장했다. 그러나 기술은 도덕적 합의보다 빠르게 발전하고 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">합성 생명 (Synthetic Life)</div>
+          <p><strong>DNA 데이터 저장소</strong>: DNA 1그램에 약 215페타바이트(215 million GB)의 데이터를 저장할 수 있다. 이것은 기존 디지털 저장 매체보다 수백만 배 밀도가 높다. Microsoft와 여러 스타트업이 DNA 기반 데이터 저장 기술을 개발하고 있다.</p>
+          <p style="margin-top:10px"><strong>새로운 기능의 생물체 설계</strong>: 자연에 존재하지 않는 기능을 가진 미생물을 설계하는 것이 가능해지고 있다. 플라스틱 분해 미생물, 바이오연료 생산 미생물, 환경 오염물질 감지 바이오센서 등이 연구되고 있다. 2010년 Craig Venter 연구팀이 완전히 합성된 게놈으로 작동하는 세균(Mycoplasma mycoides JCVI-syn1.0)을 만들어 "합성 생명"의 가능성을 입증했다.</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>윤리적 공백 (The Ethical Gap)</strong>: 기술은 도덕적 합의(moral consensus)보다 <strong>더 빨리 발전한다</strong>. CRISPR, 합성생물학, 유전자 드라이브(gene drive) 등의 기술은 이미 실용화 단계에 있지만, 이를 어떻게 규제할지에 대한 국제적 합의는 아직 형성되지 않았다.<br><br>
+          <strong>근본적 질문 (The Question)</strong>: 생식세포를 편집할 수 있고(CAN), 멸종된 종을 복원할 수 있다고 해서(de-extinct species), <strong>과연 해야 하는가(SHOULD we)?</strong> 기술적 능력과 윤리적 당위는 별개의 문제이다.
+        </div>
+      </section>
+
+      <!-- Page 39 -->
+      <section class="page-section" id="p39">
+        <span class="page-num">Page 39</span>
+        <h2>결론: 코드의 수호자 (Custodians of the Code)</h2>
+
+        <div class="summary-box">
+          1952년의 흐릿한 X선 사진에서 시작된 여정은 생명 자체를 다시 쓰는 도구에까지 이르렀다. 과학적 빛남과 윤리적 부담이라는 이중 유산을 어떻게 다룰 것인가는 다음 세대의 과제이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">최종 메시지</div>
+          <p><strong>요약 (Summary)</strong>: 1952년의 흐릿한 X선 사진(grainy X-ray)에서 시작하여, 우리는 이제 <strong>생명 자체를 다시 쓸 수 있는 도구(a tool that rewrites life itself)</strong>를 손에 쥐게 되었다. Photo 51에서 CRISPR까지, 70년의 여정은 인류가 자연의 비밀을 읽고, 이해하고, 마침내 편집할 수 있게 된 혁명적 과정이었다.</p>
+          <p style="margin-top:10px"><strong>이중 유산 (The Dual Legacy)</strong>: 우리는 <strong>과학적 빛남(scientific brilliance)</strong>과 <strong>윤리적 부담(ethical burdens)</strong> 모두를 물려받았다. Franklin의 지워진 공로, Watson의 인종주의, 허젠쿠이의 무모한 실험 -- 이 모든 것이 DNA 발견의 빛과 함께 전해지는 어두운 유산이다.</p>
+          <p style="margin-top:10px"><strong>최종 당부 (Final Charge)</strong>: 다음 세대는 이 <strong>신과 같은 힘(god-like power)</strong>을 <strong>지혜(wisdom)와 포용성(inclusivity)</strong>으로 다루어야 한다. 첫 세대가 때때로 결여했던 바로 그 자질들이다.</p>
+        </div>
+
+        <div class="key-point">
+          과학적 발견의 가치를 인정하되, 그 과정에서 치러진 대가를 기억하고, 미래의 발전이 더 윤리적이고 포용적인 방식으로 이루어지도록 하는 것 -- 이것이 "코드의 수호자(Custodians of the Code)"로서 다음 세대가 져야 할 책임이다.
+        </div>
+      </section>
+
+      <!-- Page 40 -->
+      <section class="page-section" id="p40">
+        <span class="page-num">Page 40</span>
+        <h2>유전체 세기 (THE GENOMIC CENTURY)</h2>
+
+        <div class="summary-box">
+          앞으로 수십 년간 유전체학이 인류 사회를 어떻게 변화시킬지에 대한 미래 전망 타임라인이다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">미래 타임라인</div>
+          <strong>2030s</strong> -- 전체 게놈 스크리닝이 출생 시 표준이 됨 (Whole-genome screening at birth standard)<br>
+          &nbsp;&nbsp;모든 신생아의 유전체를 분석하여 유전 질환 위험을 조기에 파악<br><br>
+
+          <strong>2050s</strong> -- 바이오파운드리가 화학 공장을 대체 (Biological foundries replace chemical plants)<br>
+          &nbsp;&nbsp;합성생물학 기반 미생물이 화학 물질, 소재, 연료를 생산<br><br>
+
+          <strong>2080s</strong> -- 맞춤형 노화 역전 치료 (Personalized age-reversal therapies)<br>
+          &nbsp;&nbsp;개인 유전체 분석에 기반한 노화 과정의 선택적 역전<br><br>
+
+          <strong>2100</strong> -- "포스트-유전체" 프로그래밍 가능한 인간 사회 (A "Post-Genomic" programmable human society)<br>
+          &nbsp;&nbsp;유전체 정보의 완전한 이해와 제어가 사회 전반에 통합
+        </div>
+
+        <div class="tip">
+          이 타임라인은 추측적(speculative) 전망이지만, 현재의 기술 발전 속도를 고려하면 상당수가 현실화될 가능성이 있다. 중요한 것은 각 단계에서 기술적 가능성만이 아니라 윤리적, 사회적 함의를 함께 고려해야 한다는 점이다.
+        </div>
+      </section>
+
+      <!-- Page 41 -->
+      <section class="page-section" id="p41">
+        <span class="page-num">Page 41</span>
+        <h2>최종 인포그래픽: DNA 혁명 -- 생명 해독에서 미래 설계까지</h2>
+
+        <div class="summary-box">
+          "The DNA Revolution: From Decoding Life to Designing the Future" -- 전체 강의(Part 1 + Part 2)의 종합적 시각화이다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">종합 인포그래픽</div>
+          <strong>FOUNDATIONS AND THE MODERN ERA (1953-Present)</strong><br>
+          &nbsp;&nbsp;1953: "생명의 비밀" 해독 -- Watson, Crick, Wilkins가 Rosalind Franklin의 데이터를 활용해 이중나선 모델 구축<br>
+          &nbsp;&nbsp;인간 게놈 프로젝트: 27억 달러, 30억 염기쌍 지도화<br><br>
+
+          <strong>ACCELERATION OF DNA TECHNOLOGY</strong><br>
+          &nbsp;&nbsp;Human Genome Project: 13년 / $2.7B / 인간 유전 지시의 최초 완전 지도<br>
+          &nbsp;&nbsp;CRISPR-Cas9: 2012-현재 / 살아있는 DNA의 "워드프로세서" 편집 가능<br>
+          &nbsp;&nbsp;Personal Sequencing: 24시간 이내 / $600 / 개인 유전 데이터 접근의 민주화<br><br>
+
+          <strong>PRECISION MEDICINE & mRNA VACCINES</strong><br>
+          &nbsp;&nbsp;현대 의료: 표적 암 치료를 위한 유전적 프로파일링 + 백신을 위한 mRNA 소프트웨어<br><br>
+
+          <strong>THE "DARK SIDES": ETHICS AND RISKS</strong><br>
+          &nbsp;&nbsp;소외된 여성 과학자들 + 비윤리적 생식세포 편집 (He Jiankui)<br><br>
+
+          <strong>THE FUTURE FRONTIER AND ETHICAL SHADOWS (2024-2100+)</strong><br>
+          &nbsp;&nbsp;합성 생물학과 멸종 복원(De-Extinction): 플라스틱 분해, 탄소 포집을 위한 "설계 생물"<br>
+          &nbsp;&nbsp;우주 식민지를 위한 유전적 적응: 2100+ 태양 방사선과 저중력 환경 대응을 위한 유전자 변형
+        </div>
+
+        <div class="key-point">
+          이 인포그래픽은 강의 전체를 관통하는 핵심 메시지를 담고 있다: DNA 과학은 인류에게 전례 없는 힘을 주었지만, 그 힘에는 반드시 <strong>윤리적 책임</strong>이 수반되어야 한다. 과거의 실수(Franklin 배제, Watson의 인종주의, 허젠쿠이의 무모한 실험)를 교훈으로 삼아, 미래의 DNA 기술은 더 지혜롭고 포용적으로 활용되어야 한다.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '다크모드';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '라이트모드';
+      }
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>

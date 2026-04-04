@@ -45,6 +45,10 @@
   --c-ac: #D97706;
   --c-ac-light: #FFFBEB;
   --c-ac-border: #FDE68A;
+
+  --c-np: #B45309;
+  --c-np-light: #FFF8F1;
+  --c-np-border: #FCD9B6;
 }
 
 [data-theme="dark"] {
@@ -78,6 +82,9 @@
 
   --c-ac-light: rgba(217,119,6,0.12);
   --c-ac-border: rgba(217,119,6,0.3);
+
+  --c-np-light: rgba(180,83,9,0.12);
+  --c-np-border: rgba(180,83,9,0.3);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -426,25 +433,25 @@ const DEFAULT_COURSES = [
         num: "02",
         title: "Bit & Integer",
         desc: "비트 표현, 정수 인코딩, 2의 보수 등",
-        file: "02_Bit_Integer_lecture.html"
+        file: "sp/02_Bit_Integer_lecture.html"
       },
       {
         num: "03",
         title: "Floating Point",
         desc: "부동소수점 표현, IEEE 754, 정밀도",
-        file: "03_Floating_Point_lecture.html"
+        file: "sp/03_Floating_Point_lecture.html"
       },
       {
         num: "04",
         title: "Machine-Level Programming: Basics",
         desc: "어셈블리 기초, 레지스터, 데이터 이동",
-        file: "04_Machine_Basic_lecture.html"
+        file: "sp/04_Machine_Basic_lecture.html"
       },
       {
         num: "05",
         title: "Machine-Level Programming: Control",
         desc: "조건 분기, 반복문, switch문",
-        file: "05_Machine_Control_lecture.html"
+        file: "sp/05_Machine_Control_lecture.html"
       }
     ]
   },
@@ -456,25 +463,25 @@ const DEFAULT_COURSES = [
         num: "1.5",
         title: "RECAP",
         desc: "컴퓨터 구조 중간 복습 정리",
-        file: "COA_1.5_RECAP_lecture.html"
+        file: "coa/COA_1.5_RECAP_lecture.html"
       },
       {
         num: "02",
         title: "ISA (Instruction Set Architecture)",
         desc: "명령어 집합 구조, RISC vs CISC",
-        file: "COA_2_ISA_lecture.html"
+        file: "coa/COA_2_ISA_lecture.html"
       },
       {
         num: "03",
         title: "MIPS",
         desc: "MIPS 아키텍처, 명령어 형식, 어셈블리",
-        file: "COA_3_MIPS_lecture.html"
+        file: "coa/COA_3_MIPS_lecture.html"
       },
       {
         num: "04",
         title: "Single-Cycle Microarchitecture",
         desc: "단일 사이클 데이터패스, 제어 유닛",
-        file: "COA_4_SingleCycle_uarch_lecture.html"
+        file: "coa/COA_4_SingleCycle_uarch_lecture.html"
       }
     ]
   },
@@ -486,31 +493,31 @@ const DEFAULT_COURSES = [
         num: "01",
         title: "Course Introduction",
         desc: "강의 소개, CV 정의, 과목 구성",
-        file: "slide01_CourseIntroduction_lecture.html"
+        file: "cv/slide01_CourseIntroduction_lecture.html"
       },
       {
         num: "02",
         title: "Image Sensing Pipeline",
         desc: "이미지 센서, 컬러 필터, ISP 파이프라인",
-        file: "slide02_ImageSensingPipeline_lecture.html"
+        file: "cv/slide02_ImageSensingPipeline_lecture.html"
       },
       {
         num: "03",
         title: "Image Formation",
         desc: "이미지 형성, 핀홀 카메라, 투영 기하학",
-        file: "slide03_ImageFormation_lecture.html"
+        file: "cv/slide03_ImageFormation_lecture.html"
       },
       {
         num: "04",
         title: "Camera Geometry",
         desc: "카메라 내부/외부 파라미터, 에피폴라 기하학",
-        file: "slide04_CameraGeometry_lecture.html"
+        file: "cv/slide04_CameraGeometry_lecture.html"
       },
       {
         num: "05",
         title: "3D Reconstruction",
         desc: "스테레오 매칭, SfM, Visual SLAM, 캘리브레이션",
-        file: "slide05_3Dreconstruction_lecture.html"
+        file: "cv/slide05_3Dreconstruction_lecture.html"
       }
     ]
   },
@@ -522,7 +529,7 @@ const DEFAULT_COURSES = [
         num: "Full",
         title: "선형대수학 완전 강의노트",
         desc: "가우스 소거법부터 SVD까지 — 기초~심화 전 범위",
-        file: "linear_algebra_lecture.html"
+        file: "la/linear_algebra_lecture.html"
       }
     ]
   },
@@ -534,7 +541,7 @@ const DEFAULT_COURSES = [
         num: "01",
         title: "Linear Regression",
         desc: "선형 회귀, 경사하강법, 정규방정식",
-        file: "linear_regression_lecture_kor.html"
+        file: "ml/linear_regression_lecture_kor.html"
       }
     ]
   },
@@ -546,19 +553,19 @@ const DEFAULT_COURSES = [
         num: "03",
         title: "공명 (Resonance) & Curved Arrows",
         desc: "Ch 2.7-2.8: 공명 구조, 공명 혼성체, 곡선 화살표 표기법",
-        file: "OC_3_Resonance_lecture.html"
+        file: "oc/OC_3_Resonance_lecture.html"
       },
       {
         num: "04",
         title: "산과 염기 (Acids & Bases)",
         desc: "Ch 3: Brønsted-Lowry, pKa, ARIO 인자, Lewis 산-염기",
-        file: "OC_4_AcidBase_lecture.html"
+        file: "oc/OC_4_AcidBase_lecture.html"
       },
       {
         num: "05",
         title: "산-염기 심화 & 알케인 명명법",
         desc: "Ch 3.4-4.2: ARIO 심화, 알케인, IUPAC 명명법",
-        file: "OC_5_Alkanes_lecture.html"
+        file: "oc/OC_5_Alkanes_lecture.html"
       }
     ]
   },
@@ -570,31 +577,49 @@ const DEFAULT_COURSES = [
         num: "00",
         title: "분석화학 개론 (Introduction)",
         desc: "Ch 0: 분석화학이란, 정량분석 절차, HPLC 초콜릿 카페인 분석",
-        file: "AC_0_Intro_lecture.html"
+        file: "ac/AC_0_Intro_lecture.html"
       },
       {
         num: "01",
         title: "화학 측정의 기초 (Chemical Measurements)",
         desc: "Ch 1: SI 단위, 몰농도, 형식농도, 희석, 평형상수",
-        file: "AC_1_ChemMeasurement_lecture.html"
+        file: "ac/AC_1_ChemMeasurement_lecture.html"
       },
       {
         num: "02",
         title: "유효숫자와 오차 분석 (Sig Figs & Error)",
         desc: "Ch 3: 유효숫자 규칙, 은행원 반올림, 정밀도·정확도, 계통오차",
-        file: "AC_2_MathToolkit_lecture.html"
+        file: "ac/AC_2_MathToolkit_lecture.html"
       },
       {
         num: "03",
         title: "통계학 기초 (Statistics)",
         desc: "Ch 4: 가우시안 분포, 표준편차, F-검정, Student t-검정",
-        file: "AC_3_Statistics_lecture.html"
+        file: "ac/AC_3_Statistics_lecture.html"
       },
       {
         num: "04",
         title: "적정 분석 (Titration)",
         desc: "Ch 6: 부피분석 원리, 직접·역적정, 화학양론 계산",
-        file: "AC_4_Titration_lecture.html"
+        file: "ac/AC_4_Titration_lecture.html"
+      }
+    ]
+  },
+  {
+    name: "노벨상 특강",
+    color: "np",
+    lectures: [
+      {
+        num: "01",
+        title: "생명의 암호 해독 (Deciphering Life's Enigma Code)",
+        desc: "DNA 발견사, 이중나선 구조, 1962 노벨 생리의학상",
+        file: "novel_prize/NP_1_Deciphering_Enigma_lecture.html"
+      },
+      {
+        num: "02",
+        title: "이중나선의 어둠과 DNA 혁명의 응용",
+        desc: "프랭클린의 비극, Watson의 추락, CRISPR, 맞춤의학",
+        file: "novel_prize/NP_2_DarkSide_Applications_lecture.html"
       }
     ]
   }

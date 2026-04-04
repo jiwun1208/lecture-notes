@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>생명의 암호 해독: 현대 생물학의 첫 번째 혁명</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    processEscapes: false
+  },
+  startup: {
+    ready: function() {
+      MathJax.startup.defaultReady();
+      window.mathJaxReady = true;
+    }
+  }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* --- Top Bar --- */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  /* --- Layout --- */
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  /* --- Sidebar --- */
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar a {
+    display: block;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 600;
+    padding: 12px 20px 4px;
+    margin-top: 8px;
+  }
+
+  /* --- Main Content --- */
+  .content {
+    padding: 40px 48px 80px;
+  }
+
+  /* --- Page Section --- */
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  /* --- Cards --- */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  /* --- Summary Box --- */
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  /* --- Math Block --- */
+  .math-block {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    overflow-x: auto;
+    font-size: 1.05em;
+  }
+
+  /* --- Key Point --- */
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  /* --- Warning Box --- */
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  /* --- Term Table --- */
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* --- Tip Box --- */
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  /* --- Code Block --- */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+
+  /* --- Diagram Box --- */
+  .diagram-box {
+    background: var(--bg-aside);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .diagram-box .diagram-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  /* --- Truth Table --- */
+  .truth-table { width: auto; border-collapse: collapse; font-size: 14px; margin: 12px 0; font-family: 'JetBrains Mono', monospace; }
+  .truth-table th { background: var(--accent); color: white; padding: 8px 16px; font-size: 12px; text-align: center; }
+  .truth-table td { padding: 6px 16px; border: 1px solid var(--border); text-align: center; }
+  .truth-table tr:nth-child(even) { background: var(--bg-aside); }
+
+  /* --- Text emphasis --- */
+  strong { color: var(--accent); font-weight: 500; }
+
+  /* --- Responsive --- */
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .page-section h2 { font-size: 20px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>생명의 암호 해독: 현대 생물학의 첫 번째 혁명</h1>
+      <div class="meta">노벨 생리의학상 1962 · Byung-Hoon Lee · DGIST</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">페이지 목록</div>
+      <div class="section-label">도입</div>
+      <a href="#p1" class="active">01 — 표제</a>
+      <a href="#p2">02 — 유전의 미스터리</a>
+      <a href="#p3">03 — 위대한 오해</a>
+      <div class="section-label">초기 증거</div>
+      <a href="#p4">04 — 초기 발견 (1869-1919)</a>
+      <a href="#p5">05 — 형질전환 원리 I</a>
+      <a href="#p6">06 — 형질전환 원리 II</a>
+      <a href="#p7">07 — 허시-체이스 실험</a>
+      <a href="#p8">08 — 거인의 어깨 위에서</a>
+      <div class="section-label">구조 경쟁</div>
+      <a href="#p9">09 — 구조 경쟁의 시작</a>
+      <a href="#p10">10 — 단서 #1: 샤가프 법칙</a>
+      <a href="#p11">11 — 단서 #2: Photo 51</a>
+      <a href="#p12">12 — 폴링의 삼중나선</a>
+      <a href="#p13">13 — 케임브리지 듀오</a>
+      <a href="#p14">14 — 모델 구축의 통찰</a>
+      <div class="section-label">이중나선</div>
+      <a href="#p15">15 — 최종 모델</a>
+      <a href="#p16">16 — 이중나선 구조</a>
+      <a href="#p17">17 — 당-인산 골격</a>
+      <a href="#p18">18 — 유레카의 순간</a>
+      <a href="#p19">19 — 상보적 염기쌍</a>
+      <a href="#p20">20 — 1962 노벨상</a>
+      <div class="section-label">물리적 성질</div>
+      <a href="#p21">21 — DNA 물리적 성질</a>
+      <a href="#p22">22 — DNA 상세 구조</a>
+      <div class="section-label">유산과 영향</div>
+      <a href="#p23">23 — Nature 논문</a>
+      <a href="#p24">24 — 분자생물학 중심원리</a>
+      <a href="#p25">25 — 유전 암호 해독</a>
+      <a href="#p26">26 — 생명의 비밀</a>
+      <a href="#p27">27 — 발견의 이정표</a>
+      <a href="#p28">28 — 생명의 청사진</a>
+      <a href="#p29">29 — 과학의 폭발적 성장</a>
+      <a href="#p30">30 — 종합 인포그래픽</a>
+      <a href="#p31">31 — 60년의 비밀</a>
+      <a href="#p32">32 — 역사 재평가</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== Page 1 ==================== -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>생명의 암호 해독: 현대 생물학의 첫 번째 혁명</h2>
+
+        <div class="summary-box">
+          이 강의는 DNA 이중나선 구조의 발견 과정을 다룬다. 1953년 왓슨과 크릭이 DNA 구조를 밝혀낸 것은 현대 생물학의 첫 번째 혁명으로, 유전 정보가 어떻게 저장되고 전달되는지를 이해하는 토대가 되었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">강의 개요</div>
+          <p>이 강의의 주인공은 <strong>DNA(디옥시리보핵산, Deoxyribonucleic Acid)</strong>이다. DNA는 모든 생명체의 유전 정보를 담고 있는 분자로, 그 구조를 밝혀낸 것은 생물학 역사상 가장 중요한 사건 중 하나이다.</p>
+          <p style="margin-top:12px;">1962년 <strong>노벨 생리의학상(Nobel Prize in Physiology or Medicine)</strong>은 <strong>프랜시스 크릭(Francis Crick)</strong>, <strong>제임스 왓슨(James Watson)</strong>, <strong>모리스 윌킨스(Maurice Wilkins)</strong>에게 수여되었다. 수상 사유는 "핵산의 분자 구조와 생체 내 정보 전달에 대한 그 구조의 중요성에 관한 발견(discoveries concerning the molecular structure of nucleic acids and its significance for information transfer in living material)"이었다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">DNA</td><td>디옥시리보핵산</td><td>유전 정보를 저장하는 이중나선 구조의 핵산 분자</td></tr>
+              <tr><td class="en">Double Helix</td><td>이중나선</td><td>DNA의 두 가닥이 서로 꼬여 있는 나선형 구조</td></tr>
+              <tr><td class="en">Nobel Prize</td><td>노벨상</td><td>과학, 문학, 평화 등 분야에서 탁월한 업적에 수여하는 상</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 2 ==================== -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>유전은 어떻게 전달되는가?</h2>
+
+        <div class="summary-box">
+          부모의 형질이 자녀에게 전달된다는 사실은 오래전부터 알려져 있었지만, 그 정확한 메커니즘은 수세기 동안 미스터리였다. 과학자들은 복잡한 단백질이 유전 물질일 것이라고 추정했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수세기에 걸친 미스터리</div>
+          <p>우리는 눈 색깔, 머리카락 모양, 키 등의 <strong>형질(Trait)</strong>이 부모로부터 자녀에게 전달된다는 것을 경험적으로 알고 있다. 하지만 20세기 중반까지도 이 유전 정보가 <strong>어떤 분자에 의해, 어떤 방식으로</strong> 전달되는지는 미지의 영역이었다.</p>
+          <p style="margin-top:12px;">당시 과학계의 <strong>유력한 용의자(Prime Suspect)</strong>는 <strong>단백질(Protein)</strong>이었다. 단백질은 20가지 아미노산으로 구성되어 있어 충분히 복잡하고, 다양한 정보를 코딩할 수 있을 것이라 생각되었기 때문이다. 반면 DNA는 단 4가지 구성 요소(염기)만 가지고 있어 너무 단순하다는 이유로 무시되었다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">핵심 질문의 구조</div>
+          <strong>[보이는 것: 형질(The Trait)]</strong> -- 눈 색깔, 피부색, 키 등 관찰 가능한 특성<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v<br>
+          <strong>[보이지 않는 것: 메커니즘(The Mechanism)]</strong> -- 어떤 분자가? 어떤 방식으로?<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v<br>
+          <strong>핵심 역설:</strong> 단 4가지 성분으로 된 단순한 분자가 어떻게 모든 생명의 설계도를 담을 수 있는가?
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Heredity</td><td>유전</td><td>부모의 형질이 자녀에게 전달되는 현상</td></tr>
+              <tr><td class="en">Trait</td><td>형질</td><td>눈 색깔, 키 등 관찰 가능한 생물학적 특성</td></tr>
+              <tr><td class="en">Protein</td><td>단백질</td><td>20종의 아미노산으로 구성된 복잡한 생체 고분자</td></tr>
+              <tr><td class="en">Amino Acid</td><td>아미노산</td><td>단백질의 기본 구성 단위 (20종류)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">
+          <span>시험 포인트: 유전 물질의 후보로 단백질이 선호된 이유(20가지 아미노산 = 높은 복잡성)와, DNA가 무시된 이유(4가지 염기 = 낮은 복잡성)를 명확히 구분하여 기억하자.</span>
+        </div>
+      </section>
+
+      <!-- ==================== Page 3 ==================== -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>위대한 오해 (The Great Misconception)</h2>
+
+        <div class="summary-box">
+          1950년대 이전, 과학계는 유전 물질이 단백질이라고 확신했다. DNA는 구조적 역할만 하는 "지루한" 물질로 치부되었다. 이 오해가 DNA 구조 발견을 지연시킨 핵심 요인이었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">본명대결: 단백질 vs DNA</div>
+          <p><strong>유력 후보 (The Favorite) -- 단백질:</strong> 20가지 아미노산이 다양한 순서로 배열될 수 있어, 마치 알파벳 26자로 무한한 문장을 만들 수 있는 것처럼 복잡한 정보를 코딩할 수 있다고 여겨졌다. 당시 과학자들은 "복잡한 정보 = 복잡한 분자"라는 논리에 빠져 있었다.</p>
+          <p style="margin-top:12px;"><strong>약체 (The Underdog) -- DNA:</strong> 단 4가지 염기(A, T, G, C)로 구성되어 있어, 생명체의 복잡한 설계도를 담기에는 너무 단순하다고 판단되었다. DNA는 단백질을 지지하는 "구조적 비계(scaffolding)" 정도로만 여겨졌다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">복잡성 비교</div>
+          <strong>단백질 (Protein)</strong><br>
+          구성 단위: 20가지 아미노산 -- "충분히 복잡하다!"<br>
+          당시 평가: 유전 암호의 담지자 (유력 후보)<br><br>
+          <strong>DNA</strong><br>
+          구성 단위: 4가지 염기 (A, T, G, C) -- "너무 단순하다!"<br>
+          당시 평가: 단순한 구조적 지지체 (무시당함)
+        </div>
+
+        <div class="key-point">
+          <strong>역설 (The Paradox):</strong> 결과적으로, 4가지 구성 요소만으로도 모든 생명의 설계도를 담을 수 있었다. 이는 컴퓨터가 0과 1 두 가지 숫자만으로 모든 정보를 처리하는 것(이진법)과 비슷한 원리이다. 단순한 코드라도 충분히 길게 조합하면 무한한 정보를 담을 수 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Scaffolding</td><td>비계 / 골격 구조</td><td>다른 물질을 지지하는 구조적 역할만 하는 것</td></tr>
+              <tr><td class="en">Genetic Code</td><td>유전 암호</td><td>DNA의 염기 서열이 단백질 합성 정보를 담는 체계</td></tr>
+              <tr><td class="en">Base</td><td>염기</td><td>DNA를 구성하는 4가지 화학 물질 (A, T, G, C)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 4 ==================== -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>초기 증거 (1869-1919)</h2>
+
+        <div class="summary-box">
+          1869년 미셰르가 DNA를 최초 발견했고, 1919년 레빈이 DNA의 기본 구성 성분을 밝혀냈다. 그러나 레빈의 "테트라뉴클레오타이드 가설"이 DNA를 단순한 물질로 오인하게 만들었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">1869년 -- 프리드리히 미셰르의 발견</div>
+          <p><strong>프리드리히 미셰르(Friedrich Miescher)</strong>는 스위스의 생화학자로, 상처에서 나온 고름 속 백혈구(White Blood Cells)를 연구하던 중 세포핵에서 이전에 알려지지 않은 물질을 발견했다. 그는 이 물질을 핵(nucleus)에서 발견했기 때문에 <strong>"뉴클레인(Nuclein)"</strong>이라 명명했다. 이것이 바로 후에 DNA로 밝혀진 물질이다.</p>
+          <p style="margin-top:12px;">미셰르는 이 물질이 중요할 것이라 직감했지만, 당시에는 그 기능을 밝히지 못했다. 이 발견은 DNA 연구의 첫 발걸음이었다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">1919년 -- 피버스 레빈의 분석</div>
+          <p><strong>피버스 레빈(Phoebus Levene)</strong>은 DNA의 기본 구성 단위인 <strong>뉴클레오타이드(Nucleotide)</strong>를 분석하여 세 가지 구성 요소를 밝혀냈다:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>당(Sugar):</strong> 디옥시리보스(Deoxyribose) -- DNA의 골격을 이루는 5탄당</li>
+            <li><strong>인산기(Phosphate):</strong> 뉴클레오타이드를 연결하는 다리 역할</li>
+            <li><strong>염기(Base):</strong> A(아데닌), T(티민), G(구아닌), C(시토신) 4종류</li>
+          </ul>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">뉴클레오타이드의 구조</div>
+          인산기 (Phosphate) --- 당 (Sugar, Deoxyribose) --- 염기 (Base: A/T/G/C)<br><br>
+          뉴클레오타이드 = DNA의 기본 구성 단위 (레고 블록 한 개에 해당)
+        </div>
+
+        <div class="warning-box">
+          <strong>레빈의 오류 -- 테트라뉴클레오타이드 가설 (Tetranucleotide Hypothesis):</strong> 레빈은 DNA에서 A, T, G, C 네 가지 염기가 항상 동일한 비율로, 고정된 순서로 반복된다고 주장했다 (예: A-T-G-C-A-T-G-C...). 이 가설이 맞다면 DNA는 단순히 반복되는 구조이므로 복잡한 유전 정보를 담을 수 없다. 이 오해가 수십 년간 DNA 연구를 지연시켰다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Nuclein</td><td>뉴클레인</td><td>미셰르가 명명한 핵 속 물질, 후에 DNA로 확인</td></tr>
+              <tr><td class="en">Nucleotide</td><td>뉴클레오타이드</td><td>DNA의 기본 단위: 당 + 인산기 + 염기</td></tr>
+              <tr><td class="en">Deoxyribose</td><td>디옥시리보스</td><td>DNA 골격을 이루는 5탄당</td></tr>
+              <tr><td class="en">Tetranucleotide Hypothesis</td><td>테트라뉴클레오타이드 가설</td><td>4가지 염기가 고정 순서로 반복된다는 잘못된 가설</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 5 ==================== -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>형질전환 원리: DNA가 범인이다 (I)</h2>
+
+        <div class="summary-box">
+          1944년 에이버리, 맥레오드, 매카티는 세균의 형질을 전환시키는 물질이 DNA라는 것을 증명했다. 이것은 DNA가 유전 물질일 수 있다는 최초의 강력한 증거였다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">형질전환 원리 (Transforming Principle)</div>
+          <p><strong>형질전환(Transformation)</strong>이란 한 세균의 유전 물질이 다른 세균으로 옮겨져 형질이 바뀌는 현상이다. 이 실험의 배경을 이해하려면 먼저 <strong>그리피스(Griffith)의 1928년 실험</strong>을 알아야 한다.</p>
+          <p style="margin-top:12px;">그리피스는 폐렴구균에 <strong>S형(Smooth, 매끄러운)</strong>과 <strong>R형(Rough, 거친)</strong> 두 가지가 있음을 발견했다. S형은 피막이 있어 병원성(pathogenic)이고, R형은 피막이 없어 무해했다. 열처리로 죽인 S형 세균과 살아있는 무해한 R형 세균을 함께 주입하면, 놀랍게도 살아있는 S형 세균이 나타났다. 즉, 죽은 S형에서 "무엇인가"가 R형으로 옮겨가 형질을 전환시킨 것이다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">형질전환 과정</div>
+          <strong>무해한 R형 세균 (Harmless Bacteria)</strong><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+<br>
+          <strong>죽은 병원성 S형 세균의 DNA (Dead Virulent Bacteria DNA)</strong><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v<br>
+          <strong>살아있는 병원성 S형 세균 (Live Virulent Bacteria)</strong><br><br>
+          --> "형질전환 원리 (Transforming Principle)" = 형질을 바꿀 수 있는 물질
+        </div>
+
+        <div class="key-point">
+          <strong>핵심:</strong> 에이버리 등(Avery, MacLeod & McCarty, 1944)은 이 "형질전환 원리"가 바로 <strong>DNA</strong>라는 것을 증명했다. 죽은 S형 세균에서 추출한 DNA만으로도 R형을 S형으로 전환시킬 수 있었다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 6 ==================== -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>형질전환 원리: DNA가 범인이다 (II)</h2>
+
+        <div class="summary-box">
+          에이버리 팀은 선택적 분해 실험을 통해 DNA만이 형질전환의 원인임을 최종 증명했다. 그러나 당시 과학계의 회의론은 여전했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">1944년 돌파구 -- 선택적 분해 실험</div>
+          <p>에이버리, 맥레오드, 매카티는 매우 정교한 실험을 설계했다. 열처리로 죽인 S형 세균의 추출물에 각각 다른 효소를 처리하여 <strong>특정 물질만 선택적으로 파괴</strong>한 후, 형질전환이 일어나는지 관찰했다:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>프로테아제(Protease, 단백질 분해 효소)</strong> 처리 --> 형질전환 발생 (단백질이 아니다!)</li>
+            <li><strong>RNase(RNA 분해 효소)</strong> 처리 --> 형질전환 발생 (RNA도 아니다!)</li>
+            <li><strong>DNase(DNA 분해 효소)</strong> 처리 --> 형질전환 <strong>중단!</strong> (DNA가 원인이다!)</li>
+          </ul>
+          <p style="margin-top:12px;">즉, DNA를 파괴했을 때만 형질전환이 멈추었으므로, 형질을 전달하는 물질은 DNA임이 확실해졌다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">선택적 분해 실험 결과</div>
+          열로 죽인 S형 세균 추출물<br>
+          &nbsp;&nbsp;&nbsp;|--- + Protease (단백질 분해) --> 형질전환 O (단백질 아님)<br>
+          &nbsp;&nbsp;&nbsp;|--- + RNase (RNA 분해) -------> 형질전환 O (RNA 아님)<br>
+          &nbsp;&nbsp;&nbsp;|--- + DNase (DNA 분해) -------> 형질전환 X (DNA가 원인!)
+        </div>
+
+        <div class="card">
+          <div class="card-label">배경 지식: S형과 R형 세균</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>구분</th><th>S형 (Smooth)</th><th>R형 (Rough)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">외형</td><td>매끄러운 콜로니 (피막 있음)</td><td>거친 콜로니 (피막 없음)</td></tr>
+              <tr><td class="en">병원성</td><td>병원성 (Pathogenic)</td><td>비병원성 (Non-pathogenic)</td></tr>
+              <tr><td class="en">면역 회피</td><td>피막이 면역계를 회피</td><td>면역계에 의해 제거됨</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="warning-box">
+          <strong>한계:</strong> 이 실험 결과에도 불구하고, 과학계의 <strong>회의론(Skepticism)</strong>은 여전했다. 많은 과학자들이 추출물에 미량의 단백질이 남아있었을 수 있다며 결과를 의심했다. DNA가 유전 물질이라는 확정적 증거에는 추가적인 실험이 필요했다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 7 ==================== -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>허시-체이스 실험: 결정적 증거 (1952)</h2>
+
+        <div class="summary-box">
+          허시와 체이스는 방사성 동위원소를 이용한 "블렌더 실험"으로 DNA가 유전 물질임을 최종 확인했다. 이 실험 이후 DNA 구조 규명 경쟁이 본격적으로 시작되었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">블렌더 실험 (The Blender Experiment)</div>
+          <p><strong>앨프리드 허시(Alfred Hershey)</strong>와 <strong>마사 체이스(Martha Chase)</strong>는 <strong>박테리오파지(Bacteriophage)</strong>, 즉 세균을 감염시키는 바이러스를 이용했다. 파지는 단백질 껍질과 DNA 코어만으로 구성된 단순한 구조여서, 둘 중 어느 것이 세균 내부로 들어가는지 추적할 수 있었다.</p>
+          <p style="margin-top:12px;">핵심 아이디어는 <strong>방사성 동위원소(Radioactive Isotope)</strong>로 DNA와 단백질을 각각 표지(label)하는 것이었다:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>P-32 (인-32):</strong> DNA에만 포함된 인(P)을 방사성으로 표지 --> DNA 추적</li>
+            <li><strong>S-35 (황-35):</strong> 단백질에만 포함된 황(S)을 방사성으로 표지 --> 단백질 추적</li>
+          </ul>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">허시-체이스 실험 과정</div>
+          1. <strong>감염 (Infection):</strong> 표지된 파지가 세균에 부착하여 물질을 주입<br>
+          2. <strong>교반 (Agitation):</strong> 블렌더로 세균 표면의 파지 껍질을 분리<br>
+          3. <strong>원심분리 (Centrifugation):</strong> 무거운 세균은 가라앉고 (pellet), 가벼운 파지 껍질은 위에 남음 (supernatant)<br><br>
+          <strong>결과:</strong><br>
+          상층액 (Supernatant): S-35 검출 --> 단백질은 세균 밖에 남음<br>
+          침전물 (Pellet): P-32 검출 --> DNA만 세균 내부로 들어감
+        </div>
+
+        <div class="key-point">
+          <strong>최종 판결 (Verdict):</strong> P-32로 표지된 DNA만이 세균 내부로 들어가 새로운 파지를 생성했다. 이것은 <strong>DNA가 유전 물질(genetic material)</strong>임을 결정적으로 증명한 실험이다. 이 발견 이후, 과학자들은 DNA의 구조를 밝히기 위한 경쟁에 본격적으로 뛰어들었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Bacteriophage</td><td>박테리오파지</td><td>세균을 감염시키는 바이러스</td></tr>
+              <tr><td class="en">Radioactive Isotope</td><td>방사성 동위원소</td><td>방사선을 방출하여 추적 가능한 원소</td></tr>
+              <tr><td class="en">Centrifugation</td><td>원심분리</td><td>무거운 것과 가벼운 것을 분리하는 기법</td></tr>
+              <tr><td class="en">Pellet</td><td>침전물</td><td>원심분리 후 바닥에 가라앉은 물질</td></tr>
+              <tr><td class="en">Supernatant</td><td>상층액</td><td>원심분리 후 위에 남은 액체</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">
+          <span>시험 포인트: DNA에만 인(P)이 있고, 단백질에만 황(S)이 있다는 화학적 차이를 이용했다는 점이 이 실험의 핵심 원리이다. P-32는 DNA 추적, S-35는 단백질 추적이라는 것을 반드시 기억하자.</span>
+        </div>
+      </section>
+
+      <!-- ==================== Page 8 ==================== -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>거인의 어깨 위에서 (Standing on the Shoulders of Giants)</h2>
+
+        <div class="summary-box">
+          1869년 미셰르의 발견부터 1952년 허시-체이스 실험까지, 약 80년에 걸친 연구들이 축적되어 "DNA가 유전 물질"이라는 결론에 도달했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">발견의 연대기</div>
+          <p>과학적 발견은 단독으로 이루어지지 않는다. DNA가 유전 물질로 확인되기까지 여러 세대의 과학자들이 기여했다:</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">핵심 타임라인</div>
+          <strong>1869 -- 미셰르 (Miescher)</strong>: 백혈구 핵에서 "뉴클레인" 최초 분리<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+          <strong>1944 -- 에이버리 등 (Avery et al.)</strong>: 형질전환 원리가 DNA임을 증명<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+          <strong>1952 -- 허시 & 체이스 (Hershey & Chase)</strong>: 방사성 추적으로 DNA가 유전물질임을 확정<br><br>
+          <strong>결론:</strong> 형질전환 원리 (Transforming Principle)는 단백질도 RNA도 아닌, <strong>DNA</strong>이다.
+        </div>
+
+        <div class="key-point">
+          <strong>과학사적 의미:</strong> 각각의 실험은 이전 실험의 한계를 보완했다. 미셰르는 DNA를 발견했지만 기능을 몰랐고, 에이버리는 기능을 증명했지만 회의론에 부딪혔으며, 허시-체이스는 누구도 반박할 수 없는 결정적 증거를 제시했다. 이처럼 과학은 축적적(cumulative) 과정이다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 9 ==================== -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>구조 경쟁의 시작 (The Race for the Structure)</h2>
+
+        <div class="summary-box">
+          DNA가 유전 물질임이 확인되자, 세 곳의 연구소가 DNA의 3차원 구조를 밝히기 위한 치열한 경쟁에 돌입했다: 케임브리지, 런던, 칼텍.
+        </div>
+
+        <div class="card">
+          <div class="card-label">세 연구 팀, 세 접근법, 하나의 상</div>
+          <p>DNA가 유전 물질이라는 사실이 확립되자, 다음 질문은 자연스럽게 <strong>"DNA의 구조는 어떻게 생겼는가?"</strong>가 되었다. 구조를 알아야 DNA가 어떻게 유전 정보를 저장하고 복제하는지 이해할 수 있기 때문이다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">경쟁 구도</div>
+          <strong>[1] 케임브리지, 영국 -- 캐번디시 연구소 (Cavendish Laboratory)</strong><br>
+          왓슨 (James Watson, 생물학자) & 크릭 (Francis Crick, 물리학자)<br>
+          접근법: 이론적 모델 구축 (Model Building)<br>
+          특징: 물리적 모형을 조립하며 구조를 추론<br><br>
+          <strong>[2] 런던, 영국 -- 킹스 칼리지 (King's College)</strong><br>
+          윌킨스 (Maurice Wilkins) & 프랭클린 (Rosalind Franklin)<br>
+          접근법: X-선 결정학 (X-ray Crystallography) -- 실험적 접근<br>
+          특징: 실제 X-선 회절 사진으로 구조적 데이터 획득<br><br>
+          <strong>[3] 패서디나, 미국 -- 칼텍 (Caltech)</strong><br>
+          라이너스 폴링 (Linus Pauling) -- 세계 최고의 화학자<br>
+          접근법: 화학적 직관과 모델 구축<br>
+          특징: 단백질 알파나선 구조를 이미 밝혀낸 거장
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">X-ray Crystallography</td><td>X-선 결정학</td><td>결정에 X-선을 쏘아 회절 패턴으로 분자 구조를 분석하는 기법</td></tr>
+              <tr><td class="en">Model Building</td><td>모델 구축</td><td>물리적 모형을 조립하여 분자 구조를 추론하는 방법</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tip">
+          <span>흥미로운 점: 왓슨은 24세, 크릭은 36세로, 둘 다 아직 박사학위를 마치지 않은 상태에서 이 발견을 했다. 반면 경쟁자인 폴링은 이미 노벨 화학상을 수상한 거장이었다.</span>
+        </div>
+      </section>
+
+      <!-- ==================== Page 10 ==================== -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>단서 #1: 숨겨진 수학적 대칭성 -- 샤가프 법칙</h2>
+
+        <div class="summary-box">
+          어윈 샤가프(Erwin Chargaff)는 1950년 DNA에서 아데닌의 양이 항상 티민과 같고, 구아닌의 양이 항상 시토신과 같다는 규칙을 발견했다. 이 수학적 대칭성은 염기쌍(base pairing)의 핵심 단서였다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">샤가프의 규칙 (Chargaff's Rules, 1950)</div>
+          <p><strong>어윈 샤가프(Erwin Chargaff)</strong>는 다양한 생물의 DNA를 분석하면서 놀라운 규칙성을 발견했다. 레빈의 테트라뉴클레오타이드 가설과 달리, 4가지 염기는 동일한 비율이 아니었다. 하지만 일정한 <strong>쌍(pair)</strong> 관계가 존재했다:</p>
+        </div>
+
+        <div class="math-block">
+          <strong>규칙 1:</strong> %Adenine(아데닌) ≈ %Thymine(티민) -- A-T 사이에 <strong>2개의 수소결합</strong><br>
+          <strong>규칙 2:</strong> %Guanine(구아닌) ≈ %Cytosine(시토신) -- G-C 사이에 <strong>3개의 수소결합</strong><br><br>
+          즉, A/T 비율 ≈ 1, G/C 비율 ≈ 1 (모든 생물에서 공통적)
+        </div>
+
+        <div class="card">
+          <div class="card-label">이 규칙이 중요한 이유</div>
+          <p>샤가프 자신은 이 규칙이 왜 성립하는지 설명하지 못했다. 하지만 이 "숨겨진 수학적 대칭성"은 DNA 구조에 대한 결정적 힌트였다. 후에 왓슨은 이 규칙을 떠올리며 <strong>A가 T와, G가 C와 구조적으로 짝을 이룬다</strong>는 것을 깨닫게 된다.</p>
+          <p style="margin-top:12px;">비유하자면, 만약 장갑 공장에서 항상 왼손 장갑과 오른손 장갑이 같은 수로 생산된다면, 이 둘이 반드시 쌍으로 존재한다는 의미이다. 마찬가지로, A와 T가 항상 같은 양이라면 이 둘은 반드시 짝을 이루고 있다는 뜻이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Chargaff's Rules</td><td>샤가프의 규칙</td><td>A=T, G=C라는 염기 비율의 법칙</td></tr>
+              <tr><td class="en">Hydrogen Bond</td><td>수소결합</td><td>수소 원자를 매개로 한 약한 화학 결합</td></tr>
+              <tr><td class="en">Base Pairing</td><td>염기쌍 형성</td><td>A-T, G-C가 짝을 이루는 것</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 11 ==================== -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>단서 #2: X-선 서명 -- Photo 51</h2>
+
+        <div class="summary-box">
+          로잘린드 프랭클린(Rosalind Franklin)이 1952년 촬영한 "Photo 51"은 DNA가 나선 구조임을 보여주는 결정적인 X-선 회절 사진이다. 이 사진 한 장이 DNA 구조 해독의 열쇠가 되었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Photo 51의 의미</div>
+          <p><strong>X-선 결정학(X-ray Crystallography)</strong>은 분자에 X-선을 쏘아 나타나는 회절 패턴(diffraction pattern)으로 분자의 3차원 구조를 추론하는 기법이다. <strong>로잘린드 프랭클린(Rosalind Franklin)</strong>은 킹스 칼리지에서 이 기법의 세계적 전문가였다.</p>
+          <p style="margin-top:12px;">1952년 프랭클린이 촬영한 <strong>Photo 51</strong>은 과학사에서 가장 유명한 사진 중 하나이다. 이 사진에서 읽어낼 수 있는 정보는:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>X자 패턴:</strong> 나선(Helix) 구조임을 나타냄</li>
+            <li><strong>상단과 하단의 진한 점:</strong> 당-인산 골격(Sugar-Phosphate Backbone)이 나선의 바깥쪽에 있음</li>
+            <li><strong>규칙적으로 배열된 가로줄:</strong> 일정한 간격의 "가로대(Rungs)"가 존재함</li>
+            <li><strong>밀도와 일정한 직경:</strong> 다중 가닥 구조(multi-stranded)임을 시사</li>
+          </ul>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Photo 51에서 읽을 수 있는 정보</div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[X자 패턴]<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ \<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;\<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;/<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ /<br><br>
+          X자 패턴 --> <strong>나선(Helix)</strong> 구조의 증거<br>
+          상/하 진한 점 --> 골격이 <strong>바깥쪽</strong>에 위치<br>
+          규칙적 가로줄 --> 일정 간격의 <strong>염기쌍</strong>
+        </div>
+
+        <div class="warning-box">
+          <strong>역사적 논쟁:</strong> 프랭클린의 Photo 51은 그녀의 동의 없이 윌킨스를 통해 왓슨에게 보여졌다. 이 사진이 왓슨과 크릭에게 결정적 영감을 주었음에도, 프랭클린은 노벨상 수상에서 제외되었다 (1958년 37세에 난소암으로 사망). 현대 과학사는 그녀를 DNA 구조 발견의 숨은 공로자로 재평가하고 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Photo 51</td><td>사진 51번</td><td>프랭클린이 촬영한 DNA의 X-선 회절 사진</td></tr>
+              <tr><td class="en">X-ray Diffraction</td><td>X-선 회절</td><td>X-선이 분자를 통과하며 만드는 산란 패턴</td></tr>
+              <tr><td class="en">Helix</td><td>나선</td><td>나사 또는 용수철처럼 꼬인 3차원 구조</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 12 ==================== -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>잘못된 단서: 폴링의 삼중나선 (The False Lead)</h2>
+
+        <div class="summary-box">
+          세계 최고의 화학자 라이너스 폴링은 인산기를 중심에 놓은 삼중나선 구조를 제안했으나, 화학적으로 치명적인 오류가 있었다. 이 실패가 오히려 왓슨과 크릭에게 올바른 방향을 알려주었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">폴링의 삼중나선 모델</div>
+          <p><strong>라이너스 폴링(Linus Pauling)</strong>은 이미 단백질의 알파나선 구조를 밝혀낸 천재 화학자였다. 그는 DNA도 <strong>3개의 가닥이 꼬인 삼중나선(Triple Helix)</strong> 구조라고 제안했으며, <strong>인산기(Phosphate)를 나선의 중심</strong>에 배치했다.</p>
+          <p style="margin-top:12px;">그러나 이 모델에는 <strong>치명적인 결함(Fatal Flaw)</strong>이 있었다:</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>치명적 결함:</strong> 인산기(Phosphate Group)는 <strong>음전하(-)</strong>를 띤다. 음전하끼리는 서로 <strong>밀어내는 정전기적 반발력(Electrostatic Repulsion)</strong>이 작용한다. 따라서 음전하를 가진 인산기들을 나선의 중심에 강제로 모아놓으면 구조가 불안정해져 유지될 수 없다. 이는 같은 극의 자석을 억지로 붙이려는 것과 같다.
+        </div>
+
+        <div class="key-point">
+          <strong>왓슨과 크릭의 통찰:</strong> 폴링의 실수를 본 왓슨과 크릭은 중요한 교훈을 얻었다 -- <strong>골격(Backbone)은 바깥쪽에, 염기(Base)는 안쪽에</strong> 배치해야 한다. 음전하를 가진 인산기는 바깥쪽에서 물(수용액)과 상호작용하고, 소수성(hydrophobic) 경향이 있는 염기들은 안쪽에서 서로 짝을 이루는 것이 화학적으로 합리적이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Triple Helix</td><td>삼중나선</td><td>세 가닥이 꼬인 구조 (폴링의 잘못된 모델)</td></tr>
+              <tr><td class="en">Electrostatic Repulsion</td><td>정전기적 반발</td><td>같은 전하끼리 밀어내는 힘</td></tr>
+              <tr><td class="en">Backbone</td><td>골격 / 뼈대</td><td>DNA의 당-인산 사슬로 이루어진 외부 구조</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 13 ==================== -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>케임브리지 듀오 (The Cambridge Duo)</h2>
+
+        <div class="summary-box">
+          왓슨(24세)과 크릭(36세)은 캐번디시 연구소에서 물리적 모델 구축이라는 독특한 방법으로 DNA 구조를 풀어냈다. 생물학자와 물리학자의 학제간 협력이 이 발견의 핵심이었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">선수 프로필</div>
+          <p><strong>제임스 왓슨(James Watson, 당시 24세):</strong> 미국 출신 생물학자. 유전학에 대한 깊은 관심으로 영국 케임브리지로 건너왔다. 생물학적 직관과 열정이 강점이었다.</p>
+          <p style="margin-top:12px;"><strong>프랜시스 크릭(Francis Crick, 당시 36세):</strong> 영국 출신 물리학자. 2차 세계대전 후 생물학으로 전향했다. 물리학적 사고방식과 수학적 분석 능력이 강점이었다.</p>
+          <p style="margin-top:12px;">이 둘은 <strong>캐번디시 연구소(Cavendish Laboratory)</strong>에서 만나 팀을 이루었다. 둘 다 아직 박사학위 논문을 완성하지 못한 상태였지만, 서로 다른 분야의 전문성을 합쳐 강력한 시너지를 만들어냈다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">왓슨-크릭 팀의 전략</div>
+          <strong>방법:</strong> 이론적 모델 구축 (Theoretical Model Building)<br>
+          --> 알려진 화학적 데이터를 종합하여 물리적 3D 모형을 조립<br><br>
+          <strong>전략:</strong> 화학적 퍼즐 조각 맞추기<br>
+          --> 샤가프의 규칙 + X-선 데이터 + 화학적 원리를 결합<br><br>
+          <strong>동기:</strong> 라이너스 폴링을 이기는 것!<br>
+          --> 폴링이 삼중나선 논문을 발표한 후, 그의 오류를 발견하고 더욱 속도를 올림
+        </div>
+
+        <div class="tip">
+          <span>학제간 연구의 힘: 이 발견은 생물학자와 물리학자의 협력이 만들어낸 결과이다. 왓슨의 생물학적 직관(유전의 중요성 이해)과 크릭의 물리학적 분석력(나선 구조의 수학적 특성 이해)이 결합되어 가능했다.</span>
+        </div>
+      </section>
+
+      <!-- ==================== Page 14 ==================== -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>모델 구축의 통찰 (The Insight: Building the Model)</h2>
+
+        <div class="summary-box">
+          왓슨과 크릭은 물리적 3D 모형을 조립하면서, 퓨린과 피리미딘이 짝을 이루면 균일한 폭이 유지된다는 결정적 통찰을 얻었다. 제리 도너휴의 호변이성질체 교정이 마지막 퍼즐 조각이었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">물리적 모형 조립</div>
+          <p>왓슨과 크릭은 금속판과 철사로 만든 <strong>실물 크기의 분자 모형</strong>을 조립했다. 각 염기, 당, 인산기를 금속으로 제작하여 실제로 맞추어 보았다. 컴퓨터 시뮬레이션이 없던 시대에, 이것이 분자 구조를 시각적으로 탐색하는 유일한 방법이었다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 돌파구: 퓨린-피리미딘 쌍</div>
+          <p>DNA의 4가지 염기는 크기에 따라 두 그룹으로 나뉜다:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>퓨린(Purine):</strong> A(아데닌)와 G(구아닌) -- 이중 고리 구조로 <strong>크기가 크다</strong></li>
+            <li><strong>피리미딘(Pyrimidine):</strong> T(티민)와 C(시토신) -- 단일 고리 구조로 <strong>크기가 작다</strong></li>
+          </ul>
+          <p style="margin-top:12px;">왓슨은 <strong>큰 퓨린(A, G)이 작은 피리미딘(T, C)과 짝을 이루면</strong>, 모든 "가로대"의 폭이 동일해진다는 것을 깨달았다. 만약 퓨린끼리(A-G) 짝을 이루면 너무 넓고, 피리미딘끼리(T-C) 짝을 이루면 너무 좁아서 균일한 나선 구조가 불가능하다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">염기쌍의 크기 원리</div>
+          퓨린 (큰 것) + 피리미딘 (작은 것) = <strong>균일한 폭</strong><br><br>
+          A (퓨린, 큰) + T (피리미딘, 작은) = 일정한 폭<br>
+          G (퓨린, 큰) + C (피리미딘, 작은) = 같은 폭!<br><br>
+          퓨린 + 퓨린 = 너무 넓음 (X)<br>
+          피리미딘 + 피리미딘 = 너무 좁음 (X)
+        </div>
+
+        <div class="key-point">
+          <strong>제리 도너휴의 교정 (Jerry Donohue's Correction):</strong> 왓슨이 처음 시도했을 때, 염기의 화학 구조가 교과서와 달라 모형이 맞지 않았다. 같은 연구실에 있던 화학자 제리 도너휴가 염기의 올바른 <strong>호변이성질체(Tautomeric Form)</strong>를 알려주었고, 이 교정 덕분에 A-T와 G-C 쌍이 정확히 들어맞게 되었다. 작은 화학적 세부사항이 역사를 바꾼 것이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Purine</td><td>퓨린</td><td>이중 고리 구조의 염기 (A, G) -- 크기가 큰 염기</td></tr>
+              <tr><td class="en">Pyrimidine</td><td>피리미딘</td><td>단일 고리 구조의 염기 (T, C) -- 크기가 작은 염기</td></tr>
+              <tr><td class="en">Tautomeric Form</td><td>호변이성질체</td><td>같은 분자가 수소 위치에 따라 다른 형태를 가지는 것</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 15 ==================== -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>최종 모델 (The Final Model) -- 1953년 2월</h2>
+
+        <div class="summary-box">
+          1953년 2월, 왓슨과 크릭은 모든 단서를 종합하여 DNA 이중나선 모델을 완성했다. 퓨린-피리미딘 쌍, 역평행 배열, 균일한 2.0nm 폭이 핵심 특징이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">최종 모델의 핵심 특징</div>
+          <p>왓슨과 크릭이 완성한 DNA 모델의 세 가지 핵심 특징:</p>
+          <ol style="margin-top:8px; margin-left:20px;">
+            <li><strong>퓨린-피리미딘 염기쌍:</strong> A(퓨린)는 T(피리미딘)와, G(퓨린)는 C(피리미딘)와 짝을 이룬다.</li>
+            <li style="margin-top:6px;"><strong>역평행 배열(Antiparallel):</strong> 두 가닥의 방향이 반대이다. 한 가닥이 5'-->3' 방향이면, 다른 가닥은 3'-->5' 방향이다. 마치 에스컬레이터에서 한 쪽은 올라가고 다른 쪽은 내려가는 것과 같다.</li>
+            <li style="margin-top:6px;"><strong>균일한 폭:</strong> 모든 위치에서 나선의 직경이 <strong>2.0 nm (20 옹스트롬)</strong>으로 일정하다. 이는 프랭클린의 X-선 데이터와 정확히 일치했다.</li>
+          </ol>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">최종 모델 개요</div>
+          5' ---- A === T ---- 3'<br>
+          5' ---- G === C ---- 3'<br>
+          5' ---- T === A ---- 3'<br>
+          5' ---- C === G ---- 3'<br><br>
+          [왼쪽 가닥: 5'-->3' 방향 | 오른쪽 가닥: 3'-->5' 방향]<br>
+          === : 수소결합으로 연결된 염기쌍<br>
+          폭: 어디서나 2.0 nm로 균일
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Antiparallel</td><td>역평행</td><td>두 가닥이 반대 방향으로 배열된 것 (5'-->3' 과 3'-->5')</td></tr>
+              <tr><td class="en">5' end / 3' end</td><td>5' 말단 / 3' 말단</td><td>DNA 가닥의 방향을 나타내는 탄소 번호 기준</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 16 ==================== -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>해결책: 이중나선 (The Double Helix, 1953)</h2>
+
+        <div class="summary-box">
+          DNA 이중나선은 오른손 방향으로 꼬인 두 가닥의 역평행 나선으로, 큰 홈(Major Groove)과 작은 홈(Minor Groove)이 교대로 나타나는 구조이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">이중나선 구조의 상세</div>
+          <p>DNA 이중나선의 주요 구조적 특징을 하나씩 살펴보자:</p>
+          <p style="margin-top:12px;"><strong>1. 두 가닥 (Two Strands):</strong> DNA는 두 개의 폴리뉴클레오타이드 가닥으로 구성된다. 두 가닥은 공통 축을 중심으로 꼬여 <strong>오른손 나선(Right-handed Helix)</strong>을 형성한다. 오른손 나선이란, 오른손 엄지가 위를 가리킬 때 나머지 손가락이 감기는 방향으로 꼬인다는 뜻이다.</p>
+          <p style="margin-top:12px;"><strong>2. 역평행 배향 (Antiparallel Orientation):</strong> 두 가닥은 반대 방향으로 달린다. 한 가닥이 5'에서 3' 방향으로 진행하면, 상보적 가닥은 3'에서 5' 방향으로 진행한다.</p>
+          <p style="margin-top:12px;"><strong>3. 큰 홈과 작은 홈 (Major Groove & Minor Groove):</strong> 두 가닥이 꼬이면서 나선 바깥쪽에 두 가지 크기의 홈이 생긴다. 큰 홈(Major Groove)은 넓은 골이고, 작은 홈(Minor Groove)은 좁은 골이다. 이 홈들은 <strong>단백질이 DNA에 결합하는 부위</strong>로, 유전자 조절에서 핵심적인 역할을 한다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">이중나선의 홈 구조</div>
+          &nbsp;&nbsp;&nbsp;&nbsp;=====큰 홈 (Major Groove)=====<br>
+          --5'---당-인산-당-인산---3'--<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;염기--염기--염기--염기<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+          --3'---당-인산-당-인산---5'--<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;=====작은 홈 (Minor Groove)=====<br><br>
+          큰 홈: 단백질이 접근하기 쉬운 넓은 공간<br>
+          작은 홈: 상대적으로 좁은 공간
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Right-handed Helix</td><td>오른손 나선</td><td>오른손 방향으로 꼬인 나선 구조</td></tr>
+              <tr><td class="en">Major Groove</td><td>큰 홈</td><td>이중나선에서 넓은 골, 단백질 결합 부위</td></tr>
+              <tr><td class="en">Minor Groove</td><td>작은 홈</td><td>이중나선에서 좁은 골</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 17 ==================== -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>레일: 당-인산 골격 (The Rails: Sugar-Phosphate Backbone)</h2>
+
+        <div class="summary-box">
+          DNA 이중나선의 "레일(Rails)"은 당(디옥시리보스)과 인산기가 교대로 연결된 골격이다. 포스포디에스테르 결합이 이 골격을 강하게 유지하며, 음전하를 띤 인산기는 바깥쪽을 향한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">포스포디에스테르 결합 (Phosphodiester Bond)</div>
+          <p>DNA 가닥의 골격은 <strong>당(Sugar)</strong>과 <strong>인산기(Phosphate)</strong>가 교대로 연결된 긴 사슬이다. 이때 한 뉴클레오타이드의 당과 다음 뉴클레오타이드의 인산기를 연결하는 <strong>공유결합(Covalent Bond)</strong>을 <strong>포스포디에스테르 결합(Phosphodiester Bond)</strong>이라 한다.</p>
+          <p style="margin-top:12px;">이 결합의 특징:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>안정성 (Stability):</strong> 포스포디에스테르 결합은 매우 강한 공유결합으로, DNA 가닥을 견고하게 유지한다. 이 때문에 DNA는 화학적으로 매우 안정적인 분자이다.</li>
+            <li><strong>방향성 (Orientation):</strong> 음전하를 띤 인산기는 바깥쪽을 향하여 물(수용액) 및 히스톤(Histone) 단백질과 상호작용한다. 히스톤은 양전하를 띤 단백질로, 음전하의 DNA와 정전기적으로 결합하여 DNA를 감아서 압축하는 역할을 한다.</li>
+          </ul>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">당-인산 골격 구조</div>
+          5' 말단<br>
+          &nbsp;&nbsp;|<br>
+          인산 --- 당(5'C) --- [염기]<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(3'C)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+          인산 --- 당(5'C) --- [염기]<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(3'C)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+          3' 말단<br><br>
+          방향: 5' --> 3' (인산에서 수산기 방향)<br>
+          포스포디에스테르 결합: 3'C-O-P-O-5'C 연결
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Phosphodiester Bond</td><td>포스포디에스테르 결합</td><td>뉴클레오타이드를 연결하는 강한 공유결합</td></tr>
+              <tr><td class="en">Sugar-Phosphate Backbone</td><td>당-인산 골격</td><td>DNA 나선의 외부 구조를 이루는 사슬</td></tr>
+              <tr><td class="en">Histone</td><td>히스톤</td><td>양전하 단백질, DNA를 감아 압축하는 역할</td></tr>
+              <tr><td class="en">Covalent Bond</td><td>공유결합</td><td>전자를 공유하여 형성되는 강한 화학 결합</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 18 ==================== -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>유레카의 순간 (THE EUREKA MOMENT)</h2>
+
+        <div class="summary-box">
+          왓슨은 A-T 쌍과 G-C 쌍의 모양과 크기가 동일하다는 것을 깨달았다. 이 발견으로 역평행 가닥이 균일한 폭을 유지하는 이중나선 구조가 완성되었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">결정적 깨달음</div>
+          <p>왓슨이 금속 모형 조각을 이리저리 맞추어 보던 중, 갑자기 모든 것이 들어맞는 순간이 왔다:</p>
+          <p style="margin-top:12px;"><strong>A-T 쌍(아데닌-티민)</strong>과 <strong>G-C 쌍(구아닌-시토신)</strong>이 <strong>동일한 모양과 크기(identical in shape and size)</strong>를 가진다는 것이었다! 이것이 바로 "유레카의 순간"이었다.</p>
+          <p style="margin-top:12px;">이 깨달음이 왜 결정적인가? 만약 A-T 쌍과 G-C 쌍의 크기가 다르다면, DNA 나선의 폭이 위치마다 달라져 고른 나선 구조를 형성할 수 없다. 하지만 둘의 크기가 같으므로, <strong>어떤 순서로 염기쌍이 배열되든</strong> 나선의 폭은 항상 일정하다. 이것은 프랭클린의 X-선 데이터(균일한 직경)와 완벽히 일치했다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">A-T 쌍과 G-C 쌍의 동일한 폭</div>
+          <strong>A-T 쌍:</strong><br>
+          [퓨린 A] ==== 2개 수소결합 ==== [피리미딘 T]<br>
+          &lt;---------- 폭: 약 2.0 nm ----------&gt;<br><br>
+          <strong>G-C 쌍:</strong><br>
+          [퓨린 G] === 3개 수소결합 === [피리미딘 C]<br>
+          &lt;---------- 폭: 약 2.0 nm ----------&gt;<br><br>
+          --> 두 쌍의 폭이 동일하므로 나선의 직경은 어디서든 균일하다!
+        </div>
+
+        <div class="key-point">
+          <strong>왜 이것이 모든 것을 설명하는가:</strong> 샤가프의 규칙(A=T, G=C)은 이 구조적 짝짓기의 자연스러운 결과이다. A가 항상 T와만 쌍을 이루므로 둘의 양이 같고, G가 항상 C와만 쌍을 이루므로 둘의 양이 같다. 수학적 규칙의 구조적 이유가 마침내 밝혀진 것이다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 19 ==================== -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 19</span>
+        <h2>가로대: 특이적 염기쌍 (THE RUNGS: SPECIFIC BASE PAIRING)</h2>
+
+        <div class="summary-box">
+          A-T 사이에는 2개, G-C 사이에는 3개의 수소결합이 형성된다. 이 수소결합은 DNA를 "지퍼"처럼 열 수 있을 만큼 약하면서도, 유전 암호를 보존할 수 있을 만큼 충분히 강하다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">상보성 (Complementarity)</div>
+          <p>DNA 이중나선에서 염기쌍 형성의 가장 중요한 규칙은 <strong>상보성(Complementarity)</strong>이다:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>A(아데닌)</strong>은 오직 <strong>T(티민)</strong>하고만 짝을 이룬다 -- <strong>2개의 수소결합</strong></li>
+            <li><strong>G(구아닌)</strong>은 오직 <strong>C(시토신)</strong>하고만 짝을 이룬다 -- <strong>3개의 수소결합</strong></li>
+          </ul>
+          <p style="margin-top:12px;">이 규칙은 절대적이다. A가 C와 짝을 이루거나, G가 T와 짝을 이루는 것은 화학적으로 불가능하다. 수소결합의 위치와 갯수가 맞지 않기 때문이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">"지퍼" 비유 (The Zipper)</div>
+          <p>수소결합(Hydrogen Bond)은 공유결합에 비해 <strong>약한 결합</strong>이다. 이 "약함"은 결점이 아니라 <strong>핵심적인 설계적 특징</strong>이다:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>열 수 있을 만큼 약하다:</strong> 효소(예: 헬리카아제, Helicase)가 두 가닥을 "지퍼를 열듯이" 분리할 수 있다. 이것은 DNA 복제(Replication)와 전사(Transcription)에 필수적이다.</li>
+            <li><strong>유전 암호를 보존할 만큼 강하다:</strong> 개별 수소결합은 약하지만, DNA 전체에 걸쳐 수백만 개의 수소결합이 있으므로 총체적으로는 매우 안정적이다. 또한, 인접 염기쌍들 사이의 <strong>스태킹 상호작용(Stacking Interaction)</strong>이 추가적인 안정성을 제공한다.</li>
+          </ul>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">수소결합 비교</div>
+          <strong>A ---- T (2개 수소결합)</strong><br>
+          아데닌 ···H-N··· 티민<br>
+          아데닌 ···N-H··· 티민<br>
+          --> 결합력 상대적으로 약함<br><br>
+          <strong>G ---- C (3개 수소결합)</strong><br>
+          구아닌 ···H-N··· 시토신<br>
+          구아닌 ···N-H··· 시토신<br>
+          구아닌 ···O-H··· 시토신<br>
+          --> 결합력 상대적으로 강함
+        </div>
+
+        <div class="tip">
+          <span>시험 포인트: G-C 쌍은 3개의 수소결합으로 A-T 쌍(2개)보다 강하다. 따라서 G-C 함량이 높은 DNA는 열에 더 안정적이다 (녹는점, Tm이 높다). 이것은 PCR 등 분자생물학 실험에서 중요한 실용적 정보이다.</span>
+        </div>
+      </section>
+
+      <!-- ==================== Page 20 ==================== -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 20</span>
+        <h2>1962 노벨 생리의학상</h2>
+
+        <div class="summary-box">
+          1962년 노벨 생리의학상은 크릭, 왓슨, 윌킨스에게 수여되었다. "핵산의 분자 구조와 생체 내 정보 전달에 대한 그 구조의 중요성에 관한 발견"이 수상 사유였다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">노벨상 수상자</div>
+          <p>1962년 노벨 생리의학상 수상자 3인:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>프랜시스 크릭 (Francis Crick, 1916-2004):</strong> 영국 물리학자 출신 생물학자. 이중나선 모델의 이론적 토대를 구축하고, 후에 중심원리(Central Dogma)를 제안했다.</li>
+            <li><strong>제임스 왓슨 (James Watson, 1928-):</strong> 미국 생물학자. 염기쌍의 상보적 구조를 직관적으로 발견한 핵심 인물.</li>
+            <li><strong>모리스 윌킨스 (Maurice Wilkins, 1916-2004):</strong> 뉴질랜드 출신 물리학자. 킹스 칼리지에서 DNA X-선 결정학 연구를 주도하여 실험적 데이터를 제공했다.</li>
+          </ul>
+        </div>
+
+        <div class="key-point">
+          <strong>수상 사유 (Citation):</strong> "핵산의 분자 구조와 생체 내 정보 전달에 대한 그 구조의 중요성에 관한 발견 (For their discoveries concerning the molecular structure of nucleic acids and its significance for information transfer in living material)."
+        </div>
+
+        <div class="warning-box">
+          <strong>부재한 이름:</strong> 로잘린드 프랭클린(Rosalind Franklin)은 1958년 37세의 나이에 난소암으로 사망했다. 노벨상은 사후에 수여되지 않으므로 수상 대상에서 제외되었다. 그러나 그녀의 Photo 51이 구조 발견에 결정적 기여를 했음은 현대 과학사가 인정하는 바이다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 21 ==================== -->
+      <section class="page-section" id="p21">
+        <span class="page-num">Page 21</span>
+        <h2>DNA의 물리적 성질 (Physical Properties of DNA)</h2>
+
+        <div class="summary-box">
+          DNA 이중나선은 나선 한 바퀴(Pitch)가 3.4nm이고, 직경 2.0nm, 염기 간격 0.34nm로 한 바퀴에 10개의 염기쌍이 포함된다. 표준 형태는 B-형(B-form)이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">DNA 구조의 수치적 특성</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>물리적 성질</th><th>수치</th><th>의미</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Helical Pitch (나선 주기)</td><td>3.4 nm (34 A)</td><td>나선이 한 바퀴 도는 데 걸리는 높이</td></tr>
+              <tr><td class="en">Diameter (직경)</td><td>2.0 nm (20 A)</td><td>이중나선의 가로 폭</td></tr>
+              <tr><td class="en">Base Separation (염기 간격)</td><td>0.34 nm (3.4 A)</td><td>인접한 두 염기쌍 사이의 거리</td></tr>
+              <tr><td class="en">Base Pairs per Turn</td><td>10 bp</td><td>나선 한 바퀴에 포함된 염기쌍 수</td></tr>
+              <tr><td class="en">Handedness (나선 방향)</td><td>Right-handed (오른손 방향)</td><td>나선이 꼬이는 방향</td></tr>
+              <tr><td class="en">Standard Form (표준 형태)</td><td>B-form (B형)</td><td>생체 내 가장 일반적인 DNA 구조 형태</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">
+          <strong>계산 확인:</strong> 나선 한 바퀴의 높이(3.4 nm) / 염기 간격(0.34 nm) = <strong>10개 염기쌍/회전</strong>. 이 수치들은 프랭클린의 X-선 회절 데이터에서 도출된 것으로, 모델의 정확성을 검증하는 핵심 기준이었다.
+        </div>
+
+        <div class="tip">
+          <span>시험 포인트: B-DNA의 핵심 수치 3개를 반드시 암기하자 -- 주기 3.4nm, 직경 2.0nm, 염기 간격 0.34nm. 특히 3.4nm / 0.34nm = 10 bp/turn이라는 관계를 기억하면 시험에서 유용하다.</span>
+        </div>
+      </section>
+
+      <!-- ==================== Page 22 ==================== -->
+      <section class="page-section" id="p22">
+        <span class="page-num">Page 22</span>
+        <h2>디옥시리보핵산 (DNA) 상세 구조</h2>
+
+        <div class="summary-box">
+          DNA 이중나선의 상세한 화학 구조를 살펴보면, 큰 홈과 작은 홈, 염기쌍(A-T 2개 수소결합, G-C 3개 수소결합), 당-인산 골격의 배치를 확인할 수 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">뉴클레오타이드의 세부 구성</div>
+          <p>각 뉴클레오타이드는 세 부분으로 구성된다:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>질소 염기 (Nitrogenous Base):</strong> 유전 정보를 담는 부분. A, T, G, C 네 종류.</li>
+            <li><strong>당 (Sugar, Deoxyribose):</strong> 5개의 탄소를 가진 오탄당. 각 탄소는 1'부터 5'까지 번호가 매겨져 있다. DNA의 방향성(5'-->3')은 이 번호에서 유래한다.</li>
+            <li><strong>인산기 (Phosphate Group):</strong> 음전하를 띠며, 당의 5' 탄소에 결합. 뉴클레오타이드를 연결하는 다리 역할.</li>
+          </ul>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">DNA 상세 구조도</div>
+          <strong>외부:</strong> 당-인산 골격 (Sugar-Phosphate Backbone)<br>
+          &nbsp;&nbsp;&nbsp;-- 인산기(PO4^3-) : 음전하, 외부 노출<br>
+          &nbsp;&nbsp;&nbsp;-- 디옥시리보스 : 5탄당<br><br>
+          <strong>내부:</strong> 염기쌍 (Base Pairs)<br>
+          &nbsp;&nbsp;&nbsp;-- A-T : 수소결합 2개<br>
+          &nbsp;&nbsp;&nbsp;-- T-A : 수소결합 2개<br>
+          &nbsp;&nbsp;&nbsp;-- G-C : 수소결합 3개<br>
+          &nbsp;&nbsp;&nbsp;-- C-G : 수소결합 3개<br><br>
+          <strong>홈:</strong><br>
+          &nbsp;&nbsp;&nbsp;-- Major Groove (큰 홈) : 넓은 골<br>
+          &nbsp;&nbsp;&nbsp;-- Minor Groove (작은 홈) : 좁은 골<br><br>
+          <strong>말단:</strong><br>
+          &nbsp;&nbsp;&nbsp;-- 3' 말단 : 수산기(-OH) 노출<br>
+          &nbsp;&nbsp;&nbsp;-- 5' 말단 : 인산기 노출
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Nitrogenous Base</td><td>질소 염기</td><td>질소를 포함한 고리 구조의 염기 (A, T, G, C)</td></tr>
+              <tr><td class="en">3' Hydroxyl</td><td>3' 수산기</td><td>당의 3번 탄소에 있는 -OH기, DNA 합성 방향 결정</td></tr>
+              <tr><td class="en">5' Phosphate</td><td>5' 인산기</td><td>당의 5번 탄소에 연결된 인산기</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 23 ==================== -->
+      <section class="page-section" id="p23">
+        <span class="page-num">Page 23</span>
+        <h2>1953년 4월 25일 -- Nature 논문</h2>
+
+        <div class="summary-box">
+          왓슨과 크릭은 1953년 4월 25일 Nature 저널에 "핵산의 분자 구조(MOLECULAR STRUCTURE OF NUCLEIC ACIDS)"라는 제목의 역사적인 논문을 발표했다. 이 논문의 마지막 문장은 "세기의 과학적 절제(Scientific Understatement of the Century)"로 불린다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">역사적 논문</div>
+          <p>1953년 4월 25일, Nature 저널에 실린 이 논문은 단 <strong>2페이지</strong> 분량이었다. 제목은 <strong>"MOLECULAR STRUCTURE OF NUCLEIC ACIDS: A Structure for Deoxyribose Nucleic Acid"</strong>이었다.</p>
+          <p style="margin-top:12px;">이 논문에서 가장 유명한 문장은 마지막 부분에 있다:</p>
+        </div>
+
+        <div class="math-block">
+          "It has not escaped our notice that the specific pairing we have postulated immediately suggests a possible copying mechanism for the genetic material."<br><br>
+          "우리가 제안한 특이적 짝짓기가 유전 물질의 복제 메커니즘을 즉시 시사한다는 점이 우리의 주의를 벗어나지 않았다."
+        </div>
+
+        <div class="key-point">
+          <strong>"세기의 과학적 절제 (The Scientific Understatement of the Century)":</strong> 이 문장은 과학사에서 가장 유명한 겸손한 표현으로 알려져 있다. 왓슨과 크릭은 자신들이 <strong>생명의 복제 메커니즘</strong>을 발견했다는 것을 알았지만, 매우 절제된 방식으로 표현했다. 실제로 이 발견은 유전학, 분자생물학, 의학, 농학 등 거의 모든 생명과학 분야를 근본적으로 변화시켰다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">논문의 핵심 함의</div>
+          <p>"특이적 짝짓기(specific pairing)"란 A-T, G-C 상보적 결합을 말한다. 이것이 "복제 메커니즘"을 시사한다는 뜻은:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li>두 가닥을 분리하면, 각 가닥이 상대방의 <strong>주형(template)</strong>이 된다.</li>
+            <li>A가 있는 위치에는 반드시 T가, G가 있는 위치에는 반드시 C가 오므로, 각 가닥만으로 원래의 이중나선을 완벽히 재구성할 수 있다.</li>
+            <li>이것이 바로 <strong>반보존적 복제(Semi-conservative Replication)</strong>의 원리이다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 24 ==================== -->
+      <section class="page-section" id="p24">
+        <span class="page-num">Page 24</span>
+        <h2>분자생물학의 중심원리 (The Central Dogma)</h2>
+
+        <div class="summary-box">
+          크릭은 1958년 "중심원리(Central Dogma)"를 제안했다: DNA에서 RNA로(전사), RNA에서 단백질로(번역) 유전 정보가 흐른다. 염기 서열이 아미노산 서열을 결정하며, 코드는 3개씩(triplet) 읽힌다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">중심원리란?</div>
+          <p><strong>중심원리(Central Dogma of Molecular Biology)</strong>는 1958년 크릭이 제안한 개념으로, 유전 정보의 흐름 방향을 정의한다. 이것은 분자생물학의 가장 기본적인 원리이다:</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">유전 정보의 흐름</div>
+          <strong>DNA</strong> --[전사, Transcription]--> <strong>RNA</strong> --[번역, Translation]--> <strong>단백질 (Protein)</strong><br><br>
+          전사 (Transcription): DNA의 염기 서열을 RNA로 복사하는 과정<br>
+          번역 (Translation): RNA의 염기 서열을 아미노산 서열(단백질)로 변환하는 과정
+        </div>
+
+        <div class="card">
+          <div class="card-label">상세 설명</div>
+          <p><strong>전사 (Transcription):</strong> DNA의 한 가닥을 주형으로 사용하여 <strong>mRNA(전령 RNA, Messenger RNA)</strong>를 합성한다. DNA의 T(티민) 대신 RNA에는 U(우라실, Uracil)이 들어간다. 세포핵(Nucleus) 안에서 일어난다.</p>
+          <p style="margin-top:12px;"><strong>번역 (Translation):</strong> mRNA의 염기 서열을 <strong>리보솜(Ribosome)</strong>이 읽어 <strong>아미노산 서열(단백질)</strong>로 변환한다. 세포질(Cytoplasm)의 리보솜에서 일어난다.</p>
+          <p style="margin-top:12px;"><strong>핵심 원칙:</strong> 염기 서열(Sequence of Bases)이 아미노산 서열(Sequence of Amino Acids)을 결정한다. 이 코드는 <strong>3개씩(triplet)</strong> 읽힌다. 즉, 3개의 연속된 염기가 하나의 아미노산을 지정한다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Central Dogma</td><td>중심원리</td><td>DNA-->RNA-->Protein으로의 유전정보 흐름 원리</td></tr>
+              <tr><td class="en">Transcription</td><td>전사</td><td>DNA를 주형으로 RNA를 합성하는 과정</td></tr>
+              <tr><td class="en">Translation</td><td>번역</td><td>mRNA를 읽어 단백질을 합성하는 과정</td></tr>
+              <tr><td class="en">mRNA</td><td>전령 RNA</td><td>DNA의 유전 정보를 리보솜으로 전달하는 RNA</td></tr>
+              <tr><td class="en">Ribosome</td><td>리보솜</td><td>mRNA를 읽어 단백질을 합성하는 세포 소기관</td></tr>
+              <tr><td class="en">Triplet</td><td>삼중체</td><td>하나의 아미노산을 지정하는 3개의 연속 염기</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 25 ==================== -->
+      <section class="page-section" id="p25">
+        <span class="page-num">Page 25</span>
+        <h2>암호 해독 (Cracking the Code)</h2>
+
+        <div class="summary-box">
+          1960년대 중반까지 유전 암호(Genetic Code)가 완전히 해독되었다. 3개의 염기(코돈)가 1개의 아미노산을 지정하며, 이 코드는 지구상 거의 모든 생명체에서 동일하게 적용되는 보편적(Universal) 코드이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">구조에서 언어로 (FROM STRUCTURE TO LANGUAGE)</div>
+          <p>DNA 구조가 밝혀진 후, 과학자들의 다음 도전은 <strong>"DNA의 염기 서열이 어떻게 단백질의 아미노산 서열로 번역되는가?"</strong>를 밝히는 것이었다. 이것을 <strong>유전 암호(Genetic Code)</strong>를 해독한다고 표현한다.</p>
+          <p style="margin-top:12px;">1960년대 마셜 니런버그(Marshall Nirenberg), 하르 고빈드 코라나(Har Gobind Khorana) 등의 연구자들이 유전 암호를 완전히 해독했다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">유전 암호 읽기 예시</div>
+          mRNA 서열: <strong>AUG - CCA - UGC</strong><br><br>
+          AUG --> 메티오닌 (Methionine) [시작 코돈]<br>
+          CCA --> 프롤린 (Proline)<br>
+          UGC --> 시스테인 (Cysteine)<br><br>
+          번역 결과: Met - Pro - Cys (아미노산 서열)
+        </div>
+
+        <div class="card">
+          <div class="card-label">유전 암호의 핵심 특성</div>
+          <ul style="margin-left:20px;">
+            <li><strong>코돈 (Codon):</strong> 연속된 3개의 염기가 하나의 단위(코돈)를 이룬다. 하나의 코돈이 하나의 아미노산을 지정한다.</li>
+            <li style="margin-top:6px;"><strong>64가지 코돈:</strong> 4가지 염기를 3개씩 조합하면 4^3 = 64가지 코돈이 가능하다. 이 중 61개는 아미노산을 지정하고, 3개는 종결 코돈(Stop Codon)이다.</li>
+            <li style="margin-top:6px;"><strong>축퇴성 (Degeneracy):</strong> 아미노산은 20가지인데 코돈은 61가지이므로, 대부분의 아미노산은 둘 이상의 코돈에 의해 지정된다.</li>
+            <li style="margin-top:6px;"><strong>보편성 (Universality):</strong> 이 유전 암호는 세균부터 인간까지, 지구상 거의 모든 생명체에서 동일하게 사용된다. 이것은 모든 생명체가 공통 조상에서 유래했다는 강력한 증거이다.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Codon</td><td>코돈</td><td>3개의 연속 염기, 하나의 아미노산을 지정</td></tr>
+              <tr><td class="en">Genetic Code</td><td>유전 암호</td><td>코돈과 아미노산의 대응 관계 체계</td></tr>
+              <tr><td class="en">Start Codon</td><td>시작 코돈</td><td>AUG -- 번역 시작 신호이자 메티오닌 지정</td></tr>
+              <tr><td class="en">Stop Codon</td><td>종결 코돈</td><td>UAA, UAG, UGA -- 번역 종료 신호</td></tr>
+              <tr><td class="en">Degeneracy</td><td>축퇴성</td><td>하나의 아미노산이 여러 코돈에 의해 지정되는 것</td></tr>
+              <tr><td class="en">Universality</td><td>보편성</td><td>유전 암호가 거의 모든 생물에서 동일한 것</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 26 ==================== -->
+      <section class="page-section" id="p26">
+        <span class="page-num">Page 26</span>
+        <h2>생명의 비밀 (The Secret of Life)</h2>
+
+        <div class="summary-box">
+          DNA 구조의 진정한 의미는 복제 메커니즘에 있다. 상보성(A-T, G-C)으로 인해 각 가닥이 상대방의 청사진이 되며, 두 가닥을 분리하면 유전 정보가 완벽히 복사된다. 이것이 유전의 비밀이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">복제 메커니즘 (Replication Mechanism)</div>
+          <p>DNA 이중나선 구조가 밝혀지자마자, 유전 정보가 어떻게 복제되는지도 자동으로 설명되었다. 이것이 바로 왓슨과 크릭이 Nature 논문에서 암시한 "복제 메커니즘"이다:</p>
+          <p style="margin-top:12px;"><strong>상보성의 원리 (COMPLEMENTARITY):</strong> A는 T와, C는 G와 짝을 이루므로, <strong>한 가닥의 서열을 알면 다른 가닥의 서열이 자동으로 결정</strong>된다. 예를 들어, 한 가닥이 "ATCG"이면, 상보적 가닥은 반드시 "TAGC"이다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">DNA 복제 과정</div>
+          <strong>원래 이중나선:</strong><br>
+          5'--- A-T-C-G-A ---3'<br>
+          3'--- T-A-G-C-T ---5'<br><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|  두 가닥 분리 (Unzip)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v<br><br>
+          <strong>각 가닥이 주형(Template)이 됨:</strong><br>
+          5'--- A-T-C-G-A ---3' (주형 1)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 새로운 가닥 합성<br>
+          3'--- T-A-G-C-T ---5' (새 가닥)<br><br>
+          3'--- T-A-G-C-T ---5' (주형 2)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 새로운 가닥 합성<br>
+          5'--- A-T-C-G-A ---3' (새 가닥)<br><br>
+          결과: <strong>2개의 동일한 이중나선</strong> (반보존적 복제)
+        </div>
+
+        <div class="key-point">
+          <strong>유전의 비밀이 풀리다:</strong> DNA 이중나선 구조 안에 유전 정보의 <strong>저장</strong>(염기 서열)과 <strong>복제</strong>(상보적 가닥 합성)의 메커니즘이 모두 내장되어 있다. 구조 자체가 기능을 설명하는 아름다운 사례이다. 크릭은 이 발견의 날 이글 펍(Eagle Pub)에서 "우리가 생명의 비밀을 발견했다(We have discovered the secret of life)"고 선언했다고 한다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 27 ==================== -->
+      <section class="page-section" id="p27">
+        <span class="page-num">Page 27</span>
+        <h2>발견의 이정표 (Milestones of Discovery)</h2>
+
+        <div class="summary-box">
+          1953년 구조 해결, 1958년 중심원리 제안, 1961년 유전 암호 해독, 1962년 노벨상 수상 -- 약 10년 만에 생물학의 패러다임이 완전히 바뀌었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 타임라인</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>연도</th><th>사건</th><th>의의</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">1953</td><td>DNA 구조 해결 (Nature Paper)</td><td>이중나선 모델 발표 -- 분자생물학의 시작</td></tr>
+              <tr><td class="en">1958</td><td>크릭, 중심원리 제안 (Central Dogma)</td><td>유전 정보의 흐름 방향 정의 (DNA-->RNA-->Protein)</td></tr>
+              <tr><td class="en">1961</td><td>유전 암호 해독 (Genetic Code Deciphered)</td><td>코돈-아미노산 대응 관계 완성</td></tr>
+              <tr><td class="en">1962</td><td>노벨 생리의학상 수상</td><td>크릭, 왓슨, 윌킨스에게 수여</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">
+          <strong>과학혁명의 속도:</strong> 1953년 구조 발견에서 1962년 노벨상까지 불과 9년이 걸렸다. 이것은 이 발견의 중요성이 얼마나 빠르게 인정되었는지를 보여준다. 보통 노벨상은 발견 후 수십 년이 지나서야 수여되는 경우가 많다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 28 ==================== -->
+      <section class="page-section" id="p28">
+        <span class="page-num">Page 28</span>
+        <h2>생명의 청사진 (The Blueprint of Life)</h2>
+
+        <div class="summary-box">
+          1953년, 인류는 자신의 설계도(유전 정보)를 읽는 방법을 처음으로 알게 되었다. 이 발견은 화학과 생물학의 경계를 허물었고, "살아있다는 것이 무엇인가"에 대한 이해를 근본적으로 바꾸었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">역사적 의의</div>
+          <p>1953년 DNA 이중나선 구조의 발견은 단순한 과학적 발견을 넘어선 <strong>패러다임의 전환</strong>이었다:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>화학과 생물학의 통합:</strong> "생명이란 무엇인가?"라는 철학적 질문에 분자 수준의 답을 제시했다. 유전이라는 생물학적 현상이 DNA라는 화학 분자의 구조로 설명된 것이다.</li>
+            <li style="margin-top:6px;"><strong>인간의 자기 이해:</strong> 인류는 최초로 자신의 유전 정보가 어떤 형태로 저장되어 있는지를 알게 되었다. 이것은 후에 인간 게놈 프로젝트(Human Genome Project)로 이어졌다.</li>
+            <li style="margin-top:6px;"><strong>실용적 혁명:</strong> 유전공학, 유전자 치료, 법의학적 DNA 감정, 맞춤형 의학 등 현대 기술의 토대가 되었다.</li>
+          </ul>
+        </div>
+
+        <div class="key-point">
+          <strong>요약:</strong> 1953년 DNA 이중나선의 발견은 화학과 생물학의 경계를 허물고, "살아있다는 것이 무엇인가"에 대한 인류의 이해를 영원히 바꾸었다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 29 ==================== -->
+      <section class="page-section" id="p29">
+        <span class="page-num">Page 29</span>
+        <h2>과학의 폭발적 성장 (The Scientific Explosion)</h2>
+
+        <div class="summary-box">
+          1953년 DNA 구조 발견 이후, 분자생물학 연구는 지수적(exponential)으로 성장했다. 2024년 현대 유전체학(Modern Genomics)에 이르기까지 약 70년간 혁명적 발전이 이어져 왔다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">DNA 구조 발견이 촉발한 혁명들</div>
+          <p>1953년 이후 분자생물학의 발전은 놀라운 속도로 이루어졌다:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li><strong>1960년대:</strong> 유전 암호 완전 해독, 제한효소(Restriction Enzyme) 발견</li>
+            <li><strong>1970년대:</strong> DNA 재조합 기술(Recombinant DNA Technology) 개발, 유전공학의 시작</li>
+            <li><strong>1980년대:</strong> PCR(중합효소 연쇄 반응) 발명 -- DNA 증폭 기술의 혁명</li>
+            <li><strong>1990-2003년:</strong> 인간 게놈 프로젝트(Human Genome Project) -- 인간 DNA 전체 서열 분석</li>
+            <li><strong>2010년대:</strong> CRISPR-Cas9 유전자 편집 기술 -- 유전자를 "수정"할 수 있는 시대</li>
+            <li><strong>2020년대:</strong> 현대 유전체학(Modern Genomics), mRNA 백신(COVID-19), 유전자 치료의 실용화</li>
+          </ul>
+          <p style="margin-top:12px;">이 모든 혁명의 출발점이 바로 1953년의 이중나선 발견이다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">분자생물학 연구의 성장 곡선</div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;*<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;*<br>
+          -----+-----+-----+-----+-----+-----+-----><br>
+          &nbsp;&nbsp;1953&nbsp;&nbsp;1960&nbsp;&nbsp;1970&nbsp;&nbsp;1980&nbsp;&nbsp;1990&nbsp;&nbsp;2000&nbsp;&nbsp;2024<br>
+          &nbsp;Discovery&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modern Genomics<br><br>
+          --> 지수적 (Exponential) 성장 패턴
+        </div>
+      </section>
+
+      <!-- ==================== Page 30 ==================== -->
+      <section class="page-section" id="p30">
+        <span class="page-num">Page 30</span>
+        <h2>DNA: 생명의 청사진 해독 -- 종합 인포그래픽</h2>
+
+        <div class="summary-box">
+          이 슬라이드는 DNA 발견의 모든 주요 측면을 하나의 종합 인포그래픽으로 정리한다: 기초(1869-1952), 1953년 발견, 구성 요소, 상보적 염기쌍, 복제 메커니즘, 중심원리, 현대 의학 혁명까지.
+        </div>
+
+        <div class="card">
+          <div class="card-label">종합 요약: DNA 이중나선의 모든 것</div>
+
+          <p><strong>1. 기초 (Foundation, 1869-1952)</strong></p>
+          <ul style="margin-left:20px; margin-bottom:12px;">
+            <li>미셰르의 뉴클레인 발견 (1869) --> 에이버리의 형질전환 실험 (1944) --> 허시-체이스 실험 (1952)</li>
+            <li>핵심 결론: DNA가 유전 물질이다.</li>
+          </ul>
+
+          <p><strong>2. 1953년 발견 (Discovery)</strong></p>
+          <ul style="margin-left:20px; margin-bottom:12px;">
+            <li>왓슨과 크릭이 이중나선 모델을 구축</li>
+            <li>프랭클린의 Photo 51, 샤가프의 규칙, 폴링의 실패가 핵심 단서</li>
+          </ul>
+
+          <p><strong>3. 구성 요소 (Building Blocks)</strong></p>
+          <ul style="margin-left:20px; margin-bottom:12px;">
+            <li>뉴클레오타이드 = 당 + 인산기 + 염기</li>
+            <li>4가지 염기: A, T, G, C</li>
+          </ul>
+
+          <p><strong>4. 상보적 염기쌍 (Complementary Base Pairing)</strong></p>
+          <ul style="margin-left:20px; margin-bottom:12px;">
+            <li>A-T: 2개 수소결합 / G-C: 3개 수소결합</li>
+            <li>균일한 나선 폭 2.0 nm 유지</li>
+          </ul>
+
+          <p><strong>5. 복제 메커니즘 (Copying Mechanism)</strong></p>
+          <ul style="margin-left:20px; margin-bottom:12px;">
+            <li>상보성으로 인해 각 가닥이 주형이 됨</li>
+            <li>반보존적 복제 --> 유전 정보 정확히 전달</li>
+          </ul>
+
+          <p><strong>6. 영향과 인정 (Impact & Recognition)</strong></p>
+          <ul style="margin-left:20px; margin-bottom:12px;">
+            <li>1962년 노벨 생리의학상: 크릭, 왓슨, 윌킨스</li>
+          </ul>
+
+          <p><strong>7. 중심원리 (Central Dogma)</strong></p>
+          <ul style="margin-left:20px; margin-bottom:12px;">
+            <li>DNA --> RNA --> Protein</li>
+          </ul>
+
+          <p><strong>8. 현대 의학 혁명 (Modern Medical Revolutions)</strong></p>
+          <ul style="margin-left:20px;">
+            <li>유전자 치료, CRISPR, mRNA 백신, 정밀 의학</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 31 ==================== -->
+      <section class="page-section" id="p31">
+        <span class="page-num">Page 31</span>
+        <h2>DNA 노벨상 뒤의 60년간의 비밀</h2>
+
+        <div class="summary-box">
+          Gann & Witkowski (2013)의 Nature 논문은 DNA 노벨상 뒤에 숨겨진 60년간의 이야기를 재조명한다. 과학적 발견의 영광 뒤에는 복잡한 인간 관계와 윤리적 문제가 있었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">역사의 재조명</div>
+          <p>2013년 Nature에 게재된 Gann과 Witkowski의 논문 <strong>"60-Year Secret Behind the DNA Nobel Prize"</strong>는 DNA 이중나선 발견 60주년을 맞아, 이 발견을 둘러싼 숨겨진 이야기들을 발굴했다.</p>
+          <p style="margin-top:12px;">이 논문은 특히 다음과 같은 점들을 조명한다:</p>
+          <ul style="margin-top:8px; margin-left:20px;">
+            <li>로잘린드 프랭클린의 데이터가 어떻게 왓슨과 크릭에게 전달되었는가</li>
+            <li>킹스 칼리지와 캐번디시 연구소 사이의 복잡한 경쟁과 협력 관계</li>
+            <li>노벨상 수상 과정에서의 정치적 고려사항</li>
+            <li>과학적 발견에서 윤리와 공정성의 문제</li>
+          </ul>
+        </div>
+
+        <div class="key-point">
+          <strong>교훈:</strong> 위대한 과학적 발견도 완벽한 과정을 통해 이루어지지는 않는다. 과학의 역사를 공부할 때는 발견 자체뿐만 아니라 그 과정에서의 인간적, 윤리적 측면도 함께 생각해볼 필요가 있다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 32 ==================== -->
+      <section class="page-section" id="p32">
+        <span class="page-num">Page 32</span>
+        <h2>역사 재평가 (Re-evaluating History)</h2>
+
+        <div class="summary-box">
+          DNA 이중나선의 발견은 과학의 승리인 동시에 협업의 실패이기도 했다. 현대 과학사는 로잘린드 프랭클린을 공동 발견자로 복원하고 있으며, 이 이야기는 과학이 인간적 활동임을 상기시킨다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">복잡한 유산 (A COMPLEX LEGACY)</div>
+          <p>DNA 이중나선의 발견을 둘러싼 역사는 단순한 성공 이야기가 아니다. 이 발견은 두 가지 상반된 측면을 동시에 보여준다:</p>
+          <p style="margin-top:12px;"><strong>과학의 승리 (Triumph of Science):</strong> 서로 다른 분야(생물학, 물리학, 화학, 결정학)의 지식이 융합되어 생명의 근본적 비밀을 풀어낸 경이로운 업적이다.</p>
+          <p style="margin-top:12px;"><strong>협업의 실패 (Failure of Collaboration):</strong> 프랭클린의 데이터가 본인의 동의 없이 사용되었고, 그녀의 기여가 충분히 인정받지 못했다. 성차별, 연구 윤리, 공정한 학문적 인정의 문제가 얽혀 있다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">로잘린드 프랭클린의 재평가</div>
+          <p>현대 과학사는 <strong>로잘린드 프랭클린(Rosalind Franklin)</strong>을 DNA 이중나선 구조의 <strong>공동 발견자(Co-discoverer)</strong>로 복원하고 있다. 그녀의 Photo 51과 정밀한 X-선 데이터 없이는 왓슨과 크릭의 모델이 완성되지 못했을 것이다.</p>
+          <p style="margin-top:12px;">2023년(발견 70주년), 영국 왕립학회는 프랭클린을 DNA 구조 발견의 핵심 기여자로 공식 인정했다. 프랭클린의 이름은 현재 수많은 대학 건물, 연구소, 과학상에 붙어 있다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">네 명의 주인공</div>
+          <strong>제임스 왓슨 (James Watson)</strong> -- 생물학자, 염기쌍 발견<br>
+          <strong>모리스 윌킨스 (Maurice Wilkins)</strong> -- 물리학자, X-선 결정학<br>
+          <strong>프랜시스 크릭 (Francis Crick)</strong> -- 물리학자, 이론적 모델링<br>
+          <strong>로잘린드 프랭클린 (Rosalind Franklin)</strong> -- 결정학자, Photo 51<br><br>
+          1962 노벨상: 왓슨, 윌킨스, 크릭 (프랭클린은 1958년 사망으로 제외)
+        </div>
+
+        <div class="key-point">
+          <strong>최종 교훈:</strong> 과학은 사회적 활동(Social Enterprise)이다. 빛나는 재능(Brilliance)과 인간적 결함(Human Fallibility) 모두가 과학의 역사를 만든다. 발견의 영광을 기억하되, 그 과정에서의 불공정도 함께 성찰해야 한다.
+        </div>
+
+        <div class="tip">
+          <span>이 강의의 핵심 메시지: DNA 이중나선의 발견은 "구조가 기능을 결정한다"는 생물학의 핵심 원리를 가장 아름답게 보여주는 사례이다. 이중나선 구조 안에 유전 정보의 저장, 복제, 전달이라는 세 가지 핵심 기능이 모두 내장되어 있다.</span>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '다크모드';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '라이트모드';
+      }
+    }
+
+    // Active sidebar link
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>
