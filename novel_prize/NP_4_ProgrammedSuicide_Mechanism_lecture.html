@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>세포의 프로그램된 자살</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar a {
+    display: block;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 600;
+    padding: 12px 12px 4px;
+    margin-top: 8px;
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .diagram-box {
+    background: var(--bg-aside);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .diagram-box .diagram-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .truth-table { width: auto; border-collapse: collapse; font-size: 14px; margin: 12px 0; font-family: 'JetBrains Mono', monospace; }
+  .truth-table th { background: var(--accent); color: white; padding: 8px 16px; font-size: 12px; text-align: center; }
+  .truth-table td { padding: 6px 16px; border: 1px solid var(--border); text-align: center; }
+  .truth-table tr:nth-child(even) { background: var(--bg-aside); }
+
+  strong { color: var(--accent); font-weight: 500; }
+
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 12px 18px;
+    margin: 12px 0;
+    font-style: italic;
+    color: var(--text-muted);
+    background: var(--bg-aside);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .page-section h2 { font-size: 20px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>세포의 프로그램된 자살</h1>
+      <div class="meta">2002 Nobel Prize &middot; Byung-Hoon Lee &middot; DGIST</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">페이지 목록</div>
+      <div class="section-label">도입 &amp; 배경</div>
+      <a href="#p1" class="active">01 -- 표지</a>
+      <a href="#p2">02 -- 생명의 역설</a>
+      <a href="#p3">03 -- 2002 노벨상</a>
+      <a href="#p4">04 -- 헌신과 위트</a>
+      <a href="#p5">05 -- 오픈 사이언스</a>
+      <a href="#p6">06 -- 코드의 윤리</a>
+      <a href="#p7">07 -- 기초과학의 힘</a>
+      <div class="section-label">C. elegans 모델</div>
+      <a href="#p8">08 -- 우아한 벌레</a>
+      <a href="#p9">09 -- 지구 최강 생물</a>
+      <a href="#p10">10 -- 완벽한 실험 대상</a>
+      <a href="#p11">11 -- 선충의 초능력</a>
+      <a href="#p12">12 -- 투명한 창</a>
+      <a href="#p13">13 -- 노벨상의 자석</a>
+      <a href="#p14">14 -- RNAi (2006)</a>
+      <a href="#p15">15 -- GFP (2008)</a>
+      <a href="#p16">16 -- microRNA (2024)</a>
+      <div class="section-label">분자생물학의 도약</div>
+      <a href="#p17">17 -- 단세포에서 복잡 생명으로</a>
+      <a href="#p18">18 -- 진화의 거울</a>
+      <a href="#p19">19 -- 궁극의 역설</a>
+      <a href="#p20">20 -- 조절된 죽음의 설계</a>
+      <div class="section-label">고정된 운명의 영웅</div>
+      <a href="#p21">21 -- 고정된 운명의 영웅</a>
+      <a href="#p22">22 -- 수명의 유전학</a>
+      <a href="#p23">23 -- 신경계 질환 모델링</a>
+      <div class="section-label">세포 죽음의 확장</div>
+      <a href="#p24">24 -- 죽음의 어휘 확장</a>
+      <a href="#p25">25 -- Pyroptosis &amp; Ferroptosis</a>
+      <a href="#p26">26 -- Necroptosis &amp; Cuproptosis</a>
+      <div class="section-label">임상 응용</div>
+      <a href="#p27">27 -- 불멸의 암세포</a>
+      <a href="#p28">28 -- Venetoclax</a>
+      <a href="#p29">29 -- 원치 않는 죽음 막기</a>
+      <a href="#p30">30 -- 좀비 세포와 노화</a>
+      <a href="#p31">31 -- 세노리틱스</a>
+      <div class="section-label">미래 &amp; 윤리</div>
+      <a href="#p32">32 -- 미래 지평</a>
+      <a href="#p33">33 -- 윤리적 지평</a>
+      <a href="#p34">34 -- 노화의 도덕적 기준</a>
+      <a href="#p35">35 -- 유산과 미래</a>
+      <a href="#p36">36 -- 최종 인포그래픽</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- Page 1 -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>The Architecture of Regulated Death</h2>
+
+        <div class="summary-box">
+          이 강의는 <strong>세포의 프로그램된 자살(Programmed Cell Death)</strong>의 분자적 메커니즘을 다룬다. 부제 "How a Worm's Suicide Program Changed Human Destiny"가 보여주듯, 1mm짜리 선충의 자살 프로그램이 어떻게 인류의 운명을 바꾸었는지를 추적한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">강의 개요</div>
+          <p>DGIST 신물질생물학과 Byung-Hoon Lee 교수의 이 강의는 2002년 노벨 생리의학상의 핵심 주제인 <strong>기관 발생의 유전적 조절과 프로그램된 세포 사멸</strong>을 심층적으로 탐구한다. 세포가 "닳아 없어져서" 죽는 것이 아니라, 유전자에 의해 <strong>능동적으로 조절되는 과정</strong>으로 죽는다는 혁명적 발견이 어떻게 이루어졌는지, 그리고 이것이 암 치료, 노화 연구, 신경퇴행성 질환 등 현대 의학에 어떤 영향을 미쳤는지를 다룬다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">Programmed Cell Death (PCD)</td>
+                <td>프로그램된 세포 사멸</td>
+                <td>유전자에 의해 조절되는 세포의 능동적 자살 과정</td>
+              </tr>
+              <tr>
+                <td class="en">Apoptosis</td>
+                <td>세포자멸사</td>
+                <td>그리스어 "떨어짐"에서 유래. 깔끔하고 조절된 세포 죽음</td>
+              </tr>
+              <tr>
+                <td class="en">C. elegans</td>
+                <td>예쁜꼬마선충</td>
+                <td>1mm 크기의 투명한 선충. 세포 사멸 연구의 핵심 모델 생물</td>
+              </tr>
+              <tr>
+                <td class="en">Genetic Regulation</td>
+                <td>유전적 조절</td>
+                <td>유전자에 의해 생물학적 과정이 제어되는 것</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Page 2 -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>생명의 역설: 죽음은 사고가 아니다</h2>
+
+        <div class="summary-box">
+          "죽음은 단순한 사고나 기계의 마모가 아니다. 그것은 <strong>능동적이고 조절된 과정</strong>이다." -- 이 한 문장이 이 강의 전체를 관통하는 핵심 메시지이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">생명의 역설 (The Paradox of Life)</div>
+          <p>생물이 올바르게 발생하고 조직 항상성(tissue homeostasis)을 유지하려면, 죽음은 탄생만큼이나 중요하다. 이것은 직관에 반하는 역설이다. 우리는 보통 "삶 = 좋은 것, 죽음 = 나쁜 것"이라고 생각하지만, 세포 수준에서 보면 <strong>적절한 시기에 적절한 세포가 죽는 것</strong>이야말로 건강한 생명의 필수 조건이다.</p>
+          <p style="margin-top:10px">인간의 몸에서는 매일 <strong>수십억 개의 세포</strong>가 프로그램에 따라 죽는다. 이 세포들이 죽지 않으면 암이 발생하고, 자가면역 질환이 생기며, 발생 과정이 완전히 뒤틀린다. 세포 죽음은 생명 유지를 위한 <strong>필수적인 유지보수 과정</strong>인 것이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">2002 노벨상의 의미</div>
+          <p>2002년 노벨 생리의학상은 단순한 선충(<em>C. elegans</em>)에 대한 <strong>호기심 주도 연구(curiosity-driven research)</strong>를 정당화했다. 세포의 자기 파괴가 유전적으로 암호화되어 있다는 것을 증명한 이 연구는, 기초과학이 어떻게 인류 건강의 가장 근본적인 문제를 해결하는 열쇠가 되는지를 보여주는 전형적인 사례이다.</p>
+        </div>
+
+        <blockquote>
+          "Death is not just an accident or a running down of the machinery. It is an active, regulated process."
+        </blockquote>
+      </section>
+
+      <!-- Page 3 -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>2002년 노벨 생리의학상</h2>
+
+        <div class="summary-box">
+          Sydney Brenner, H. Robert Horvitz, John E. Sulston -- 세 과학자가 "기관 발생의 유전적 조절과 프로그램된 세포 사멸에 관한 발견(discoveries concerning genetic regulation of organ development and programmed cell death)"으로 공동 수상했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수상자 3인</div>
+          <p><strong>Sydney Brenner (1927-2019)</strong> -- 남아프리카공화국 출신의 분자생물학자. 1963년 <em>C. elegans</em>를 모델 생물로 선택한 선구자이다. 유전 암호 해독에도 기여했으며, 분자생물학의 "다음 프론티어"로 발생(Development)과 행동(Behavior)을 제시했다. 한마디로 이 모든 연구의 <strong>비전 제시자(The Visionary)</strong>였다.</p>
+          <p style="margin-top:10px"><strong>John E. Sulston (1942-2018)</strong> -- 영국의 생물학자. 매일 암실에서 1.5년간 현미경으로 <em>C. elegans</em>의 <strong>모든 세포 분열을 실시간 추적</strong>하여 불변 세포 계보(invariant cell lineage)를 완성했다. '인간 현미경(Human Microscope)'이라는 별명을 얻었다. 나중에 인간 게놈 프로젝트에서도 유전 데이터의 공공 개방을 위해 싸웠다.</p>
+          <p style="margin-top:10px"><strong>H. Robert Horvitz (1947-)</strong> -- MIT 교수. Brenner의 제자로, 세포 사멸을 조절하는 핵심 유전자 <strong>ced-3, ced-4, ced-9</strong>를 발견했다. "죽음이 불변이라면, 반드시 유전적이어야 한다"는 가설에서 출발하여, EMS 돌연변이유발(mutagenesis) 스크린을 통해 "언데드(undead)" 세포를 가진 돌연변이를 찾아냈다.</p>
+        </div>
+
+        <div class="key-point">
+          이 세 과학자의 업적은 순차적으로 연결된다: Brenner가 <strong>모델 생물을 선택</strong>하고, Sulston이 <strong>세포 계보를 완성</strong>했으며, Horvitz가 <strong>죽음의 유전자를 발견</strong>했다. 단순한 호기심에서 시작된 연구가 인류의 질병 이해를 근본적으로 바꾸어놓았다는 점에서, 호기심 주도 기초연구(curiosity-driven basic research)의 힘을 극명하게 보여준다.
+        </div>
+      </section>
+
+      <!-- Page 4 -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>헌신과 위트: Sulston과 Brenner</h2>
+
+        <div class="summary-box">
+          존 설스턴은 1.5년간 매일 암실에 틀어박혀 <em>C. elegans</em> 배아의 모든 세포 분열을 수동으로 추적했고, 시드니 브레너는 날카로운 과학적 위트로 유명했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">John Sulston -- 헌신의 아이콘</div>
+          <p>Sulston은 발생 중인 <em>C. elegans</em> 배아의 <strong>완전한 세포 계보(complete cell lineage)</strong>를 수동으로 매핑하기 위해 암실에서 Nomarski 미분간섭(DIC) 현미경을 들여다보며 매일 몇 시간씩 관찰했다. 이것은 단순한 끈기의 문제가 아니었다 -- 살아있는 동물 안에서 세포가 분열하고, 이동하고, 죽는 과정을 <strong>실시간으로</strong> 기록하는 전례 없는 작업이었다. 그는 수정란에서 시작하여 성체의 959개 체세포까지, 중간에 죽는 131개 세포를 포함한 모든 세포의 "가계도"를 완성했다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Sydney Brenner -- 과학적 위트</div>
+          <p>Brenner는 그의 날카로운 과학적 재치로도 유명했다. 그의 유명한 말: <em>"Progress in science depends on new techniques, new discoveries, and new ideas, probably in that order."</em> (과학의 진보는 새로운 기술, 새로운 발견, 그리고 새로운 아이디어에 달려있다 -- 아마도 그 순서대로.) 이 말은 기초과학 연구에서 <strong>기술적 혁신이 아이디어보다 선행</strong>한다는 통찰을 담고 있다. <em>C. elegans</em>의 선택 자체가 바로 이런 "새로운 기술적 접근"의 전형이었다.</p>
+        </div>
+      </section>
+
+      <!-- Page 5 -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>오픈 사이언스를 위한 치열한 투쟁</h2>
+
+        <div class="summary-box">
+          Sulston의 인류에 대한 헌신은 세포를 세는 것을 넘어, <strong>인간 게놈 프로젝트(Human Genome Project)</strong>에서 유전 데이터의 공공 개방을 위해 상업적 이익에 맞서 싸운 것으로까지 확장되었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">특허에 맞선 투쟁</div>
+          <p>Human Genome Project의 리더 중 한 명이었던 Sulston은 <strong>인간 DNA를 특허화하려는 상업적 이익</strong>에 강력히 반대했다. 그는 독점적 시퀀싱 형식의 "코드를 해독(broke the code)"하여 데이터가 접근 가능하도록 만들었는데, 이 작업을 일요일 오후 정원에서 해냈다는 일화가 유명하다.</p>
+          <p style="margin-top:10px">자전거 사고로 골반이 부러진 상태에서도 휠체어를 타고 중요한 펀딩 회의에 참석하여 오픈소스 유전체학(open-source genomics)의 미래를 확보했다. 이런 일화들은 Sulston이 단순한 과학자가 아니라 <strong>과학 데이터의 공공성을 수호한 투사</strong>였음을 보여준다.</p>
+        </div>
+
+        <div class="tip">
+          Sulston은 세포 하나하나를 추적하는 인내심과, 인류 전체의 유전 정보를 지키려는 대의를 동시에 가진 드문 인물이었다. 미시적 관찰과 거시적 비전이 한 사람 안에 공존했다.
+        </div>
+      </section>
+
+      <!-- Page 6 -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>코드의 윤리: Sulston의 오픈 데이터 투쟁</h2>
+
+        <div class="summary-box">
+          "게놈은 인류의 것이지, 기업의 것이 아니다(The genome belongs to humanity, not to a corporation)." -- 인간 게놈 프로젝트 기간 동안 Sulston이 인간 유전자의 사적 특허화에 반대하며 남긴 말이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">John Sulston의 신념</div>
+          <p>1990년대 후반, 민간 기업 Celera Genomics(Craig Venter 주도)가 인간 게놈 시퀀싱을 독점하고 특허를 걸려는 시도를 했을 때, Sulston은 이에 정면으로 맞섰다. 그의 핵심 주장은 명확했다: <strong>유전 정보는 인류 공동의 자산</strong>이며, 어떤 기업도 이를 사유화할 수 없다는 것이었다.</p>
+          <p style="margin-top:10px">이 투쟁은 궁극적으로 성공하여, 인간 게놈 데이터는 공공 데이터베이스에 무료로 공개되었다. 이것은 이후의 모든 유전체 연구, 맞춤 의학, 약물 개발의 기반이 되었다. Sulston의 투쟁이 없었다면, 오늘날 우리가 당연하게 여기는 유전체 데이터의 자유로운 접근은 불가능했을 것이다.</p>
+        </div>
+
+        <blockquote>
+          "The genome belongs to humanity, not to a corporation." -- John E. Sulston
+        </blockquote>
+      </section>
+
+      <!-- Page 7 -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>기초과학의 힘</h2>
+
+        <div class="summary-box">
+          "작은 벌레가 자라는 것을 관찰하는 일이 암 치료법으로 이어질 줄 누가 알았겠는가?" -- Brenner, Sulston, Horvitz는 인간 건강의 비밀이 가장 단순한 생물 안에 숨어 있다는 것을 우리에게 가르쳐주었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">호기심 주도 연구의 가치</div>
+          <p>1960년대에 Sydney Brenner가 "1mm짜리 흙 속 벌레를 연구하겠다"고 했을 때, 많은 동료들은 회의적이었다. 당시 분자생물학의 주류는 박테리아와 바이러스였고, 이런 "하등 동물"의 연구가 무슨 의미가 있을지 불분명했다. 그러나 Brenner의 비전은 정확했다 -- 이 작은 벌레는 결국 <strong>4개의 노벨상</strong>(2002, 2006, 2008, 2024)을 가져다 주었다.</p>
+          <p style="margin-top:10px">이 사례는 기초과학 연구의 가장 중요한 교훈을 담고 있다: <strong>즉각적인 응용 가치가 보이지 않는 순수한 호기심에서 출발한 연구</strong>가 결국 가장 혁명적인 의학적 돌파구를 만들어낸다. 세포 사멸 유전자의 발견은 암 치료(Venetoclax), 신경퇴행성 질환 연구, 노화 과학(senolytics) 등 현대 의학의 핵심 분야를 탄생시켰다.</p>
+        </div>
+
+        <blockquote>
+          "Who would have thought that watching a tiny worm grow would lead to a cure for cancer?"
+        </blockquote>
+      </section>
+
+      <!-- Page 8 -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>우아한 벌레: The Elegant Worm</h2>
+
+        <div class="summary-box">
+          <em>Caenorhabditis elegans</em> -- 1mm 크기의 흙 속 선충(nematode)이 생명의 비밀을 풀고 4개의 노벨상을 가져다 준 이야기. "elegans"라는 이름 자체가 "우아한"을 뜻한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">1밀리미터의 거인</div>
+          <p><em>C. elegans</em>는 길이 약 1mm의 투명한 토양 선충이다. 겉보기에는 아무 특징 없는 이 작은 벌레가 현대 생물학과 의학을 혁명적으로 변화시켰다. <strong>"The 1-Millimeter Giant"</strong>이라는 별명은 이 생물의 크기와 과학적 영향력 사이의 극적인 대비를 잘 표현한다.</p>
+          <p style="margin-top:10px">이 투명한 토양 선충이 현대 생물학과 의학을 혁명적으로 바꾸었다는 사실은, 과학에서 <strong>올바른 모델 시스템의 선택</strong>이 얼마나 중요한지를 보여준다. Brenner는 복잡한 질문에 답하기 위해 가장 단순한 시스템을 선택했고, 이 선택이 반세기에 걸친 발견의 물결을 일으켰다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 특성</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>특성</th><th>내용</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">학명</td>
+                <td><em>Caenorhabditis elegans</em> (자유생활형, 비기생성 선충)</td>
+              </tr>
+              <tr>
+                <td class="en">크기</td>
+                <td>성체 약 1mm</td>
+              </tr>
+              <tr>
+                <td class="en">서식지</td>
+                <td>온대 토양, 실험실에서 <em>E. coli</em>를 먹여 쉽게 배양</td>
+              </tr>
+              <tr>
+                <td class="en">노벨상</td>
+                <td>4개 (2002, 2006, 2008, 2024) -- 단일 모델 생물 최다</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Page 9 -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>지구상 가장 대단한 생물</h2>
+
+        <div class="summary-box">
+          "지구상 가장 대단한(badass) 생물" -- 2024 노벨상 수상자 Gary Ruvkun이 <em>C. elegans</em>를 이렇게 표현했다. 1mm, 959개 세포, 4개 노벨상, 국제우주정거장 6개월 체류.
+        </div>
+
+        <div class="card">
+          <div class="card-label">경이로운 숫자들</div>
+          <p><em>C. elegans</em>의 놀라운 점은 몇 가지 숫자로 요약된다:</p>
+          <p style="margin-top:10px"><strong>1mm</strong> -- 성체의 길이. 육안으로는 거의 보이지 않는 크기이다.</p>
+          <p style="margin-top:5px"><strong>959개 세포</strong> -- 성체 자웅동체(hermaphrodite)의 정확한 체세포 수. 모든 개체가 동일하다.</p>
+          <p style="margin-top:5px"><strong>4개 노벨상</strong> -- <em>C. elegans</em> 연구로 직접 수상된 노벨상의 수.</p>
+          <p style="margin-top:5px"><strong>6개월</strong> -- 국제우주정거장(ISS)에서의 최장 체류 기간. 우주 생물학 연구에도 활용된다.</p>
+          <p style="margin-top:10px">이 네 가지 숫자는 하나의 메시지로 수렴한다: <strong>크기가 중요한 것이 아니라, 올바른 질문을 던질 수 있는 시스템</strong>인지가 중요하다.</p>
+        </div>
+
+        <blockquote>
+          "The most badass organism on Earth." -- Gary Ruvkun, 2024 Nobel Laureate
+        </blockquote>
+      </section>
+
+      <!-- Page 10 -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>완벽한 실험 대상을 만나다</h2>
+
+        <div class="summary-box">
+          <em>C. elegans</em>가 모델 생물로 선택된 이유: 자유생활형 비기생성 선충, 정확히 1mm, <em>E. coli</em>를 먹여 실험실에서 쉽게 배양 가능.
+        </div>
+
+        <div class="card">
+          <div class="card-label">모델 생물로서의 장점</div>
+          <p>Brenner가 1960년대에 <em>C. elegans</em>를 선택한 것은 천재적인 판단이었다. 이 선충은 모델 생물이 갖추어야 할 거의 모든 조건을 만족시켰다:</p>
+          <p style="margin-top:10px"><strong>투명성(Transparency)</strong> -- 몸 전체가 투명하여, 살아있는 상태에서 모든 세포를 현미경으로 관찰할 수 있다. 이것은 세포 분열과 세포 사멸을 실시간으로 추적하는 데 결정적이었다.</p>
+          <p style="margin-top:5px"><strong>빠른 생활사(Fast Life Cycle)</strong> -- 배아에서 번식 가능한 성체까지 단 3일이면 된다. 유전학 실험에서 빠른 세대 교체는 곧 빠른 결과를 의미한다.</p>
+          <p style="margin-top:5px"><strong>고정된 세포 수(Fixed Cell Count)</strong> -- 성체 자웅동체는 정확히 959개의 체세포를 가진다. 모든 개체가 동일한 세포 수와 동일한 세포 배치를 가지므로, 돌연변이의 효과를 정밀하게 파악할 수 있다.</p>
+          <p style="margin-top:5px"><strong>간편한 배양</strong> -- 실험실에서 표준 <em>E. coli</em>를 먹여 쉽게 키울 수 있다. 특별한 장비나 환경이 필요 없다.</p>
+        </div>
+      </section>
+
+      <!-- Page 11 -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>선충의 생물학적 초능력</h2>
+
+        <div class="summary-box">
+          빠른 생활사(3일), 자가수정 자웅동체, 불변적 발생 -- 이 세 가지 "초능력"이 <em>C. elegans</em>를 유전학 연구의 이상적 모델로 만들었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">세 가지 초능력</div>
+          <p><strong>1. 빠른 생활사 (Rapid Life Cycle)</strong> -- 배아(Embryo) &rarr; L1 &rarr; L2 &rarr; L3 &rarr; L4 &rarr; 성체(Adult)까지 단 <strong>3일</strong>. 4단계의 유충기(larval stage)를 거치며 성장한다. 이는 초파리(Drosophila)의 10일, 쥐의 3주보다 훨씬 빠르다.</p>
+          <p style="margin-top:10px"><strong>2. 자가수정 자웅동체 (Self-Fertilizing Hermaphrodites)</strong> -- 대부분의 개체가 자웅동체(hermaphrodite)로, 교배 없이 유전적으로 동일한 대규모 집단을 만들 수 있다. 수컷은 전체의 0.2% 미만으로 극히 드물게 존재하며, 의도적인 유전적 교배(genetic crosses)에만 사용된다. 이 특성 덕분에 <strong>동일한 유전형(isogenic)의 실험 집단</strong>을 손쉽게 확보할 수 있다.</p>
+          <p style="margin-top:10px"><strong>3. 불변적 발생 (Invariant Development)</strong> -- 모든 개체에서 모든 세포 분열이 <strong>정확히 동일한 방식</strong>으로 일어난다. A라는 벌레에서 특정 세포가 분열하는 시점과 위치가, B라는 벌레에서도 완전히 동일하다. 이 결정론적(deterministic) 발생 패턴 덕분에, 하나의 개체를 관찰하면 모든 개체를 이해할 수 있다.</p>
+        </div>
+
+        <div class="tip">
+          불변적 발생이라는 특성은 "모든 벌레가 동일한 프로그램을 실행한다"는 것을 의미한다. 이것이 Sulston이 세포 계보를 완성할 수 있었던 핵심 전제조건이었다 -- 한 마리를 관찰하면 모든 마리를 아는 것과 같았기 때문이다.
+        </div>
+      </section>
+
+      <!-- Page 12 -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>생명을 들여다보는 완전히 투명한 창</h2>
+
+        <div class="summary-box">
+          <em>C. elegans</em>는 일생 동안 -- 단세포 수정란(zygote)에서 성체까지 -- <strong>완전히 투명</strong>하다. 이 전례 없는 가시성(visibility)이 다세포 생물의 완전한 세포 계보 매핑을 가능하게 했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">투명성의 과학적 의미</div>
+          <p>대부분의 동물은 불투명하다. 세포를 관찰하려면 조직을 잘라내고, 고정하고, 염색해야 한다 -- 즉, 죽은 상태에서만 볼 수 있다. 그러나 <em>C. elegans</em>는 <strong>살아있는 상태에서 모든 세포를 직접 관찰</strong>할 수 있다. 이것은 단순한 편의가 아니라, 생물학 연구의 패러다임을 바꾼 혁명적 특성이었다.</p>
+          <p style="margin-top:10px">이 투명성 덕분에 밝혀진 핵심 사실들:</p>
+          <p style="margin-top:5px">-- 성체 자웅동체는 정확히 <strong>959개의 체세포</strong>를 가진다.</p>
+          <p style="margin-top:5px">-- 정확히 <strong>302개의 뉴런</strong>을 가지며, 이는 최초로 완전히 매핑된 커넥톰(connectome)이 되었다.</p>
+          <p style="margin-top:5px">-- 발생 과정에서 총 <strong>1090개의 세포가 태어나고, 그 중 131개가 프로그램에 따라 죽어</strong> 959개가 남는다.</p>
+        </div>
+
+        <div class="key-point">
+          <em>C. elegans</em>의 투명성은 "관찰 가능하면 이해 가능하다"는 과학의 원칙을 완벽하게 구현했다. 이 작은 벌레 덕분에, 인류는 최초로 다세포 생물의 <strong>모든 세포의 탄생, 분열, 죽음</strong>을 한 눈에 볼 수 있게 되었다.
+        </div>
+      </section>
+
+      <!-- Page 13 -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>노벨상의 자석: 4개의 노벨상</h2>
+
+        <div class="summary-box">
+          지난 20여 년간 이 보잘것없는 토양 선충은 4개의 노벨상을 직접적으로 받는 기반이 되었다: 2002년 (세포 사멸), 2006년 (RNA 간섭), 2008년 (GFP), 2024년 (microRNA).
+        </div>
+
+        <div class="card">
+          <div class="card-label">C. elegans 노벨상 연대기</div>
+          <p><strong>2002년 -- 프로그램된 세포 사멸</strong><br>Brenner, Sulston, Horvitz. 기관 발생의 유전적 조절과 프로그램된 세포 사멸 발견.</p>
+          <p style="margin-top:10px"><strong>2006년 -- RNA 간섭 (RNAi)</strong><br>Andrew Fire &amp; Craig Mello. <em>C. elegans</em>에서 불과 4년 만에 또 다른 노벨상. 이중가닥 RNA(dsRNA)로 특정 유전자의 발현을 침묵시킬 수 있다는 발견.</p>
+          <p style="margin-top:10px"><strong>2008년 -- 녹색형광단백질 (GFP)</strong><br>Martin Chalfie (with Shimomura and Tsien). 해파리의 녹색형광단백질(GFP)을 투명한 벌레에서 생물학적 마커로 활용.</p>
+          <p style="margin-top:10px"><strong>2024년 -- microRNA</strong><br>Victor Ambros &amp; Gary Ruvkun. <em>C. elegans</em>의 "이상하게 생긴" 돌연변이 벌레를 연구하다가 유전자 조절의 완전히 새로운 원리를 발견.</p>
+        </div>
+
+        <div class="key-point">
+          단일 모델 생물에서 4개의 노벨상이 나왔다는 사실은 전례가 없다. 이 작은 벌레의 단순한 체제가 발생, 죽음, 질병을 지배하는 <strong>보편적 유전 법칙</strong>을 해독하는 열쇠가 되었다.
+        </div>
+      </section>
+
+      <!-- Page 14 -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>도구 제작자의 상: RNA 간섭 (2006)</h2>
+
+        <div class="summary-box">
+          Craig Mello &amp; Andrew Fire -- <em>C. elegans</em>에서 RNA 간섭(RNAi) 발견. 특정 mRNA 표적을 체계적으로 침묵시키는 "궁극의 유전자 끄기 도구"를 제공했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 메시지</div>
+          <p><em>C. elegans</em>에서 발견된 RNAi는 "유전자 하나를 선택적으로 끌 수 있는" 도구를 과학자들에게 제공했다. 이중가닥 RNA를 벌레에게 먹이기만 해도(feeding RNAi) 특정 유전자의 발현이 억제되는 놀라운 현상이었다.</p>
+          <p style="margin-top:10px"><strong>세포 사멸 연구에의 영향:</strong> RNAi 기술은 포유류의 세포 사멸 경로를 빠르게 매핑하는 데 결정적인 도구가 되었다. 수천 개의 유전자를 하나씩 침묵시키며 어떤 유전자가 세포 죽음에 관여하는지를 <strong>체계적으로 스크리닝</strong>할 수 있게 된 것이다. 이는 고처리량 유전 스크린(high-throughput genetic screens)의 시대를 열었다.</p>
+        </div>
+      </section>
+
+      <!-- Page 15 -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>세포의 내부 작동을 비추다: GFP (2008)</h2>
+
+        <div class="summary-box">
+          2008년 노벨 화학상: Chalfie (with Shimomura and Tsien). 해파리의 녹색형광단백질(GFP)을 투명한 선충에서 생물학적 마커로 활용하여, 살아있는 동물 안에서 단백질 발현을 실시간 관찰하는 "분자 랜턴"을 만들었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">GFP의 혁명</div>
+          <p>Martin Chalfie는 <em>C. elegans</em>의 투명한 몸을 활용하여 GFP의 잠재력을 최초로 증명했다. GFP를 특정 유전자의 프로모터에 연결하면, 그 유전자가 발현되는 세포가 <strong>녹색으로 빛나게</strong> 된다. 이는 살아있는 동물 안에서 유전자 발현의 시공간적 패턴을 직접 관찰할 수 있게 한 혁명적 기술이었다.</p>
+          <p style="margin-top:10px">세포 사멸 연구에서 GFP는 특히 중요했다: ced 유전자들의 발현 패턴, 세포 사멸이 일어나는 정확한 위치와 시점, 그리고 사멸 과정에서 일어나는 세포 내 변화를 <strong>실시간으로 시각화</strong>할 수 있게 되었기 때문이다.</p>
+        </div>
+      </section>
+
+      <!-- Page 16 -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>유전자 발현의 마스터 조절자: microRNA (2024)</h2>
+
+        <div class="summary-box">
+          2024년 노벨 생리의학상: Victor Ambros &amp; Gary Ruvkun. <em>C. elegans</em>의 "이상하게 생긴" 돌연변이 연구에서 유전자 조절의 완전히 새로운 원리인 <strong>microRNA</strong>를 발견했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">microRNA의 발견</div>
+          <p>Ambros와 Ruvkun은 <em>C. elegans</em>에서 <em>lin-4</em>와 <em>lin-14</em> 유전자의 돌연변이를 연구하던 중, 단백질을 암호화하지 않는 아주 작은 RNA 조각이 mRNA에 결합하여 단백질 합성을 제어한다는 사실을 발견했다. 이것이 <strong>microRNA</strong>이다.</p>
+          <p style="margin-top:10px">정상 발생에서는 L1 &rarr; L2 &rarr; L3 &rarr; L4 &rarr; Adult로 순차적으로 진행되지만, <em>lin-4</em> 또는 <em>lin-14</em> 돌연변이에서는 발생 단계가 반복되거나 건너뛰어 "이상하게 생긴" 벌레가 만들어진다.</p>
+          <p style="margin-top:10px">인간에게는 <strong>1,000개 이상의 microRNA</strong>가 있으며, 이들이 세포 발생을 정밀하게 조절한다. microRNA의 교란은 암, 심혈관 질환 등과 직접적으로 연결된다.</p>
+        </div>
+      </section>
+
+      <!-- Page 17 -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>단세포에서 복잡한 생명으로의 도약</h2>
+
+        <div class="summary-box">
+          "E. coli에 대해 참인 것은 코끼리에 대해서도 참이다(What is true for E. coli is true for the elephant)." -- Jacques Monod. 1960년대까지 과학은 단세포 DNA를 이해했지만, "다세포 미스터리(Multicellular Mystery)"는 미해결로 남아있었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">다세포 미스터리</div>
+          <p>1960년대까지 분자생물학은 주로 <strong>단세포 생물</strong>(박테리아, 바이러스)을 대상으로 유전 암호, 전사(transcription), 번역(translation) 등의 기본 메커니즘을 밝혀냈다. 그러나 핵심적인 질문이 남아있었다:</p>
+          <p style="margin-top:10px"><strong>하나의 수정란이, 동일한 DNA 세트를 가지고, 어떻게 완벽하게 분열하여 뇌, 피부, 근육 같은 극적으로 다른 조직을 만들어내는가?</strong></p>
+          <p style="margin-top:10px">이것이 바로 Brenner가 도전한 "다세포 미스터리"였다. 단세포 수준의 분자생물학만으로는 이 질문에 답할 수 없었다. <strong>세포가 분열하고, 분화하고, 이동하고, 죽는</strong> 전체 과정을 추적할 수 있는 새로운 시스템이 필요했고, 그것이 바로 <em>C. elegans</em>였다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">복잡성의 도약</div>
+          <strong>박테리아 (E. coli)</strong> &rarr; 단세포, 유전 암호 해독 완료<br>
+          &nbsp;&nbsp;&nbsp;&darr;<br>
+          <strong>선충 (C. elegans)</strong> &rarr; 다세포, 959개 세포, 완전한 세포 계보<br>
+          &nbsp;&nbsp;&nbsp;&darr;<br>
+          <strong>복잡한 동물 (코끼리, 인간)</strong> &rarr; 수조 개의 세포, 동일한 유전 원리
+        </div>
+      </section>
+
+      <!-- Page 18 -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>인간 건강을 비추는 진화의 거울</h2>
+
+        <div class="summary-box">
+          <em>C. elegans</em>와 인간은 <strong>6억 년</strong>의 진화적 분기에도 불구하고, 인간 유전자의 60-80%가 선충에 상동 유전자(ortholog)를 가지며, 인간 질병 관련 유전자의 40%가 선충에 명확한 대응물을 가진다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">놀라운 유전적 보존</div>
+          <p>6억 년이라는 거대한 시간 간격에도 불구하고, 생명의 핵심 유전 프로그램은 놀라울 정도로 보존되어 있다. 이 사실은 진화의 가장 강력한 증거 중 하나이면서, 동시에 <em>C. elegans</em> 연구의 <strong>직접적인 의학적 가치</strong>를 보장하는 근거이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 숫자</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>지표</th><th>수치</th><th>의미</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">진화적 분기</td>
+                <td>6억 년</td>
+                <td>선충과 인간의 마지막 공통 조상 이후 경과 시간</td>
+              </tr>
+              <tr>
+                <td class="en">유전자 상동성</td>
+                <td>60-80%</td>
+                <td>인간 유전자 중 C. elegans에 ortholog가 있는 비율</td>
+              </tr>
+              <tr>
+                <td class="en">질병 유전자</td>
+                <td>40%</td>
+                <td>인간 질병 관련 유전자 중 선충에 대응물이 있는 비율</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">
+          세포 사멸 유전자(ced-3, ced-4, ced-9)가 인간의 caspase, Apaf-1, Bcl-2와 직접 대응된다는 사실은 이 "진화의 거울" 원리의 가장 극적인 예시이다. 벌레에서 발견된 죽음의 메커니즘이 인간에게도 거의 그대로 적용된다.
+        </div>
+      </section>
+
+      <!-- Page 19 -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 19</span>
+        <h2>궁극의 생물학적 역설</h2>
+
+        <div class="summary-box">
+          인간의 발생, 질병, 죽음이라는 거대한 미스터리를 해독하기 위해, 우리는 먼저 <strong>1mm 벌레의 투명한 몸</strong>을 들여다보아야 했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">역설의 본질</div>
+          <p>이것은 생물학의 궁극적 역설이다: 인류가 직면한 가장 복잡한 의학적 문제들 -- 암, 알츠하이머, 파킨슨, 노화 -- 의 해답이 <strong>가장 단순한 생물</strong> 안에 숨어 있었다. 복잡한 질문에 답하기 위해 복잡한 시스템을 연구하는 것이 직관적으로 맞아 보이지만, 실제로는 그 반대였다.</p>
+          <p style="margin-top:10px">Nietzsche의 말이 이 역설을 잘 포착한다: <em>"당신은 벌레에서 인간으로 진화했지만, 당신 안의 많은 것은 여전히 벌레이다."</em> 이것은 문학적 비유가 아니라 <strong>과학적 사실</strong>이다. 세포 사멸의 유전적 프로그램은 벌레에서 인간까지 거의 동일하게 보존되어 있다.</p>
+        </div>
+
+        <blockquote>
+          "You have evolved from worm to man, but much within you is still worm." -- Friedrich Nietzsche
+        </blockquote>
+      </section>
+
+      <!-- Page 20 -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 20</span>
+        <h2>조절된 세포 죽음의 설계</h2>
+
+        <div class="summary-box">
+          이 페이지는 강의의 핵심 전환점이다. 지금까지의 배경(모델 생물, 진화적 보존)을 바탕으로, 이제 <strong>조절된 세포 죽음(Regulated Cell Death)</strong>의 분자적 메커니즘으로 본격적으로 진입한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">THE ARCHITECTURE OF REGULATED CELL DEATH</div>
+          <p>"1mm 벌레에서 인간 불멸의 추구까지 이어지는 유산(A legacy spanning from a 1mm worm to the pursuit of human immortality)" -- 이 문구는 강의의 후반부가 다룰 내용을 압축적으로 보여준다.</p>
+          <p style="margin-top:10px">앞선 슬라이드들이 "왜 <em>C. elegans</em>인가?"를 설명했다면, 이 슬라이드부터는 <strong>"이 벌레에서 무엇을 발견했는가?"</strong>로 초점이 이동한다. 세포 사멸의 유전적 기계장치(genetic machinery), 핵심 유전자(ced-3, ced-4, ced-9, egl-1), 사멸 실행 메커니즘, 시체 정리(corpse clearance), 그리고 이 모든 것의 인간 대응물로의 번역이 이어진다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">강의 구조 전환</div>
+          <strong>Part 1: 왜 C. elegans인가?</strong> (Pages 1-20)<br>
+          &nbsp;&nbsp;모델 생물 선택 &rarr; 생물학적 특성 &rarr; 진화적 보존 &rarr; 4개의 노벨상<br><br>
+          <strong>Part 2: 무엇을 발견했는가?</strong> (Pages 21-36)<br>
+          &nbsp;&nbsp;고정된 세포 수 &rarr; ced 유전자 &rarr; 분자 메커니즘 &rarr; 임상 응용 &rarr; 미래
+        </div>
+      </section>
+
+      <!-- Page 21 -->
+      <section class="page-section" id="p21">
+        <span class="page-num">Page 21</span>
+        <h2>고정된 운명의 영웅: The Hero With a Fixed Fate</h2>
+
+        <div class="summary-box">
+          Brenner가 선택한 <em>C. elegans</em>: 1mm의 투명한 토양 선충. 정확히 <strong>302개의 뉴런</strong>과 <strong>959개의 체세포</strong>를 가진다. 이 <strong>eutelic(고정 세포 수) 특성</strong>이 이 생물을 궁극의 예측 가능한 기계로 만들었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">eutelic 특성</div>
+          <p><em>C. elegans</em>의 가장 놀라운 특성 중 하나는 <strong>eutely(고정 세포 수)</strong>이다. 모든 성체 자웅동체가 정확히 동일한 수의 세포를 가지며, 각 세포의 위치와 기능도 동일하다. 이것은 이 벌레가 "완전히 결정론적인 프로그램"을 실행한다는 의미이다.</p>
+          <p style="margin-top:10px">이 특성 덕분에, 특정 세포의 생사를 정확히 추적하고, 돌연변이가 어떤 세포에 영향을 미치는지를 한 세포 단위로 파악할 수 있었다. 이것은 세포 사멸 연구의 결정적 전제조건이었다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">선충 과학의 유머 문화</div>
+          <p>이 벌레를 연구하는 과학 커뮤니티는 독특하고 유쾌한 문화를 가지고 있었다. <strong>'Worm Breeder's Gazette'</strong>라는 뉴스레터에는 진지한 연구 결과와 함께 만화가 실렸고, 유전자 이름에는 <strong>의도적인 언어유희(puns)</strong>가 사용되었다:</p>
+          <p style="margin-top:10px"><strong>ced</strong> -- <strong>C</strong>ell <strong>D</strong>eath abnormal. 세포 사멸 이상 돌연변이.</p>
+          <p style="margin-top:5px"><strong>unc</strong> -- <strong>Unc</strong>oordinated. 운동이 비정상적인 돌연변이.</p>
+          <p style="margin-top:5px"><strong>smb</strong> -- <strong>S</strong>mall <strong>M</strong>ind. 뇌 결함이 있는 돌연변이에 대한 재치있는 이름.</p>
+          <p style="margin-top:10px">이런 유머는 소규모 커뮤니티의 협력적이고 개방적인 과학 문화를 반영한다. 치열한 경쟁보다는 지식의 공유를 중시한 이 문화가 <em>C. elegans</em> 연구의 폭발적 성장의 토양이 되었다.</p>
+        </div>
+      </section>
+
+      <!-- Page 22 -->
+      <section class="page-section" id="p22">
+        <span class="page-num">Page 22</span>
+        <h2>수명의 유전학 해독하기</h2>
+
+        <div class="summary-box">
+          노화는 무작위적인 세포 붕괴가 아니라 <strong>유전적으로 조절되는 현상</strong>이다. <em>daf-2</em> 돌연변이 벌레는 야생형보다 <strong>2배 이상 오래</strong> 살면서도 젊음을 유지한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수명 유전학의 발견</div>
+          <p>야생형(Wild-Type) <em>C. elegans</em>의 수명은 약 <strong>2.5주</strong>이다. 그런데 <em>daf-2</em> 유전자에 돌연변이가 생기면, 벌레는 2배 이상 오래 살면서도 건강을 유지한다(더 긴 수명 &amp; 건강수명). <em>daf-2</em>는 인슐린/IGF-1 신호전달 경로(insulin/IGF-1 signaling pathway)의 핵심 구성요소이다.</p>
+          <p style="margin-top:10px">놀랍게도, 인간의 대응 유전자인 <strong>FOXO3A</strong>의 변이는 인간 백세인(centenarians)의 <strong>예외적인 장수</strong>와 강하게 연관되어 있다. 벌레에서 발견된 수명 조절 메커니즘이 인간에게도 적용된다는 강력한 증거이다.</p>
+        </div>
+
+        <div class="key-point">
+          세포 사멸과 노화는 밀접하게 연결되어 있다. 세포가 적절한 시기에 죽지 못하면(너무 적은 사멸) 암이 생기고, 너무 많이 죽으면(과도한 사멸) 신경퇴행이 발생한다. <em>daf-2</em> 경로는 이 균형의 핵심 조절자 중 하나이다.
+        </div>
+      </section>
+
+      <!-- Page 23 -->
+      <section class="page-section" id="p23">
+        <span class="page-num">Page 23</span>
+        <h2>신경계에서 상상할 수 없는 것을 모델링하다</h2>
+
+        <div class="summary-box">
+          <em>C. elegans</em>의 302개 뉴런 네트워크에 인간 질병 유전자를 삽입하여 알츠하이머, 파킨슨, 헌팅턴 등 <strong>신경퇴행성 질환을 살아있는 투명한 신경계</strong>에서 관찰할 수 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">신경퇴행 모델링</div>
+          <p>벌레에게는 특정 인간 질병 단백질이 없기 때문에, 과학자들은 인간 유전자를 <em>C. elegans</em>의 302개 뉴런 네트워크에 삽입할 수 있다. 이를 통해 <strong>살아있는 투명한 신경계</strong>에서 단백질 응집, 신경독성, 세포 기능 장애를 직접 관찰할 수 있다:</p>
+          <p style="margin-top:10px"><strong>알츠하이머 (Alzheimer's)</strong> -- Tau 단백질 응집 모델. 벌레의 뉴런에서 Tau가 응집되면 운동 장애가 발생하며, 이를 통해 응집 억제제를 스크리닝할 수 있다.</p>
+          <p style="margin-top:5px"><strong>파킨슨 (Parkinson's)</strong> -- Alpha-Synuclein 모델. 도파민 뉴런에서의 단백질 응집과 뉴런 사멸을 관찰한다.</p>
+          <p style="margin-top:5px"><strong>헌팅턴 (Huntington's)</strong> -- PolyQ repeats 모델. 반복 서열 길이와 신경독성의 관계를 연구한다.</p>
+          <p style="margin-top:10px">이 모든 모델에서 <strong>세포 사멸 경로(ced 유전자들)</strong>가 신경퇴행과 직접적으로 연관되어 있음이 밝혀지고 있다.</p>
+        </div>
+      </section>
+
+      <!-- Page 24 -->
+      <section class="page-section" id="p24">
+        <span class="page-num">Page 24</span>
+        <h2>죽음의 어휘가 확장되다</h2>
+
+        <div class="summary-box">
+          세포자멸사(Apoptosis)는 더 이상 혼자가 아니다. 세포는 직면하는 특정 스트레스, 손상, 또는 병원체에 따라 <strong>유전적으로 제어되는 별개의 죽음 메커니즘</strong>을 가지고 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">확장된 세포 죽음의 세계</div>
+          <p>2002년 노벨상이 수여된 당시에는 프로그램된 세포 죽음이 주로 apoptosis와 동의어처럼 사용되었다. 그러나 이후 연구에서 세포가 죽는 방법은 훨씬 다양하다는 것이 밝혀졌다:</p>
+          <p style="margin-top:10px"><strong>Apoptosis (세포자멸사)</strong> -- 고전적 프로그램된 죽음. 깔끔하고 조절됨. Caspase 의존적.</p>
+          <p style="margin-top:5px"><strong>Ferroptosis (철사멸사)</strong> -- 철(iron) 의존적, 비세포자멸적 세포 죽음. 지질 과산화에 의해 매개됨.</p>
+          <p style="margin-top:5px"><strong>Pyroptosis (화염사멸사)</strong> -- 고도로 염증성인 세포 괴사. 병원체에 의해 유발되며 Gasdermin이 실행.</p>
+          <p style="margin-top:5px"><strong>Necroptosis (괴사사멸사)</strong> -- 프로그램된 괴사. 겉보기에는 사고처럼 보이지만 유전적으로 프로그래밍됨.</p>
+          <p style="margin-top:5px"><strong>Cuproptosis (구리사멸사)</strong> -- 2022년 발견. 구리(copper) 의존적 세포 죽음.</p>
+        </div>
+
+        <div class="tip">
+          apoptosis가 "조용한 자살"이라면, pyroptosis는 "불타는 자살", ferroptosis는 "녹스는 자살", necroptosis는 "좀비 자살"이라 비유할 수 있다. 각각 다른 상황에서 다른 목적으로 활성화된다.
+        </div>
+      </section>
+
+      <!-- Page 25 -->
+      <section class="page-section" id="p25">
+        <span class="page-num">Page 25</span>
+        <h2>Pyroptosis (불) &amp; Ferroptosis (철)</h2>
+
+        <div class="summary-box">
+          두 가지 비고전적 세포 죽음 경로: <strong>Pyroptosis</strong>(고도 염증성 괴사, 병원체 유발, Gasdermin D 실행)와 <strong>Ferroptosis</strong>(철 의존적 비세포자멸적 죽음, 지질 과산화에 의한 막 파괴).
+        </div>
+
+        <div class="card">
+          <div class="card-label">Pyroptosis (화염사멸사)</div>
+          <p><strong>Pyroptosis</strong>는 고도로 염증성인 세포 괴사이다. 그리스어 "pyro(불)"에서 유래한 이름답게, 세포가 "불타듯" 폭발적으로 죽으며 강한 면역 반응을 유발한다.</p>
+          <p style="margin-top:10px">-- 병원체(pathogens)에 의해 유발된다.</p>
+          <p style="margin-top:5px">-- 염증성 시스테아제(inflammatory cysteases)인 Caspase-1/4/5/11에 의존한다.</p>
+          <p style="margin-top:5px">-- 실행자는 <strong>Gasdermin D</strong>: 세포막에 거대한 구멍(pores)을 형성하여, 염증성 인자(IL-1&beta; 등)를 방출시킨다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Ferroptosis (철사멸사)</div>
+          <p><strong>Ferroptosis</strong>는 철(iron) 의존적, 비세포자멸적 세포 죽음이다.</p>
+          <p style="margin-top:10px">-- 실행자: 독성 지질 과산화물(PUFA-PL-OOH)의 축적이 세포막 무결성을 파괴한다.</p>
+          <p style="margin-top:5px">-- 방어 메커니즘: <strong>Glutathione peroxidase 4 (GPX4)</strong>가 이를 방지한다.</p>
+          <p style="margin-top:5px">-- GPX4가 기능을 잃으면 지질 과산화가 통제 불능이 되어 세포가 죽는다.</p>
+          <p style="margin-top:10px">Ferroptosis는 특히 <strong>암 치료 저항성</strong> 극복에서 주목받고 있다.</p>
+        </div>
+      </section>
+
+      <!-- Page 26 -->
+      <section class="page-section" id="p26">
+        <span class="page-num">Page 26</span>
+        <h2>Necroptosis &amp; Cuproptosis</h2>
+
+        <div class="summary-box">
+          <strong>Necroptosis</strong>(좀비 괴사: 사고처럼 보이지만 유전적으로 프로그래밍된 괴사)와 <strong>Cuproptosis</strong>(2022년 발견, 구리 의존적 세포 죽음).
+        </div>
+
+        <div class="card">
+          <div class="card-label">Necroptosis (괴사사멸사)</div>
+          <p>Necroptosis는 "좀비" 괴사라 불린다 -- 겉보기에는 사고로 인한 죽음(necrosis)처럼 보이지만, 실제로는 유전적으로 프로그래밍된 죽음이다.</p>
+          <p style="margin-top:10px">-- 죽음 수용체(death receptors)인 TNF-&alpha;에 의해 유발된다.</p>
+          <p style="margin-top:5px">-- 키나아제 경로 RIPK1 &rarr; RIPK3 &rarr; <strong>MLKL</strong>(핵심 실행자)로 진행된다.</p>
+          <p style="margin-top:5px">-- MLKL이 세포막에 삽입되어 구멍을 형성함으로써 세포가 터진다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Cuproptosis (구리사멸사) -- 2022년 발견</div>
+          <p>가장 최근에 발견된 세포 죽음 경로인 <strong>Cuproptosis</strong>는 구리(copper) 의존적 제어된 세포 죽음이다.</p>
+          <p style="margin-top:10px">-- 메커니즘: 구리가 TCA 회로(시트르산 회로)의 <strong>리포일화된(lipoylated) 구성요소</strong>에 직접 결합한다.</p>
+          <p style="margin-top:5px">-- 결과: 리포화된 단백질의 응집, 철-황 클러스터 단백질의 소실, 그리고 치명적인 <strong>단백질독성 스트레스(proteotoxic stress)</strong>.</p>
+          <p style="margin-top:10px">Cuproptosis의 발견은 세포 죽음의 어휘가 여전히 확장 중이며, 아직 발견되지 않은 죽음 경로가 더 있을 수 있음을 시사한다.</p>
+        </div>
+      </section>
+
+      <!-- Page 27 -->
+      <section class="page-section" id="p27">
+        <span class="page-num">Page 27</span>
+        <h2>임상 문제: 불멸의 암세포</h2>
+
+        <div class="summary-box">
+          암세포는 내부의 자살 기계장치를 <strong>끄거나(turn off)</strong> 보호 단백질을 과활성화하여 죽음을 피한다. <strong>Bcl-2(선충의 ced-9 상동체)</strong>의 과발현이 "생존 방패(Survival Shield)"를 만든다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Bcl-2 과활성화</div>
+          <p>암세포가 불멸에 가까운 생존을 달성하는 핵심 전략 중 하나는 <strong>Bcl-2 단백질의 과발현</strong>이다. Bcl-2는 <em>C. elegans</em>의 ced-9와 상동인 인간의 세포 사멸 억제 단백질이다. 정상 세포에서 Bcl-2는 적절한 수준으로 발현되어 불필요한 세포 사멸을 방지하지만, 암세포에서는 이것이 비정상적으로 높아져 <strong>"생존 방패"</strong>를 형성한다.</p>
+          <p style="margin-top:10px">이 방패는 세포 사멸을 촉진하는 신호(pro-apoptotic activators)를 격리(sequester)시키고, 동시에 화학요법 약물(chemotherapy drugs)에 의한 죽음 신호도 차단한다. 결과적으로 종양은 화학요법과 대규모 DNA 손상에도 <strong>높은 저항성</strong>을 보이게 된다.</p>
+        </div>
+
+        <div class="key-point">
+          <em>C. elegans</em>에서 발견된 ced-9/Bcl-2가 인간의 암 생존 메커니즘의 핵심이라는 사실은, 기초 벌레 연구가 직접적인 임상적 의미를 가진다는 가장 강력한 증거이다.
+        </div>
+      </section>
+
+      <!-- Page 28 -->
+      <section class="page-section" id="p28">
+        <span class="page-num">Page 28</span>
+        <h2>세포자멸사를 무기로: Venetoclax (ABT-199)</h2>
+
+        <div class="summary-box">
+          <strong>Venetoclax</strong> -- 혁명적 BH3-모방 약물(BH3-mimetic drug). Bcl-2 방패에 강하게 결합하여 격리된 죽음 신호(BIM)를 해방시키고, BAX/BAK의 올리고머화를 강제하여 세포자멸사를 재활성화한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">작용 메커니즘</div>
+          <p>Venetoclax(ABT-199)는 <em>C. elegans</em>에서 발견된 세포 사멸 메커니즘의 직접적인 임상 응용이다. 이 약물은 <strong>BH3-mimetic</strong>이라 불리는데, 세포 사멸을 촉진하는 BH3-only 단백질(EGL-1/BIM의 인간 대응물)을 모방하여 Bcl-2 방패에 결합한다.</p>
+          <p style="margin-top:10px">Venetoclax가 Bcl-2에 결합하면, 격리되어 있던 죽음 신호 단백질 <strong>BIM</strong>이 해방된다. 해방된 BIM은 BAX/BAK를 활성화하여 미토콘드리아 외막에 구멍을 뚫고, 시토크롬 c가 방출되어 궁극적으로 <strong>caspase 활성화와 세포자멸사</strong>가 실행된다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">임상적 영향</div>
+          <p>Venetoclax는 <strong>만성 림프구성 백혈병(CLL)</strong>과 <strong>급성 골수성 백혈병(AML)</strong> 치료에 혁명적 변화를 가져왔다. 표준 항암화학요법에 적합하지 않은 환자들의 전체 생존율을 유의미하게 연장시켰다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">선충에서 약물까지의 번역 경로</div>
+          <strong>ced-9</strong> (C. elegans 보호자) &rarr; <strong>Bcl-2</strong> (인간 상동체) 발견<br>
+          &nbsp;&nbsp;&darr;<br>
+          Bcl-2 과발현이 암의 핵심 생존 전략임을 규명<br>
+          &nbsp;&nbsp;&darr;<br>
+          BH3-only 단백질(EGL-1/BIM)의 기능 이해<br>
+          &nbsp;&nbsp;&darr;<br>
+          <strong>Venetoclax</strong> (BH3-mimetic) 개발 &rarr; CLL/AML 환자 생존율 향상
+        </div>
+      </section>
+
+      <!-- Page 29 -->
+      <section class="page-section" id="p29">
+        <span class="page-num">Page 29</span>
+        <h2>반대편: 원치 않는 죽음을 멈추기</h2>
+
+        <div class="summary-box">
+          "세포는 일종의 칼날 위에 놓여 있다, 죽음 쪽으로 기울어진 채로..." -- H. Robert Horvitz. 암에서는 죽음을 <strong>촉진</strong>해야 하지만, 신경퇴행 질환과 허혈성 뇌졸중에서는 죽음을 <strong>막아야</strong> 한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">역방향 논리 (Inverse Logic)</div>
+          <p>Venetoclax가 암세포의 죽음을 "켜는(turn on)" 약물이라면, 신경퇴행 질환에서는 반대로 죽음을 "끄는(turn off)" 접근이 필요하다. <strong>Caspase 억제제, RIPK1 억제제, Ferroptosis 억제제</strong> 등 실행자 효소를 차단하는 실험적 약물들이 개발되고 있다.</p>
+          <p style="margin-top:10px">이 약물들의 목표는 신경퇴행성 질환(알츠하이머, 파킨슨, ALS)과 허혈성 뇌졸중에서 <strong>죽어가는 뉴런을 구하는 것</strong>이다.</p>
+        </div>
+
+        <blockquote>
+          "Cells are kind of poised on a knife edge, biased towards death..." -- H. Robert Horvitz
+        </blockquote>
+
+        <div class="tip">
+          같은 분자 메커니즘을 "켜거나" "끄는" 것으로 완전히 다른 질병을 치료한다는 것은, 세포 사멸 연구가 얼마나 강력한 치료적 잠재력을 가지는지를 보여준다.
+        </div>
+      </section>
+
+      <!-- Page 30 -->
+      <section class="page-section" id="p30">
+        <span class="page-num">Page 30</span>
+        <h2>노화의 역설 &amp; '좀비' 세포</h2>
+
+        <div class="summary-box">
+          <strong>세포 노화(Cellular Senescence)</strong> -- 텔로미어 단축과 DNA 손상에 의해 유발된 세포가 세포 주기를 영구적으로 이탈하여 "좀비"가 된다. 죽기를 거부하고 대신 <strong>SASP(Senescence-Associated Secretory Phenotype)</strong>라는 독성 칵테일을 분비한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">개념: 세포 노화</div>
+          <p>세포가 일정 횟수 이상 분열하거나(텔로미어 단축), 심각한 DNA 손상을 받으면, 세포 주기를 <strong>영구적으로 멈춘다</strong>. 이것이 세포 노화(cellular senescence)이다. 문제는 이 세포들이 죽지 않는다는 것이다. 세포자멸사 프로그램이 작동하지 않아 "좀비" 상태로 남는다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">위험성: SASP</div>
+          <p>좀비 세포는 <strong>SASP(Senescence-Associated Secretory Phenotype)</strong>라는 독성 분비물을 내놓는다. SASP에는 염증성 시토카인(IL-6, TNF-&alpha; 등)이 포함되어 있으며, 이것이 만성적 전신 염증(<strong>'inflammaging'</strong>)을 유발한다.</p>
+          <p style="margin-top:10px">이 만성 염증은 <strong>골관절염(osteoarthritis)</strong>, <strong>동맥경화(atherosclerosis)</strong>, <strong>치매(dementia)</strong> 등 노화 관련 질환의 주요 원인으로 지목되고 있다.</p>
+        </div>
+
+        <div class="key-point">
+          좀비 세포는 <strong>세포자멸사 프로그램이 작동하지 않아 생긴 문제</strong>이다. 적절한 시기에 적절한 세포가 죽어야 한다는 원칙이 지켜지지 않으면, 그 대가는 노화와 질병으로 돌아온다.
+        </div>
+      </section>
+
+      <!-- Page 31 -->
+      <section class="page-section" id="p31">
+        <span class="page-num">Page 31</span>
+        <h2>세노리틱스: 생물학적 시계를 되돌리다</h2>
+
+        <div class="summary-box">
+          <strong>세노리틱스(Senolytics)</strong> -- Dasatinib + Quercetin 등의 화합물이 노화 세포의 항-세포자멸사 경로를 선택적으로 이용하여 좀비 세포를 강제로 세포자멸사시킨다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">세노리틱스의 돌파구</div>
+          <p>세노리틱스(Senolytics)는 노화(senescent) 세포의 <strong>항-세포자멸사 경로(anti-apoptotic pathways)</strong>를 선택적으로 공격하여, 이 좀비 세포들을 강제로 세포자멸사(apoptosis)시키는 화합물이다.</p>
+          <p style="margin-top:10px">대표적인 세노리틱 조합인 <strong>Dasatinib + Quercetin (D+Q)</strong>은 노화 세포가 생존하기 위해 의존하는 특정 신호 경로를 차단한다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">전임상 결과와 전망</div>
+          <p>전임상 연구에서 노화 세포를 제거하면:</p>
+          <p style="margin-top:10px">-- <strong>조직 기능 향상</strong>: 근육, 관절, 피부 등의 기능이 회복된다.</p>
+          <p style="margin-top:5px">-- <strong>노화 관련 질환의 발병 지연</strong>: 동맥경화, 골다공증, 인지 저하 등이 늦춰진다.</p>
+          <p style="margin-top:5px">-- <strong>건강수명(healthspan) 연장</strong>: 단순히 오래 사는 것이 아니라, 건강하게 오래 산다.</p>
+          <p style="margin-top:10px">벌레의 ced 유전자에서 시작된 기초연구가 <strong>노화를 치료 가능한 상태(treatable condition)</strong>로 재정의하는 데 기여하고 있다.</p>
+        </div>
+      </section>
+
+      <!-- Page 32 -->
+      <section class="page-section" id="p32">
+        <span class="page-num">Page 32</span>
+        <h2>조절된 죽음의 미래 지평</h2>
+
+        <div class="summary-box">
+          세포 죽음 연구의 세 가지 미래 방향: <strong>재생 의학(Regenerative Medicine)</strong>, <strong>합성 생물학(Synthetic Biology)</strong>, <strong>면역요법(Immunotherapy)</strong>.
+        </div>
+
+        <div class="card">
+          <div class="card-label">1. 재생 의학 (Regenerative Medicine)</div>
+          <p>세포 죽음 경로의 제어는 장기 이식의 생존율을 획기적으로 개선할 수 있다. 특히 <strong>허혈-재관류(ischemia-reperfusion) 중 발생하는 ferroptosis</strong>를 억제함으로써, 이식된 장기의 세포 손실을 최소화하는 연구가 진행 중이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">2. 합성 생물학 (Synthetic Biology)</div>
+          <p>합성 박테리아에 유전적 <strong>'킬 스위치(kill switches)'</strong>를 설계하여, 환경 및 인체 안전을 보장한다. 합성 생물이 의도하지 않은 환경에 노출되면 자동으로 세포자멸사가 활성화되어 자멸하도록 프로그래밍하는 것이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">3. 면역요법 (Immunotherapy)</div>
+          <p>CD8+ T 세포가 전통적인 면역 체크포인트(immune checkpoints)와 함께 <strong>종양의 ferroptosis를 유도하는 능력</strong>을 강화하는 연구가 진행 중이다. 이는 기존 면역관문 억제제(anti-PD-1/PD-L1)의 효과를 보완하는 새로운 항암 전략이 될 수 있다.</p>
+        </div>
+      </section>
+
+      <!-- Page 33 -->
+      <section class="page-section" id="p33">
+        <span class="page-num">Page 33</span>
+        <h2>죽음을 속이기: 윤리적 지평</h2>
+
+        <div class="summary-box">
+          세포 죽음을 제어하는 기술이 발전함에 따라, <strong>분배적 정의(Distributive Justice)</strong>, <strong>세대 간 정의(Intergenerational Justice)</strong>, <strong>사회적 전환(Societal Shift)</strong>이라는 윤리적 질문이 대두된다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">세 가지 윤리적 질문</div>
+          <p><strong>분배적 정의 (Distributive Justice)</strong> -- 세노리틱스와 노화 치료법(gerotherapies)이 부유층과 빈곤층 사이에 <strong>생물학적 격차</strong>를 만들어낼 것인가?</p>
+          <p style="margin-top:10px"><strong>세대 간 정의 (Intergenerational Justice)</strong> -- 사람들이 훨씬 더 오래, 건강하게 살게 되면, 노동 시장, 전통적 퇴직 구조, 가족 역학이 근본적으로 뒤흔들린다.</p>
+          <p style="margin-top:10px"><strong>사회적 전환 (Societal Shift)</strong> -- 세포 죽음을 이해하는 것은 곧 생명을 제어하는 것을 의미한다. 이것은 의학을 "병 치료(sick care)"에서 <strong>진정한 건강 유지(true health maintenance)</strong>로 전환시킬 잠재력을 가진다.</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>핵심 윤리적 긴장</strong><br>
+          기술이 "노화를 치료할 수 있다"는 것을 증명하는 순간, "노화를 치료해야 할 도덕적 의무가 있는가?"라는 질문이 불가피해진다. 세포 사멸 연구는 단순한 과학적 호기심을 넘어 인류의 근본적인 가치관에 도전하고 있다.
+        </div>
+      </section>
+
+      <!-- Page 34 -->
+      <section class="page-section" id="p34">
+        <span class="page-num">Page 34</span>
+        <h2>노화의 도덕적 기준선</h2>
+
+        <div class="summary-box">
+          역사적으로 노화와 죽음은 불가피한 것으로 받아들여졌다. 그러나 생물학적 노화가 <strong>치료 가능한 세포 메커니즘</strong>에 의해 구동된다면, 증명의 부담(burden of proof)이 뒤집힌다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">패러다임의 전환</div>
+          <p>수천 년 동안 인류는 노화와 죽음을 "자연의 순리"로 받아들여왔다. 그러나 <em>C. elegans</em>에서 시작된 연구가 노화가 <strong>특정 유전자와 분자 경로</strong>에 의해 조절된다는 것을 증명하면서, 근본적인 질문이 제기되었다:</p>
+          <p style="margin-top:10px"><strong>노화의 고통을 치료할 도덕적 의무(moral imperative)가 있는가?</strong></p>
+          <p style="margin-top:10px">만약 노화가 daf-2/인슐린 경로, Bcl-2/세포자멸사 경로, 세포 노화/SASP 등 구체적인 메커니즘에 의해 구동되고, 이 메커니즘들이 약물로 조절 가능하다면, 노화를 "불가피한 것"으로 방치하는 것은 <strong>도덕적으로 정당화될 수 있는가?</strong></p>
+          <p style="margin-top:10px">우리는 <strong>장수 과학(longevity science)의 "아폴로 프로그램"</strong> 시대에 진입하고 있다.</p>
+        </div>
+      </section>
+
+      <!-- Page 35 -->
+      <section class="page-section" id="p35">
+        <span class="page-num">Page 35</span>
+        <h2>벌레 너머: 프로그램된 세포 죽음의 유산과 미래</h2>
+
+        <div class="summary-box">
+          2002년의 '프로그램된 세포 자살' 발견이 어떻게 현대 임상적 돌파구와 미래 항노화 치료법으로 진화했는지를 조망한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">발견에서 현대 돌파구까지</div>
+          <p><strong>RNA 간섭 혁명</strong> -- 벌레에서의 RNAi 발견(2006 노벨상)이 표적 유전자 침묵(targeted gene silencing)을 가능하게 했다.</p>
+          <p style="margin-top:10px"><strong>임상 의학의 변혁</strong> -- Venetoclax 같은 약물이 암의 '죽음 스위치'를 재활성화하여 생명을 구하고 있다.</p>
+          <p style="margin-top:10px"><strong>오픈소스 정신</strong> -- 수상자 John Sulston은 유전 데이터를 상업 특허로부터 자유롭게 지키기 위해 싸웠다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">미래: 노화과학 &amp; 사회</div>
+          <p><strong>표적 세노리틱스</strong> -- 미래 치료법은 '좀비' 노화 세포를 선택적으로 제거하여 생물학적 노화를 되돌리는 것을 목표로 한다.</p>
+          <p style="margin-top:10px"><strong>2050 만성질환 위기</strong> -- 과학자들은 다발이환(multimorbidity)의 90% 증가가 예상되는 상황에 대응하기 위해 세포 죽음 경로를 활용하고 있다.</p>
+          <p style="margin-top:10px"><strong>'암 방지(Cancer-Proof)' 인간</strong> -- 강화된 자살 프로그램을 가진 세포를 설계하여 종양 형성을 원천적으로 차단하는 미래 혁신이 탐구되고 있다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">벌레 vs 인간 -- 세포 죽음의 규모</div>
+          <strong>C. elegans (벌레)</strong><br>
+          &nbsp;&nbsp;총 세포: 1,090개 / 죽도록 예정된 세포: 131개<br><br>
+          <strong>Homo sapiens (인간)</strong><br>
+          &nbsp;&nbsp;총 세포: ~10조 개 / 매일 죽도록 예정된 세포: <strong>수십억 개</strong><br><br>
+          규모는 극적으로 다르지만, <strong>동일한 유전적 프로그램</strong>이 세포의 생사를 결정한다.
+        </div>
+      </section>
+
+      <!-- Page 36 -->
+      <section class="page-section" id="p36">
+        <span class="page-num">Page 36</span>
+        <h2>최종 인포그래픽: 표적 의학의 차세대 프론티어</h2>
+
+        <div class="summary-box">
+          현대 의학이 세포 생활주기를 정밀하게 조절하는 방향으로 전환하고 있다: 암에서는 특정 죽음 경로(PCD)를 활성화하고, 노화에서는 "좀비" 노화 세포를 제거하여 저항성을 극복하고 노화를 되돌린다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">PCD의 새로운 경로들</div>
+          <p>Apoptosis를 넘어서 <strong>PCD 혁명</strong>이 진행 중이다:</p>
+          <p style="margin-top:10px"><strong>Ferroptosis</strong> -- 실행 메커니즘: 철 의존적 지질 과산화. 치료적 초점: 종양 방사선 저항성 극복.</p>
+          <p style="margin-top:5px"><strong>Necroptosis</strong> -- 실행 메커니즘: RIPK3/MLKL 매개 용해. 치료적 초점: 항종양 면역 활성화.</p>
+          <p style="margin-top:5px"><strong>Pyroptosis</strong> -- 실행 메커니즘: Gasdermin 매개 막 구멍. 치료적 초점: 염증성 면역 반응 유발.</p>
+          <p style="margin-top:5px"><strong>Cuproptosis</strong> -- 구리 의존적 (2022년 발견). TCA 회로 단백질 응집.</p>
+          <p style="margin-top:5px"><strong>방사선 치료</strong>: 방사선이 비세포자멸적 죽음 경로를 유도하여 전통적 세포자멸사 치료 저항성을 극복.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">장수를 위한 노화 세포 표적화</div>
+          <p><strong>세노리틱스(Senolytics)</strong>: 'inflammaging'과 70가지 이상의 노화 관련 질환을 유발하는 비분열 세포를 선택적으로 제거한다.</p>
+          <p style="margin-top:10px"><strong>세노모르픽스(Senomorphics)</strong>: 세포 자체를 죽이지 않고, 해로운 염증성 분비물(SASP)만을 억제한다.</p>
+          <p style="margin-top:10px"><strong>"원-투 펀치(One-Two Punch)" 전략</strong>: (1) 먼저 Senomorphics로 염증 반동(inflammatory rebound)을 최소화하고, (2) 그 다음 Senolytics로 노화 세포를 제거한다. 이 순차적 접근이 우수한 조직 재생 결과를 달성한다.</p>
+        </div>
+
+        <div class="key-point">
+          이 인포그래픽은 강의 전체를 관통하는 핵심 메시지를 담고 있다: <em>C. elegans</em>의 131개 세포 죽음에서 시작된 기초연구가, 인류의 암 치료, 노화 역전, 그리고 건강수명 연장이라는 <strong>거대한 의학적 혁명</strong>의 기반이 되었다. 1mm 벌레의 유전적 프로그램이 인간의 운명을 바꾸고 있다.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '다크모드';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '라이트모드';
+      }
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>

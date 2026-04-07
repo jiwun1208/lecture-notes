@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>조절된 죽음의 설계도</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar a {
+    display: block;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 600;
+    padding: 12px 12px 4px;
+    margin-top: 8px;
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .diagram-box {
+    background: var(--bg-aside);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .diagram-box .diagram-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .truth-table { width: auto; border-collapse: collapse; font-size: 14px; margin: 12px 0; font-family: 'JetBrains Mono', monospace; }
+  .truth-table th { background: var(--accent); color: white; padding: 8px 16px; font-size: 12px; text-align: center; }
+  .truth-table td { padding: 6px 16px; border: 1px solid var(--border); text-align: center; }
+  .truth-table tr:nth-child(even) { background: var(--bg-aside); }
+
+  strong { color: var(--accent); font-weight: 500; }
+
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 12px 18px;
+    margin: 12px 0;
+    font-style: italic;
+    color: var(--text-muted);
+    background: var(--bg-aside);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .page-section h2 { font-size: 20px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>조절된 죽음의 설계도</h1>
+      <div class="meta">2002 Nobel Prize &middot; Byung-Hoon Lee</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">페이지 목록</div>
+      <div class="section-label">Part 1: The Elegant Worm</div>
+      <a href="#p1" class="active">01 -- 표지</a>
+      <a href="#p2">02 -- 삶과 죽음의 역설</a>
+      <a href="#p3">03 -- 2002 노벨상 수상자</a>
+      <a href="#p4">04 -- 헌신과 위트</a>
+      <a href="#p5">05 -- 코드의 윤리</a>
+      <a href="#p6">06 -- 오픈 사이언스</a>
+      <a href="#p7">07 -- 기초과학의 힘</a>
+      <a href="#p8">08 -- 1mm의 거인</a>
+      <a href="#p9">09 -- 지구 최강의 생물</a>
+      <a href="#p10">10 -- 완벽한 실험 대상</a>
+      <a href="#p11">11 -- 생물학적 초능력</a>
+      <a href="#p12">12 -- 생명의 투명한 창</a>
+      <a href="#p13">13 -- 노벨상의 자석</a>
+      <a href="#p14">14 -- RNAi (2006)</a>
+      <a href="#p15">15 -- GFP (2008)</a>
+      <a href="#p16">16 -- microRNAs (2024)</a>
+      <a href="#p17">17 -- 진화의 거울</a>
+      <a href="#p18">18 -- 진화적 보존</a>
+      <a href="#p19">19 -- 궁극의 역설</a>
+      <a href="#p20">20 -- 조절된 세포 죽음</a>
+      <div class="section-label">Part 2: 세포의 자살</div>
+      <a href="#p21">21 -- Part 2 표지</a>
+      <a href="#p22">22 -- 분자생물학의 갈림길</a>
+      <a href="#p23">23 -- 세포생물학의 암흑기</a>
+      <a href="#p24">24 -- 생명의 필연적 끝</a>
+      <a href="#p25">25 -- 사고가 아닌 죽음</a>
+      <a href="#p26">26 -- 죽음으로 조각되다</a>
+      <a href="#p27">27 -- 조각가로서의 자연</a>
+      <a href="#p28">28 -- 아폽토시스의 탄생</a>
+      <a href="#p29">29 -- 두 가지 죽음</a>
+      <a href="#p30">30 -- 깨끗한 vs 지저분한 죽음</a>
+      <a href="#p31">31 -- 세포 자살의 이유</a>
+      <a href="#p32">32 -- 완벽한 하드웨어</a>
+      <div class="section-label">Part 3: 유전자 사냥</div>
+      <a href="#p33">33 -- 유리 기술</a>
+      <a href="#p34">34 -- 선각자 Sydney Brenner</a>
+      <a href="#p35">35 -- 지도 제작자 Sulston</a>
+      <a href="#p36">36 -- 불변의 계보</a>
+      <a href="#p37">37 -- 불변의 계보 지도</a>
+      <a href="#p38">38 -- 전체 가계도 매핑</a>
+      <a href="#p39">39 -- 사라진 세포의 미스터리</a>
+      <a href="#p40">40 -- 유전자 명명 문화</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== PART 1: THE ELEGANT WORM ==================== -->
+
+      <!-- Page 1 -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>The Programmed Suicide of Cells</h2>
+
+        <div class="summary-box">
+          이 강의는 <strong>2002년 노벨 생리의학상</strong>의 주제인 프로그램된 세포 죽음(Programmed Cell Death)을 다룬다. 부제 "Genetic Regulation of Organ Development and the 2002 Nobel Prize"가 보여주듯, 장기 발생의 유전적 조절과 세포 자살 프로그램이 핵심이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">강의 개요</div>
+          <p>Byung-Hoon Lee 교수(DGIST 신물질생물학과)의 이 강의는 1mm짜리 투명한 선충(C. elegans)의 세포 자살 프로그램이 어떻게 인류의 운명을 바꾸었는지를 추적한다. 표지의 이미지는 고전 조각상의 얼굴이 분자 구조물로 해체되어 가는 모습으로, <strong>아름다운 형태가 죽음(해체)을 통해 만들어진다</strong>는 강의의 핵심 메시지를 시각적으로 전달한다.</p>
+        </div>
+
+        <blockquote>"To understand life, we must first understand death."</blockquote>
+
+        <div class="card">
+          <div class="card-label">수상자 소개</div>
+          <p>표지 하단에 세 수상자의 이름이 나열되어 있다: <strong>Sydney Brenner</strong>, <strong>H. Robert Horvitz</strong>, <strong>John E. Sulston</strong>. 이 세 사람은 각각 모델 생물 플랫폼의 확립, 세포 죽음의 유전학적 규명, 세포 계보 지도의 완성이라는 상호 보완적 역할을 수행하여 2002년 노벨상을 공동 수상했다.</p>
+        </div>
+
+        <div class="key-point">
+          이 강의의 원제 "The Architecture of Regulated Death"에서 "Architecture(설계)"라는 단어가 핵심이다. 세포의 죽음은 무작위적 사고가 아니라, 유전자에 의해 정교하게 <strong>설계된(designed)</strong> 과정임을 강조한다.
+        </div>
+      </section>
+
+      <!-- Page 2 -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>삶과 죽음의 역설: The Paradox of Life</h2>
+
+        <div class="summary-box">
+          "Death is not just an accident..." -- 이 강의의 핵심 명제를 소개하며, 2002년 노벨 생리의학상의 배경을 제시한다. 죽음은 사고가 아니라 <strong>생명의 필수 구성요소</strong>라는 역설적 진실에서 출발한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">삶과 죽음의 역설</div>
+          <p>우리는 보통 "삶 = 좋은 것, 죽음 = 나쁜 것"이라는 이분법적 사고를 한다. 하지만 생물학의 가장 놀라운 발견 중 하나는, <strong>세포의 죽음이 생명을 유지하는 데 절대적으로 필요하다</strong>는 것이다. 매일 인체에서 수십억 개의 세포가 의도적으로 죽는다. 이것은 고장이 아니라 정교한 프로그램의 실행이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">2002 노벨 생리의학상</div>
+          <p>2002년 노벨 생리의학상은 "장기 발생과 프로그램된 세포 죽음의 유전적 조절에 관한 발견(discoveries concerning genetic regulation of organ development and programmed cell death)"으로 수여되었다. 이 수상은 1mm 크기의 투명한 선충 <strong>C. elegans</strong>에서 시작된 기초 연구가 인간 질병(암, 신경퇴행성 질환 등)의 이해에 혁명적 전환을 가져온 사례이다.</p>
+        </div>
+
+        <div class="tip">
+          이 강의를 이해하는 핵심 전환: "왜 세포가 죽는가?"가 아니라 "왜 세포가 스스로 죽도록 프로그램되어 있는가?" -- 이 질문의 차이가 2002년 노벨상의 본질이다.
+        </div>
+      </section>
+
+      <!-- Page 3 -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>2002년 노벨 생리의학상 수상자</h2>
+
+        <div class="summary-box">
+          Sydney Brenner, H. Robert Horvitz, John E. Sulston -- 세 과학자가 C. elegans를 통해 프로그램된 세포 죽음의 유전적 메커니즘을 밝혀낸 공로로 노벨상을 공동 수상했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">수상자 3인의 역할</div>
+          <p><strong>Sydney Brenner (1927-2019)</strong> -- 남아프리카 출신의 분자생물학자. C. elegans를 모델 생물(model organism)로 확립한 선구자이다. "The Platform(플랫폼)"을 구축한 인물로, 1963년 유전학 연구에 이상적인 생물로 선충을 선택했다.</p>
+          <p style="margin-top:10px"><strong>H. Robert Horvitz (1947-)</strong> -- MIT 교수. 세포 죽음을 조절하는 핵심 유전자(ced-3, ced-4, ced-9)를 발견한 유전학자이다. "The Mechanism(메커니즘)"을 밝힌 인물로, 죽어야 할 세포가 살아남는 "언데드(undead)" 돌연변이를 찾아내는 천재적 실험 전략을 사용했다.</p>
+          <p style="margin-top:10px"><strong>John E. Sulston (1942-2018)</strong> -- 영국의 생물학자. C. elegans의 모든 세포 분열을 실시간으로 추적하여 <strong>불변의 세포 계보(invariant cell lineage)</strong>를 완성한 "지도 제작자(The Cartographer)"이다. 1.5년간 현미경 앞에 앉아 모든 세포의 운명을 기록한 헌신적 인물이다.</p>
+        </div>
+
+        <div class="key-point">
+          이 세 과학자의 업적은 하나의 스토리로 연결된다: Brenner가 무대(C. elegans)를 세웠고, Sulston이 지도(세포 계보)를 그렸으며, Horvitz가 메커니즘(죽음의 유전자)을 해독했다.
+        </div>
+      </section>
+
+      <!-- Page 4 -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>헌신과 위트: Dedication &amp; Wit</h2>
+
+        <div class="summary-box">
+          Sulston은 1.5년 동안 현미경 앞에 앉아 세포 분열을 하나하나 추적했고, Brenner는 과학계에서 가장 재치 있는 인물로 유명했다. 과학의 위대한 발견 뒤에는 헌신과 인간적 매력이 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Sulston의 헌신</div>
+          <p>John Sulston은 C. elegans의 세포 계보를 매핑하기 위해 <strong>1.5년간</strong> Nomarski 미분간섭 현미경(DIC microscope) 앞에 앉아 세포 분열을 실시간으로 관찰했다. 당시에는 자동 추적 기술이 없었기 때문에, 모든 세포의 탄생과 죽음을 <strong>수작업으로</strong> 기록해야 했다. 이것은 과학사에서 가장 인내심을 요하는 실험 중 하나로 꼽힌다.</p>
+          <p style="margin-top:10px">그는 이 과정에서 발생 중 정확히 <strong>1090개의 세포가 태어나고 131개가 죽어</strong> 성체에서 <strong>959개의 체세포</strong>가 남는다는 사실을 발견했다. 이 패턴이 모든 개체에서 <strong>완전히 동일(invariant)</strong>하다는 것은 혁명적 발견이었다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Brenner의 위트</div>
+          <p>Sydney Brenner는 과학계에서 가장 유머러스한 인물 중 한 명으로 알려져 있다. 그의 유명한 말: <strong>"Progress in science depends on new techniques, new discoveries and new ideas, probably in that order."</strong> (과학의 진보는 새로운 기술, 새로운 발견, 새로운 아이디어에 달려 있다 -- 아마도 이 순서대로.) 이 말은 C. elegans라는 새로운 기술(모델 시스템)이 어떻게 새로운 발견(세포 죽음의 유전학)과 새로운 아이디어(프로그램된 세포 죽음)로 이어졌는지를 정확히 설명한다.</p>
+        </div>
+      </section>
+
+      <!-- Page 5 -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>코드의 윤리: Ethics of the Code</h2>
+
+        <div class="summary-box">
+          John Sulston은 과학자일 뿐 아니라 <strong>오픈 사이언스(Open Science)</strong>의 투사였다. 그는 인간 게놈 프로젝트에서 유전체 데이터의 공공성을 위해 싸운 인물이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Sulston의 오픈 사이언스 투쟁</div>
+          <p>Sulston은 C. elegans 연구를 넘어 <strong>인간 게놈 프로젝트(Human Genome Project)</strong>에서 핵심적 역할을 했다. 특히 Craig Venter의 Celera Genomics가 인간 게놈을 특허화(privatize)하려 했을 때, Sulston은 강력하게 반대하며 유전체 데이터가 <strong>인류 공동의 자산</strong>이어야 한다고 주장했다.</p>
+          <p style="margin-top:10px">그의 투쟁 덕분에 인간 게놈 서열은 무료로 공개되었고, 이것이 이후 모든 유전체학 연구의 기반이 되었다. Sulston은 과학적 발견뿐 아니라 <strong>과학의 윤리적 방향</strong>을 세운 인물이기도 하다.</p>
+        </div>
+
+        <div class="key-point">
+          Sulston의 신념: <strong>"게놈은 인류에게 속한다(The genome belongs to humanity)."</strong> 이것은 단순한 구호가 아니라, 실제로 수십억 달러의 기업적 이해관계에 맞서 관철시킨 원칙이었다.
+        </div>
+      </section>
+
+      <!-- Page 6 -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>오픈 데이터를 위한 싸움</h2>
+
+        <div class="summary-box">
+          John Sulston의 오픈 사이언스 철학은 인간 게놈 프로젝트의 공공성을 확보하는 데 결정적 역할을 했다. 유전체 데이터의 사유화에 맞선 그의 투쟁은 현대 생명과학의 방향을 결정했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">게놈 전쟁의 배경</div>
+          <p>1990년대 후반, 인간 게놈 프로젝트는 공공 자금으로 운영되는 국제 컨소시엄과 Craig Venter가 이끄는 민간 기업 Celera Genomics 사이의 치열한 경쟁 구도에 놓여 있었다. Celera는 샷건 시퀀싱(shotgun sequencing)으로 빠르게 진행하면서 유전체 데이터에 대한 <strong>독점적 접근권</strong>을 확보하려 했다.</p>
+          <p style="margin-top:10px">Sulston은 영국 Wellcome Trust의 Sanger Centre를 이끌며, 유전체 서열이 발견되는 즉시 <strong>24시간 이내에 공개(Bermuda Principles)</strong>되어야 한다는 원칙을 관철시켰다. 이 원칙이 없었다면 오늘날의 유전체학, 정밀의학, 바이오인포매틱스는 완전히 다른 형태가 되었을 것이다.</p>
+        </div>
+
+        <div class="tip">
+          Sulston의 사례는 DGIST 학생들에게 중요한 교훈을 제공한다: 위대한 과학자는 단순히 발견만 하는 것이 아니라, 그 발견이 어떻게 사용되어야 하는지에 대한 <strong>윤리적 비전</strong>을 가져야 한다.
+        </div>
+      </section>
+
+      <!-- Page 7 -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>기초과학의 힘: The Power of Basic Science</h2>
+
+        <div class="summary-box">
+          작은 벌레의 성장을 관찰하는 것이 어떻게 암 치료로 이어질 수 있는가? 이 강의가 보여주려는 가장 중요한 메시지 중 하나이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">기초에서 응용으로</div>
+          <p>1960년대 Sydney Brenner가 "이 작은 벌레를 연구하겠다"고 했을 때, 아무도 그것이 인간의 암, 알츠하이머병, 자가면역질환의 이해에 혁명을 가져올 것이라 예상하지 못했다. 그러나 C. elegans에서 발견된 세포 죽음의 유전적 경로는 <strong>인간에게도 그대로 보존</strong>되어 있었다.</p>
+          <p style="margin-top:10px">이것은 기초과학의 본질을 보여준다: <strong>당장의 실용적 가치가 아닌, 자연의 근본 원리를 이해하는 것</strong>이 궁극적으로 가장 큰 응용적 가치를 만들어낸다. C. elegans의 ced-3 유전자에서 발견된 카스파제(caspase)는 현재 항암 치료의 핵심 타겟이 되었다.</p>
+        </div>
+
+        <div class="key-point">
+          "작은 벌레의 성장을 관찰하는 것이 암 치료로 이어진다" -- 이것이 기초과학 투자의 정당성을 가장 잘 보여주는 사례이다.
+        </div>
+      </section>
+
+      <!-- Page 8 -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>1mm의 거인: The Elegant Worm</h2>
+
+        <div class="summary-box">
+          <strong>Caenorhabditis elegans (C. elegans)</strong> -- 길이 1mm의 투명한 토양 선충(nematode)이 생물학 역사상 가장 중요한 모델 생물 중 하나가 된 이유를 탐구한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">C. elegans 기본 정보</div>
+          <p><strong>C. elegans</strong>는 토양에 사는 자유생활 선충(free-living nematode)으로, 학명의 "elegans"는 "우아한"이라는 뜻이다. 몸 전체가 <strong>투명(transparent)</strong>하여 살아있는 상태에서 모든 세포를 현미경으로 관찰할 수 있다는 점이 가장 큰 장점이다.</p>
+          <p style="margin-top:10px">이 작은 생물의 크기와 단순함 뒤에는 놀라운 복잡성이 숨어 있다. <strong>정확히 959개의 체세포</strong>와 <strong>302개의 신경세포</strong>를 가지고 있으며, 모든 세포의 위치와 연결이 완전히 매핑되어 있는 유일한 다세포 생물이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">Nematode</td>
+                <td>선충</td>
+                <td>둥근 몸을 가진 벌레 문(Phylum Nematoda). 자연에서 가장 흔한 동물</td>
+              </tr>
+              <tr>
+                <td class="en">Model Organism</td>
+                <td>모델 생물</td>
+                <td>특정 생물학적 현상을 연구하기 위해 선택된 표준 실험 생물</td>
+              </tr>
+              <tr>
+                <td class="en">Transparent</td>
+                <td>투명</td>
+                <td>빛이 통과하여 내부 구조를 직접 관찰할 수 있는 성질</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Page 9 -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>지구에서 가장 강력한 생물</h2>
+
+        <div class="summary-box">
+          Gary Ruvkun(2024 노벨상 수상자)의 표현을 빌리자면, C. elegans는 "지구에서 가장 대단한(most badass) 생물"이다. 1mm 길이, 959개 세포, 4개의 노벨상, 6개월간의 ISS 우주 체류까지.
+        </div>
+
+        <div class="card">
+          <div class="card-label">C. elegans의 스펙</div>
+          <p>슬라이드는 C. elegans의 놀라운 성과를 숫자로 정리한다:</p>
+          <p style="margin-top:10px"><strong>1mm</strong> -- 성체의 길이. 육안으로는 거의 보이지 않는 크기이다.</p>
+          <p style="margin-top:10px"><strong>959개 세포</strong> -- 성체 자웅동체(hermaphrodite)의 정확한 체세포 수. 모든 개체에서 동일하다.</p>
+          <p style="margin-top:10px"><strong>4개의 노벨상</strong> -- 2002(세포 죽음), 2006(RNAi), 2008(GFP), 2024(microRNA). 단일 생물 중 가장 많은 노벨상과 연관되어 있다.</p>
+          <p style="margin-top:10px"><strong>6개월 ISS 체류</strong> -- 국제우주정거장에서 6개월간 실험된 최초의 다세포 동물 모델 중 하나이다.</p>
+        </div>
+
+        <div class="tip">
+          Gary Ruvkun은 C. elegans에서 microRNA를 발견한 공로로 2024년 노벨상을 수상한 인물이다. 그가 이 작은 벌레를 "most badass"라고 부른 것은, 단순한 생물이 얼마나 깊은 생물학적 통찰을 제공할 수 있는지를 역설적으로 표현한 것이다.
+        </div>
+      </section>
+
+      <!-- Page 10 -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>완벽한 실험 대상을 만나다</h2>
+
+        <div class="summary-box">
+          C. elegans가 모델 생물로 선택된 이유는 단순히 작고 투명해서가 아니다. 실험 생물로서 갖춰야 할 <strong>모든 조건</strong>을 완벽하게 충족하기 때문이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">모델 생물의 조건</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>특성</th><th>설명</th><th>연구적 의미</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">투명성</td>
+                <td>몸 전체가 투명하여 모든 세포핵이 보임</td>
+                <td>살아있는 동물에서 세포 분열과 죽음을 실시간 관찰 가능</td>
+              </tr>
+              <tr>
+                <td class="en">빠른 생활사</td>
+                <td>알에서 성체까지 3일</td>
+                <td>유전학 실험의 빠른 반복. 세대 간 유전 분석 용이</td>
+              </tr>
+              <tr>
+                <td class="en">자웅동체</td>
+                <td>자가수정(self-fertilizing) 가능</td>
+                <td>동형접합 돌연변이체를 쉽게 유지. 유전학 분석 단순화</td>
+              </tr>
+              <tr>
+                <td class="en">고정 세포 수</td>
+                <td>모든 성체가 정확히 959개 체세포</td>
+                <td>세포 하나하나의 운명을 추적 가능. 누락된 세포를 탐지 가능</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">
+          모든 개체가 동일한 수의 세포를 갖는다는 것(고정 세포 수, invariant cell number)은 "불변의 발생(invariant development)"을 의미한다. 이것은 발생 과정이 완전히 <strong>유전적으로 프로그램</strong>되어 있다는 강력한 증거이다.
+        </div>
+      </section>
+
+      <!-- Page 11 -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>생물학적 초능력: Biological Superpowers</h2>
+
+        <div class="summary-box">
+          C. elegans의 생물학적 특성을 더 깊이 들여다보면, 이 생물이 왜 현대 생물학의 슈퍼스타가 되었는지 이해할 수 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">3일의 생활사</div>
+          <p>C. elegans는 수정란에서 성체까지 <strong>단 3일</strong>이면 완전히 성장한다. 4단계의 유충기(L1-L4)를 거쳐 성체가 되며, 성체 수명은 약 2-3주이다. 이 빠른 세대 시간 덕분에 유전학 실험을 매우 빠르게 반복할 수 있다. 비교하자면 초파리(Drosophila)는 10일, 마우스는 3개월이 필요하다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">자웅동체 (Hermaphrodite)</div>
+          <p>C. elegans의 대부분(약 99.95%)은 <strong>자웅동체(hermaphrodite)</strong>로, 정자와 난자를 모두 생산하여 자가수정(self-fertilization)할 수 있다. 드물게 수컷(0.05%)이 나타나 이종교배(cross-fertilization)도 가능하다. 자가수정은 <strong>동형접합(homozygous) 돌연변이체</strong>를 자연스럽게 만들어주므로, 유전학 실험에서 매우 유리하다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">불변의 발생 (Invariant Development)</div>
+          <p>가장 놀라운 특성: 모든 C. elegans 성체 자웅동체는 정확히 <strong>959개의 체세포</strong>를 가진다. 302개의 신경세포, 95개의 근육세포, 나머지는 표피, 장, 생식선 등으로 구성된다. 세포 하나의 수도 다르지 않으며, 각 세포의 위치까지 동일하다. 이것은 인간을 포함한 다른 어떤 다세포 생물에서도 볼 수 없는 특성이다.</p>
+        </div>
+      </section>
+
+      <!-- Page 12 -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>생명의 투명한 창: A Transparent Window</h2>
+
+        <div class="summary-box">
+          959개의 체세포와 302개의 신경세포 -- C. elegans는 생명을 들여다보는 투명한 창(transparent window)이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">신경계의 완전한 매핑</div>
+          <p>C. elegans의 <strong>302개 신경세포</strong>와 그 사이의 약 7,000개 시냅스 연결은 <strong>완전히 매핑(connectome)</strong>되어 있다. 이것은 지구상에서 신경계가 완전히 해독된 유일한 동물이다. 인간의 뇌에는 약 860억 개의 신경세포가 있으므로, C. elegans의 302개 신경세포는 극도로 단순화된 신경계 모델을 제공한다.</p>
+          <p style="margin-top:10px">이 완전한 신경 지도(connectome)는 신경과학에서 "회로 수준의 이해(circuit-level understanding)"를 가능하게 했다. 특정 행동(먹이 탐색, 화학주성 등)이 어떤 신경세포의 활성 패턴으로 일어나는지를 정확히 추적할 수 있다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">C. elegans 세포 구성</div>
+          <strong>전체 체세포:</strong> 959개<br>
+          &nbsp;&nbsp;신경세포: 302개 (31.6%)<br>
+          &nbsp;&nbsp;근육세포: 95개<br>
+          &nbsp;&nbsp;표피세포(Hypodermis): 213개<br>
+          &nbsp;&nbsp;장세포(Intestine): 20개<br>
+          &nbsp;&nbsp;기타(인두, 생식선 등): 329개<br><br>
+          <strong>생식세포:</strong> 약 2,000개 (체세포와 별도)
+        </div>
+      </section>
+
+      <!-- Page 13 -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>노벨상의 자석: A Magnet for the Nobel Prize</h2>
+
+        <div class="summary-box">
+          C. elegans는 단일 생물로서 <strong>4개의 노벨상</strong>과 직접 연관되어 있다. 2002년, 2006년, 2008년, 그리고 2024년 -- 이 작은 벌레가 노벨상을 끌어당기는 "자석"이 된 이유를 살펴본다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">C. elegans 관련 노벨상 연대기</div>
+          <p><strong>2002년 노벨 생리의학상</strong> -- Brenner, Horvitz, Sulston. 프로그램된 세포 죽음의 유전적 조절. 이 강의의 주제이다.</p>
+          <p style="margin-top:10px"><strong>2006년 노벨 생리의학상</strong> -- Andrew Fire &amp; Craig Mello. <strong>RNA 간섭(RNAi, RNA interference)</strong>의 발견. C. elegans에 이중가닥 RNA를 주입하면 특정 유전자의 발현이 억제된다는 것을 발견했다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">RNA 간섭 (RNAi)</div>
+          <p>RNAi는 이중가닥 RNA(double-stranded RNA)가 세포 내에서 상보적 서열의 mRNA를 분해하여 유전자 발현을 <strong>침묵(silencing)</strong>시키는 현상이다. Fire와 Mello는 1998년 C. elegans에서 이 현상을 발견하여 2006년 노벨상을 수상했다. RNAi는 현재 유전자 기능 연구, 유전자 치료, 항바이러스 전략 등에 광범위하게 활용된다.</p>
+        </div>
+      </section>
+
+      <!-- Page 14 -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>RNAi: 2006 노벨상</h2>
+
+        <div class="summary-box">
+          RNA 간섭(RNAi)의 발견은 유전자 기능 연구의 패러다임을 바꿨다. C. elegans에서 처음 발견된 이 메커니즘은 인간을 포함한 모든 진핵생물에서 보존되어 있었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">RNAi의 혁명적 의미</div>
+          <p>RNAi 이전에 유전자의 기능을 알아보려면 복잡한 돌연변이 유도 과정이 필요했다. 하지만 RNAi의 발견 후에는 <strong>원하는 유전자의 이중가닥 RNA를 합성하여 투여</strong>하는 것만으로 그 유전자를 "끌 수" 있게 되었다. C. elegans의 경우, RNAi를 먹이에 섞어 먹이기만 해도(feeding RNAi) 유전자 침묵이 일어난다는 놀라운 발견까지 이루어졌다.</p>
+          <p style="margin-top:10px">이것은 C. elegans 연구의 속도를 기하급수적으로 가속화했고, 현재는 인간 세포에서의 유전자 치료(gene therapy)에도 RNAi 기반 약물이 사용되고 있다(예: Patisiran, FDA 승인 RNAi 약물).</p>
+        </div>
+      </section>
+
+      <!-- Page 15 -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>GFP: 2008 노벨 화학상</h2>
+
+        <div class="summary-box">
+          녹색형광단백질(GFP, Green Fluorescent Protein)은 해파리에서 발견되었지만, 그것이 <strong>살아있는 생물의 세포를 추적하는 도구</strong>가 될 수 있음을 처음 증명한 것은 C. elegans에서였다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">2008 노벨 화학상</div>
+          <p><strong>Osamu Shimomura</strong>가 해파리 Aequorea victoria에서 GFP를 최초로 분리했고, <strong>Martin Chalfie</strong>가 C. elegans에서 GFP를 생물학적 마커로 사용할 수 있음을 증명했으며, <strong>Roger Tsien</strong>이 다양한 색상의 형광단백질을 개발했다.</p>
+          <p style="margin-top:10px">Chalfie의 핵심 실험: C. elegans의 특정 유전자 프로모터에 GFP를 연결하여, <strong>특정 세포가 언제 어디서 활성화되는지</strong>를 살아있는 동물에서 실시간으로 시각화했다. 이것은 C. elegans의 투명한 몸체와 완벽한 궁합을 이루어, 세포 생물학의 혁명을 가져왔다.</p>
+        </div>
+
+        <div class="key-point">
+          GFP가 C. elegans에서 특히 강력한 도구인 이유: 몸 전체가 투명하므로 GFP의 형광 신호가 <strong>체내 깊은 곳의 세포까지</strong> 관찰 가능하다. 불투명한 동물(마우스 등)에서는 조직을 절개하지 않으면 내부를 볼 수 없다.
+        </div>
+      </section>
+
+      <!-- Page 16 -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>microRNAs: 2024 노벨 생리의학상</h2>
+
+        <div class="summary-box">
+          2024년 노벨 생리의학상은 Victor Ambros와 Gary Ruvkun에게 수여되었다. C. elegans에서 <strong>microRNA</strong>라는 유전자 조절의 새로운 층위를 발견한 공로이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">microRNA의 발견</div>
+          <p><strong>Victor Ambros</strong>는 1993년 C. elegans에서 <strong>lin-4</strong>라는 유전자가 단백질을 코딩하지 않고 약 22 뉴클레오타이드 길이의 작은 RNA를 만든다는 것을 발견했다. 이 작은 RNA는 다른 유전자(lin-14)의 mRNA에 결합하여 <strong>번역을 억제(translational repression)</strong>했다.</p>
+          <p style="margin-top:10px"><strong>Gary Ruvkun</strong>은 let-7이라는 두 번째 microRNA를 발견하고, 이것이 C. elegans뿐 아니라 <strong>인간을 포함한 모든 동물에서 보존</strong>되어 있음을 증명했다. 이로써 microRNA가 보편적인 유전자 조절 메커니즘임이 확인되었다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">과학사적 의미</div>
+          <p>microRNA의 발견은 유전자 조절에 대한 패러다임을 근본적으로 바꿨다. 기존의 "DNA -&gt; RNA -&gt; 단백질"이라는 센트럴 도그마에 <strong>새로운 조절 층위(regulatory layer)</strong>가 추가된 것이다. 현재 인간 게놈에서 약 2,000개 이상의 microRNA가 발견되었으며, 유전자 발현의 60% 이상이 microRNA에 의해 조절되는 것으로 추정된다.</p>
+        </div>
+      </section>
+
+      <!-- Page 17 -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>단세포에서 복잡한 생명으로의 도약</h2>
+
+        <div class="summary-box">
+          Jacques Monod의 유명한 말: "E. coli에서 참인 것은 코끼리에서도 참이다." -- 하지만 이 원리에는 한계가 있다. 다세포 생물만의 고유한 문제가 있기 때문이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">다세포성의 도전</div>
+          <p>단세포 생물(박테리아)에서는 각 세포가 독립적으로 생존한다. 하나의 세포 = 하나의 생명이다. 하지만 다세포 생물에서는 근본적으로 다른 질문이 등장한다:</p>
+          <p style="margin-top:10px">1. <strong>분화(Differentiation)</strong>: 동일한 DNA를 가진 세포들이 어떻게 신경, 근육, 피부 등 다른 세포 유형으로 변하는가?</p>
+          <p style="margin-top:10px">2. <strong>조직화(Organization)</strong>: 수조 개의 세포가 어떻게 정확한 위치에서 정확한 기능을 수행하는가?</p>
+          <p style="margin-top:10px">3. <strong>제거(Elimination)</strong>: 불필요하거나 위험한 세포를 어떻게 안전하게 제거하는가?</p>
+          <p style="margin-top:10px">세 번째 질문 -- 세포의 제거 -- 가 바로 이 강의의 핵심이다. 프로그램된 세포 죽음은 다세포 생물만의 고유한 문제에 대한 진화적 해답이다.</p>
+        </div>
+      </section>
+
+      <!-- Page 18 -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>진화의 거울: Evolutionary Mirror</h2>
+
+        <div class="summary-box">
+          C. elegans와 인간은 약 <strong>6억 년 전</strong> 공통 조상에서 갈라졌다. 그럼에도 불구하고 60-80%의 유전자가 인간에서 상동 유전자(ortholog)를 가지며, 인간 질병 관련 유전자의 약 40%가 C. elegans에서 발견된다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">놀라운 유전적 보존</div>
+          <p><strong>6억 년</strong>의 진화적 거리에도 불구하고 C. elegans 유전자의 <strong>60-80%가 인간 상동 유전자(ortholog)</strong>를 가지고 있다. 이것은 생물학의 핵심 메커니즘이 얼마나 오래전에 확립되었는지, 그리고 얼마나 강력하게 보존되었는지를 보여준다.</p>
+          <p style="margin-top:10px">특히 주목할 점: 인간의 <strong>질병 관련 유전자 중 약 40%</strong>가 C. elegans에서 상동 유전자를 가진다. 실제로 암(ced-9/Bcl-2), 신경퇴행(ced-3/Caspases), 노화(daf-2/Insulin receptor) 등 수많은 인간 질병의 유전적 기반이 C. elegans에서 처음 밝혀졌다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">진화적 보존 비교</div>
+          <strong>C. elegans vs 인간</strong><br>
+          &nbsp;&nbsp;진화적 분리 시점: ~6억 년 전<br>
+          &nbsp;&nbsp;유전자 수: ~20,000 vs ~20,000 (놀랍게도 유사)<br>
+          &nbsp;&nbsp;상동 유전자 비율: 60-80%<br>
+          &nbsp;&nbsp;질병 관련 유전자 보존: ~40%<br>
+          &nbsp;&nbsp;게놈 크기: ~100 Mb vs ~3,200 Mb (32배 차이)
+        </div>
+      </section>
+
+      <!-- Page 19 -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 19</span>
+        <h2>궁극의 생물학적 역설</h2>
+
+        <div class="summary-box">
+          Nietzsche의 인용과 함께 세포 죽음이 단순한 파괴가 아니라 <strong>생명을 위한 설계</strong>라는 역설을 소개하며, 조절된 세포 죽음(Regulated Cell Death)의 전체 구조를 개관한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Architecture of Regulated Cell Death</div>
+          <p>이 슬라이드는 조절된 세포 죽음의 <strong>전체 아키텍처(Architecture)</strong>를 개관하는 핵심 페이지이다. 세포 죽음은 단일한 현상이 아니라 다양한 형태를 가진 복잡한 체계이다:</p>
+          <p style="margin-top:10px"><strong>Apoptosis(아폽토시스)</strong> -- 가장 잘 연구된 프로그램된 세포 죽음. 이 강의의 주요 주제이다.</p>
+          <p style="margin-top:10px"><strong>Necroptosis(네크롭토시스)</strong> -- 조절된 괴사. 감염 시 면역 반응의 일환으로 발생한다.</p>
+          <p style="margin-top:10px"><strong>Pyroptosis(파이롭토시스)</strong> -- 염증성 세포 죽음. 선천면역에서 중요한 역할을 한다.</p>
+          <p style="margin-top:10px"><strong>Ferroptosis(페롭토시스)</strong> -- 철 의존적 세포 죽음. 비교적 최근(2012년)에 발견되었다.</p>
+        </div>
+
+        <div class="key-point">
+          이 강의는 주로 <strong>아폽토시스(Apoptosis)</strong>에 집중하지만, 세포 죽음에는 다양한 형태가 있음을 인식하는 것이 중요하다. 각 형태는 다른 생리적/병리적 맥락에서 작동하며, 각각의 유전적 메커니즘이 다르다.
+        </div>
+      </section>
+
+      <!-- Page 20 -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 20</span>
+        <h2>조절된 세포 죽음의 전경</h2>
+
+        <div class="summary-box">
+          Part 1에서 배운 C. elegans의 특성과 노벨상의 역사를 바탕으로, Part 2에서는 본격적으로 <strong>프로그램된 세포 죽음의 발견 과정</strong>을 추적한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Part 1 요약과 Part 2 전망</div>
+          <p>지금까지 배운 내용을 정리하면:</p>
+          <p style="margin-top:10px">1. C. elegans는 투명하고, 빠르게 자라며, 고정된 세포 수를 가진 이상적인 모델 생물이다.</p>
+          <p style="margin-top:10px">2. 이 작은 벌레에서 RNAi, GFP, microRNA 등 현대 생물학의 핵심 도구와 개념이 발견되었다.</p>
+          <p style="margin-top:10px">3. C. elegans와 인간은 6억 년 전에 갈라졌지만, 핵심 유전자의 60-80%가 보존되어 있다.</p>
+          <p style="margin-top:10px">이제 Part 2에서는 이 모델 생물을 사용하여 <strong>"세포가 왜 스스로 죽는가?"</strong>라는 질문에 대한 답을 찾아가는 과정을 살펴볼 것이다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== PART 2: THE PROGRAMMED SUICIDE OF CELLS ==================== -->
+
+      <!-- Page 21 -->
+      <section class="page-section" id="p21">
+        <span class="page-num">Page 21</span>
+        <h2>The Programmed Suicide of Cells (Part 2)</h2>
+
+        <div class="summary-box">
+          Part 2는 프로그램된 세포 죽음의 개념이 어떻게 탄생했는지, 그 발견의 역사적 과정을 따라간다. 세포 죽음에 대한 <strong>패러다임 전환(paradigm shift)</strong>의 이야기이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Part 2의 구조</div>
+          <p>Part 2는 다음의 핵심 질문들을 순서대로 다룬다:</p>
+          <p style="margin-top:10px">1. <strong>분자생물학의 갈림길</strong> -- 1965년 유전 암호 해독 후, 다음 도전은 무엇이었는가?</p>
+          <p style="margin-top:10px">2. <strong>세포 죽음에 대한 오래된 편견</strong> -- "세포는 닳아서 죽는다"는 잘못된 도그마의 교정</p>
+          <p style="margin-top:10px">3. <strong>프로그램된 세포 죽음의 증거</strong> -- 손가락 물갈퀴, 올챙이 꼬리 등 일상적 예시</p>
+          <p style="margin-top:10px">4. <strong>아폽토시스 vs 괴사</strong> -- 두 가지 세포 죽음의 근본적 차이</p>
+          <p style="margin-top:10px">5. <strong>왜 세포가 스스로 죽어야 하는가?</strong> -- 발생, 보호, 항상성의 세 가지 이유</p>
+        </div>
+      </section>
+
+      <!-- Page 22 -->
+      <section class="page-section" id="p22">
+        <span class="page-num">Page 22</span>
+        <h2>분자생물학의 갈림길: Molecular Biology at a Crossroad</h2>
+
+        <div class="summary-box">
+          1965년까지 유전 암호(genetic code)가 대부분 해독되었다. DNA에서 RNA로, RNA에서 단백질로의 정보 흐름이 밝혀진 후, 분자생물학의 다음 도전은 <strong>"What's next?"</strong>였다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">1965년의 분기점</div>
+          <p>1953년 DNA 이중나선 구조 발견 이후, 약 12년 만에 유전 암호(codon table)가 완전히 해독되었다. DNA -&gt; RNA -&gt; Protein이라는 <strong>센트럴 도그마(Central Dogma)</strong>가 확립되고, 유전 정보가 어떻게 단백질로 번역되는지가 밝혀졌다.</p>
+          <p style="margin-top:10px">이 시점에서 생물학의 가장 큰 질문은: "이제 유전 암호를 읽을 수 있게 되었는데, 하나의 수정란이 어떻게 <strong>복잡한 다세포 생물</strong>로 발달하는가?" 즉, 유전자가 어떻게 <strong>발생과 행동(Development and Behavior)</strong>을 제어하는지가 다음 프론티어였다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Sydney Brenner의 비전</div>
+          <p><strong>Sydney Brenner</strong>는 이 질문에 대한 답을 찾기 위해, 전체 생명체의 발생 과정을 세포 하나 수준에서 추적할 수 있는 시스템이 필요하다고 판단했다. 그의 급진적 아이디어: <strong>하나의 수정란에서 성체까지, 모든 세포의 계보(lineage)를 완전히 매핑</strong>하자. 이를 위해 그가 선택한 것이 바로 C. elegans였다.</p>
+        </div>
+
+        <div class="tip">
+          Brenner의 선견지명이 놀라운 이유: 1963년 그가 C. elegans를 선택했을 때, 아직 유전 암호 해독도 완료되지 않은 상태였다. 그는 다른 과학자들보다 한 세대 앞을 내다본 것이다.
+        </div>
+      </section>
+
+      <!-- Page 23 -->
+      <section class="page-section" id="p23">
+        <span class="page-num">Page 23</span>
+        <h2>세포생물학의 암흑기: The Dark Ages of Cell Biology</h2>
+
+        <div class="summary-box">
+          1972년 이전, 세포 죽음에 대한 과학계의 이해는 <strong>근본적으로 잘못</strong>되어 있었다. "세포는 닳아서(wear out) 죽는다"는 오래된 도그마가 지배하고 있었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">오래된 도그마 (Old Dogma)</div>
+          <p>19세기 중반 이래 과학계의 견해(Mid-19th Century View)는 다음과 같았다:</p>
+          <p style="margin-top:10px">-- 세포는 <strong>"닳아서(wear out)"</strong> 죽는다. 영양소가 고갈되거나 퇴화(degenerate)하기 때문이다.</p>
+          <p style="margin-top:10px">-- 죽음은 기계의 <strong>고장(failure of the machinery)</strong>이지, 설계의 특성(feature of the design)이 아니다.</p>
+          <p style="margin-top:10px">이 관점에서 세포 죽음은 단순히 세포가 제 기능을 다하거나 손상을 입어 불가피하게 일어나는 <strong>수동적 과정</strong>이었다. 세포가 "스스로 죽기로 결정한다"는 개념은 존재하지 않았다.</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>패러다임 전환의 핵심:</strong> 1972년 이전에는 "능동적 세포 자살(active cell suicide)"이라는 개념 자체가 존재하지 않았다. 세포 죽음을 연구하는 것은 과학계에서 무의미한 일로 여겨졌고, 이 분야에 관심을 보이는 연구자는 극소수였다.
+        </div>
+      </section>
+
+      <!-- Page 24 -->
+      <section class="page-section" id="p24">
+        <span class="page-num">Page 24</span>
+        <h2>생명의 필연적 끝: Life's Necessary End</h2>
+
+        <div class="summary-box">
+          우리는 흔히 생물학을 성장, 분열, 생존의 이야기로 본다. 그러나 다세포 생물이 기능하려면, <strong>세포의 죽음은 세포의 탄생만큼 필수적</strong>이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">매일 수십억 세포의 의도적 죽음</div>
+          <p>인간의 몸에서는 매일 <strong>수십억(BILLIONS)</strong>개의 세포가 의도적으로 죽는다. 이것은 사고나 질병이 아니라, 생명을 유지하기 위한 <strong>계획된 프로세스</strong>이다.</p>
+          <p style="margin-top:10px">구체적 예시:</p>
+          <p style="margin-top:10px">-- 장(intestine) 상피세포: 3-5일마다 전체 교체. 매일 수백억 개의 세포가 죽고 새로운 세포로 대체된다.</p>
+          <p style="margin-top:10px">-- 혈액세포: 매초 약 350만 개의 적혈구가 죽고 새로 만들어진다.</p>
+          <p style="margin-top:10px">-- 피부세포: 약 2-3주마다 전체 교체된다.</p>
+          <p style="margin-top:10px">-- 면역세포: 흉선(thymus)에서 성숙하는 T세포의 약 95%가 자가반응 검사에서 탈락하여 아폽토시스로 제거된다.</p>
+        </div>
+
+        <div class="key-point">
+          이 숫자들이 보여주는 핵심: 세포의 죽음은 예외적 사건이 아니라 <strong>생명의 일상적 작동 방식</strong>이다. 이 프로세스가 고장나면 암(세포가 죽지 않음)이나 신경퇴행성 질환(세포가 과도하게 죽음)이 발생한다.
+        </div>
+      </section>
+
+      <!-- Page 25 -->
+      <section class="page-section" id="p25">
+        <span class="page-num">Page 25</span>
+        <h2>죽음은 사고가 아니다: Death is Not an Accident</h2>
+
+        <div class="summary-box">
+          "Death is not just a running down of the machinery. It is an active, regulated process." -- 프로그램된 세포 죽음(PCD)의 개념이 등장한다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">PCD (Programmed Cell Death)</div>
+          <p>프로그램된 세포 죽음은 세포가 외부 손상이 아닌 <strong>내부의 유전적 프로그램</strong>에 의해 자발적으로 죽는 과정이다. 이 개념의 핵심 포인트:</p>
+          <p style="margin-top:10px">1. <strong>능동적(Active)</strong>: 세포 죽음은 수동적 퇴화가 아니라, 에너지(ATP)를 소비하는 능동적 과정이다.</p>
+          <p style="margin-top:10px">2. <strong>조절된(Regulated)</strong>: 유전자에 의해 정밀하게 조절되며, 시간과 위치가 프로그램되어 있다.</p>
+          <p style="margin-top:10px">3. <strong>의도적(Intentional)</strong>: 매일 수십억 세포가 의도적으로 죽어 생체를 살린다. 이것은 고장이 아니라 기능이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">PCD</td>
+                <td>프로그램된 세포 죽음</td>
+                <td>유전적 프로그램에 의해 제어되는 세포 자살</td>
+              </tr>
+              <tr>
+                <td class="en">Active Process</td>
+                <td>능동적 과정</td>
+                <td>ATP 등 에너지를 소비하며 일어나는 과정</td>
+              </tr>
+              <tr>
+                <td class="en">Regulated</td>
+                <td>조절된</td>
+                <td>유전자에 의해 시간과 공간이 정밀하게 제어되는</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Page 26 -->
+      <section class="page-section" id="p26">
+        <span class="page-num">Page 26</span>
+        <h2>죽음으로 조각되다: We Are Sculpted by Death</h2>
+
+        <div class="summary-box">
+          우리는 모두 <strong>물갈퀴가 달린 손(webbed fingers)</strong>으로 태어난다. 독립된 손가락을 가지게 된 것은 손가락 사이의 세포가 <strong>의도적으로 죽었기</strong> 때문이다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">프로그램된 세포 죽음의 가장 직관적 사례</div>
+          <p>인간 배아 발생 과정에서 손가락은 처음에 <strong>물갈퀴(webbing)</strong>로 연결되어 있다. 발생이 진행되면서 손가락 사이의 세포('지간(interdigital)' 공간의 세포)가 아폽토시스를 통해 <strong>의도적으로 제거</strong>되어, 독립된 다섯 개의 손가락이 형성된다.</p>
+          <p style="margin-top:10px">이 과정이 실패하면 <strong>합지증(Syndactyly)</strong>이 발생한다 -- 손가락이 물갈퀴로 연결된 채 태어나는 선천성 기형이다. 이것은 아폽토시스가 정상적으로 작동하지 않은 결과이다.</p>
+        </div>
+
+        <div class="key-point">
+          "We Are Sculpted by Death" -- 우리의 형태는 세포의 추가(addition)로만 만들어지는 것이 아니라, 세포의 제거(subtraction)를 통해 <strong>조각(sculpt)</strong>된다. 생물학적 발생은 화가보다 조각가에 가깝다.
+        </div>
+      </section>
+
+      <!-- Page 27 -->
+      <section class="page-section" id="p27">
+        <span class="page-num">Page 27</span>
+        <h2>조각가로서의 자연: Nature as a Sculptor</h2>
+
+        <div class="summary-box">
+          손 발생의 세 단계 -- Paddle Stage(물갈퀴), Intermediate Stage(아폽토시스 시작), Final Stage(손가락 분리) -- 를 통해 <strong>음의 선택(Negative Selection)</strong>이라는 핵심 개념을 소개한다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">손 발생의 세 단계</div>
+          <strong>1. Paddle Stage (물갈퀴 단계)</strong><br>
+          &nbsp;&nbsp;지간(interdigital) 물갈퀴가 존재. 손이 노(paddle) 모양이다.<br><br>
+          <strong>2. Intermediate Stage (중간 단계)</strong><br>
+          &nbsp;&nbsp;아폽토시스가 시작됨. 지간 세포가 죽기 시작한다.<br><br>
+          <strong>3. Final Stage (최종 단계)</strong><br>
+          &nbsp;&nbsp;손가락이 완전히 분리됨. 각각 독립된 digits이 된다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 은유: 음의 선택 (Negative Selection)</div>
+          <p>생물학적 시스템은 필요한 것보다 <strong>더 많은 세포를 만든 후, 불필요한 것을 "깎아내는(chip away)"</strong> 방식으로 작동한다. 이것을 <strong>음의 선택(Negative Selection)</strong>이라 한다. 미켈란젤로가 대리석 블록에서 불필요한 부분을 제거하여 다비드 상을 만들어낸 것과 같은 원리이다.</p>
+          <p style="margin-top:10px">프로그램된 세포 죽음이 없다면 우리의 손은 물갈퀴로 남아 있을 것이다. 이 상태가 바로 <strong>합지증(Syndactyly)</strong>이다.</p>
+        </div>
+      </section>
+
+      <!-- Page 28 -->
+      <section class="page-section" id="p28">
+        <span class="page-num">Page 28</span>
+        <h2>1972: 새로운 개념을 위한 새로운 단어</h2>
+
+        <div class="summary-box">
+          1972년, Kerr, Wyllie, Currie가 "Apoptosis: A Basic Biological Phenomenon"이라는 역사적 논문을 발표하며 <strong>아폽토시스(Apoptosis)</strong>라는 용어를 만들었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Apoptosis의 어원</div>
+          <p>Apoptosis는 그리스어에서 유래한 합성어이다:</p>
+          <p style="margin-top:10px"><strong>APO (apo-)</strong> = "~로부터 떨어져(Away)"</p>
+          <p style="margin-top:10px"><strong>PTOSIS (ptosis)</strong> = "떨어짐(Falling)"</p>
+          <p style="margin-top:10px">합치면 <strong>"Falling off"</strong> = 나무에서 잎이 떨어지는 것과 같은 자연스러운 분리를 의미한다. 가을에 나뭇잎이 떨어지는 것은 폭풍(외부 손상)이 아니라 나무 자체의 프로그램에 의한 것이다. 세포의 아폽토시스도 마찬가지로, 외부 손상이 아닌 <strong>내부 프로그램에 의한 자연스러운 죽음</strong>이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">1972년 논문의 혁명적 통찰</div>
+          <p>Kerr, Wyllie, Currie의 논문은 세포 죽음이 <strong>프로그램된, 에너지 의존적 사건(programmed, energy-dependent event)</strong>임을 처음으로 체계적으로 주장했다. 이 논문은 처음에는 거의 주목받지 못했지만, 1990년대에 C. elegans에서의 유전학적 발견이 이루어지면서 폭발적으로 인용되기 시작했다.</p>
+        </div>
+
+        <div class="tip">
+          발음 주의: Apoptosis는 "아-팝-토시스"가 아니라 <strong>"아포-토시스"</strong>로 발음한다. 두 번째 'p'는 묵음이다. 이 발음 규칙은 그리스어 어원을 따른 것이다.
+        </div>
+      </section>
+
+      <!-- Page 29 -->
+      <section class="page-section" id="p29">
+        <span class="page-num">Page 29</span>
+        <h2>두 가지 죽음의 방식: Two Ways to Die</h2>
+
+        <div class="summary-box">
+          세포가 죽는 방식에는 두 가지가 있다: <strong>괴사(Necrosis) = 타살(Homicide)</strong>과 <strong>아폽토시스(Apoptosis) = 자살(Suicide)</strong>. 이 두 방식은 원인, 과정, 결과 모두에서 근본적으로 다르다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Necrosis vs Apoptosis 비교</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>특성</th><th>Necrosis (괴사)</th><th>Apoptosis (아폽토시스)</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="en">비유</td>
+                <td>타살 (Homicide)</td>
+                <td>자살 (Suicide)</td>
+              </tr>
+              <tr>
+                <td class="en">원인</td>
+                <td>외부 손상, 독소, 외상</td>
+                <td>유전적 프로그램</td>
+              </tr>
+              <tr>
+                <td class="en">형태 변화</td>
+                <td>세포 팽창(swell) &amp; 파열(burst)</td>
+                <td>세포 수축(shrink), 응축(condense), 블레빙(bleb)</td>
+              </tr>
+              <tr>
+                <td class="en">결과</td>
+                <td>염증(inflammation)과 조직 손상</td>
+                <td>깨끗한 제거(clean removal), 염증 없음</td>
+              </tr>
+              <tr>
+                <td class="en">에너지</td>
+                <td>수동적 (에너지 불필요)</td>
+                <td>능동적 (ATP 필요)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">
+          이 비교가 보여주는 핵심: 아폽토시스는 "죽음"이라는 결과만 보면 괴사와 같지만, 그 <strong>과정과 의미</strong>는 완전히 다르다. 괴사는 무질서한 파괴이고, 아폽토시스는 정돈된 해체이다.
+        </div>
+      </section>
+
+      <!-- Page 30 -->
+      <section class="page-section" id="p30">
+        <span class="page-num">Page 30</span>
+        <h2>깨끗한 죽음 vs 지저분한 죽음</h2>
+
+        <div class="summary-box">
+          괴사(Necrosis)와 아폽토시스(Apoptosis)의 차이를 세포 수준의 과정으로 상세히 비교한다. 핵심 차이: 하나는 <strong>지저분한 누출(Messy Leakage)</strong>을 만들고, 다른 하나는 <strong>깨끗한 제거(Neat Removal)</strong>를 실현한다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Necrosis (사고적 죽음)</div>
+          <strong>Normal Cell</strong> --&gt; <strong>Swelling &amp; Membrane Rupture</strong> --&gt; <strong>Cell Burst &amp; Toxic Release</strong><br>
+          &nbsp;&nbsp;세포가 팽창하고 세포막이 파열된다.<br>
+          &nbsp;&nbsp;세포 내용물이 주변으로 쏟아져 나온다.<br>
+          &nbsp;&nbsp;결과: <strong>Messy Leakage / Inflammation</strong> -- 주변 조직에 독성 물질이 퍼져 염증 반응을 유발한다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Apoptosis (프로그램된 죽음) -- ATP 필요</div>
+          <strong>Normal Cell</strong> --&gt; <strong>Shrinking, Condensing, &amp; Blebbing</strong> --&gt; <strong>Neat Packaging &amp; Engulfment</strong><br>
+          &nbsp;&nbsp;세포가 수축하고, 핵이 응축되며, 세포막이 돌기(bleb)를 형성한다.<br>
+          &nbsp;&nbsp;세포가 작은 소포(apoptotic body)로 깔끔하게 포장된다.<br>
+          &nbsp;&nbsp;결과: <strong>Neat Removal / No Inflammation</strong> -- 주변 세포가 소포를 삼켜(engulf) 깨끗하게 처리한다.
+        </div>
+
+        <div class="tip">
+          아폽토시스가 ATP(에너지)를 필요로 한다는 것은 매우 중요한 포인트이다. 죽는 과정 자체가 <strong>에너지를 소비하는 능동적 작업</strong>이다. 세포가 "그냥 꺼지는" 것이 아니라, 자신을 해체하는 정교한 프로그램을 적극적으로 실행하는 것이다.
+        </div>
+      </section>
+
+      <!-- Page 31 -->
+      <section class="page-section" id="p31">
+        <span class="page-num">Page 31</span>
+        <h2>세포가 스스로 죽는 세 가지 이유</h2>
+
+        <div class="summary-box">
+          왜 세포가 스스로 자살하도록 프로그램되어 있는가? 세 가지 핵심 이유: <strong>발생(Development)</strong>, <strong>보호(Protection)</strong>, <strong>항상성(Homeostasis)</strong>.
+        </div>
+
+        <div class="card">
+          <div class="card-label">1. Development (발생) -- 장기 조각</div>
+          <p>앞서 본 손가락 물갈퀴 제거(removing webbing)가 대표적 사례이다. 이 외에도 올챙이의 꼬리 흡수, 뇌의 시냅스 가지치기(synaptic pruning), 성별에 따른 생식관 퇴화 등이 있다. 발생 과정에서 아폽토시스는 장기를 <strong>조각(sculpting)</strong>하는 역할을 한다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">2. Protection (보호) -- 손상된 DNA 제거</div>
+          <p>DNA가 손상된 세포는 암으로 변할 위험이 있다. 아폽토시스는 이러한 세포를 <strong>암이 되기 전에 미리 제거</strong>하는 방어 메커니즘이다. 피부에 자외선을 과도하게 받으면 일광화상이 생기는데, 이것은 DNA 손상을 감지한 세포가 아폽토시스를 실행한 결과이다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">3. Homeostasis (항상성) -- "골디락스 원칙"</div>
+          <p>우리 몸의 세포 수는 놀라울 정도로 일정하게 유지된다. 이것은 세포 분열(증가)과 세포 죽음(감소)의 <strong>정밀한 균형</strong> 덕분이다. 이 균형이 깨지면:</p>
+          <p style="margin-top:10px">-- 세포 죽음 &lt; 세포 증식: <strong>암(Cancer)</strong></p>
+          <p style="margin-top:10px">-- 세포 죽음 &gt; 세포 증식: <strong>신경퇴행(Neurodegeneration)</strong>, 예: 알츠하이머, 파킨슨</p>
+        </div>
+
+        <blockquote>"Death is not just an accident... It is an active, regulated process."</blockquote>
+      </section>
+
+      <!-- Page 32 -->
+      <section class="page-section" id="p32">
+        <span class="page-num">Page 32</span>
+        <h2>완벽한 하드웨어 찾기: Finding the Perfect Hardware</h2>
+
+        <div class="summary-box">
+          세포 죽음의 유전적 메커니즘을 밝히려면 적합한 실험 시스템이 필요했다. Sydney Brenner는 1960년대에 세 가지 핵심 요건을 갖춘 완벽한 "하드웨어"를 찾아냈다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">세 가지 핵심 요건</div>
+          <p><strong>1. Transparent (투명)</strong> -- 살아있는 동물에서 모든 세포핵을 현미경으로 직접 관찰할 수 있다. 세포가 죽는 순간을 실시간으로 볼 수 있다는 것이 결정적이었다.</p>
+          <p style="margin-top:10px"><strong>2. Fast Life Cycle (빠른 생활사)</strong> -- 알에서 성체까지 단 3일. 유전학 실험의 빠른 반복이 가능하다.</p>
+          <p style="margin-top:10px"><strong>3. Fixed Cell Count (고정 세포 수)</strong> -- 모든 성체가 정확히 동일한 수의 체세포를 가진다. 따라서 "죽어야 할 세포가 살아남은" 돌연변이체를 <strong>세포 수를 세는 것만으로</strong> 탐지할 수 있다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Sydney Brenner의 타임라인</div>
+          <strong>19세기: Observation</strong> -- C. elegans 최초 발견 및 형태 기술<br>
+          --&gt; <strong>1960s: Brenner's Idea</strong> -- 발생 연구를 위한 모델 생물로 선택<br>
+          --&gt; <strong>2002: Nobel Prize</strong> -- 프로그램된 세포 죽음의 유전적 조절 발견으로 노벨상 수상
+        </div>
+      </section>
+
+      <!-- ==================== PART 3: THE GENE HUNT ==================== -->
+
+      <!-- Page 33 -->
+      <section class="page-section" id="p33">
+        <span class="page-num">Page 33</span>
+        <h2>유리 기술: The 'Glass' Technology</h2>
+
+        <div class="summary-box">
+          C. elegans는 과학자들에게 "유리(Glass)"와 같은 생물이다. 투명한 몸체 덕분에 살아있는 동물 내부에서 <strong>모든 세포의 분열을 현미경 아래에서 직접 관찰</strong>할 수 있다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">투명성의 과학적 가치</div>
+          <p>C. elegans의 투명성(transparency)은 단순한 편의가 아니라 <strong>과학적 혁명의 전제 조건</strong>이었다. Nomarski 미분간섭 현미경(DIC microscopy)을 사용하면 살아있는 C. elegans에서:</p>
+          <p style="margin-top:10px">-- 모든 세포핵의 위치를 확인할 수 있다.</p>
+          <p style="margin-top:10px">-- 세포 분열의 순간을 실시간으로 관찰할 수 있다.</p>
+          <p style="margin-top:10px">-- 세포가 죽는 과정(아폽토시스)을 직접 목격할 수 있다. 죽는 세포는 특징적인 <strong>"refractile button"</strong> 형태를 보여 쉽게 식별된다.</p>
+          <p style="margin-top:10px">이 모든 관찰이 <strong>살아있는 동물(in vivo)</strong>에서 가능하다는 것이 핵심이다. 다른 모델 생물(마우스, 초파리)에서는 이러한 수준의 세포 해상도 관찰이 불가능하다.</p>
+        </div>
+      </section>
+
+      <!-- Page 34 -->
+      <section class="page-section" id="p34">
+        <span class="page-num">Page 34</span>
+        <h2>선각자: Sydney Brenner</h2>
+
+        <div class="summary-box">
+          "Progress in science depends on new techniques, new discoveries and new ideas, probably in that order." -- Sydney Brenner. 1963년, 그는 발생의 퍼즐을 풀기 위해 C. elegans를 선택했다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">The Visionary</div>
+          <p>Sydney Brenner(1927-2019)는 남아프리카 출신의 분자생물학자로, Francis Crick과 함께 유전 암호 해독에 기여한 인물이기도 하다. 1960년대 초, 유전 암호의 해독이 마무리되어 가는 시점에서 Brenner는 <strong>다음 큰 질문</strong>을 내다보았다.</p>
+          <p style="margin-top:10px">그의 급진적 아이디어: 단순하지만 완전한 다세포 생물을 선택하여, <strong>하나의 수정란에서 모든 세포가 어떻게 만들어지는지를 완전히 추적</strong>하자. 모든 세포의 "가족 나무(family tree)"를 그리면, 발생의 유전적 논리를 해독할 수 있을 것이다.</p>
+          <p style="margin-top:10px">1963년, 그는 이 목표에 가장 적합한 생물로 <strong>C. elegans</strong>를 선택했다. 이 결정은 이후 40년간 4개의 노벨상으로 이어지는 연구 분야를 열었다.</p>
+        </div>
+
+        <div class="key-point">
+          Brenner가 인용한 "기술 &gt; 발견 &gt; 아이디어" 순서의 의미: C. elegans라는 새로운 기술(모델 시스템)이 새로운 발견(세포 계보, 세포 죽음의 유전자)을 낳았고, 그것이 새로운 아이디어(프로그램된 세포 죽음)로 이어졌다.
+        </div>
+      </section>
+
+      <!-- Page 35 -->
+      <section class="page-section" id="p35">
+        <span class="page-num">Page 35</span>
+        <h2>지도 제작자: John Sulston</h2>
+
+        <div class="summary-box">
+          <strong>The Cartographer</strong> -- John Sulston은 C. elegans의 모든 세포 분열을 실시간으로 추적하여 <strong>불변의 지도(invariant map)</strong>를 완성했다. 1090개 세포가 태어나고 정확히 131개가 죽는다는 발견.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Sulston의 과업 (The Task)</div>
+          <p>John Sulston이 맡은 과업은 전무후무한 것이었다: C. elegans의 발생 과정에서 일어나는 <strong>모든 세포 분열을 실시간으로 추적(tracking every cell division in real-time)</strong>하는 것. Nomarski 현미경 앞에 앉아 수정란부터 성체까지 세포가 분열하고, 이동하고, 분화하는 모든 과정을 관찰하고 기록했다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Sulston의 발견 (The Discovery)</div>
+          <p>Sulston이 발견한 것은 경이로웠다: C. elegans의 세포 계보는 <strong>완전히 불변(invariant)</strong>이다.</p>
+          <p style="margin-top:10px"><strong>1090개의 세포가 태어난다</strong> -- 발생 과정에서 정확히 이 수만큼의 세포가 생성된다.</p>
+          <p style="margin-top:10px"><strong>정확히 131개가 죽는다</strong> -- 항상 같은 세포가, 같은 시간에, 같은 장소에서 죽는다.</p>
+          <p style="margin-top:10px"><strong>959개가 성체로 남는다</strong> -- 1090 - 131 = 959. 모든 개체에서 동일하다.</p>
+        </div>
+
+        <div class="key-point">
+          <strong>Sulston의 핵심 통찰(Insight):</strong> "만약 죽음이 예측 가능(predictable)하다면, 그것은 유전적(genetic)이어야 한다." -- 같은 세포가 항상 같은 시간에 죽는다면, 이것은 우연이 아니라 유전자에 의해 프로그램된 것이다. 이 통찰이 Horvitz의 유전학적 연구로 이어졌다.
+        </div>
+      </section>
+
+      <!-- Page 36 -->
+      <section class="page-section" id="p36">
+        <span class="page-num">Page 36</span>
+        <h2>John Sulston과 불변의 계보</h2>
+
+        <div class="summary-box">
+          'Human Microscope(인간 현미경)'이라 불린 John Sulston은 수년간 Nomarski 광학 현미경을 통해 세포 분열을 수동으로 추적했다. 그가 발견한 것: <strong>생물의 세포 계보는 완전히 불변이며, 모든 벌레에서, 매번 정확히 같은 방식으로 일어난다.</strong>
+        </div>
+
+        <div class="card">
+          <div class="card-label">'인간 현미경'의 작업 방식</div>
+          <p>Sulston의 작업 방식은 현대적 기준에서 보면 놀라울 정도로 아날로그적이었다. 컴퓨터 추적 시스템이 없던 시대에, 그는 <strong>눈과 손으로</strong> 모든 세포를 추적했다:</p>
+          <p style="margin-top:10px">1. 살아있는 C. elegans를 현미경 슬라이드에 고정한다.</p>
+          <p style="margin-top:10px">2. Nomarski(DIC) 현미경으로 세포핵의 위치를 확인한다.</p>
+          <p style="margin-top:10px">3. 세포가 분열하는 순간을 관찰하고 기록한다.</p>
+          <p style="margin-top:10px">4. 딸세포(daughter cells)의 운명을 계속 추적한다 -- 다시 분열하는지, 분화하는지, 죽는지.</p>
+          <p style="margin-top:10px">5. 이 과정을 수정란에서 성체까지 반복한다.</p>
+          <p style="margin-top:10px">이 모든 과정을 <strong>수백 마리의 벌레</strong>에서 반복하여, 계보가 개체 간에 동일한지 확인했다.</p>
+        </div>
+
+        <div class="key-point">
+          Sulston의 발견이 혁명적인 이유: 인간을 포함한 대부분의 동물에서는 발생이 <strong>확률적(stochastic)</strong>이다. 같은 종의 개체라도 세포의 정확한 배치가 다르다. 하지만 C. elegans에서는 발생이 <strong>완전히 결정론적(deterministic)</strong>이다. 이것은 유전자가 발생의 모든 세부 사항을 직접 제어한다는 가장 강력한 증거였다.
+        </div>
+      </section>
+
+      <!-- Page 37 -->
+      <section class="page-section" id="p37">
+        <span class="page-num">Page 37</span>
+        <h2>불변의 계보 지도: The Invariant Lineage Map</h2>
+
+        <div class="summary-box">
+          Sulston이 완성한 불변의 계보 지도(Invariant Lineage Map)는 생물학 역사상 가장 상세한 발생 기록이다. 수정란(egg cell)에서 시작하여 모든 성체 세포까지의 <strong>완전한 가계도</strong>를 보여준다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">계보 지도의 구조</div>
+          <p>계보 지도는 <strong>가계도(family tree)</strong> 형태로 표현된다:</p>
+          <p style="margin-top:10px">-- 최상단: <strong>수정란(egg cell)</strong></p>
+          <p style="margin-top:10px">-- 첫 번째 분열: AB와 P1 (시조 세포, founder cells)</p>
+          <p style="margin-top:10px">-- AB: 표피, 신경 등 대부분의 체세포를 만든다</p>
+          <p style="margin-top:10px">-- EMS: 장(endoderm)과 근육(mesoderm)을 만든다</p>
+          <p style="margin-top:10px">-- P계열: 생식세포(germline cells, 95개)를 만든다</p>
+          <p style="margin-top:10px">-- 가지 끝의 X 표시: 아폽토시스로 죽는 세포(131개)</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 데이터</div>
+          <p><strong>The Observer:</strong> John Sulston</p>
+          <p style="margin-top:10px"><strong>Method:</strong> 수정란에서 성체까지 모든 세포 분열을 추적</p>
+          <p style="margin-top:10px"><strong>Result:</strong> 모든 성체 자웅동체는 정확히 <strong>959개 체세포</strong>를 가진다</p>
+          <p style="margin-top:10px"><strong>Invariant Lineage:</strong> 생물학적 청사진(blueprint)이 <strong>모든 개체에서 동일</strong>하다</p>
+        </div>
+      </section>
+
+      <!-- Page 38 -->
+      <section class="page-section" id="p38">
+        <span class="page-num">Page 38</span>
+        <h2>전체 가계도 매핑: Mapping the Entire Family Tree</h2>
+
+        <div class="summary-box">
+          이 슬라이드는 세포 계보 지도의 실제 모습을 보여준다. 수정란에서 갈라진 ABala, ABalp 등의 가지가 수백 개의 끝단까지 뻗어나가며, X 표시가 된 가지는 아폽토시스로 죽는 세포를 나타낸다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">가계도가 증명하는 것</div>
+          <p>이 차트는 수정란에서 성체까지 <strong>모든 세포의 완전한 발생 역사(complete developmental history)</strong>를 나타낸다. 각 분기점은 세포 분열을 의미하고, 각 끝단은 최종 분화된 세포(근육, 신경 등) 또는 죽은 세포를 나타낸다.</p>
+          <p style="margin-top:10px">이 지도가 증명하는 핵심 원리: <strong>발생은 엄격하고 예측 가능한 유전적 프로그램을 따른다.</strong> 무작위성(randomness)이 거의 없으며, 모든 세포의 운명이 미리 결정되어 있다.</p>
+          <p style="margin-top:10px">중요한 점: 이 계보 지도는 단지 "세포가 몇 개인가"를 세는 것이 아니다. <strong>어떤 세포가 어떤 세포에서 유래했는지</strong>의 완전한 계보를 보여준다. 이것은 세포의 "족보"와 같다.</p>
+        </div>
+      </section>
+
+      <!-- Page 39 -->
+      <section class="page-section" id="p39">
+        <span class="page-num">Page 39</span>
+        <h2>사라진 세포의 미스터리: 1090 - 959 = 131</h2>
+
+        <div class="summary-box">
+          발생 과정에서 1090개의 세포가 태어나지만 성체에는 959개만 남는다. <strong>131개의 세포는 어디로 갔는가?</strong> -- 이것이 프로그램된 세포 죽음 연구의 출발점이었다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">131개의 의도적 죽음</div>
+          <p>Sulston의 세포 계보 지도에서 가장 놀라운 발견은 이 단순한 뺄셈에 숨어 있었다:</p>
+          <p style="margin-top:10px"><strong>1090</strong> (Cells Born) - <strong>959</strong> (Cells Survive) = <strong>131</strong> (Cells Die)</p>
+          <p style="margin-top:10px">이 131개의 세포는 "그냥 사라지는" 것이 아니다. 그들은 <strong>특정한 시간에, 특정한 장소에서, 의도적으로 죽도록 프로그램</strong>되어 있다. 죽음은 발생 계획(development plan)의 <strong>필수적 부분(integral part)</strong>이다.</p>
+          <p style="margin-top:10px">131개 중 대부분(113개)은 <strong>신경 계보(neural lineage)</strong>에서 발생한다. 즉, 뇌/신경계 발생 과정에서 과잉 생산된 신경세포가 아폽토시스로 제거되는 것이다. 이것은 인간 뇌 발생에서도 동일하게 일어나는 현상이다(시냅스 가지치기).</p>
+        </div>
+
+        <div class="key-point">
+          이 발견의 과학사적 의미: "세포 죽음이 예측 가능하다"는 것은 곧 "유전자에 의해 제어된다"는 것을 의미한다. 이 논리가 Horvitz의 유전학적 연구 -- 죽음을 제어하는 유전자(ced genes)의 발견 -- 로 직접 이어졌다.
+        </div>
+      </section>
+
+      <!-- Page 40 -->
+      <section class="page-section" id="p40">
+        <span class="page-num">Page 40</span>
+        <h2>유전자 명명 문화와 수명 유전학</h2>
+
+        <div class="summary-box">
+          C. elegans 연구 커뮤니티의 독특한 유전자 명명 문화: ced(cell death abnormal), unc(uncoordinated), dpy(dumpy) 등. 그리고 daf-2 돌연변이에서 발견된 수명 연장의 유전학.
+        </div>
+
+        <div class="card">
+          <div class="card-label">유전자 명명 문화 (Gene Naming Culture)</div>
+          <p>C. elegans 연구자들은 유전자를 <strong>돌연변이의 표현형(phenotype)</strong>에 기반하여 명명하는 독특한 전통을 가지고 있다:</p>
+          <p style="margin-top:10px"><strong>ced</strong> = <strong>c</strong>ell <strong>d</strong>eath abnormal -- 세포 죽음에 이상이 생긴 돌연변이</p>
+          <p style="margin-top:10px"><strong>unc</strong> = <strong>unc</strong>oordinated -- 운동이 부조화된 돌연변이 (근육/신경 관련)</p>
+          <p style="margin-top:10px"><strong>dpy</strong> = <strong>d</strong>um<strong>py</strong> -- 몸이 뭉툭하고 짧은 돌연변이</p>
+          <p style="margin-top:10px"><strong>daf</strong> = <strong>d</strong>auer <strong>f</strong>ormation -- 내구 유충(dauer larva) 형성 관련 돌연변이</p>
+          <p style="margin-top:10px"><strong>egl</strong> = <strong>e</strong>gg-<strong>l</strong>aying defective -- 산란 결함 돌연변이</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">daf-2와 수명 유전학</div>
+          <p><strong>daf-2</strong> 돌연변이는 C. elegans 연구의 또 다른 혁명적 발견을 이끌었다. daf-2 유전자(인슐린/IGF-1 수용체의 상동 유전자)가 돌연변이되면 벌레의 수명이 <strong>2배 이상 연장</strong>된다.</p>
+          <p style="margin-top:10px">놀랍게도, daf-2의 인간 상동 유전자인 인슐린/IGF-1 수용체 경로의 변이는 인간의 장수와도 연관되어 있다. 100세 이상 장수하는 사람들에게서 <strong>FOXO3A</strong>(C. elegans daf-16의 인간 상동 유전자) 변이가 높은 빈도로 발견된다.</p>
+        </div>
+
+        <div class="tip">
+          C. elegans의 유전자 명명법은 유머러스하지만 매우 실용적이다. 돌연변이를 보고 바로 표현형을 유추할 수 있기 때문이다. "ced-3 mutant"라고 하면 "세포 죽음에 이상이 있는 세 번째 유전자"임을 즉시 알 수 있다.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '다크모드';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '라이트모드';
+      }
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>
