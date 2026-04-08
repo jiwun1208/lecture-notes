@@ -242,6 +242,19 @@ window.MathJax = {
     border-color: #4A3030;
   }
 
+  .tip-box {
+    background: #F0F7EE;
+    border: 1px solid #C5DFC0;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .tip-box {
+    background: #1E2D1E;
+    border-color: #2E4A2E;
+  }
+
   .terms-table {
     width: 100%;
     border-collapse: collapse;
@@ -694,6 +707,29 @@ window.MathJax = {
             <li><strong>시프트 연산</strong> &mdash; &lt;&lt;, &gt;&gt;</li>
           </ul>
         </div>
+
+        <div class="card">
+          <div class="card-label">왜 비트 연산이 중요한가?</div>
+          <p>비트 연산은 시스템 프로그래밍에서 <strong>하드웨어와 가장 가까운 수준의 조작</strong>을 가능하게 합니다. CPU가 실제로 수행하는 연산은 모두 비트 단위이며, 고수준 언어의 <code>+</code>, <code>-</code>, <code>*</code>도 내부적으로 비트 연산의 조합입니다.</p>
+          <div class="highlight-box">
+            <strong>하드웨어와의 관계:</strong> 디지털 회로의 논리 게이트(AND, OR, NOT, XOR)가 곧 비트 연산입니다. 소프트웨어에서 비트 연산을 이해하면 하드웨어 동작 원리를 직관적으로 파악할 수 있습니다.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">실제 활용 사례</div>
+          <ul>
+            <li><strong>비트 마스킹 (Masking)</strong> &mdash; 특정 비트만 추출하거나 변경. 예: <code>status &amp; 0x0F</code>로 하위 4비트만 읽기</li>
+            <li><strong>플래그 설정/해제 (Flags)</strong> &mdash; 하나의 정수에 여러 개의 boolean 옵션 저장. 예: 파일 권한 <code>rwx</code>(읽기/쓰기/실행)를 3비트로 관리</li>
+            <li><strong>효율적 곱셈/나눗셈</strong> &mdash; 시프트 연산으로 2의 거듭제곱 곱셈/나눗셈을 빠르게 수행</li>
+            <li><strong>네트워크/프로토콜</strong> &mdash; 패킷 헤더에서 특정 필드를 비트 단위로 파싱</li>
+            <li><strong>암호학/해시</strong> &mdash; XOR, 시프트 등이 암호화 알고리즘의 핵심 구성 요소</li>
+          </ul>
+        </div>
+
+        <div class="tip-box">
+          <strong>학습 목표:</strong> 이 섹션을 마치면 (1) Boolean 대수의 4가지 연산을 완벽히 이해하고, (2) C에서 비트 연산자와 논리 연산자의 차이를 구분하며, (3) 시프트 연산의 산술적/논리적 차이를 설명할 수 있어야 합니다.
+        </div>
       </section>
 
       <!-- ==================== Page 9 ==================== -->
@@ -1028,6 +1064,29 @@ Arith. x &gt;&gt; 2 →  11101000   (MSB=1이므로 1로 채움!)</pre>
             <li><strong>Addition, Multiplication, Shifting</strong> &mdash; 비트 수준 산술 연산</li>
           </ul>
         </div>
+
+        <div class="card">
+          <div class="card-label">Unsigned vs Signed &mdash; 핵심 차이</div>
+          <div class="highlight-box">
+            <strong>Unsigned:</strong> 모든 비트를 양수 가중치로 해석 &rarr; 0 이상의 정수만 표현<br>
+            <strong>Signed (Two's Complement):</strong> 최상위 비트(MSB)에 음의 가중치 부여 &rarr; 음수도 표현 가능
+          </div>
+          <p>같은 비트 패턴 <code>1111 1111</code>이 unsigned에서는 255, signed에서는 -1입니다. <strong>비트는 같지만 해석이 다릅니다.</strong></p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">왜 2의 보수(Two's Complement)인가?</div>
+          <p>음수를 표현하는 방법은 여러 가지가 있지만(부호-크기, 1의 보수 등), 현대 컴퓨터는 거의 모두 <strong>2의 보수</strong>를 채택합니다. 그 이유:</p>
+          <ul>
+            <li><strong>하드웨어 단순성</strong> &mdash; 덧셈/뺄셈에 별도 회로가 필요 없음 (unsigned와 동일한 회로 사용)</li>
+            <li><strong>0이 하나</strong> &mdash; 부호-크기나 1의 보수는 +0과 -0이 존재하지만, 2의 보수는 0이 유일함</li>
+            <li><strong>음수 하나 더</strong> &mdash; 양수 범위보다 음수 범위가 1 더 넓어 효율적 (예: 8비트에서 -128~+127)</li>
+          </ul>
+        </div>
+
+        <div class="tip-box">
+          <strong>학습 목표:</strong> 이 섹션을 마치면 (1) unsigned와 signed 인코딩 공식을 수학적으로 이해하고, (2) 같은 비트 패턴이 다른 값으로 해석되는 원리를 설명하며, (3) 타입 변환 시 발생할 수 있는 버그를 예측할 수 있어야 합니다.
+        </div>
       </section>
 
       <!-- ==================== Page 16 ==================== -->
@@ -1313,6 +1372,31 @@ LONG_MIN   // signed long의 최소값</pre>
           <div class="section-divider">&mdash; Conversion, Casting &mdash;</div>
           같은 비트 패턴을 signed로 볼 것인가, unsigned로 볼 것인가? 이 전환이 어떤 결과를 낳는지 살펴봅니다. C에서 타입 캐스팅의 함정을 이해하는 데 핵심적인 내용입니다.
         </div>
+
+        <div class="card">
+          <div class="card-label">타입 변환이 위험한 이유</div>
+          <p>C 언어에서 signed와 unsigned 사이의 변환은 <strong>비트 패턴을 유지한 채 해석만 변경</strong>합니다. 프로그래머가 의도하지 않은 암시적 캐스팅이 발생하면, 값이 극적으로 바뀔 수 있습니다.</p>
+          <div class="highlight-box">
+            <strong>핵심 원리:</strong> 변환 시 메모리에 저장된 비트는 그대로이고, CPU가 읽는 방식(signed vs unsigned)만 달라집니다. 비트 <code>1111...1111</code>이 signed에서는 -1이지만 unsigned에서는 최댓값(UMax)입니다.
+          </div>
+        </div>
+
+        <div class="warning-box">
+          <strong>실제 버그 미리보기:</strong> <code>if (length - 1 &gt; 0)</code>에서 <code>length</code>가 <code>unsigned</code>이고 값이 0이면? <code>0 - 1 = 4,294,967,295</code> (unsigned underflow)가 되어 조건이 참이 됩니다. 이런 류의 버그가 보안 취약점(buffer overflow)으로 이어지는 사례가 빈번합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Signed &harr; Unsigned 변환의 함정 요약</div>
+          <ul>
+            <li><strong>암시적 캐스팅</strong> &mdash; signed와 unsigned가 한 표현식에 섞이면, C는 자동으로 signed를 unsigned로 변환합니다</li>
+            <li><strong>비교 연산 주의</strong> &mdash; <code>-1 &gt; 0U</code>는 참(True)! -1이 UMax로 변환되기 때문</li>
+            <li><strong>반복문 함정</strong> &mdash; <code>for (unsigned i = n; i &gt;= 0; i--)</code>는 무한 루프 (unsigned는 항상 &ge; 0)</li>
+          </ul>
+        </div>
+
+        <div class="tip-box">
+          <strong>학습 목표:</strong> 이 섹션을 마치면 (1) signed &harr; unsigned 변환의 비트 수준 메커니즘을 이해하고, (2) 암시적 캐스팅이 발생하는 상황을 식별하며, (3) 캐스팅 관련 버그를 예방하는 코딩 습관을 갖출 수 있어야 합니다.
+        </div>
       </section>
 
       <!-- ==================== Page 23 ==================== -->
@@ -1392,6 +1476,23 @@ LONG_MIN   // signed long의 최소값</pre>
             차이: \(+2^{w-1} - (-2^{w-1}) = +2^w\)
           </div>
           <p>이것이 바로 "음수에 \(2^w\)를 더한다"는 규칙의 이유입니다.</p>
+        </div>
+
+        <div class="tip-box">
+          <strong>TMin의 비대칭성: |TMin| &gt; TMax</strong><br><br>
+          Two's Complement에서 음수 범위가 양수 범위보다 1 더 넓습니다:<br>
+          &bull; 8비트: TMin = -128, TMax = +127 &rarr; <code>|TMin| = 128 &gt; 127 = TMax</code><br>
+          &bull; 32비트: TMin = -2,147,483,648, TMax = +2,147,483,647<br><br>
+          이것은 비트 패턴 <code>1000...0</code>이 TMin에 해당하고, <code>0111...1</code>이 TMax에 해당하기 때문입니다. 총 \(2^w\)개의 패턴에서 0이 양수 쪽에 하나를 차지하므로, 음수가 하나 더 많습니다.
+        </div>
+
+        <div class="warning-box">
+          <strong>왜 -TMin = TMin인가? (오버플로우)</strong><br><br>
+          <code>-TMin</code>을 계산하면 TMax + 1이 되어야 하지만, 이 값은 signed 범위를 초과합니다:<br>
+          &bull; 8비트 예: <code>-(-128) = +128</code>이어야 하지만, 8비트 signed 최댓값은 127<br>
+          &bull; 비트 수준: TMin = <code>1000 0000</code>, 부정(negate) = ~TMin + 1 = <code>0111 1111</code> + 1 = <code>1000 0000</code> = TMin!<br>
+          &bull; 즉, <strong>TMin은 자기 자신의 부정(negation)</strong>입니다. 이것은 <code>abs()</code> 함수에서 TMin을 입력하면 여전히 음수가 반환되는 버그의 원인이 됩니다.<br><br>
+          <code>int x = INT_MIN; printf("%d", -x);</code> &rarr; 여전히 <code>INT_MIN</code> 출력! (또는 미정의 동작)
         </div>
       </section>
 
@@ -1509,6 +1610,54 @@ uy = ty;   // 암시적 캐스팅: signed → unsigned</pre>
           &bull; signed와 unsigned가 섞인 표현식에서 <strong>int는 unsigned로 캐스팅된다!</strong>
         </div>
         <p>이 규칙을 모르면 보안 취약점이나 미묘한 버그의 원인이 됩니다.</p>
+
+        <div class="card">
+          <div class="card-label">실제 C 코드에서 흔한 캐스팅 실수</div>
+
+          <p><strong>예시 1: unsigned와 signed 비교 시 버그</strong></p>
+          <pre>/* 배열 길이를 unsigned로 받는 함수 */
+int check_index(unsigned len, int index) {
+    /* 의도: index가 유효 범위인지 확인 */
+    if (index &lt; 0 || index &gt;= len)  /* BUG! */
+        return -1;
+    return 0;
+}
+
+/* index가 -1이면?
+ * index &gt;= len 비교에서 signed int(-1)가
+ * unsigned로 암시적 캐스팅 → 4,294,967,295
+ * 결과: 4,294,967,295 &gt;= len → 거의 항상 참
+ * → index &lt; 0에서 이미 걸리므로 이 경우는 OK
+ *
+ * 하지만 만약 조건을 이렇게 쓰면?: */
+int check_index_bad(unsigned len, int index) {
+    if (index &gt;= len)  /* len=0일 때: -1 &gt;= 0U → True! */
+        return -1;      /* 음수 index가 통과해버림 */
+    return 0;
+}</pre>
+
+          <p><strong>예시 2: unsigned 뺄셈의 underflow</strong></p>
+          <pre>/* 문자열 길이 비교 */
+size_t strlen(const char *s);  /* 반환형: size_t (unsigned) */
+
+int is_longer_than(const char *s, int min_len) {
+    /* BUG: strlen(s) - min_len은 unsigned 연산! */
+    if (strlen(s) - min_len &gt; 0)  /* 위험! */
+        return 1;
+    return 0;
+}
+
+/* strlen(s) = 3, min_len = 5일 때:
+ * 3 - 5 = -2이어야 하지만...
+ * unsigned 연산이므로: 3 - 5 = 4,294,967,294 (매우 큰 양수!)
+ * 조건이 참 → 잘못된 결과
+ *
+ * 올바른 코드: if (strlen(s) &gt; (size_t)min_len) */</pre>
+        </div>
+
+        <div class="tip-box">
+          <strong>방어적 코딩 습관:</strong> (1) signed와 unsigned를 같은 표현식에서 혼합하지 않기, (2) 비교 전에 명시적 캐스팅으로 의도를 분명히 하기, (3) 컴파일러 경고(<code>-Wall -Wconversion</code>)를 활성화하여 암시적 캐스팅 감지하기.
+        </div>
       </section>
 
       <!-- ==================== Page 30 ==================== -->
@@ -1518,6 +1667,34 @@ uy = ty;   // 암시적 캐스팅: signed → unsigned</pre>
         <div class="summary-box">
           <div class="section-divider">&mdash; Expanding, Truncating &mdash;</div>
           데이터 타입의 크기를 바꿀 때(short &rarr; int, int &rarr; short) 비트 수준에서 무슨 일이 일어나는지 알아봅니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">데이터 크기 변환이 필요한 이유</div>
+          <p>프로그래밍에서 서로 다른 크기의 정수 타입 간 대입은 매우 빈번합니다. 예를 들어:</p>
+          <ul>
+            <li><code>short</code>(16비트) 값을 <code>int</code>(32비트) 변수에 저장 &rarr; <strong>확장 (Expanding)</strong></li>
+            <li><code>int</code>(32비트) 값을 <code>short</code>(16비트) 변수에 저장 &rarr; <strong>축소 (Truncating)</strong></li>
+          </ul>
+          <p>함수 호출, API 인터페이스, 파일 I/O 등에서 타입 크기가 다른 경우가 항상 존재합니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Zero Extension vs Sign Extension 개요</div>
+          <div class="highlight-box">
+            <strong>Zero Extension (영 확장):</strong> unsigned 타입 확장 시 상위 비트를 0으로 채움<br>
+            &nbsp;&nbsp; 예: <code>0011</code> (4비트) &rarr; <code>0000 0011</code> (8비트) &mdash; 값 3 유지<br><br>
+            <strong>Sign Extension (부호 확장):</strong> signed 타입 확장 시 부호 비트(MSB)를 복사하여 채움<br>
+            &nbsp;&nbsp; 예: <code>1011</code> (4비트, -5) &rarr; <code>1111 1011</code> (8비트, -5) &mdash; 값 유지
+          </div>
+        </div>
+
+        <div class="warning-box">
+          <strong>정보 손실 위험 (Truncation):</strong> 큰 타입에서 작은 타입으로 변환하면 상위 비트가 잘려나갑니다. 예를 들어 32비트 값 <code>0x0001ABCD</code>를 16비트로 축소하면 <code>0xABCD</code>만 남습니다. 원래 값을 복원할 수 없으므로, 축소는 항상 위험한 연산입니다. 수학적으로는 \(\text{mod } 2^k\) 연산과 동일합니다.
+        </div>
+
+        <div class="tip-box">
+          <strong>학습 목표:</strong> 이 섹션을 마치면 (1) zero extension과 sign extension의 차이를 비트 수준에서 설명하고, (2) truncation이 값에 미치는 영향을 예측하며, (3) C에서 타입 크기 변환 시 컴파일러가 어떤 규칙을 적용하는지 이해할 수 있어야 합니다.
         </div>
       </section>
 
@@ -2154,6 +2331,29 @@ void getstuff() {
           <div class="section-divider">&mdash; Summary &mdash;</div>
           지금까지 배운 정수 연산의 핵심을 정리하고, unsigned의 올바른 사용법을 알아봅니다.
         </div>
+
+        <div class="card">
+          <div class="card-label">핵심 포인트 정리</div>
+          <div class="highlight-box">
+            <strong>1. 모듈러 연산 (Modular Arithmetic):</strong> 고정 비트 폭에서의 산술은 \(\text{mod } 2^w\)로 동작합니다. 결과가 표현 범위를 넘으면 "wrap around"합니다.<br><br>
+            <strong>2. 오버플로우 (Overflow):</strong> 두 양수를 더해 음수가 나오거나(signed), 최댓값을 넘어 0으로 돌아가는(unsigned) 현상입니다.<br><br>
+            <strong>3. Unsigned/Signed 비트 동일성:</strong> 덧셈, 곱셈, 시프트의 비트 수준 연산은 unsigned와 signed가 동일합니다. 하드웨어는 하나의 회로만 필요합니다.<br><br>
+            <strong>4. 시프트 = 곱셈/나눗셈:</strong> 왼쪽 시프트는 \(\times 2^k\), 오른쪽 시프트는 \(\div 2^k\) (unsigned: 논리 시프트, signed: 산술 시프트).
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">자주 실수하는 패턴</div>
+          <ul>
+            <li><strong>Unsigned 오버플로우</strong>: <code>unsigned x = 0; x--;</code> &rarr; x는 UMax (4,294,967,295)가 됨</li>
+            <li><strong>Signed 오버플로우</strong>: <code>int x = INT_MAX; x++;</code> &rarr; 미정의 동작(Undefined Behavior)! 컴파일러가 예측 불가능한 코드를 생성할 수 있음</li>
+            <li><strong>나눗셈 반올림</strong>: 음수의 오른쪽 시프트는 "0 쪽으로 반올림"이 아닌 "음의 무한대 쪽으로 반올림" &mdash; <code>-7 &gt;&gt; 1 = -4</code> (C의 <code>/</code>는 -3)</li>
+          </ul>
+        </div>
+
+        <div class="tip-box">
+          <strong>이 섹션의 의의:</strong> 정수 연산의 수학적 성질(아벨 군, 교환법칙, 결합법칙)은 컴파일러 최적화의 근거가 됩니다. 이 성질들을 이해하면 컴파일러가 왜 특정 코드를 특정 방식으로 변환하는지 알 수 있습니다.
+        </div>
       </section>
 
       <!-- ==================== Page 52 ==================== -->
@@ -2279,6 +2479,40 @@ for (i = cnt-2; i &lt; cnt; i--)
         <div class="summary-box">
           <div class="section-divider">&mdash; Part 3: Representations in Memory &mdash;</div>
           이제 비트가 실제 메모리에 어떻게 저장되는지, 바이트 순서(Endian), 포인터, 문자열을 살펴봅니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">메모리 모델이 왜 중요한가?</div>
+          <p>지금까지 배운 정수 표현은 "값"에 집중했습니다. 하지만 실제 프로그램에서 데이터는 <strong>메모리에 바이트 단위로 저장</strong>됩니다. 같은 정수 값이라도 메모리에 배치되는 방식은 시스템마다 다를 수 있습니다. 이것을 이해해야 하는 상황:</p>
+          <ul>
+            <li>네트워크 통신 &mdash; 서로 다른 아키텍처 간 데이터 교환</li>
+            <li>바이너리 파일 파싱 &mdash; 파일 포맷의 바이트 순서를 알아야 올바르게 읽음</li>
+            <li>디버깅 &mdash; 메모리 덤프를 볼 때 바이트 순서를 모르면 값을 잘못 해석</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">엔디안 (Endianness) 미리보기</div>
+          <div class="highlight-box">
+            4바이트 정수 <code>0x01234567</code>이 메모리에 저장될 때:<br><br>
+            <strong>Big Endian</strong> (네트워크 바이트 순서): <code>01 23 45 67</code> &mdash; 큰 자릿수(Most Significant Byte)가 먼저<br>
+            <strong>Little Endian</strong> (x86, ARM): <code>67 45 23 01</code> &mdash; 작은 자릿수(Least Significant Byte)가 먼저
+          </div>
+          <p>대부분의 현대 PC(x86-64)는 Little Endian입니다. 네트워크 프로토콜은 Big Endian(Network Byte Order)을 사용합니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">포인터(Pointer)의 본질</div>
+          <p>포인터는 <strong>메모리 주소를 값으로 가지는 변수</strong>입니다. 정수처럼 생겼지만, 그 값이 "메모리의 어디"를 가리킵니다.</p>
+          <div class="highlight-box">
+            &bull; 32비트 시스템: 포인터 = 4바이트 &rarr; 최대 \(2^{32}\) = 4GB 주소 공간<br>
+            &bull; 64비트 시스템: 포인터 = 8바이트 &rarr; 최대 \(2^{64}\) = 16 EB 주소 공간<br>
+            &bull; <code>sizeof(int*)</code>와 <code>sizeof(char*)</code>는 같은 시스템에서 항상 동일 (주소의 크기는 타입과 무관)
+          </div>
+        </div>
+
+        <div class="tip-box">
+          <strong>학습 목표:</strong> 이 섹션을 마치면 (1) Big Endian과 Little Endian의 차이를 설명하고 바이트 순서를 직접 판별하며, (2) 포인터의 크기와 역할을 이해하고, (3) 문자열이 메모리에 어떻게 저장되는지(null-terminated) 설명할 수 있어야 합니다.
         </div>
       </section>
 

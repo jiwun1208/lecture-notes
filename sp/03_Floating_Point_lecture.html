@@ -468,6 +468,16 @@ window.MathJax = {
             <tr><td><strong>6. C에서의 FP</strong></td><td>float/double 변환, 퍼즐</td></tr>
           </table>
         </div>
+        <div class="card">
+          <div class="card-label">강의 흐름 안내</div>
+          <p>이 강의는 <strong>이론 → 표준 → 실습 → 응용</strong>의 순서로 진행됩니다:</p>
+          <p><strong>1. 이진 소수 (Binary Fractions):</strong> 먼저 소수를 이진수로 표현하는 기초를 다집니다. 이것이 부동소수점의 출발점입니다.</p>
+          <p><strong>2. IEEE 754 표준:</strong> 부동소수점의 실제 비트 구조(sign, exponent, fraction)와 Normalized/Denormalized/Special Values를 배웁니다.</p>
+          <p><strong>3. 예제와 성질:</strong> 8비트 미니 FP로 모든 규칙을 직접 적용해보고, 수의 분포를 시각적으로 확인합니다.</p>
+          <p><strong>4. Rounding:</strong> 무한한 실수를 유한 비트에 맞추는 반올림 전략, 특히 Round-to-Even을 깊이 이해합니다.</p>
+          <p><strong>5. 연산:</strong> FP 덧셈/곱셈의 수학적 성질 &mdash; 결합법칙, 분배법칙이 깨지는 이유를 파악합니다.</p>
+          <p><strong>6. C에서의 활용:</strong> 실제 C 프로그래밍에서 float/double 타입 변환의 함정과 주의사항을 배웁니다.</p>
+        </div>
       </section>
 
       <!-- ==================== Page 5 ==================== -->
@@ -503,6 +513,24 @@ window.MathJax = {
             \(= \sum_{k=-j}^{i} b_k \times 2^k\)
           </div>
           <p>소수점 오른쪽: \(b_{-1} = 1/2\), \(b_{-2} = 1/4\), \(b_{-3} = 1/8\), ...</p>
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure &mdash; 십진 소수 → 이진 소수 변환 과정 (0.375₁₀ = 0.011₂)</div>
+          <strong>방법: 소수부에 2를 반복적으로 곱하여 정수부를 취한다</strong><br><br>
+          <strong>Step 1:</strong> 0.375 &times; 2 = <strong>0</strong>.750 &rarr; 정수부 = <strong>0</strong><br>
+          <strong>Step 2:</strong> 0.750 &times; 2 = <strong>1</strong>.500 &rarr; 정수부 = <strong>1</strong><br>
+          <strong>Step 3:</strong> 0.500 &times; 2 = <strong>1</strong>.000 &rarr; 정수부 = <strong>1</strong><br>
+          <strong>Step 4:</strong> 0.000 &rarr; 종료 (소수부가 0)<br><br>
+          결과: 0.375₁₀ = <code>0.011</code>₂<br><br>
+          <strong>검증:</strong> \(0 \times 2^{-1} + 1 \times 2^{-2} + 1 \times 2^{-3} = 0 + \frac{1}{4} + \frac{1}{8} = \frac{3}{8} = 0.375\) &check;<br><br>
+          <strong>추가 예제 &mdash; 0.1₁₀의 변환:</strong><br>
+          0.1 &times; 2 = 0.2 &rarr; <strong>0</strong><br>
+          0.2 &times; 2 = 0.4 &rarr; <strong>0</strong><br>
+          0.4 &times; 2 = 0.8 &rarr; <strong>0</strong><br>
+          0.8 &times; 2 = 1.6 &rarr; <strong>1</strong><br>
+          0.6 &times; 2 = 1.2 &rarr; <strong>1</strong><br>
+          0.2 &times; 2 = 0.4 &rarr; <strong>0</strong> (반복 시작!)&hellip;<br>
+          결과: 0.1₁₀ = <code>0.0001100110011...</code>₂ (무한 순환!) &larr; 이것이 <code>0.1 + 0.2 != 0.3</code>인 근본적 이유입니다.
         </div>
       </section>
 
@@ -562,6 +590,17 @@ window.MathJax = {
         <h2>로드맵 &mdash; IEEE 표준</h2>
         <div class="summary-box">
           고정 소수점의 한계를 극복하기 위해 <strong>소수점 위치를 "떠다니게"</strong> 하는 표현 방식을 배웁니다.
+        </div>
+        <div class="key-point">
+          <strong>IEEE 754는 왜 만들어졌는가?</strong><br>
+          1980년대 이전에는 제조사마다 부동소수점 구현이 달랐습니다. IBM, DEC, Cray 등이 각자 다른 형식을 사용하여 같은 프로그램이 컴퓨터마다 다른 결과를 내는 문제가 발생했습니다.
+          <br><br>
+          <strong>역사적 배경:</strong>
+          <br>&bull; Intel 8087 보조프로세서 개발 과정에서 William Kahan 교수(UC Berkeley)가 표준화를 주도
+          <br>&bull; 1985년 <strong>IEEE 754</strong>로 공식 제정, 2008년 개정(IEEE 754-2008)
+          <br>&bull; 핵심 성과: 반올림 규칙, 특수값(±∞, NaN), 비정규수(denormalized) 등을 통일
+          <br><br>
+          <strong>표준화의 의의:</strong> 동일한 FP 연산이 어떤 하드웨어에서든 <strong>동일한 결과</strong>를 보장합니다. 이로 인해 수치 계산의 이식성(portability)과 신뢰성이 크게 향상되었습니다.
         </div>
       </section>
 
@@ -865,6 +904,25 @@ window.MathJax = {
         <div class="summary-box">
           8비트 미니 부동소수점으로 전체 동작을 확인하고, 수의 분포를 시각적으로 이해합니다.
         </div>
+        <div class="card">
+          <div class="card-label">학습 목표</div>
+          <p>이 섹션에서는 <strong>8비트 미니 부동소수점(Tiny FP)</strong>을 통해 IEEE 754의 모든 규칙을 직접 적용해보고, FP 연산이 일반적인 수학 연산과 어떻게 다른지를 체감합니다.</p>
+        </div>
+        <div class="key-point">
+          <strong>핵심 개념 미리보기:</strong> 부동소수점 연산은 우리가 수학에서 당연하게 여기는 여러 성질이 깨집니다.
+          <br>&bull; <strong>비결합성(Non-associativity):</strong> \((a + b) + c \neq a + (b + c)\) &mdash; 덧셈 순서가 결과를 바꿉니다
+          <br>&bull; <strong>비분배성(Non-distributivity):</strong> \(a \times (b + c) \neq a \times b + a \times c\)
+          <br>&bull; <strong>덧셈에서의 흡수(Absorption):</strong> 매우 큰 수와 매우 작은 수를 더하면 작은 수가 사라집니다 (예: \(10^{20} + 3.14 = 10^{20}\))
+          <br>&bull; <strong>오버플로우(Overflow):</strong> 곱셈 결과가 너무 크면 \(\pm\infty\)가 됩니다
+        </div>
+        <div class="warning-box">
+          <strong>왜 프로그래밍에서 중요한가?</strong><br>
+          이러한 성질들은 실제 소프트웨어에서 심각한 버그를 유발합니다:
+          <br>&bull; <strong>누적 오차:</strong> 반복문에서 작은 값을 수백만 번 더할 때, 순서에 따라 결과가 크게 달라질 수 있습니다
+          <br>&bull; <strong>비교 위험:</strong> <code>if (a + b == c)</code>처럼 FP 값을 <code>==</code>로 비교하면 예상과 다른 결과가 나옵니다
+          <br>&bull; <strong>컴파일러 최적화 제한:</strong> 컴파일러가 <code>(a+b)+c</code>를 <code>a+(b+c)</code>로 재배치할 수 없습니다 (결과가 달라지므로)
+          <br>&bull; <strong>실제 사고 사례:</strong> Patriot 미사일 시스템에서 0.1초의 반복 누적 오차로 인해 미사일 요격 실패 (1991년)
+        </div>
       </section>
 
       <!-- ==================== Page 20 ==================== -->
@@ -1063,6 +1121,24 @@ window.MathJax = {
         <div class="summary-box">
           부동소수점 연산의 핵심: <strong>"정확한 결과를 먼저 계산한 뒤, 표현 가능한 값으로 반올림한다"</strong>
         </div>
+        <div class="card">
+          <div class="card-label">왜 반올림이 필요한가?</div>
+          <p>실수(real number)는 <strong>무한히 많지만</strong>, 부동소수점은 <strong>유한한 비트</strong>로 표현합니다. 예를 들어 \(\frac{1}{3} = 0.333...\)은 이진수로도 무한 소수이므로, 유한 비트에 맞추려면 반드시 반올림이 발생합니다.</p>
+          <p>FP 연산의 기본 원리: <strong>정확한 결과(exact result)를 먼저 구한 뒤, 가장 가까운 표현 가능한 값(representable value)으로 반올림</strong>합니다.</p>
+        </div>
+        <div class="key-point">
+          <strong>반올림 모드 4가지 (IEEE 754 정의):</strong>
+          <br>&bull; <strong>Round-to-Even (기본값):</strong> 가장 가까운 값으로, 정확히 중간이면 짝수 쪽으로. 통계적 편향 없음
+          <br>&bull; <strong>Round-toward-Zero (절삭):</strong> 0 방향으로 잘라냄. C의 <code>(int)</code> 캐스팅이 이 방식
+          <br>&bull; <strong>Round-Down (내림, \(-\infty\) 방향):</strong> 항상 작은 쪽으로
+          <br>&bull; <strong>Round-Up (올림, \(+\infty\) 방향):</strong> 항상 큰 쪽으로
+        </div>
+        <div class="highlight-box">
+          <strong>금융/과학 계산에서의 중요성:</strong>
+          <br>&bull; <strong>금융:</strong> 하루에 수억 건의 거래를 처리할 때, 반올림 편향이 한 방향으로 치우치면 막대한 금액 차이가 발생합니다. Round-to-Even은 이 편향을 제거하는 핵심 메커니즘입니다.
+          <br>&bull; <strong>과학 계산:</strong> 기상 시뮬레이션, 유체역학 등에서 수백만 번의 반복 연산을 수행하면 반올림 오차가 누적됩니다. 올바른 반올림 모드 선택이 시뮬레이션의 신뢰성을 결정합니다.
+          <br>&bull; <strong>구간 산술(Interval Arithmetic):</strong> Round-Down과 Round-Up을 조합하면 "진짜 답이 이 범위 안에 있다"는 보장을 제공할 수 있습니다.
+        </div>
       </section>
 
       <!-- ==================== Page 25 ==================== -->
@@ -1167,6 +1243,21 @@ window.MathJax = {
 7.8950001 → 7.90   (중간 초과 → 올림)
 7.8950000 → 7.90   (정확히 중간 → 짝수 쪽 = .90 ✅)
 7.8850000 → 7.88   (정확히 중간 → 짝수 쪽 = .88 ✅)</pre>
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Figure &mdash; Round-to-Even이 통계적으로 편향이 없는 이유</div>
+          <strong>문제: Round-Up(반올림)만 쓰면 왜 편향이 생기는가?</strong><br><br>
+          정확히 중간값(halfway)인 경우를 10번 반올림한다고 가정합니다:<br>
+          <code>0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5</code><br><br>
+          <strong>Round-Up (항상 올림) 결과:</strong><br>
+          <code>→ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10</code><br>
+          평균 오차 = +0.5 (항상 위로 올림 &rarr; <strong>양의 편향!</strong>)<br>
+          합계 오차 = +5.0 (10번 × +0.5)<br><br>
+          <strong>Round-to-Even (짝수 방향) 결과:</strong><br>
+          <code>0.5→0, 1.5→2, 2.5→2, 3.5→4, 4.5→4, 5.5→6, 6.5→6, 7.5→8, 8.5→8, 9.5→10</code><br>
+          오차: <code>-0.5, +0.5, -0.5, +0.5, -0.5, +0.5, -0.5, +0.5, -0.5, +0.5</code><br>
+          평균 오차 = <strong>0.0</strong> (짝수/홀수로 균등 분배되어 편향 없음!)<br><br>
+          <strong>원리:</strong> 중간값일 때 절반은 올림(홀수→짝수), 절반은 내림(홀수→짝수)이 되어 오차가 서로 상쇄됩니다. 이것이 IEEE 754가 Round-to-Even을 기본(default) 반올림 모드로 선택한 이유입니다.
         </div>
       </section>
 
@@ -1285,6 +1376,26 @@ window.MathJax = {
         <div class="summary-box">
           C에서 float/double 타입과 정수 간 변환 시 주의사항을 알아봅니다.
         </div>
+        <div class="card">
+          <div class="card-label">C 언어의 부동소수점 타입 시스템</div>
+          <p>C 언어는 두 가지 주요 부동소수점 타입을 제공합니다:</p>
+          <table class="terms-table">
+            <tr><th>타입</th><th>크기</th><th>유효숫자(Significand)</th><th>정밀도(십진)</th><th>범위</th></tr>
+            <tr><td><code>float</code></td><td>32비트</td><td>24비트 (23+1)</td><td>~7자리</td><td>\(\pm 3.4 \times 10^{38}\)</td></tr>
+            <tr><td><code>double</code></td><td>64비트</td><td>53비트 (52+1)</td><td>~15자리</td><td>\(\pm 1.8 \times 10^{308}\)</td></tr>
+          </table>
+          <p><code>float</code> 리터럴은 접미사 <code>f</code>를 붙여야 합니다 (예: <code>3.14f</code>). 없으면 <code>double</code>로 처리됩니다.</p>
+        </div>
+        <div class="key-point">
+          <strong>형변환 시 핵심 주의점 미리보기:</strong>
+          <br>&bull; <strong>int → float:</strong> 큰 정수(>2^24)는 유효숫자 손실 발생! <code>16777217 != (int)(float)16777217</code>
+          <br>&bull; <strong>int → double:</strong> 안전 (double의 53비트 > int의 32비트)
+          <br>&bull; <strong>double → float:</strong> 정밀도 손실 (53비트 → 24비트)
+          <br>&bull; <strong>float/double → int:</strong> 소수부 잘림(truncation) + 범위 초과 시 <strong>미정의 동작(undefined behavior)</strong>
+        </div>
+        <div class="warning-box">
+          <strong>정수 &harr; 실수 변환의 위험성:</strong> C에서의 암묵적(implicit) 형변환은 컴파일러 경고 없이 정밀도를 잃을 수 있습니다. 특히 <code>int</code>와 <code>float</code>가 혼합된 수식에서 <code>int</code>가 자동으로 <code>float</code>로 변환되면서 프로그래머 모르게 값이 바뀔 수 있습니다. <code>double</code>과 <code>float</code>가 혼합되면 <code>float</code>가 <code>double</code>로 승격(promotion)됩니다.
+        </div>
       </section>
 
       <!-- ==================== Page 34 ==================== -->
@@ -1316,6 +1427,14 @@ window.MathJax = {
           <strong>double → float 손실 예제:</strong><br>
           <code>double d = 1.0000000000001;&nbsp;&nbsp;// 소수점 아래 13자리</code><br>
           <code>float f = (float)d;&nbsp;&nbsp;// f = 1.0 (7자리 정밀도 초과 부분 손실)</code>
+        </div>
+        <div class="warning-box">
+          <strong>변환 시 정밀도 손실 요약 &mdash; 반드시 기억할 규칙:</strong><br><br>
+          &bull; <strong>int (32비트) → float (24비트 유효숫자):</strong> \(2^{24} = 16{,}777{,}216\)보다 큰 정수에서 손실 발생. 대략 1600만 이상의 정수는 float로 정확히 표현할 수 없습니다.<br>
+          &bull; <strong>int (32비트) → double (53비트 유효숫자):</strong> 모든 32비트 정수를 정확히 표현 가능. <strong>안전한 변환</strong>.<br>
+          &bull; <strong>long (64비트) → double (53비트 유효숫자):</strong> \(2^{53}\)보다 큰 정수에서 손실 발생. Java나 C에서 <code>long</code>을 <code>double</code>로 바꿀 때 주의!<br>
+          &bull; <strong>float → int:</strong> 소수부 잘림(truncation). <code>-1.999</code> → <code>-1</code> (0 방향으로 잘림). 범위 초과 시 <strong>미정의 동작</strong>.<br><br>
+          <strong>실전 팁:</strong> 정수와 실수가 혼합된 수식에서는 어떤 타입으로 변환되는지 항상 확인하세요. <code>printf("%d", (int)(1e20))</code>은 미정의 동작입니다!
         </div>
       </section>
 
