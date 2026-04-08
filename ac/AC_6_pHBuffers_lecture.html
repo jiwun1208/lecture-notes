@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 9: pH 완충용액 (pH Buffers)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    processEscapes: false
+  },
+  startup: {
+    ready: function() {
+      MathJax.startup.defaultReady();
+      window.mathJaxReady = true;
+    }
+  }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --bg-card: #FFFFFF;
+    --bg-aside: #F5F0EB;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --accent: #C0583F;
+    --accent-light: #F3E8E4;
+    --border: #E8E3DD;
+    --code-bg: #F7F4F0;
+    --term-bg: #EDE8E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --radius: 10px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #1A1917;
+    --bg-card: #242320;
+    --bg-aside: #2A2825;
+    --text: #E4E0D8;
+    --text-muted: #9B9588;
+    --accent: #E07A5F;
+    --accent-light: #3A2A24;
+    --border: #3A3835;
+    --code-bg: #2E2C28;
+    --term-bg: #32302C;
+    --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+    font-weight: 300;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .theme-toggle {
+    background: var(--bg-aside);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { color: var(--accent); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    max-width: 1280px;
+    margin: 0 auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 50px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .sidebar a {
+    display: block;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 600;
+    padding: 12px 20px 4px;
+    margin-top: 8px;
+  }
+
+  .content {
+    padding: 40px 48px 80px;
+  }
+
+  .page-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-section .page-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .page-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .summary-box {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+  }
+
+  .math-block {
+    background: var(--bg-aside);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    overflow-x: auto;
+    font-size: 1.05em;
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+
+  .warning-box {
+    background: #FFF5F5;
+    border: 1px solid #F5CDCD;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  [data-theme="dark"] .warning-box {
+    background: #2D2020;
+    border-color: #4A3030;
+  }
+
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .terms-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    font-weight: 500;
+  }
+  .terms-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .terms-table .en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+
+  .diagram-box {
+    background: var(--bg-aside);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .diagram-box .diagram-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .truth-table { width: auto; border-collapse: collapse; font-size: 14px; margin: 12px 0; font-family: 'JetBrains Mono', monospace; }
+  .truth-table th { background: var(--accent); color: white; padding: 8px 16px; font-size: 12px; text-align: center; }
+  .truth-table td { padding: 6px 16px; border: 1px solid var(--border); text-align: center; }
+  .truth-table tr:nth-child(even) { background: var(--bg-aside); }
+
+  strong { color: var(--accent); font-weight: 500; }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .page-section h2 { font-size: 20px; }
+  }
+
+  @media print {
+    .topbar, .sidebar, .theme-toggle { display: none; }
+    .layout { display: block; }
+    .content { padding: 0; }
+    .page-section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>분석화학 &mdash; Chapter 9: pH 완충용액 (pH Buffers)</h1>
+      <div class="meta">Analytical Chemistry &middot; DGIST</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="label">페이지 목록</div>
+
+      <div class="section-label">도입</div>
+      <a href="#p1" class="active">01 &mdash; 타이틀</a>
+      <a href="#p2">02 &mdash; 완충용액 정의</a>
+      <a href="#p3">03 &mdash; Logic Flow</a>
+
+      <div class="section-label">9.1 혼합 = 결과</div>
+      <a href="#p4">04 &mdash; What you mix</a>
+
+      <div class="section-label">9.2 Henderson-Hasselbalch</div>
+      <a href="#p5">05 &mdash; H-H 식 유도</a>
+      <a href="#p6">06 &mdash; 약염기 H-H 식</a>
+      <a href="#p7">07 &mdash; 산/염기 통합</a>
+      <a href="#p8">08 &mdash; 비율과 pH</a>
+      <a href="#p9">09 &mdash; HOCl 예제</a>
+      <a href="#p10">10 &mdash; Ex 9-A</a>
+      <a href="#p11">11 &mdash; 풀이 공간</a>
+
+      <div class="section-label">9.3 Buffer in Action</div>
+      <a href="#p12">12 &mdash; Tris 버퍼 pH</a>
+      <a href="#p13">13 &mdash; HCl 첨가</a>
+      <a href="#p14">14 &mdash; Box 9-1</a>
+      <a href="#p15">15 &mdash; Ex 9-B</a>
+      <a href="#p16">16 &mdash; 풀이 공간</a>
+
+      <div class="section-label">9.4 버퍼 제조</div>
+      <a href="#p17">17 &mdash; 제조법 원리</a>
+      <a href="#p18">18 &mdash; NaOH 계산</a>
+      <a href="#p19">19 &mdash; 실제 제조</a>
+      <a href="#p20">20 &mdash; Ex 9-C</a>
+      <a href="#p21">21 &mdash; 풀이 공간</a>
+
+      <div class="section-label">9.5 완충용량</div>
+      <a href="#p22">22 &mdash; Buffer Capacity</a>
+      <a href="#p23">23 &mdash; 그래프</a>
+      <a href="#p24">24 &mdash; 핵심 정리</a>
+      <a href="#p25">25 &mdash; mix &ne; get</a>
+      <a href="#p26">26 &mdash; 온도/이온세기</a>
+      <a href="#p27">27 &mdash; Table 9-2</a>
+
+      <div class="section-label">과제 / 공지</div>
+      <a href="#p28">28 &mdash; Homework</a>
+      <a href="#p29">29 &mdash; 중간고사</a>
+
+      <div class="section-label">연습문제</div>
+      <a href="#p30">30 &mdash; Ex 9-6</a>
+      <a href="#p31">31 &mdash; Ex 9-10</a>
+      <a href="#p32">32 &mdash; 풀이 공간</a>
+      <a href="#p33">33 &mdash; Ex 9-12</a>
+      <a href="#p34">34 &mdash; 풀이 공간</a>
+      <a href="#p35">35 &mdash; Ex 9-16</a>
+
+      <div class="section-label">보충 자료</div>
+      <a href="#p36">36 &mdash; Supplement</a>
+      <a href="#p37">37 &mdash; 비짝산-염기</a>
+
+      <div class="section-label">9.6 산-염기 지시약</div>
+      <a href="#p38">38 &mdash; Bromocresol green</a>
+      <a href="#p39">39 &mdash; Thymol blue</a>
+      <a href="#p40">40 &mdash; Table 9-3</a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== Page 1 ==================== -->
+      <section class="page-section" id="p1">
+        <span class="page-num">Page 01</span>
+        <h2>Chapter 9 &mdash; pH Buffers (완충용액)</h2>
+
+        <div class="summary-box">
+          이 챕터에서는 <strong>완충용액(buffer solution)</strong>의 원리, 제조법, 그리고 핵심 수식인 <strong>Henderson-Hasselbalch 식</strong>을 배웁니다. 생화학, 분석화학, 생물학 실험에서 pH를 일정하게 유지하는 데 필수적인 개념입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">이 장의 학습 목표</div>
+          <p>1. 완충용액이 무엇이고, 왜 필요한지 이해한다.</p>
+          <p>2. Henderson-Hasselbalch 식을 유도하고 활용한다.</p>
+          <p>3. 완충용액의 pH 계산 및 실제 제조 방법을 익힌다.</p>
+          <p>4. 완충용량(buffer capacity)의 개념과 한계를 이해한다.</p>
+          <p>5. 산-염기 지시약(indicator)의 원리를 학습한다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 용어</div>
+          <table class="terms-table">
+            <thead>
+              <tr><th>영어</th><th>한국어</th><th>설명</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="en">Buffer solution</td><td>완충용액</td><td>산이나 염기를 넣어도 pH 변화를 최소화하는 용액</td></tr>
+              <tr><td class="en">Henderson-Hasselbalch eq.</td><td>헨더슨-하셀바흐 식</td><td>완충용액의 pH를 계산하는 핵심 공식</td></tr>
+              <tr><td class="en">Buffer capacity</td><td>완충용량</td><td>pH 변화에 저항하는 정도를 나타내는 양</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 2 ==================== -->
+      <section class="page-section" id="p2">
+        <span class="page-num">Page 02</span>
+        <h2>완충용액의 정의와 중요성</h2>
+
+        <div class="summary-box">
+          완충용액은 <strong>약산과 그 짝염기</strong>, 또는 <strong>약염기와 그 짝산</strong>의 혼합물로, 산이나 염기를 첨가해도 pH 변화가 매우 작습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">완충용액(Buffer Solution) 정의</div>
+          <p><strong>완충용액</strong>이란 다음 중 하나의 혼합물입니다:</p>
+          <ul style="margin-left: 20px; margin-top: 8px;">
+            <li><strong>약산(weak acid) + 짝염기(conjugate base)</strong> &mdash; 예: CH&#8323;COOH + CH&#8323;COONa</li>
+            <li><strong>약염기(weak base) + 짝산(conjugate acid)</strong> &mdash; 예: NH&#8323; + NH&#8324;Cl</li>
+          </ul>
+          <p style="margin-top: 12px;">가장 중요한 특성: <strong>산이나 염기를 첨가해도 pH 변화에 저항</strong>합니다(Resists changes in pH).</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">완충용액의 중요성</div>
+          <p>완충용액은 화학과 생화학의 거의 모든 분야에서 발견됩니다:</p>
+          <ul style="margin-left: 20px; margin-top: 8px;">
+            <li>효소 반응의 속도를 조절합니다.</li>
+            <li>생물의 생존에 필수적입니다 (혈액의 pH는 7.35~7.45로 유지).</li>
+            <li>pH 적정 곡선에서 곡선이 비교적 평탄한 영역이 바로 <strong>완충 영역(buffer region)</strong>입니다.</li>
+          </ul>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Figure 9-1: Chymotrypsin의 pH 의존성</div>
+          <p>그래프: x축 = pH (5.0 ~ 10.0), y축 = 반응의 상대 속도 (Relative rate of reaction)</p>
+          <p>pH 8 부근에서 반응 속도가 최대(약 4.0)이며, pH 7이나 pH 9에서는 약 절반(약 2.0)으로 감소합니다.</p>
+          <p>Chymotrypsin은 장에서 단백질을 소화하는 효소로, 아미드 결합(amide bond, RC(=O)NHR')을 절단합니다.</p>
+          <p>이처럼 효소의 활성은 pH에 크게 의존하므로, 실험 시 완충용액으로 pH를 정확히 유지해야 합니다.</p>
+        </div>
+
+        <div class="tip">
+          <span>TIP</span> 완충용액이 pH를 유지하는 원리를 직관적으로 이해하려면, "산을 넣으면 짝염기가 중화하고, 염기를 넣으면 약산이 중화한다"고 생각하세요.
+        </div>
+      </section>
+
+      <!-- ==================== Page 3 ==================== -->
+      <section class="page-section" id="p3">
+        <span class="page-num">Page 03</span>
+        <h2>Logic Flow: 완충용액을 어떻게 만들까?</h2>
+
+        <div class="summary-box">
+          4개의 질문-답변(Q&amp;A)을 따라가면 완충용액이 왜 약산+짝염기(또는 약염기+짝산)의 혼합물인지 자연스럽게 이해됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">단계별 Logic Flow</div>
+
+          <p style="margin-top: 10px;"><strong>Q1) 용액의 pH 변화를 막으려면?</strong></p>
+          <p>A1) \([\text{H}^+]\)와 \([\text{OH}^-]\)를 일정하게 유지해야 합니다.</p>
+
+          <p style="margin-top: 16px;"><strong>Q2) 어떻게 \([\text{H}^+]\)와 \([\text{OH}^-]\)를 일정하게 유지할까?</strong></p>
+          <p>A2) 외부에서 추가되는 \([\text{H}^+]\) 또는 \([\text{OH}^-]\)를 <strong>소비(consume)</strong>해야 합니다.</p>
+
+          <p style="margin-top: 16px;"><strong>Q3) 외부에서 들어오는 \([\text{H}^+]\)나 \([\text{OH}^-]\)를 어떻게 소비할까?</strong></p>
+          <p>A3) \(\text{H}^+\)는 염기로, \(\text{OH}^-\)는 산으로 중화시킵니다. 즉, 용액 안에 <strong>여분의 산과 염기 모두</strong>가 있어야 합니다.</p>
+
+          <p style="margin-top: 16px;"><strong>Q4) 산과 염기를 동시에 넣으면 서로 반응하지 않을까?</strong></p>
+          <p>A4) <strong>약산과 그 짝염기</strong>(또는 약염기와 그 짝산)를 사용하면 됩니다! 약산-짝염기 쌍은 서로 거의 반응하지 않기 때문입니다.</p>
+        </div>
+
+        <div class="key-point">
+          핵심: 강산+강염기는 서로 완전히 반응하지만, <strong>약산과 그 짝염기</strong>는 공존할 수 있어 완충 작용이 가능합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 4 ==================== -->
+      <section class="page-section" id="p4">
+        <span class="page-num">Page 04</span>
+        <h2>9.1 What You Mix Is What You Get</h2>
+
+        <div class="summary-box">
+          약산과 짝염기를 섞으면 거의 반응이 일어나지 않으므로, 넣은 양이 곧 용액 속 농도가 됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">(1) 약산과 짝염기 사이에는 거의 반응이 없다</div>
+          <p>0.1 M 약산 HA (\(K_a = 10^{-4}\))와 0.1 M 짝염기 A\(^-\) (\(K_b = 10^{-10}\))를 혼합하는 경우를 생각합시다.</p>
+
+          <div class="math-block">
+            <p><strong>HA의 해리:</strong></p>
+            \[ \text{HA} \rightleftharpoons \text{A}^- + \text{H}^+ \]
+            <p>초기: 0.1 &minus; x &nbsp;&nbsp; x &nbsp;&nbsp; x</p>
+            <p>\(x = 3.1 \times 10^{-3}\) M &rarr; 해리율(fraction of dissociation) = 0.031 = 3.1%</p>
+            <p>따라서 \([\text{HA}] \approx F_{\text{HA}}\) (넣은 농도와 거의 같음)</p>
+          </div>
+
+          <div class="math-block">
+            <p><strong>A\(^-\)의 가수분해:</strong></p>
+            \[ \text{A}^- + \text{H}_2\text{O} \rightleftharpoons \text{HA} + \text{OH}^- \]
+            <p>초기: 0.1 &minus; x &nbsp;&nbsp; x &nbsp;&nbsp; x</p>
+            <p>\(x = 3.2 \times 10^{-6}\) M &rarr; 결합율(fraction of association) = \(3.2 \times 10^{-5}\) = 0.0032%</p>
+            <p>따라서 \([\text{A}^-] \approx F_{\text{A}^-}\)</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">(2) 농도 변화가 거의 없는 이유</div>
+          <p>- HA는 원래도 아주 약간만 해리하는데, A\(^-\)를 추가하면 <strong>르 샤틀리에 원리(Le Chatelier's Principle)</strong>에 의해 해리가 더욱 억제됩니다.</p>
+          <p>- A\(^-\)는 물과 거의 반응하지 않는데, HA를 추가하면 가수분해가 더욱 억제됩니다.</p>
+          <p style="margin-top: 8px;">결론: <strong>"What you mix is what you get"</strong> &mdash; 섞은 양이 곧 용액 속 농도입니다!</p>
+        </div>
+
+        <div class="key-point">
+          이 근사는 약산/약염기의 \(K_a\) 또는 \(K_b\)가 충분히 작을 때(보통 \(10^{-4}\) 이하) 잘 성립합니다. 이 덕분에 Henderson-Hasselbalch 식에서 \([\text{HA}]\)와 \([\text{A}^-]\)에 넣은 농도를 직접 대입할 수 있습니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 5 ==================== -->
+      <section class="page-section" id="p5">
+        <span class="page-num">Page 05</span>
+        <h2>9.2 Henderson-Hasselbalch 식의 유도</h2>
+
+        <div class="summary-box">
+          완충용액의 pH를 계산하는 핵심 도구인 <strong>Henderson-Hasselbalch 식</strong>은 \(K_a\) 식의 단순한 재배열입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">(1) 유도 과정</div>
+          <p><strong>Step 1:</strong> \(K_a\) 식에서 시작합니다.</p>
+          <div class="math-block">
+            \[ K_a = \frac{[\text{H}^+][\text{A}^-]}{[\text{HA}]} \]
+          </div>
+
+          <p><strong>Step 2:</strong> 양변에 log를 취합니다.</p>
+          <div class="math-block">
+            \[ \log K_a = \log[\text{H}^+] + \log\frac{[\text{A}^-]}{[\text{HA}]} \]
+          </div>
+
+          <p><strong>Step 3:</strong> \(-\log[\text{H}^+] = \text{pH}\), \(-\log K_a = \text{p}K_a\)이므로 재배열하면:</p>
+          <div class="math-block">
+            \[ \boxed{ \text{pH} = \text{p}K_a + \log\frac{[\text{A}^-]}{[\text{HA}]} } \]
+          </div>
+          <p>이것이 바로 <strong>Henderson-Hasselbalch 식</strong>입니다!</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">(2) 의미</div>
+          <p>\([\text{A}^-]/[\text{HA}]\) 비율과 \(\text{p}K_a\) 값만 알면 pH를 결정할 수 있습니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">(3) 약산의 경우 근사</div>
+          <p>HA가 약산이면 해리가 거의 안 되므로:</p>
+          <p>\([\text{HA}] \approx F_{\text{HA}}\) (넣은 약산의 농도)</p>
+          <p>\([\text{A}^-] \approx F_{\text{A}^-}\) (넣은 짝염기의 농도)</p>
+        </div>
+
+        <div class="key-point">
+          Henderson-Hasselbalch 식은 \(K_a\) 식의 재배열에 불과합니다. 새로운 물리법칙이 아니라 기존 평형 식의 편리한 표현 방식입니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 6 ==================== -->
+      <section class="page-section" id="p6">
+        <span class="page-num">Page 06</span>
+        <h2>약염기 버퍼의 Henderson-Hasselbalch 식</h2>
+
+        <div class="summary-box">
+          약염기(B)와 그 짝산(BH\(^+\))으로 구성된 버퍼에도 동일한 형태의 H-H 식을 사용합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">약염기 버퍼의 H-H 식</div>
+          <div class="math-block">
+            \[ \text{pH} = \text{p}K_a + \log\frac{[\text{B}]}{[\text{BH}^+]} \]
+          </div>
+          <p>여기서 \(\text{p}K_a\)는 <strong>짝산 BH\(^+\)</strong>의 \(\text{p}K_a\) 값입니다.</p>
+          <p style="margin-top: 10px;">주의: \(\text{p}K_a\)는 항상 <strong>산 형태(BH\(^+\))</strong>에 대한 값을 사용합니다!</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">유도 연습</div>
+          <p>다음 반응으로부터 위 식을 유도해 보세요:</p>
+          <div class="math-block">
+            \[ \text{B} + \text{H}_2\text{O} \rightleftharpoons \text{BH}^+ + \text{OH}^- \]
+          </div>
+          <p>힌트: \(K_b = K_w / K_a\)를 이용하여 \(K_a\)(BH\(^+\))를 도입하면 됩니다. pOH를 구한 뒤 pH = 14 &minus; pOH 또는 직접 \(K_a\) 식으로 변환하세요.</p>
+        </div>
+
+        <div class="tip">
+          <span>TIP</span> 약산 버퍼든 약염기 버퍼든, H-H 식에서 <strong>분자에 항상 염기 형태</strong>(A\(^-\) 또는 B)가, <strong>분모에 항상 산 형태</strong>(HA 또는 BH\(^+\))가 옵니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 7 ==================== -->
+      <section class="page-section" id="p7">
+        <span class="page-num">Page 07</span>
+        <h2>Henderson-Hasselbalch 식 &mdash; 산/염기 통합 정리</h2>
+
+        <div class="summary-box">
+          산 버퍼든 염기 버퍼든, H-H 식의 log 항에서 <strong>분자 = 염기 형태, 분모 = 산 형태</strong>라는 한 가지 규칙만 기억하면 됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">산의 Henderson-Hasselbalch 식</div>
+          <div class="math-block">
+            \[ \text{HA} \xrightleftharpoons{K_a} \text{H}^+ + \text{A}^- \]
+            \[ \text{pH} = \text{p}K_a + \log\left(\frac{[\text{A}^-]}{[\text{HA}]}\right) \quad \leftarrow \text{분자: 염기(Base), 분모: 산(Acid)} \]
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">염기의 Henderson-Hasselbalch 식</div>
+          <div class="math-block">
+            \[ \text{BH}^+ \xrightleftharpoons{K_a = K_w/K_b} \text{B} + \text{H}^+ \]
+            \[ \text{pH} = \text{p}K_a + \log\left(\frac{[\text{B}]}{[\text{BH}^+]}\right) \quad \leftarrow \text{p}K_a\text{는 이 산(BH}^+\text{)에 대한 값} \]
+          </div>
+        </div>
+
+        <div class="key-point">
+          H-H 식에서 log 항의 분자와 분모를 <strong>농도(molarity) 대신 몰수(moles)로 표현</strong>해도 됩니다. 같은 용액 안이므로 부피가 분자/분모에서 약분되기 때문입니다.
+          \[ \text{pH} = \text{p}K_a + \log\frac{\text{mol of base}}{\text{mol of acid}} \]
+        </div>
+      </section>
+
+      <!-- ==================== Page 8 ==================== -->
+      <section class="page-section" id="p8">
+        <span class="page-num">Page 08</span>
+        <h2>[A\(^-\)]/[HA] 비율과 pH의 관계</h2>
+
+        <div class="summary-box">
+          pH가 1단위 변하려면 \([\text{A}^-]/[\text{HA}]\) 비율이 10배 변해야 합니다. 이 관계를 Table 9-1이 보여줍니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 관계</div>
+          <p>- HA(산)가 증가하면 &rarr; pH 감소</p>
+          <p>- A\(^-\)(염기)가 증가하면 &rarr; pH 증가</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Table 9-1: [A<sup>&minus;</sup>]/[HA] 비율에 따른 pH 변화</div>
+          <table class="truth-table" style="margin: 0 auto;">
+            <thead>
+              <tr><th>[A\(^-\)] : [HA]</th><th>pH</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>100 : 1</td><td>\(\text{p}K_a + 2\)</td></tr>
+              <tr><td>10 : 1</td><td>\(\text{p}K_a + 1\)</td></tr>
+              <tr><td>1 : 1</td><td>\(\text{p}K_a\)</td></tr>
+              <tr><td>1 : 10</td><td>\(\text{p}K_a - 1\)</td></tr>
+              <tr><td>1 : 100</td><td>\(\text{p}K_a - 2\)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-label">pH와 pKa의 관계 정리</div>
+          <div class="math-block">
+            <p>\(\text{pH} = \text{p}K_a\)이면 &rarr; \([\text{HA}] = [\text{A}^-]\) (두 종이 같은 양)</p>
+            <p>\(\text{pH} < \text{p}K_a\)이면 &rarr; \([\text{HA}] > [\text{A}^-]\) (산 형태가 더 많음)</p>
+            <p>\(\text{pH} > \text{p}K_a\)이면 &rarr; \([\text{HA}] < [\text{A}^-]\) (염기 형태가 더 많음)</p>
+          </div>
+        </div>
+
+        <div class="tip">
+          <span>TIP</span> 시험에서 자주 묻는 포인트: "pH = pKa일 때 [HA] = [A\(^-\)]" 라는 것을 반드시 기억하세요!
+        </div>
+      </section>
+
+      <!-- ==================== Page 9 ==================== -->
+      <section class="page-section" id="p9">
+        <span class="page-num">Page 09</span>
+        <h2>예제: HOCl/OCl\(^-\) 버퍼 &mdash; H-H 식 적용</h2>
+
+        <div class="summary-box">
+          주어진 pH와 pK\(_a\)로부터 짝산-짝염기 비율을 구하는 연습입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제</div>
+          <p>차아염소산나트륨 NaOCl (표백제에 사용)이 pH 6.20으로 완충된 용액에 녹아있다. \([\text{OCl}^-]/[\text{HOCl}]\) 비율을 구하라. (pK\(_a\) = 7.53)</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이</div>
+          <div class="math-block">
+            \[ \text{HOCl} \rightleftharpoons \text{H}^+ + \text{OCl}^- \]
+            \[ \text{pH} = \text{p}K_a + \log\frac{[\text{OCl}^-]}{[\text{HOCl}]} \]
+            \[ 6.20 = 7.53 + \log\frac{[\text{OCl}^-]}{[\text{HOCl}]} \]
+            \[ -1.33 = \log\frac{[\text{OCl}^-]}{[\text{HOCl}]} \]
+            \[ \frac{[\text{OCl}^-]}{[\text{HOCl}]} = 10^{-1.33} = 0.047 \]
+          </div>
+          <p>해석: pH(6.20)이 pK\(_a\)(7.53)보다 훨씬 낮으므로, 산 형태(HOCl)가 염기 형태(OCl\(^-\))보다 약 21배 더 많습니다.</p>
+        </div>
+
+        <div class="tip">
+          <span>TIP</span> 추가 질문: pH = 7.20일 때 비율은? &rarr; \(\log\frac{[\text{OCl}^-]}{[\text{HOCl}]} = 7.20 - 7.53 = -0.33\), 비율 = \(10^{-0.33} \approx 0.47\). pH가 pK\(_a\)에 가까워질수록 비율이 1에 접근합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 10 ==================== -->
+      <section class="page-section" id="p10">
+        <span class="page-num">Page 10</span>
+        <h2>Ex 9-A: 포름산 버퍼 문제</h2>
+
+        <div class="summary-box">
+          H-H 식을 활용하여 완충용액의 pH를 계산하고, 주어진 pH에서 짝산-짝염기 비율을 구하는 연습 문제입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제 (a)</div>
+          <p>약산 HA (\(K_a = 1.0 \times 10^{-5}\)) 0.100 mol과 짝염기 Na\(^+\)A\(^-\) 0.050 mol을 1.00 L에 녹인 버퍼의 pH는?</p>
+          <div class="math-block">
+            \[ \text{p}K_a = -\log(1.0 \times 10^{-5}) = 5.00 \]
+            \[ \text{pH} = 5.00 + \log\frac{0.050}{0.100} = 5.00 + \log(0.50) = 5.00 + (-0.30) = 4.70 \]
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제 (b)</div>
+          <p>포름산(HCO&#8322;H)의 H-H 식을 쓰고, pH 3.00, 3.744, 4.00에서 \([\text{HCO}_2^-]/[\text{HCO}_2\text{H}]\) 비율을 구하라.</p>
+          <p>포름산의 \(\text{p}K_a = 3.744\)입니다.</p>
+          <div class="math-block">
+            \[ \text{pH} = 3.744 + \log\frac{[\text{HCO}_2^-]}{[\text{HCO}_2\text{H}]} \]
+          </div>
+          <table class="truth-table" style="margin: 12px auto;">
+            <thead>
+              <tr><th>pH</th><th>\(\log\) 값</th><th>\([\text{HCO}_2^-]/[\text{HCO}_2\text{H}]\)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>3.00</td><td>&minus;0.744</td><td>\(10^{-0.744} = 0.180\)</td></tr>
+              <tr><td>3.744</td><td>0</td><td>\(10^0 = 1.000\)</td></tr>
+              <tr><td>4.00</td><td>+0.256</td><td>\(10^{0.256} = 1.80\)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== Page 11 ==================== -->
+      <section class="page-section" id="p11">
+        <span class="page-num">Page 11</span>
+        <h2>Ex 9-A 풀이 공간</h2>
+
+        <div class="summary-box">
+          수업 중 직접 풀어보는 연습 공간입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이 연습</div>
+          <p>이 페이지는 수업 시간에 Ex 9-A를 직접 풀어보기 위한 빈 공간입니다. 위의 Page 10에서 문제를 확인하고, H-H 식을 적용하여 풀이해 보세요.</p>
+          <p style="margin-top: 12px;"><strong>풀이 전략:</strong></p>
+          <ol style="margin-left: 20px;">
+            <li>pK\(_a\) 값을 확인한다.</li>
+            <li>[A\(^-\)]와 [HA]의 값(또는 몰수)을 파악한다.</li>
+            <li>H-H 식에 대입하여 pH를 구한다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ==================== Page 12 ==================== -->
+      <section class="page-section" id="p12">
+        <span class="page-num">Page 12</span>
+        <h2>9.3 A Buffer in Action &mdash; Tris 버퍼 pH 계산</h2>
+
+        <div class="summary-box">
+          실제로 Tris(트리스) 버퍼를 만들고 pH를 계산하는 예제입니다. 생화학 실험에서 가장 널리 쓰이는 버퍼 중 하나입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제</div>
+          <p>Tris (B, MW = 121.14) 12.43 g과 Tris hydrochloride (BH\(^+\)Cl\(^-\), MW = 157.60) 4.67 g을 1.00 L 물에 녹였다. pH는?</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Tris 구조</div>
+          <p>BH\(^+\) (짝산): (HOCH&#8322;)&#8323;C-NH&#8323;\(^+\) &nbsp;&nbsp; pK\(_a\) = 8.07</p>
+          <p>B (염기, "tris"): (HOCH&#8322;)&#8323;C-NH&#8322; &nbsp;&nbsp; Tris(hydroxymethyl)aminomethane</p>
+          <p>BH\(^+\)는 3개의 -CH&#8322;OH기를 가진 탄소에 양전하를 띤 아미노기가 결합한 형태입니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이: 농도 계산</div>
+          <p>"What you mix is what you get" 근사를 적용합니다.</p>
+          <div class="math-block">
+            \[ [\text{B}] = \frac{12.43 \text{ g/L}}{121.14 \text{ g/mol}} = 0.1026 \text{ M} \]
+            \[ [\text{BH}^+] = \frac{4.67 \text{ g/L}}{157.60 \text{ g/mol}} = 0.0296 \text{ M} \]
+          </div>
+
+          <div class="math-block">
+            \[ \text{pH} = \text{p}K_a + \log\frac{[\text{B}]}{[\text{BH}^+]} = 8.07 + \log\frac{0.1026}{0.0296} = 8.07 + 0.54 = 8.61 \]
+          </div>
+        </div>
+
+        <div class="tip">
+          <span>TIP</span> Tris의 pK\(_a\) = 8.07이므로, pH 7~9 범위에서 좋은 버퍼입니다. 생화학에서 pH 7.4 근처의 실험에 많이 사용됩니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 13 ==================== -->
+      <section class="page-section" id="p13">
+        <span class="page-num">Page 13</span>
+        <h2>9.3 A Buffer in Action &mdash; HCl 첨가 시 pH 변화</h2>
+
+        <div class="summary-box">
+          버퍼 용액에 강산(HCl)을 첨가하면 어떻게 되는지 계산합니다. 비완충 용액과의 극적인 차이를 확인하세요.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제</div>
+          <p>위의 Tris 버퍼에 12.0 mL의 1.00 M HCl을 첨가하면 새 pH는?</p>
+          <p>HCl의 몰수: 0.0120 L &times; 1.00 M = 0.0120 mol</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이: 반응표(ICE table)</div>
+          <div class="math-block">
+            \[ \text{B (tris)} + \text{H}^+ \text{(from HCl)} \longrightarrow \text{BH}^+ \]
+          </div>
+          <table class="truth-table" style="margin: 12px auto;">
+            <thead>
+              <tr><th></th><th>B (tris)</th><th>H\(^+\)</th><th>BH\(^+\)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Initial moles</td><td>0.1026</td><td>0.0120</td><td>0.0296</td></tr>
+              <tr><td>Final moles</td><td>0.0906</td><td>&mdash;</td><td>0.0416</td></tr>
+            </tbody>
+          </table>
+
+          <div class="math-block">
+            \[ \text{pH} = \text{p}K_a + \log\frac{\text{mol B}}{\text{mol BH}^+} = 8.07 + \log\frac{0.0906}{0.0416} = 8.07 + 0.34 = 8.41 \]
+          </div>
+          <p>용액의 부피를 신경 쓸 필요 없습니다! 분자와 분모에서 부피가 약분되기 때문입니다.</p>
+        </div>
+
+        <div class="warning-box">
+          <strong>비교:</strong> 만약 동일한 12.0 mL 1 M HCl을 <strong>비완충 용액</strong>에 넣었다면, pH는 약 1.93이 됩니다. 버퍼의 pH는 8.61 &rarr; 8.41로 겨우 0.2 변한 반면, 비완충 용액은 pH가 7 &rarr; 1.93으로 급변합니다!
+        </div>
+      </section>
+
+      <!-- ==================== Page 14 ==================== -->
+      <section class="page-section" id="p14">
+        <span class="page-num">Page 14</span>
+        <h2>Box 9-1: 강산+약염기 &rarr; 완전 반응</h2>
+
+        <div class="summary-box">
+          강산과 약염기(또는 강염기와 약산)는 평형상수가 매우 크기 때문에 <strong>완전히 반응</strong>한다고 볼 수 있습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">강산 + 약염기</div>
+          <div class="math-block">
+            \[ \text{B} + \text{H}^+ \rightleftharpoons \text{BH}^+ \qquad K = \frac{1}{K_a(\text{BH}^+)} \]
+          </div>
+          <p>Tris의 경우: \(K = \frac{1}{K_a} = \frac{1}{10^{-8.07}} = 1.2 \times 10^8\) &larr; 매우 큰 수!</p>
+          <p>따라서 강산은 약염기와 <strong>"완전히(completely)"</strong> 반응합니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">강염기 + 약산</div>
+          <div class="math-block">
+            \[ \text{OH}^- + \text{HA} \rightleftharpoons \text{A}^- + \text{H}_2\text{O} \qquad K = \frac{1}{K_b(\text{A}^-)} = \frac{K_a(\text{HA})}{K_w} \]
+          </div>
+          <p>아세트산의 경우: \(K = \frac{K_a}{K_w} = 1.7 \times 10^9\) &larr; 역시 매우 큰 수!</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">강산 + 강염기</div>
+          <div class="math-block">
+            \[ \text{H}^+ + \text{OH}^- \rightleftharpoons \text{H}_2\text{O} \qquad K = \frac{1}{K_w} = 10^{14} \]
+          </div>
+          <p>말도 안 되게 큰 수(ridiculously big)! 완전 반응입니다.</p>
+        </div>
+
+        <div class="key-point">
+          <strong>반응 우선순위:</strong> 강산+강염기, 약산+강염기, 강산+약염기가 섞이면, 먼저 강산과 강염기가 중화한 뒤, 남은 강산/강염기가 약염기/약산과 반응합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 15 ==================== -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>Ex 9-B: Tris 버퍼 연습문제</h2>
+
+        <div class="summary-box">
+          Tris 버퍼를 직접 만들고, 산이나 염기 첨가 시 pH 변화를 계산하는 종합 문제입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제</div>
+          <p><strong>(a)</strong> Tris 10.0 g + Tris hydrochloride 10.0 g을 0.250 L 물에 녹인 용액의 pH는?</p>
+          <p><strong>(b)</strong> (a)에 0.500 M HClO&#8324; 10.5 mL를 넣으면 pH는?</p>
+          <p><strong>(c)</strong> (a)에 0.500 M NaOH 10.5 mL를 넣으면 pH는?</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Tris / TrisHCl 정보</div>
+          <p>BH\(^+\) (TrisHCl): MW = 157.60, pK\(_a\) = 8.07</p>
+          <p>B (Tris): MW = 121.14</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이 가이드</div>
+          <p><strong>(a)</strong> 몰수 계산 후 H-H 식 적용:</p>
+          <div class="math-block">
+            <p>mol B = 10.0/121.14 = 0.08255 mol</p>
+            <p>mol BH\(^+\) = 10.0/157.60 = 0.06345 mol</p>
+            <p>pH = 8.07 + log(0.08255/0.06345) = 8.07 + 0.11 = 8.18</p>
+          </div>
+          <p><strong>(b)</strong> HClO&#8324; (강산)이 B를 BH\(^+\)로 전환: mol H\(^+\) = 0.0105 &times; 0.500 = 0.00525</p>
+          <div class="math-block">
+            <p>new mol B = 0.08255 &minus; 0.00525 = 0.07730</p>
+            <p>new mol BH\(^+\) = 0.06345 + 0.00525 = 0.06870</p>
+            <p>pH = 8.07 + log(0.07730/0.06870) = 8.07 + 0.051 = 8.12</p>
+          </div>
+          <p><strong>(c)</strong> NaOH (강염기)가 BH\(^+\)를 B로 전환:</p>
+          <div class="math-block">
+            <p>new mol BH\(^+\) = 0.06345 &minus; 0.00525 = 0.05820</p>
+            <p>new mol B = 0.08255 + 0.00525 = 0.08780</p>
+            <p>pH = 8.07 + log(0.08780/0.05820) = 8.07 + 0.179 = 8.25</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 16 ==================== -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>Ex 9-B 풀이 공간</h2>
+
+        <div class="summary-box">
+          수업 중 직접 풀어보는 연습 공간입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이 연습</div>
+          <p>Ex 9-B의 (a), (b), (c)를 직접 풀어보세요.</p>
+          <p style="margin-top: 12px;"><strong>풀이 전략:</strong></p>
+          <ol style="margin-left: 20px;">
+            <li>각 물질의 몰수를 계산한다.</li>
+            <li>강산/강염기 첨가 시 반응표(ICE)를 작성한다.</li>
+            <li>반응 후 남은 B와 BH\(^+\)의 몰수로 H-H 식에 대입한다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ==================== Page 17 ==================== -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>9.4 완충용액 제조법 (Preparing a Buffer Solution)</h2>
+
+        <div class="summary-box">
+          완충용액을 만드는 두 가지 기본 방법: (1) 약산에 OH\(^-\) 첨가, (2) 약염기에 H\(^+\) 첨가.
+        </div>
+
+        <div class="card">
+          <div class="card-label">제조 방법</div>
+          <p><strong>방법 1:</strong> \(\text{OH}^-\)를 약산(HA)에 첨가하여 HA와 A\(^-\)의 혼합물을 만든다.</p>
+          <div class="math-block">
+            \[ \text{HA} + \text{OH}^- \longrightarrow \text{A}^- + \text{H}_2\text{O} \]
+          </div>
+          <p>OH\(^-\)가 HA의 일부를 A\(^-\)로 전환시켜, HA와 A\(^-\)가 공존하는 버퍼가 됩니다.</p>
+
+          <p style="margin-top: 16px;"><strong>방법 2:</strong> \(\text{H}^+\)를 약염기(B)에 첨가하여 B와 BH\(^+\)의 혼합물을 만든다.</p>
+          <div class="math-block">
+            \[ \text{B} + \text{H}^+ \longrightarrow \text{BH}^+ \]
+          </div>
+          <p>H\(^+\)가 B의 일부를 BH\(^+\)로 전환시켜, B와 BH\(^+\)가 공존하는 버퍼가 됩니다.</p>
+        </div>
+
+        <div class="tip">
+          <span>TIP</span> 실험실에서는 약산(또는 약염기)의 순수한 형태를 먼저 용해한 후, NaOH(또는 HCl)를 원하는 pH가 될 때까지 첨가하는 방법을 많이 사용합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 18 ==================== -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>9.4 NaOH 첨가량 계산 예제</h2>
+
+        <div class="summary-box">
+          TrisHCl에 NaOH를 얼마나 넣어야 원하는 pH의 버퍼를 만들 수 있는지 계산합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제</div>
+          <p>TrisHCl (BH\(^+\)Cl\(^-\)) 10 g에 0.500 M NaOH를 첨가하여 pH 7.60인 250 mL 버퍼를 만들려면, NaOH를 몇 mL 넣어야 하는가?</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이</div>
+          <p><strong>Step 1:</strong> TrisHCl의 몰수 계산</p>
+          <div class="math-block">
+            \[ \text{mol TrisHCl} = \frac{10.0 \text{ g}}{157.60 \text{ g/mol}} = 0.0635 \text{ mol} \]
+          </div>
+
+          <p><strong>Step 2:</strong> 반응표 &mdash; NaOH가 BH\(^+\)를 B로 전환</p>
+          <div class="math-block">
+            \[ \text{BH}^+ + \text{OH}^- \longrightarrow \text{B} \]
+            <p>Initial: &nbsp; 0.0635 &nbsp;&nbsp;&nbsp; x &nbsp;&nbsp;&nbsp; 0</p>
+            <p>Final: &nbsp;&nbsp; 0.0635 &minus; x &nbsp;&nbsp;&nbsp; &mdash; &nbsp;&nbsp;&nbsp; x</p>
+          </div>
+
+          <p><strong>Step 3:</strong> H-H 식에 대입</p>
+          <div class="math-block">
+            \[ 7.60 = 8.07 + \log\frac{x}{0.0635 - x} \]
+            \[ -0.47 = \log\frac{x}{0.0635 - x} \]
+            \[ \frac{x}{0.0635 - x} = 10^{-0.47} = 0.3388 \]
+            \[ x = 0.0161 \text{ mol} \]
+          </div>
+
+          <p><strong>Step 4:</strong> NaOH 부피 계산</p>
+          <div class="math-block">
+            \[ \text{mL NaOH} = \frac{0.0161 \text{ mol}}{0.500 \text{ mol/L}} = 0.0322 \text{ L} = 32.2 \text{ mL} \]
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 19 ==================== -->
+      <section class="page-section" id="p19">
+        <span class="page-num">Page 19</span>
+        <h2>9.4 실제 버퍼 제조의 현실</h2>
+
+        <div class="summary-box">
+          계산한 양을 섞어도 실제 pH는 예상과 정확히 일치하지 않습니다. 활동도 계수(activity coefficient) 때문입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Preparing a Buffer in Real Life</div>
+          <p><strong>문제:</strong> 계산으로 결정한 양의 산과 염기를 섞으면, 실제 pH가 예상과 정확히 맞지 않습니다.</p>
+          <p style="margin-top: 10px;"><strong>원인:</strong> pH는 농도(concentration)가 아니라 <strong>활동도(activity)</strong>에 의해 결정됩니다.</p>
+          <div class="math-block">
+            \[ \text{pH} = -\log a_{\text{H}^+} \]
+          </div>
+          <p>활동도를 고려한 Henderson-Hasselbalch 식:</p>
+          <div class="math-block">
+            \[ \text{pH} = \text{p}K_a + \log\frac{[\text{A}^-]\gamma_{\text{A}^-}}{[\text{HA}]\gamma_{\text{HA}}} \]
+          </div>
+          <p>여기서 \(\gamma\)는 활동도 계수(activity coefficient)이며, Chapter 12에서 상세히 다룹니다.</p>
+        </div>
+
+        <div class="key-point">
+          <strong>실험실 조언:</strong> 실제 버퍼 제조 시에는 계산값으로 대략 맞춘 뒤, <strong>pH 전극(pH electrode)</strong>을 사용하여 원하는 pH에 정확히 맞추세요.
+        </div>
+      </section>
+
+      <!-- ==================== Page 20 ==================== -->
+      <section class="page-section" id="p20">
+        <span class="page-num">Page 20</span>
+        <h2>Ex 9-C: HCl+Tris 및 아세테이트 버퍼</h2>
+
+        <div class="summary-box">
+          버퍼 제조의 두 가지 방법(강산+약염기, 약산+강염기)을 연습하는 문제입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제 (a)</div>
+          <p>Tris (B) 10.0 g에 1.20 M HCl을 첨가하여 pH 7.60인 250 mL 버퍼를 만들려면, HCl을 몇 mL 넣어야 하는가?</p>
+          <div class="math-block">
+            <p>mol Tris = 10.0/121.14 = 0.08255 mol</p>
+            <p>\(7.60 = 8.07 + \log\frac{0.08255 - x}{x}\)</p>
+            <p>\(\frac{0.08255 - x}{x} = 10^{-0.47} = 0.3388\) ... 이를 풀면</p>
+            <p>x (= mol HCl needed) = 0.0616 mol</p>
+            <p>mL HCl = 0.0616/1.20 = 51.4 mL</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제 (b)</div>
+          <p>0.200 M 아세테이트 버퍼 (pH 5.00) 100.0 mL를 만들려면? 순수 아세트산과 ~3 M HCl 및 ~3 M NaOH를 사용.</p>
+          <p>조건: [HA] + [A\(^-\)] = 0.200 M, pK\(_a\)(아세트산) = 4.76</p>
+          <div class="math-block">
+            <p>\(5.00 = 4.76 + \log\frac{[\text{A}^-]}{[\text{HA}]}\)</p>
+            <p>\(\log\frac{[\text{A}^-]}{[\text{HA}]} = 0.24\), &nbsp; \(\frac{[\text{A}^-]}{[\text{HA}]} = 1.74\)</p>
+            <p>[HA] + [A\(^-\)] = 0.200 M과 연립하면:</p>
+            <p>[HA] = 0.0730 M, [A\(^-\)] = 0.127 M</p>
+            <p>아세트산을 0.200 M로 만든 뒤, NaOH로 A\(^-\) 분량만큼 전환하면 됩니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 21 ==================== -->
+      <section class="page-section" id="p21">
+        <span class="page-num">Page 21</span>
+        <h2>Ex 9-C 풀이 공간</h2>
+
+        <div class="summary-box">
+          수업 중 직접 풀어보는 연습 공간입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이 연습</div>
+          <p>Ex 9-C의 (a)와 (b)를 직접 풀어보세요.</p>
+          <p style="margin-top: 12px;"><strong>핵심 전략:</strong></p>
+          <ul style="margin-left: 20px;">
+            <li>(a): Tris에 HCl 첨가 &rarr; B + H\(^+\) &rarr; BH\(^+\) 반응표 작성 후 H-H 식 적용</li>
+            <li>(b): 총 농도 조건과 H-H 식을 연립하여 [HA]와 [A\(^-\)] 결정 후, NaOH 첨가량 계산</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 22 ==================== -->
+      <section class="page-section" id="p22">
+        <span class="page-num">Page 22</span>
+        <h2>9.5 완충용량 (Buffer Capacity, \(\beta\))</h2>
+
+        <div class="summary-box">
+          완충용량 \(\beta\)는 산이나 염기가 첨가될 때 pH 변화에 저항하는 능력의 정량적 척도입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">정의</div>
+          <div class="math-block">
+            \[ \beta = \frac{dC_b}{d\text{pH}} = -\frac{dC_a}{d\text{pH}} \]
+          </div>
+          <p>여기서 \(C_a\)와 \(C_b\)는 pH를 1 단위 변화시키는 데 필요한 <strong>강산 또는 강염기의 몰수(moles per liter)</strong>입니다.</p>
+          <p>\(\beta\) 값이 클수록 완충 능력이 뛰어납니다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Figure 9-2: 완충용량 그래프</div>
+          <p>그래프: x축 = Initial pH (3~7), y축 = &Delta;(pH)</p>
+          <p>HA + A\(^-\) 총량 = 1 mol인 버퍼(pK\(_a\) = 5)에 0.01 mol H\(^+\) 또는 OH\(^-\)를 첨가할 때의 pH 변화량.</p>
+          <p>pH = pK\(_a\) = 5 부근에서 pH 변화가 가장 작음(= 완충용량이 최대).</p>
+          <p>OH\(^-\) 첨가: pH 3에서 +0.105, pH 5에서 거의 0에 가까움.</p>
+          <p>H\(^+\) 첨가: pH 3에서 -0.136, pH 5에서 거의 0에 가까움.</p>
+        </div>
+
+        <div class="key-point">
+          <strong>핵심:</strong> 완충용량은 pH = pK\(_a\)일 때 최대입니다. 이 지점에서 [HA] = [A\(^-\)]이므로 산/염기 모두를 가장 효과적으로 중화할 수 있습니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 23 ==================== -->
+      <section class="page-section" id="p23">
+        <span class="page-num">Page 23</span>
+        <h2>9.5 Buffer Capacity &mdash; C\(_b\) vs pH 그래프</h2>
+
+        <div class="summary-box">
+          0.100 M HA (pK\(_a\) = 5.00)에 대한 C\(_b\)(첨가된 강염기 농도) vs pH 그래프와 그 도함수인 \(\beta\) vs pH 그래프입니다.
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">그래프 (a): C_b (M) vs pH</div>
+          <p>x축 = pH (3~13), y축 = C\(_b\) (0~0.18 M)</p>
+          <p>pH 3~4에서는 C\(_b\)가 거의 0이고, pH 5 부근(pK\(_a\))에서 기울기가 완만해지며(변곡점), pH 11 이후 급격히 상승합니다.</p>
+          <p>이 곡선의 기울기(도함수)가 바로 완충용량 \(\beta\)입니다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">그래프 (b): Buffer Capacity \(\beta\) (M/pH unit) vs pH</div>
+          <p>x축 = pH (3~13), y축 = \(\beta\) (0~0.16)</p>
+          <p>\(\beta\)는 pH = 5 (= pK\(_a\))에서 <strong>피크</strong>를 보입니다 (약 0.06 M/pH unit).</p>
+          <p>pH가 pK\(_a\)에서 멀어질수록 \(\beta\)가 감소합니다.</p>
+          <p>pH가 매우 낮거나(pH &lt; 3) 매우 높을 때(pH &gt; 11) \(\beta\)가 다시 증가하는데, 이는 물 자체의 완충 효과 때문입니다.</p>
+        </div>
+      </section>
+
+      <!-- ==================== Page 24 ==================== -->
+      <section class="page-section" id="p24">
+        <span class="page-num">Page 24</span>
+        <h2>9.5 완충용량 핵심 정리</h2>
+
+        <div class="summary-box">
+          완충용량의 핵심 원리와 유용한 pH 범위를 정리합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">완충 작용의 원리</div>
+          <p>버퍼가 pH 변화에 저항하는 이유: 첨가된 산이나 염기를 <strong>소비(consume)</strong>하기 때문입니다.</p>
+          <ul style="margin-left: 20px; margin-top: 8px;">
+            <li>산이 첨가되면 &rarr; A\(^-\) (또는 B)가 중화</li>
+            <li>염기가 첨가되면 &rarr; HA (또는 BH\(^+\))가 중화</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-label">한계</div>
+          <p>- 산이 모든 A\(^-\) (또는 B)를 소비하거나, 염기가 모든 HA (또는 BH\(^+\))를 소비하면 완충 능력을 잃습니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">핵심 포인트</div>
+          <div class="key-point">
+            <p><strong>1. pH = pK\(_a\)일 때 완충용량이 최대</strong></p>
+            <p>이유: [HA] = [A\(^-\)]일 때 산/염기 양쪽 모두를 가장 효과적으로 중화할 수 있음</p>
+          </div>
+          <div class="key-point" style="margin-top: 8px;">
+            <p><strong>2. 유용한 pH 범위: pK\(_a\) &plusmn; 1</strong></p>
+            <p>이 범위에서 [A\(^-\)]/[HA] 비율이 1:10 ~ 10:1 사이이므로 의미 있는 완충 작용이 가능합니다.</p>
+          </div>
+          <div class="key-point" style="margin-top: 8px;">
+            <p><strong>3. 버퍼 선택 기준:</strong> 원하는 pH에 pK\(_a\)가 가장 가까운 버퍼를 선택하세요!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 25 ==================== -->
+      <section class="page-section" id="p25">
+        <span class="page-num">Page 25</span>
+        <h2>9.5 "Mix &ne; Get" &mdash; 근사가 성립하지 않는 경우</h2>
+
+        <div class="summary-box">
+          \(F_{\text{HA}}\)나 \(F_{\text{A}^-}\)가 너무 작거나, 첨가된 H\(^+\)/OH\(^-\)가 너무 많으면 "what you mix is what you get" 근사가 깨집니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제 상황</div>
+          <p>\(F_{\text{HA}}\) M HA와 \(F_{\text{A}^-}\) M Na\(^+\)A\(^-\)로 구성된 버퍼에 H\(^+\) 또는 OH\(^-\)를 첨가하는 경우:</p>
+          <p style="margin-top: 8px;">\(F_{\text{HA}}\)나 \(F_{\text{A}^-}\)가 너무 작거나, 첨가된 H\(^+\)/OH\(^-\)가 너무 크면:</p>
+          <p>\([\text{HA}] \neq F_{\text{HA}}\) 이고 \([\text{A}^-] \neq F_{\text{A}^-}\)</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">정확한 해법: 질량 균형 + 전하 균형</div>
+          <p><strong>질량 균형(Mass balance):</strong></p>
+          <div class="math-block">
+            <p>\(F_{\text{A}^-} = [\text{Na}^+]\)</p>
+            <p>\(F_{\text{HA}} + F_{\text{A}^-} = [\text{HA}] + [\text{A}^-]\)</p>
+          </div>
+
+          <p><strong>전하 균형(Charge balance):</strong></p>
+          <div class="math-block">
+            \[ [\text{Na}^+] + [\text{H}^+] = [\text{OH}^-] + [\text{A}^-] \]
+          </div>
+
+          <p>이 두 식을 연립하면:</p>
+          <div class="math-block">
+            <p>\([\text{HA}] = F_{\text{HA}} - [\text{H}^+] + [\text{OH}^-] \neq F_{\text{HA}}\)</p>
+            <p>\([\text{A}^-] = F_{\text{A}^-} + [\text{H}^+] - [\text{OH}^-] \neq F_{\text{A}^-}\)</p>
+          </div>
+        </div>
+
+        <div class="warning-box">
+          대부분의 실용적인 경우에는 "mix = get" 근사가 잘 작동합니다. 이 보정은 매우 묽은 버퍼나 극단적 pH에서만 필요합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 26 ==================== -->
+      <section class="page-section" id="p26">
+        <span class="page-num">Page 26</span>
+        <h2>9.5 버퍼 pH의 온도/이온세기 의존성</h2>
+
+        <div class="summary-box">
+          대부분의 버퍼 pH는 <strong>온도(temperature)</strong>와 <strong>이온세기(ionic strength)</strong>에 따라 변합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">(1) 온도 의존성</div>
+          <p>대부분의 버퍼는 상당한 온도 의존성을 보입니다.</p>
+          <p><strong>예:</strong> Tris의 \(\text{p}K_a\)는 온도 1 &deg;C 변화당 약 &minus;0.028 단위 변합니다.</p>
+          <div class="math-block">
+            <p>25 &deg;C에서 pH = 8.07인 Tris 버퍼의 경우:</p>
+            <p>4 &deg;C: pH &asymp; 8.7 (냉장고 온도)</p>
+            <p>37 &deg;C: pH &asymp; 7.7 (체온)</p>
+          </div>
+          <p>온도가 달라지면 pH가 상당히 바뀝니다! 실험 온도에서 pH를 보정해야 합니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">(2) 이온세기 의존성 (희석 효과)</div>
+          <p>pH 6.6인 0.5 M 인산염 버퍼를 0.05 M으로 희석하면, pH가 6.9로 증가합니다.</p>
+          <p>원인: 이온세기 변화 &rarr; 활동도 계수(\(\gamma\)) 변화 &rarr; 활동도 기반 H-H 식의 값이 달라짐</p>
+          <div class="math-block">
+            \[ \text{pH} = \text{p}K_a + \log\frac{[\text{A}^-]\gamma_{\text{A}^-}}{[\text{HA}]\gamma_{\text{HA}}} \]
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 27 ==================== -->
+      <section class="page-section" id="p27">
+        <span class="page-num">Page 27</span>
+        <h2>Table 9-2: 일반적인 버퍼의 구조와 pK\(_a\) 값</h2>
+
+        <div class="summary-box">
+          다양한 pH 범위에서 사용할 수 있는 버퍼 목록입니다. 원하는 pH에 가장 가까운 pK\(_a\)를 가진 버퍼를 선택합니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Table 9-2: Common Buffers</div>
+          <div style="overflow-x: auto;">
+          <table class="terms-table">
+            <thead>
+              <tr><th>이름</th><th>pK\(_a\)</th><th>&Delta;pK\(_a\)/&Delta;T (K\(^{-1}\))</th><th>FM</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Phosphoric acid</td><td>2.15 (pK\(_1\))</td><td>+0.005</td><td>98.00</td></tr>
+              <tr><td>Citric acid</td><td>3.13 (pK\(_1\))</td><td>&minus;0.002</td><td>192.12</td></tr>
+              <tr><td>Citric acid</td><td>4.76 (pK\(_2\))</td><td>&minus;0.001</td><td>192.12</td></tr>
+              <tr><td>Acetic acid</td><td>4.76</td><td>0.000</td><td>60.05</td></tr>
+              <tr><td>MES</td><td>6.27</td><td>&minus;0.009</td><td>195.24</td></tr>
+              <tr><td>Citric acid</td><td>6.40 (pK\(_3\))</td><td>+0.002</td><td>192.12</td></tr>
+              <tr><td>MOPSO</td><td>6.90</td><td>&minus;0.015</td><td>225.26</td></tr>
+              <tr><td>Imidazole HCl</td><td>6.99</td><td>&minus;0.022</td><td>104.54</td></tr>
+              <tr><td>PIPES</td><td>7.14</td><td>&minus;0.007</td><td>302.37</td></tr>
+              <tr><td>Phosphoric acid</td><td>7.20 (pK\(_2\))</td><td>&minus;0.002</td><td>98.00</td></tr>
+              <tr><td>HEPES</td><td>7.56</td><td>&minus;0.012</td><td>238.30</td></tr>
+              <tr><td>Tris HCl</td><td>8.07</td><td>&minus;0.028</td><td>157.60</td></tr>
+              <tr><td>Glycylglycine</td><td>8.26</td><td>&minus;0.026</td><td>132.12</td></tr>
+              <tr><td>Ammonia</td><td>9.24</td><td>&minus;0.031</td><td>17.03</td></tr>
+              <tr><td>Boric acid</td><td>9.24 (pK\(_1\))</td><td>&minus;0.008</td><td>61.83</td></tr>
+              <tr><td>CHES</td><td>9.39</td><td>&minus;0.023</td><td>207.29</td></tr>
+              <tr><td>CAPS</td><td>10.50</td><td>&minus;0.028</td><td>221.32</td></tr>
+              <tr><td>Phosphoric acid</td><td>12.375 (pK\(_3\))</td><td>&minus;0.009</td><td>98.00</td></tr>
+              <tr><td>Boric acid</td><td>12.74 (pK\(_2\))</td><td>&mdash;</td><td>61.83</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">pK\(_a\)의 온도 보정 예시</div>
+          <p>Tris 버퍼의 경우, \(\Delta(\text{p}K_a)/\Delta T = -0.028\) /&deg;C (25&deg;C 근처)</p>
+          <div class="math-block">
+            \[ \text{p}K_a(37\text{&deg;C}) = \text{p}K_a(25\text{&deg;C}) + \left(\frac{\Delta\text{p}K_a}{\Delta T}\right)(\Delta T) = 8.07 + (-0.028)(12) = 7.73 \]
+          </div>
+        </div>
+
+        <div class="tip">
+          <span>TIP</span> 생화학 실험(37&deg;C, pH 7.4)에는 HEPES(pK\(_a\) = 7.56)나 Tris가 좋은 선택입니다. 아세트산(pK\(_a\) = 4.76)은 &Delta;pK\(_a\)/&Delta;T = 0으로 온도 변화에 안정합니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 28 ==================== -->
+      <section class="page-section" id="p28">
+        <span class="page-num">Page 28</span>
+        <h2>Homework</h2>
+
+        <div class="summary-box">
+          Chapter 9 과제 안내입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">과제</div>
+          <p><strong>Problems in Chapter 9:</strong></p>
+          <p style="font-size: 18px; margin: 12px 0;"><strong>7, 13, 20(a), 22</strong></p>
+          <p><strong>Due: 4/15 (Wed)</strong></p>
+        </div>
+
+        <div class="tip">
+          <span>TIP</span> 과제를 풀 때 항상 H-H 식의 기본 형태를 먼저 쓰고, 주어진 값을 대입하는 습관을 들이세요. 강산/강염기 첨가 문제에서는 반응표(ICE table)를 반드시 작성하세요.
+        </div>
+      </section>
+
+      <!-- ==================== Page 29 ==================== -->
+      <section class="page-section" id="p29">
+        <span class="page-num">Page 29</span>
+        <h2>Notice &mdash; 중간고사</h2>
+
+        <div class="summary-box">
+          중간고사 일정 안내입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Mid-Term Exam</div>
+          <p style="font-size: 18px; margin: 8px 0;"><strong>시간:</strong> 10:30 &ndash; 12:00</p>
+          <p style="font-size: 18px; margin: 8px 0;"><strong>날짜:</strong> 4/15 (Wed)</p>
+          <p style="font-size: 18px; margin: 8px 0;"><strong>장소:</strong> E7-233</p>
+        </div>
+
+        <div class="warning-box">
+          과제 제출일과 중간고사가 같은 날(4/15)입니다! 미리 준비하세요.
+        </div>
+      </section>
+
+      <!-- ==================== Page 30 ==================== -->
+      <section class="page-section" id="p30">
+        <span class="page-num">Page 30</span>
+        <h2>Ex 9-6: IO\(_3^-\)의 pK\(_b\) 문제</h2>
+
+        <div class="summary-box">
+          아이오딘산 이온(IO\(_3^-\))의 pK\(_b\)로부터 주어진 pH에서 산/염기 비율을 구하는 문제입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제</div>
+          <p>IO\(_3^-\)의 pK\(_b\) = 13.83일 때, 아이오딘산나트륨(NaIO&#8323;) 용액에서 \([\text{HIO}_3]/[\text{IO}_3^-]\) 비율을 구하라.</p>
+          <p><strong>(a)</strong> pH 7.00 &nbsp;&nbsp; <strong>(b)</strong> pH 1.00</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이 가이드</div>
+          <p><strong>Step 1:</strong> pK\(_a\) 구하기</p>
+          <div class="math-block">
+            \[ \text{p}K_a + \text{p}K_b = 14.00 \]
+            \[ \text{p}K_a = 14.00 - 13.83 = 0.17 \]
+          </div>
+          <p>HIO&#8323;는 매우 강한 산입니다! (pK\(_a\)가 매우 작음)</p>
+
+          <p style="margin-top: 12px;"><strong>Step 2:</strong> H-H 식 적용</p>
+          <div class="math-block">
+            \[ \text{pH} = \text{p}K_a + \log\frac{[\text{IO}_3^-]}{[\text{HIO}_3]} \]
+          </div>
+
+          <p><strong>(a) pH 7.00:</strong></p>
+          <div class="math-block">
+            <p>\(7.00 = 0.17 + \log\frac{[\text{IO}_3^-]}{[\text{HIO}_3]}\)</p>
+            <p>\(\log\frac{[\text{IO}_3^-]}{[\text{HIO}_3]} = 6.83\)</p>
+            <p>\(\frac{[\text{HIO}_3]}{[\text{IO}_3^-]} = 10^{-6.83} = 1.5 \times 10^{-7}\)</p>
+          </div>
+
+          <p><strong>(b) pH 1.00:</strong></p>
+          <div class="math-block">
+            <p>\(1.00 = 0.17 + \log\frac{[\text{IO}_3^-]}{[\text{HIO}_3]}\)</p>
+            <p>\(\log\frac{[\text{IO}_3^-]}{[\text{HIO}_3]} = 0.83\)</p>
+            <p>\(\frac{[\text{HIO}_3]}{[\text{IO}_3^-]} = 10^{-0.83} = 0.148\)</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 31 ==================== -->
+      <section class="page-section" id="p31">
+        <span class="page-num">Page 31</span>
+        <h2>Ex 9-10: Glycine Amide 버퍼</h2>
+
+        <div class="summary-box">
+          Glycine amide와 glycine amide hydrochloride를 사용한 버퍼 문제입니다. pH 계산, 산/염기 첨가 효과까지 종합적으로 다룹니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제</div>
+          <p><strong>(a)</strong> Glycine amide hydrochloride (BH\(^+\), FM 110.54, pK\(_a\) = 8.20) 1.00 g + Glycine amide (B, FM 74.08) 1.00 g을 0.100 L에 녹인 용액의 pH?</p>
+          <p><strong>(b)</strong> Glycine amide hydrochloride 1.00 g에 glycine amide를 몇 g 넣어야 100 mL에서 pH 8.00?</p>
+          <p><strong>(c)</strong> (a)의 용액에 0.100 M HCl 5.00 mL를 섞으면 pH?</p>
+          <p><strong>(d)</strong> (c)의 용액에 0.100 M NaOH 10.00 mL를 섞으면 pH?</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Glycine amide 구조</div>
+          <p>Glycine amide hydrochloride (BH\(^+\)): H&#8323;N\(^+\)CH&#8322;CONH&#8322; &middot; Cl\(^-\), FM 110.54, pK\(_a\) = 8.20</p>
+          <p>Glycine amide (B): H&#8322;NCH&#8322;CONH&#8322;, FM 74.08</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이 (a)</div>
+          <div class="math-block">
+            <p>mol BH\(^+\) = 1.00/110.54 = 0.009046 mol</p>
+            <p>mol B = 1.00/74.08 = 0.01350 mol</p>
+            <p>pH = 8.20 + log(0.01350/0.009046) = 8.20 + 0.17 = 8.37</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== Page 32 ==================== -->
+      <section class="page-section" id="p32">
+        <span class="page-num">Page 32</span>
+        <h2>Ex 9-10 풀이 공간</h2>
+
+        <div class="summary-box">
+          수업 중 직접 풀어보는 연습 공간입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이 연습</div>
+          <p>Ex 9-10의 (b), (c), (d)를 직접 풀어보세요.</p>
+          <p style="margin-top: 12px;"><strong>풀이 전략:</strong></p>
+          <ul style="margin-left: 20px;">
+            <li>(b): pH = 8.00에서 필요한 [B]/[BH\(^+\)] 비율 계산 &rarr; B의 몰수 &rarr; g 환산</li>
+            <li>(c): HCl이 B를 BH\(^+\)로 전환하는 반응표 작성</li>
+            <li>(d): NaOH가 BH\(^+\)를 B로 전환하는 반응표 작성 (주의: (c) 이후의 상태에서 시작)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 33 ==================== -->
+      <section class="page-section" id="p33">
+        <span class="page-num">Page 33</span>
+        <h2>Ex 9-12: 클로로아세트산 버퍼</h2>
+
+        <div class="summary-box">
+          강산/강염기가 섞인 복합 용액에서 H-H 식을 적용하는 고급 문제입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제 (a)</div>
+          <p>Chloroacetic acid (ClCH&#8322;CO&#8322;H) 0.0800 mol + sodium chloroacetate (ClCH&#8322;CO&#8322;Na) 0.0400 mol을 1.00 L에 녹인 용액의 pH? (pK\(_a\) = 2.86)</p>
+          <div class="math-block">
+            \[ \text{pH} = 2.86 + \log\frac{0.0400}{0.0800} = 2.86 + \log(0.500) = 2.86 - 0.30 = 2.56 \]
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제 (b) &mdash; 복합 용액</div>
+          <p>1.00 L에 다음을 모두 녹임:</p>
+          <ul style="margin-left: 20px;">
+            <li>0.180 mol ClCH&#8322;CO&#8322;H (약산)</li>
+            <li>0.020 mol ClCH&#8322;CO&#8322;Na (짝염기의 Na 염)</li>
+            <li>0.080 mol HNO&#8323; (강산)</li>
+            <li>0.080 mol Ca(OH)&#8322; (강염기, 완전 해리 가정)</li>
+          </ul>
+
+          <div class="math-block">
+            <p><strong>Step 1:</strong> 강산과 강염기를 먼저 반응시킵니다.</p>
+            <p>HNO&#8323; = 0.080 mol H\(^+\)</p>
+            <p>Ca(OH)&#8322; = 0.080 mol &times; 2 = 0.160 mol OH\(^-\)</p>
+            <p>H\(^+\) + OH\(^-\) &rarr; H&#8322;O: 0.080 mol H\(^+\)가 모두 반응</p>
+            <p>남은 OH\(^-\) = 0.160 &minus; 0.080 = 0.080 mol</p>
+          </div>
+
+          <div class="math-block">
+            <p><strong>Step 2:</strong> 남은 OH\(^-\)가 약산과 반응합니다.</p>
+            <p>OH\(^-\) + ClCH&#8322;CO&#8322;H &rarr; ClCH&#8322;CO&#8322;\(^-\) + H&#8322;O</p>
+            <p>약산: 0.180 &minus; 0.080 = 0.100 mol</p>
+            <p>짝염기: 0.020 + 0.080 = 0.100 mol</p>
+          </div>
+
+          <div class="math-block">
+            <p><strong>Step 3:</strong> H-H 식 적용</p>
+            \[ \text{pH} = 2.86 + \log\frac{0.100}{0.100} = 2.86 + 0 = 2.86 \]
+          </div>
+        </div>
+
+        <div class="key-point">
+          강산+강염기+약산+짝염기가 모두 섞인 경우: (1) 강산과 강염기를 먼저 반응, (2) 남은 강산/강염기가 약산/짝염기와 반응, (3) 최종 [HA]와 [A\(^-\)]로 H-H 식 적용.
+        </div>
+      </section>
+
+      <!-- ==================== Page 34 ==================== -->
+      <section class="page-section" id="p34">
+        <span class="page-num">Page 34</span>
+        <h2>Ex 9-12 풀이 공간</h2>
+
+        <div class="summary-box">
+          수업 중 직접 풀어보는 연습 공간입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이 연습</div>
+          <p>Ex 9-12의 (b)를 직접 풀어보세요. 위의 Page 33에서 풀이 과정을 참고할 수 있습니다.</p>
+          <p style="margin-top: 12px;"><strong>핵심 전략:</strong></p>
+          <ol style="margin-left: 20px;">
+            <li>강산과 강염기를 먼저 반응시킨다 (H\(^+\) + OH\(^-\) &rarr; H&#8322;O).</li>
+            <li>남은 강산/강염기가 약산/짝염기와 반응하게 한다.</li>
+            <li>최종 [HA]와 [A\(^-\)]를 H-H 식에 대입한다.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ==================== Page 35 ==================== -->
+      <section class="page-section" id="p35">
+        <span class="page-num">Page 35</span>
+        <h2>Ex 9-16: 최적 버퍼 선택</h2>
+
+        <div class="summary-box">
+          주어진 pH에서 가장 높은 완충용량을 제공하는 버퍼를 Table 9-2에서 선택하는 문제입니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">문제</div>
+          <p>0.05 M 버퍼 농도에서, Table 9-2의 버퍼 중 다음 pH에서 가장 높은 완충용량을 가지는 것은?</p>
+          <p><strong>(a)</strong> pH 4.00 &nbsp;&nbsp; <strong>(b)</strong> pH 7.00 &nbsp;&nbsp; <strong>(c)</strong> pH 10.00</p>
+          <p><strong>(d)</strong> pH 10.00에서 유용한 다른 버퍼는?</p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">풀이 원리</div>
+          <p>완충용량 최대 조건: <strong>pH = pK\(_a\)</strong>. 따라서 원하는 pH에 pK\(_a\)가 가장 가까운 버퍼를 선택합니다.</p>
+
+          <table class="truth-table" style="margin: 12px auto;">
+            <thead>
+              <tr><th>목표 pH</th><th>최적 버퍼</th><th>pK\(_a\)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>4.00</td><td>Citric acid (pK\(_2\)) / Acetic acid</td><td>4.76</td></tr>
+              <tr><td>7.00</td><td>MOPSO / Imidazole HCl</td><td>6.90 / 6.99</td></tr>
+              <tr><td>10.00</td><td>CAPS</td><td>10.50</td></tr>
+            </tbody>
+          </table>
+
+          <p style="margin-top: 12px;"><strong>(d)</strong> pH 10.00에서 유용한 다른 버퍼: CHES (pK\(_a\) = 9.39), Ammonia (pK\(_a\) = 9.24), Boric acid (pK\(_a\) = 9.24) 등이 pK\(_a\) &plusmn; 1 범위 내에 있습니다.</p>
+        </div>
+
+        <div class="key-point">
+          버퍼 선택 원칙: (1) pK\(_a\)가 목표 pH에 가장 가까운 것, (2) 온도 의존성(&Delta;pK\(_a\)/&Delta;T)이 작은 것, (3) 실험 조건에 간섭하지 않는 것.
+        </div>
+      </section>
+
+      <!-- ==================== Page 36 ==================== -->
+      <section class="page-section" id="p36">
+        <span class="page-num">Page 36</span>
+        <h2>Supplement Information</h2>
+
+        <div class="summary-box">
+          여기서부터는 보충 자료입니다. 본 강의 내용을 심화 이해하는 데 도움이 됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">보충 자료 안내</div>
+          <p>이후 페이지에서 다루는 내용:</p>
+          <ul style="margin-left: 20px;">
+            <li>비짝산-염기 혼합이 버퍼가 될 수 있는가? (Page 37)</li>
+            <li>산-염기 지시약의 원리 (Page 38~40)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==================== Page 37 ==================== -->
+      <section class="page-section" id="p37">
+        <span class="page-num">Page 37</span>
+        <h2>비짝산-염기 혼합이 버퍼가 되는가?</h2>
+
+        <div class="summary-box">
+          짝산-짝염기 쌍이 아닌, 서로 관계없는 약산(HA)과 약염기(B)를 섞으면 버퍼가 될 수 있을까?
+        </div>
+
+        <div class="card">
+          <div class="card-label">분석</div>
+          <p>0.1 M HA (\(K_a = 10^{-4}\))와 0.1 M B (\(K_b = 10^{-4}\))를 혼합하면:</p>
+          <div class="math-block">
+            <p>\(\text{HA} \rightleftharpoons \text{A}^- + \text{H}^+ \quad : K_a(\text{HA})\)</p>
+            <p>\(\text{B} + \text{H}^+ \rightleftharpoons \text{BH}^+ \quad : 1/K_a(\text{BH}^+) = K_b(\text{B})/K_w\)</p>
+            <hr style="border-color: var(--border); margin: 8px 0;">
+            <p>\(\text{HA} + \text{B} \rightleftharpoons \text{A}^- + \text{BH}^+ \quad : K = K_a(\text{HA}) \cdot K_b(\text{B}) / K_w\)</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">K 값에 따른 결과</div>
+          <table class="truth-table" style="margin: 12px auto;">
+            <thead>
+              <tr><th>\(K_a\)(HA)</th><th>\(K_b\)(B)</th><th>K</th><th>해석</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>\(10^{-4}\)</td><td>\(10^{-4}\)</td><td>\(10^{6}\)</td><td>거의 완전 반응 &rarr; 버퍼 X</td></tr>
+              <tr><td>\(10^{-7}\)</td><td>\(10^{-7}\)</td><td>\(1\)</td><td>부분 반응 &rarr; 버퍼 O</td></tr>
+              <tr><td>\(10^{-10}\)</td><td>\(10^{-10}\)</td><td>\(10^{-6}\)</td><td>거의 무반응 &rarr; 버퍼 O</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-point">
+          비짝산-염기를 섞었을 때: K가 매우 크면 거의 완전히 반응하여 HA와 B가 남지 않으므로 버퍼가 안 됩니다. K &asymp; 1이거나 K &lt;&lt; 1이면 HA와 B(또는 A\(^-\)와 BH\(^+\))가 공존하여 버퍼 역할을 할 수 있습니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 38 ==================== -->
+      <section class="page-section" id="p38">
+        <span class="page-num">Page 38</span>
+        <h2>9.6 산-염기 지시약 &mdash; (1) Bromocresol Green</h2>
+
+        <div class="summary-box">
+          산-염기 지시약(indicator)은 그 자체가 약산 또는 약염기로, pH에 따라 색이 변합니다. H-H 식으로 색 변화를 설명할 수 있습니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Bromocresol Green (Y)</div>
+          <p>Bromocresol green은 산 형태(Y)에서 <strong style="color: #DAA520;">노란색</strong>, 염기 형태(B\(^-\))에서 <strong style="color: #0066CC;">파란색</strong>입니다.</p>
+          <div class="math-block">
+            \[ \text{Y (Yellow)} \rightleftharpoons \text{B}^- \text{(Blue)} + \text{H}^+ \qquad \text{p}K_{\text{Hin}} = 4.7 \]
+          </div>
+          <p>\(K_{\text{Hin}} = [\text{B}^-][\text{H}^+]/[\text{Y}]\)</p>
+          <div class="math-block">
+            \[ \text{pH} = \text{p}K_{\text{Hin}} + \log\frac{[\text{B}^-]}{[\text{Y}]} \]
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">pH에 따른 색 변화</div>
+          <table class="truth-table" style="margin: 12px auto;">
+            <thead>
+              <tr><th>pH</th><th>[B\(^-\)] : [Y]</th><th>색</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>3.7</td><td>1 : 10</td><td style="color: #DAA520; font-weight: bold;">Yellow</td></tr>
+              <tr><td>4.7</td><td>1 : 1</td><td style="color: #228B22; font-weight: bold;">Green</td></tr>
+              <tr><td>5.7</td><td>10 : 1</td><td style="color: #0066CC; font-weight: bold;">Blue</td></tr>
+            </tbody>
+          </table>
+          <p>전이 범위(transition range): pH 3.8 ~ 5.4</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Bromocresol Green 구조</div>
+          <p>산 형태(Y): 브로민(Br) 4개가 치환된 트리페닐메탄 유도체. 두 개의 OH기와 SO&#8322;기를 가짐. 노란색.</p>
+          <p>염기 형태(B\(^-\)): OH기 중 하나가 탈양성자화되어 O\(^-\)가 되면서 공명 구조가 바뀌어 파란색으로 변함. SO&#8323;\(^-\)기를 가짐.</p>
+        </div>
+
+        <div class="key-point">
+          지시약의 색 변화 원리: pH가 pK\(_{\text{Hin}}\) &plusmn; 1 범위에서 색이 변합니다. 이것은 버퍼의 유효 pH 범위와 동일한 원리입니다!
+        </div>
+      </section>
+
+      <!-- ==================== Page 39 ==================== -->
+      <section class="page-section" id="p39">
+        <span class="page-num">Page 39</span>
+        <h2>9.6 산-염기 지시약 &mdash; (2) Thymol Blue</h2>
+
+        <div class="summary-box">
+          Thymol blue는 이양성자산(diprotic acid)으로 두 단계의 색 변화를 보여줍니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">첫 번째 전이 (pK\(_1\) = 1.7)</div>
+          <div class="math-block">
+            \[ \text{R (Red)} \rightleftharpoons \text{Y}^- \text{(Yellow)} + \text{H}^+ \qquad \text{p}K_1 = 1.7 \]
+          </div>
+          <p>\(K_1 = [\text{Y}^-][\text{H}^+]/[\text{R}]\)</p>
+          <div class="math-block">
+            \[ \text{pH} = \text{p}K_1 + \log\frac{[\text{Y}^-]}{[\text{R}]} \]
+          </div>
+
+          <table class="truth-table" style="margin: 12px auto;">
+            <thead>
+              <tr><th>pH</th><th>[Y\(^-\)] : [R]</th><th>색</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0.7</td><td>1 : 10</td><td style="color: #CC0000; font-weight: bold;">Red</td></tr>
+              <tr><td>1.7</td><td>1 : 1</td><td style="color: #FF8C00; font-weight: bold;">Orange</td></tr>
+              <tr><td>2.7</td><td>10 : 1</td><td style="color: #DAA520; font-weight: bold;">Yellow</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-label">두 번째 전이 (pK\(_2\) = 8.9)</div>
+          <p>Y\(^-\) (Yellow) &rarr; B\(^{2-}\) (Blue) + H\(^+\)</p>
+          <p>이 전이는 pH 8~10 범위에서 일어나며, 노란색에서 파란색으로 변합니다.</p>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-label">Thymol Blue 구조</div>
+          <p>R (Red): 두 개의 OH기, SO&#8322;기를 가진 트리페닐메탄 유도체. 이소프로필기와 메틸기가 치환.</p>
+          <p>Y\(^-\) (Yellow): 첫 번째 탈양성자화 (pK\(_1\) = 1.7). SO&#8323;\(^-\)기 형성.</p>
+          <p>B\(^{2-}\) (Blue): 두 번째 탈양성자화 (pK\(_2\) = 8.9). O\(^-\)기 형성으로 공명 구조 변화.</p>
+        </div>
+
+        <div class="tip">
+          <span>TIP</span> Thymol blue처럼 이양성자산 지시약은 두 개의 전이 범위를 가지므로, 넓은 pH 범위에서 색 변화를 관찰할 수 있어 만능 지시약(universal indicator)의 구성 성분으로 사용됩니다.
+        </div>
+      </section>
+
+      <!-- ==================== Page 40 ==================== -->
+      <section class="page-section" id="p40">
+        <span class="page-num">Page 40</span>
+        <h2>Table 9-3: 일반적인 산-염기 지시약 (Common Indicators)</h2>
+
+        <div class="summary-box">
+          다양한 pH 범위에서 색 변화를 보이는 지시약 목록입니다. 적정 실험에서 종말점 검출에 활용됩니다.
+        </div>
+
+        <div class="card">
+          <div class="card-label">Table 9-3: Common Indicators</div>
+          <div style="overflow-x: auto;">
+          <table class="terms-table">
+            <thead>
+              <tr><th>Indicator</th><th>Transition range (pH)</th><th>Acid color</th><th>Base color</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Methyl violet</td><td>0.0 &ndash; 1.6</td><td>Yellow</td><td>Violet</td></tr>
+              <tr><td>Cresol red</td><td>0.2 &ndash; 1.8</td><td>Red</td><td>Yellow</td></tr>
+              <tr><td>Thymol blue</td><td>1.2 &ndash; 2.8</td><td>Red</td><td>Yellow</td></tr>
+              <tr><td>Cresol purple</td><td>1.2 &ndash; 2.8</td><td>Red</td><td>Yellow</td></tr>
+              <tr><td>Erythrosine, disodium</td><td>2.2 &ndash; 3.6</td><td>Orange</td><td>Red</td></tr>
+              <tr><td>Methyl orange</td><td>3.1 &ndash; 4.4</td><td>Red</td><td>Yellow</td></tr>
+              <tr><td>Congo red</td><td>3.0 &ndash; 5.0</td><td>Violet</td><td>Red</td></tr>
+              <tr><td>Ethyl orange</td><td>3.4 &ndash; 4.8</td><td>Red</td><td>Yellow</td></tr>
+              <tr><td>Bromocresol green</td><td>3.8 &ndash; 5.4</td><td>Yellow</td><td>Blue</td></tr>
+              <tr><td>Methyl red</td><td>4.8 &ndash; 6.0</td><td>Red</td><td>Yellow</td></tr>
+              <tr><td>Chlorophenol red</td><td>4.8 &ndash; 6.4</td><td>Yellow</td><td>Red</td></tr>
+              <tr><td>Bromocresol purple</td><td>5.2 &ndash; 6.8</td><td>Yellow</td><td>Purple</td></tr>
+              <tr><td>p-Nitrophenol</td><td>5.6 &ndash; 7.6</td><td>Colorless</td><td>Yellow</td></tr>
+              <tr><td>Litmus</td><td>5.0 &ndash; 8.0</td><td>Red</td><td>Blue</td></tr>
+              <tr><td>Bromothymol blue</td><td>6.0 &ndash; 7.6</td><td>Yellow</td><td>Blue</td></tr>
+              <tr><td>Phenol red</td><td>6.4 &ndash; 8.0</td><td>Yellow</td><td>Red</td></tr>
+              <tr><td>Neutral red</td><td>6.8 &ndash; 8.0</td><td>Red</td><td>Yellow</td></tr>
+              <tr><td>Cresol red</td><td>7.2 &ndash; 8.8</td><td>Yellow</td><td>Red</td></tr>
+              <tr><td>&alpha;-Naphtholphthalein</td><td>7.3 &ndash; 8.7</td><td>Pink</td><td>Green</td></tr>
+              <tr><td>Cresol purple</td><td>7.6 &ndash; 9.2</td><td>Yellow</td><td>Purple</td></tr>
+              <tr><td>Thymol blue</td><td>8.0 &ndash; 9.6</td><td>Yellow</td><td>Blue</td></tr>
+              <tr><td>Phenolphthalein</td><td>8.0 &ndash; 9.6</td><td>Colorless</td><td>Pink</td></tr>
+              <tr><td>Thymolphthalein</td><td>8.3 &ndash; 10.5</td><td>Colorless</td><td>Blue</td></tr>
+              <tr><td>Alizarin yellow</td><td>10.1 &ndash; 12.0</td><td>Yellow</td><td>Orange-red</td></tr>
+              <tr><td>Nitramine</td><td>10.8 &ndash; 13.0</td><td>Colorless</td><td>Orange-brown</td></tr>
+              <tr><td>Tropaeolin O</td><td>11.1 &ndash; 12.7</td><td>Yellow</td><td>Orange</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+
+        <div class="key-point">
+          적정에서 지시약 선택: 당량점(equivalence point)의 pH가 지시약의 전이 범위 안에 들어가도록 선택합니다. 예를 들어, 강산-강염기 적정(당량점 pH &asymp; 7)에는 bromothymol blue(6.0~7.6)가 적합합니다.
+        </div>
+
+        <div class="tip">
+          <span>TIP</span> 가장 유명한 지시약인 <strong>phenolphthalein</strong>(pH 8.0~9.6, 무색&rarr;분홍)은 약산-강염기 적정에 적합합니다. 강산-약염기 적정에는 methyl orange나 methyl red를 사용합니다.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.querySelector('.theme-toggle');
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '다크모드';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.textContent = '라이트모드';
+      }
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.page-section').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>

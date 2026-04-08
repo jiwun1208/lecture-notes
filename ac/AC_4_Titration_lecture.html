@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chapter 6: 적정 분석 (Volumetric / Titration Analysis)</title>
+<title>분석화학 — Chapter 6: Volumetric Analysis (적정)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
@@ -11,10 +11,8 @@ window.MathJax = {
   tex: {
     inlineMath: [['\\(','\\)']],
     displayMath: [['\\[','\\]']],
-    processEscapes: false,
-    packages: {'[+]': ['mhchem']}
+    processEscapes: false
   },
-  loader: {load: ['[tex]/mhchem']},
   startup: {
     ready: function() {
       MathJax.startup.defaultReady();
@@ -39,7 +37,6 @@ window.MathJax = {
     --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
     --radius: 10px;
   }
-
   [data-theme="dark"] {
     --bg: #1A1917;
     --bg-card: #242320;
@@ -53,9 +50,7 @@ window.MathJax = {
     --term-bg: #32302C;
     --shadow: 0 1px 3px rgba(0,0,0,0.2);
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     font-family: 'Noto Sans KR', sans-serif;
     background: var(--bg);
@@ -65,7 +60,6 @@ window.MathJax = {
     font-weight: 300;
     transition: background 0.3s, color 0.3s;
   }
-
   .topbar {
     position: sticky; top: 0; z-index: 100;
     background: var(--bg-card);
@@ -73,1187 +67,842 @@ window.MathJax = {
     padding: 12px 32px;
     display: flex; justify-content: space-between; align-items: center;
     backdrop-filter: blur(12px);
-    gap: 8px;
   }
-  .topbar h1 {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-  .topbar .meta {
-    font-size: 12px;
-    color: var(--text-muted);
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-  }
-  .theme-toggle {
-    background: var(--bg-aside);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 13px;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: all 0.2s;
-  }
+  .topbar h1 { font-family: 'Noto Serif KR', serif; font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+  .topbar .meta { font-size: 12px; color: var(--text-muted); letter-spacing: 0.03em; text-transform: uppercase; }
+  .theme-toggle { background: var(--bg-aside); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; font-size: 13px; cursor: pointer; color: var(--text-muted); transition: all 0.2s; }
   .theme-toggle:hover { color: var(--accent); }
-
-  img { max-width: 100%; height: auto; }
-
-  .layout {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    max-width: 1200px;
-    margin: 0 auto;
-    min-height: calc(100vh - 50px);
-  }
-
-  .sidebar {
-    position: sticky;
-    top: 50px;
-    height: calc(100vh - 50px);
-    overflow-y: auto;
-    padding: 28px 20px;
-    border-right: 1px solid var(--border);
-  }
-  .sidebar .label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    margin-bottom: 12px;
-    font-weight: 500;
-  }
-  .sidebar .section-label {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--accent);
-    margin-top: 16px;
-    margin-bottom: 6px;
-    padding-left: 4px;
-  }
-  .sidebar a {
-    display: block;
-    padding: 5px 12px;
-    font-size: 12.5px;
-    color: var(--text-muted);
-    text-decoration: none;
-    border-radius: 6px;
-    margin-bottom: 1px;
-    transition: all 0.15s;
-    font-weight: 400;
-  }
-  .sidebar a:hover, .sidebar a.active {
-    color: var(--accent);
-    background: var(--accent-light);
-  }
-
-  .content {
-    padding: 40px 48px 80px;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    min-width: 0;
-  }
-
-  .page-section {
-    margin-bottom: 56px;
-    animation: fadeUp 0.4s ease-out;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .page-section .page-num {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    margin-bottom: 6px;
-  }
-  .page-section h2 {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    margin-bottom: 20px;
-    line-height: 1.4;
-  }
-  .page-section h3 {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 19px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin: 24px 0 14px;
-    line-height: 1.4;
-  }
-
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px 28px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
-  }
-  .card-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-    margin-bottom: 10px;
-    font-weight: 500;
-  }
-
-  .summary-box {
-    background: var(--bg-aside);
-    border-left: 3px solid var(--accent);
-    padding: 18px 22px;
-    border-radius: 0 var(--radius) var(--radius) 0;
-    margin-bottom: 20px;
-    font-size: 14.5px;
-  }
-
-  .math-block {
-    background: var(--bg-aside);
-    border-left: 3px solid var(--accent);
-    padding: 18px 22px;
-    margin: 18px 0;
-    border-radius: 0 var(--radius) var(--radius) 0;
-    overflow-x: auto;
-    font-size: 1.05em;
-  }
-
-  .key-point {
-    background: var(--accent-light);
-    border: 1px solid var(--border);
-    padding: 16px 20px;
-    border-radius: var(--radius);
-    margin: 14px 0;
-    font-size: 14.5px;
-  }
-
-  .warning-box {
-    background: #FFF5F5;
-    border: 1px solid #F5CDCD;
-    padding: 16px 20px;
-    border-radius: var(--radius);
-    margin: 14px 0;
-    font-size: 14.5px;
-  }
-  [data-theme="dark"] .warning-box {
-    background: #2D2020;
-    border-color: #4A3030;
-  }
-
-  .terms-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-  .terms-table th {
-    text-align: left;
-    padding: 10px 14px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
-    border-bottom: 2px solid var(--border);
-    font-weight: 500;
-  }
-  .terms-table td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
-  .terms-table .en {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--accent);
-    font-weight: 500;
-  }
-
-  .tip {
-    background: var(--accent-light);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    font-size: 14px;
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-  }
-
-  pre {
-    background: var(--code-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 20px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    overflow-x: auto;
-    margin: 12px 0;
-    max-width: 100%;
-  }
-
+  .layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1260px; margin: 0 auto; min-height: calc(100vh - 50px); }
+  .sidebar { position: sticky; top: 50px; height: calc(100vh - 50px); overflow-y: auto; padding: 28px 16px; border-right: 1px solid var(--border); }
+  .sidebar .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; font-weight: 500; }
+  .sidebar a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text-muted); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: all 0.15s; font-weight: 400; }
+  .sidebar a:hover, .sidebar a.active { color: var(--accent); background: var(--accent-light); }
+  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 600; padding: 10px 10px 4px; margin-top: 6px; }
+  .content { padding: 40px 48px 80px; }
+  .page-section { margin-bottom: 56px; animation: fadeUp 0.4s ease-out; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .page-section .page-num { display: inline-block; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 6px; }
+  .page-section h2 { font-family: 'Noto Serif KR', serif; font-size: 24px; font-weight: 700; letter-spacing: -0.025em; margin-bottom: 20px; line-height: 1.4; }
+  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 10px; font-weight: 500; }
+  .summary-box { background: var(--bg-aside); border-left: 3px solid var(--accent); padding: 18px 22px; border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 20px; font-size: 14.5px; }
+  .math-block { background: var(--bg-aside); border-left: 3px solid var(--accent); padding: 18px 22px; margin: 18px 0; border-radius: 0 var(--radius) var(--radius) 0; overflow-x: auto; font-size: 1.05em; }
+  .key-point { background: var(--accent-light); border: 1px solid var(--border); padding: 16px 20px; border-radius: var(--radius); margin: 14px 0; font-size: 14.5px; }
+  .warning-box { background: #FFF5F5; border: 1px solid #F5CDCD; padding: 16px 20px; border-radius: var(--radius); margin: 14px 0; font-size: 14.5px; }
+  [data-theme="dark"] .warning-box { background: #2D2020; border-color: #4A3030; }
+  .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .terms-table th { text-align: left; padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border-bottom: 2px solid var(--border); font-weight: 500; }
+  .terms-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .terms-table .en { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 500; }
+  .tip { background: var(--accent-light); border-radius: var(--radius); padding: 16px 20px; font-size: 14px; display: flex; gap: 10px; align-items: flex-start; margin: 14px 0; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; overflow-x: auto; margin: 12px 0; }
+  .diagram-box { background: var(--bg-aside); border: 2px dashed var(--border); border-radius: var(--radius); padding: 20px 24px; margin: 16px 0; font-size: 14px; line-height: 1.9; }
+  .diagram-box .diagram-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 500; margin-bottom: 8px; }
   strong { color: var(--accent); font-weight: 500; }
-
-  p { margin-bottom: 12px; }
-  ul, ol { margin: 8px 0 12px 20px; }
-  li { margin-bottom: 4px; }
-
-  .diagram-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-    overflow-x: auto;
-  }
-  .diagram-container svg {
-    max-width: 100%;
-    height: auto;
-  }
-  .diagram-caption {
-    text-align: center;
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 8px;
-  }
-  .diagram-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-    margin: 16px 0;
-  }
-  .diagram-cell {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    text-align: center;
-  }
-  .diagram-cell .cell-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--accent);
-    margin-bottom: 8px;
-  }
-  .diagram-cell .cell-desc {
-    font-size: 12.5px;
-    color: var(--text-muted);
-    margin-top: 8px;
-  }
-
-  .step-box {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 22px;
-    margin: 12px 0;
-    position: relative;
-    padding-left: 50px;
-  }
-  .step-box .step-num {
-    position: absolute;
-    left: 16px;
-    top: 18px;
-    width: 26px;
-    height: 26px;
-    background: var(--accent);
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 700;
-  }
-
-  .comparison-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin: 16px 0;
-  }
-  @media (max-width: 768px) {
-    .comparison-grid { grid-template-columns: 1fr; }
-  }
-
-  .nitrogen-cycle {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-    padding: 20px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-  }
-  .cycle-node {
-    background: var(--accent-light);
-    border: 2px solid var(--accent);
-    border-radius: var(--radius);
-    padding: 12px 18px;
-    text-align: center;
-    font-weight: 500;
-    min-width: 100px;
-  }
-  .cycle-arrow {
-    font-size: 24px;
-    color: var(--accent);
-    font-weight: 700;
-  }
-
-  /* --- Responsive --- */
-  @media (max-width: 1024px) {
-    .layout { grid-template-columns: 200px 1fr; }
-    .content { padding: 32px 32px 60px; }
-    .sidebar { padding: 20px 12px; }
-  }
-
-  @media (max-width: 900px) {
-    .layout { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .content { padding: 28px 24px 60px; }
-  }
-
-  @media (max-width: 768px) {
-    .topbar { padding: 10px 16px; }
-    .topbar h1 { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60vw; }
-    .topbar .meta { font-size: 10px; }
-    .content { padding: 20px 16px 48px; }
-    .page-section h2 { font-size: 18px; }
-    .page-section h3 { font-size: 16px; }
-    .card { padding: 18px 16px; }
-    .summary-box { padding: 14px 16px; }
-  }
-
-  @media (max-width: 480px) {
-    .content { padding: 16px 12px 40px; }
-    .topbar h1 { font-size: 13px; max-width: 50vw; }
-    body { font-size: 14px; }
-  }
-
-  @media print {
-    .topbar, .sidebar, .theme-toggle { display: none; }
-    .layout { display: block; }
-    .content { padding: 0; }
-    .page-section { break-inside: avoid; }
-  }
+  .step-list { counter-reset: step-counter; list-style: none; padding-left: 0; }
+  .step-list li { counter-increment: step-counter; padding: 8px 0 8px 36px; position: relative; }
+  .step-list li::before { content: counter(step-counter); position: absolute; left: 0; top: 8px; width: 24px; height: 24px; background: var(--accent); color: white; border-radius: 50%; text-align: center; font-size: 12px; line-height: 24px; font-weight: 700; }
+  details { margin: 10px 0; }
+  details summary { cursor: pointer; font-weight: 500; color: var(--accent); padding: 8px 0; }
+  details[open] summary { margin-bottom: 8px; }
+  @media (max-width: 768px) { .layout { grid-template-columns: 1fr; } .sidebar { display: none; } .content { padding: 24px 20px 60px; } .page-section h2 { font-size: 20px; } }
+  @media print { .topbar, .sidebar, .theme-toggle { display: none; } .layout { display: block; } .content { padding: 0; } .page-section { break-inside: avoid; } }
 </style>
 </head>
 <body>
   <div class="topbar">
     <div>
-      <h1>적정 분석 (Volumetric / Titration Analysis)</h1>
-      <div class="meta">Analytical Chemistry &mdash; Lecture 4 (Chapter 6)</div>
+      <h1>분석화학 &mdash; Chapter 6: Volumetric Analysis (적정)</h1>
+      <div class="meta">Analytical Chemistry &middot; DGIST</div>
     </div>
     <button class="theme-toggle" onclick="toggleTheme()">다크모드</button>
   </div>
-
   <div class="layout">
     <nav class="sidebar">
       <div class="label">페이지 목록</div>
-      <div class="section-label">6.1 부피 분석의 원리</div>
-      <a href="#p1">01 &mdash; Chapter 6 개요</a>
-      <a href="#p2">02 &mdash; 화성 토양의 SO&#x2084;&sup2;&minus; 정량</a>
-      <a href="#p3">03 &mdash; BaCl&#x2082; 적정 실험</a>
-      <a href="#p4">04 &mdash; 부피 분석 &amp; 적정 정의</a>
-      <a href="#p5">05 &mdash; 핵심 용어 정리</a>
-      <a href="#p6">06 &mdash; 적정오차 &amp; 바탕적정</a>
-      <a href="#p7">07 &mdash; 일차 표준물질 &amp; 표준화</a>
+      <a href="#p1" class="active">01 &mdash; 목차</a>
+      <div class="section-label">Intro</div>
+      <a href="#p2">02 &mdash; 화성 토양 SO4 (장치)</a>
+      <a href="#p3">03 &mdash; 화성 토양 SO4 (그래프)</a>
+      <div class="section-label">6.1 부피분석 원리</div>
+      <a href="#p4">04 &mdash; 부피분석/적정 정의</a>
+      <a href="#p5">05 &mdash; 당량점/종말점</a>
+      <a href="#p6">06 &mdash; 적정오차/바탕적정</a>
+      <a href="#p7">07 &mdash; 일차표준물질/표준화</a>
       <a href="#p8">08 &mdash; 직접적정</a>
       <a href="#p9">09 &mdash; 역적정</a>
-      <a href="#p10">10 &mdash; 역적정을 쓰는 이유</a>
+      <a href="#p10">10 &mdash; 역적정 이유/예시</a>
       <div class="section-label">6.2 적정 계산</div>
-      <a href="#p11">11 &mdash; 적정 계산 2단계</a>
-      <a href="#p12">12 &mdash; 1:1 화학량론 계산</a>
-      <a href="#p13">13 &mdash; x:y 화학량론 계산</a>
-      <div class="section-label">Ex 6-B 아스코르브산</div>
+      <a href="#p11">11 &mdash; 적정 분석 2단계</a>
+      <a href="#p12">12 &mdash; 1:1 화학양론</a>
+      <a href="#p13">13 &mdash; x:y 화학양론</a>
       <a href="#p14">14 &mdash; Ex 6-B 문제</a>
       <a href="#p15">15 &mdash; Ex 6-B 풀이</a>
       <div class="section-label">6.3 수족관의 화학</div>
       <a href="#p16">16 &mdash; 질소 순환</a>
-      <a href="#p17">17 &mdash; 질산화 반응</a>
-      <a href="#p18">18 &mdash; NaNO&#x2082; 표준화</a>
-      <a href="#p19">19 &mdash; 3가지 용액 준비</a>
-      <a href="#p20">20 &mdash; KMnO&#x2084; 표준화 계산</a>
-      <div class="section-label">용어 총정리</div>
-      <a href="#glossary">용어 정리</a>
+      <a href="#p17">17 &mdash; 질화과정</a>
+      <a href="#p18">18 &mdash; NaNO2 표준화 개요</a>
+      <a href="#p19">19 &mdash; 용액 준비</a>
+      <a href="#p20">20 &mdash; (1) KMnO4 표준화</a>
+      <a href="#p21">21 &mdash; (2) NaNO2 표준화</a>
+      <a href="#p22">22 &mdash; Ex 6-C</a>
+      <div class="section-label">6.4 용해도곱</div>
+      <a href="#p23">23 &mdash; Ksp와 PbI2 용해도</a>
+      <a href="#p24">24 &mdash; 공통이온 효과</a>
+      <a href="#p25">25 &mdash; 최대 I- 농도</a>
+      <a href="#p26">26 &mdash; Ex 6-D</a>
+      <div class="section-label">6.5 혼합물 적정</div>
+      <a href="#p27">27 &mdash; 전위차 적정 장치</a>
+      <a href="#p28">28 &mdash; 적정 곡선</a>
+      <a href="#p29">29 &mdash; Ex 6-E</a>
+      <div class="section-label">6.6 은적정</div>
+      <a href="#p30">30 &mdash; Volhard 적정</a>
+      <a href="#p31">31 &mdash; Fajans 적정 원리</a>
+      <a href="#p32">32 &mdash; Fajans 적정 사진</a>
+      <a href="#p33">33 &mdash; 침전적정 총정리표</a>
+      <div class="section-label">Homework / 연습문제</div>
+      <a href="#p34">34 &mdash; Homework</a>
+      <a href="#p35">35 &mdash; 연습 6-4</a>
+      <a href="#p36">36 &mdash; 연습 6-6 (문제)</a>
+      <a href="#p37">37 &mdash; 연습 6-6 (풀이)</a>
+      <a href="#p38">38 &mdash; 연습 6-7</a>
+      <a href="#p39">39 &mdash; 연습 6-9 (문제)</a>
+      <a href="#p40">40 &mdash; 연습 6-9 (풀이)</a>
     </nav>
-
     <main class="content">
 
-      <!-- ==================== Page 1 ==================== -->
+      <!-- PAGE 1 -->
       <section class="page-section" id="p1">
         <span class="page-num">Page 01</span>
-        <h2>Chapter 6 &mdash; 부피 분석: 적정 (Volumetric Analysis: Titration)</h2>
-        <div class="summary-box">
-          Chapter 6에서는 <strong>부피 분석(Volumetric Analysis)</strong>의 원리와 적정(Titration) 계산 방법을 다룬다. 정량적 분석의 핵심 기법으로, 시약의 부피를 측정하여 미지 시료의 농도를 결정하는 방법이다.
+        <h2>Chapter 6 &mdash; Volumetric Analysis: Titration (부피분석: 적정)</h2>
+        <div class="summary-box">이 장에서는 <strong>부피분석(Volumetric Analysis)</strong>의 핵심 기법인 <strong>적정(Titration)</strong>을 다룹니다. 적정의 원리, 계산법, 용해도곱, 혼합물 적정, 은적정까지 총 6개 절로 구성됩니다.</div>
+        <div class="card"><div class="card-label">목차 (Table of Contents)</div>
+          <table class="terms-table"><thead><tr><th>절</th><th>주제 (영어)</th><th>주제 (한국어)</th></tr></thead><tbody>
+            <tr><td>6.1</td><td class="en">Principles of Volumetric Analysis</td><td>부피분석의 원리</td></tr>
+            <tr><td>6.2</td><td class="en">Titration Calculation</td><td>적정 계산</td></tr>
+            <tr><td>6.3</td><td class="en">Chemistry in an Aquarium</td><td>수족관의 화학</td></tr>
+            <tr><td>6.4</td><td class="en">Solubility Product (용해도곱)</td><td>용해도곱</td></tr>
+            <tr><td>6.5</td><td class="en">Titration of a Mixture</td><td>혼합물의 적정</td></tr>
+            <tr><td>6.6</td><td class="en">Argentometric Titration (은적정)</td><td>은적정</td></tr>
+          </tbody></table>
         </div>
-        <div class="card">
-          <div class="card-label">이 장에서 다루는 내용</div>
-          <ul>
-            <li><strong>6.1</strong> 부피 분석의 원리 (Principles of Volumetric Analysis)</li>
-            <li><strong>6.2</strong> 적정 계산 (Titration Calculation)</li>
-            <li><strong>6.3</strong> 수족관의 화학 (Chemistry in an Aquarium)</li>
-            <li><strong>6.4</strong> 용해도곱 (Solubility Product)</li>
-            <li><strong>6.5</strong> 혼합물의 적정 (Titration of a Mixture)</li>
-            <li><strong>6.6</strong> 은적정 (Argentometric Titration)</li>
-          </ul>
-        </div>
-        <div class="tip">이 강의에서는 6.1&ndash;6.3을 중점적으로 다루며, 직접적정(Direct Titration)과 역적정(Back Titration), 그리고 실제 응용 사례(화성 탐사, 수족관 질소 순환)를 학습한다.</div>
+        <div class="tip"><span>TIP</span><span>이 장은 적정의 기초 원리부터 실제 계산, 은적정(argentometric titration)까지를 다룹니다. 화학양론(stoichiometry) 개념이 핵심이므로 반응식 균형 맞추기를 확실히 복습해 두세요.</span></div>
       </section>
 
-      <!-- ==================== Page 2 ==================== -->
+      <!-- PAGE 2 -->
       <section class="page-section" id="p2">
         <span class="page-num">Page 02</span>
-        <h2>도입: 화성 토양의 \(\ce{SO4^{2-}}\) 정량</h2>
-        <div class="summary-box">
-          화성 토양에서 황산이온(\(\ce{SO4^{2-}}\))을 정량하는 실험은 부피 분석의 실제 응용 사례이다. NASA의 화성 탐사 장비는 토양 시료에 침출 용액(leaching solution)을 적용하고, \(\ce{BaCl2}\) 시약을 이용하여 황산이온을 침전시킨다.
+        <h2>Intro: 화성 토양의 SO\(_{4}^{2-}\) 정량 &mdash; 장치</h2>
+        <div class="summary-box">NASA 화성 탐사 로버가 화성 토양 속 황산이온(\(\text{SO}_4^{2-}\))을 정량한 실제 사례를 소개합니다. 분석화학이 지구 밖에서도 쓰인다는 것을 보여주는 흥미로운 도입부입니다.</div>
+        <div class="card"><div class="card-label">분석 장치 설명</div>
+          <p>화성 탐사 로버에 탑재된 분석 장치는 다음 주요 부분으로 구성됩니다.</p>
+          <div class="diagram-box"><div class="diagram-label">화성 토양 분석 장치 (Mars Soil Analyzer)</div>
+            <p><strong>Container with leaching solution</strong> &mdash; 침출 용액 용기: 토양에서 이온을 녹여내는 용액</p>
+            <p><strong>Stainless steel sieve</strong> &mdash; 스테인리스 스틸 체: 큰 토양 덩어리를 걸러냄</p>
+            <p><strong>Actuator arm</strong> &mdash; 구동 팔: 건조 시약 캐니스터를 전달</p>
+            <p><strong>Beaker compartment</strong> &mdash; 비커 칸: 반응이 일어나는 공간</p>
+          </div>
+          <p>이 장치로 화성 토양에 침출 용액을 가하여 \(\text{SO}_4^{2-}\)을 녹여낸 후, <strong>BaCl\(_2\)</strong>를 첨가하여 \(\text{BaSO}_4\) 침전을 형성시킵니다.</p>
         </div>
-        <div class="card">
-          <div class="card-label">화성 토양 분석 장치 구성</div>
-          <ul>
-            <li><strong>침출 용액 용기 (Container with leaching solution)</strong>: 토양에서 이온을 녹여내는 용액</li>
-            <li><strong>스테인리스 스틸 체 (Stainless steel sieve)</strong>: 큰 토양 덩어리를 걸러냄</li>
-            <li><strong>구동 암 (Actuator arm)</strong>: 건조 시약 캐니스터를 전달</li>
-            <li><strong>비커 구획 (Beaker compartment)</strong>: 반응이 일어나는 공간</li>
-          </ul>
-        </div>
-        <div class="key-point">화성 토양 분석은 적정 분석의 원리가 우주 탐사에까지 적용되는 실제 사례로, 부피 분석의 중요성과 범용성을 보여준다.</div>
+        <div class="key-point"><strong>핵심:</strong> 분석화학 기법은 실험실뿐 아니라 <strong>우주 탐사</strong>에서도 활용됩니다.</div>
       </section>
 
-      <!-- ==================== Page 3 ==================== -->
+      <!-- PAGE 3 -->
       <section class="page-section" id="p3">
         <span class="page-num">Page 03</span>
-        <h2>화성 토양 \(\ce{SO4^{2-}}\) 정량 &mdash; 반응과 데이터</h2>
-        <div class="summary-box">
-          \(\ce{BaCl2}\)를 사용하여 황산이온을 침전시키는 원리와, \(\ce{Cl^-}\) 및 \(\ce{Ba^{2+}}\) 농도 변화를 추적하여 종말점(end point)을 결정하는 방법을 학습한다.
+        <h2>Intro: 화성 토양의 SO\(_{4}^{2-}\) 정량 &mdash; 반응과 그래프</h2>
+        <div class="summary-box">BaCl\(_2\)를 이용하여 \(\text{SO}_4^{2-}\)를 침전시키는 반응의 원리와, 시간에 따른 Ba\(^{2+}\) 및 Cl\(^-\) 농도 변화 그래프를 분석합니다.</div>
+        <div class="card"><div class="card-label">화학 반응</div>
+          <div class="math-block">\[ \text{BaCl}_2 \rightarrow \text{Ba}^{2+} + 2\text{Cl}^- \]\[ \text{SO}_4^{2-} + \text{Ba}^{2+} \rightarrow \text{BaSO}_4(s) \downarrow \]</div>
+          <p>\(\text{BaCl}_2\)가 해리하여 \(\text{Ba}^{2+}\)와 \(\text{Cl}^-\)을 생성하고, \(\text{Ba}^{2+}\)는 토양에서 나온 \(\text{SO}_4^{2-}\)과 반응하여 <strong>불용성 침전물</strong> \(\text{BaSO}_4(s)\)를 형성합니다.</p>
         </div>
-        <div class="card">
-          <div class="card-label">핵심 반응식</div>
-          <div class="math-block">
-            \[ \ce{BaCl2 -> Ba^{2+} + 2Cl^-} \]
-            \[ \ce{SO4^{2-} + Ba^{2+} -> BaSO4(s)} \]
+        <div class="card"><div class="card-label">시간-농도 그래프 해석</div>
+          <div class="diagram-box"><div class="diagram-label">log(concentration) vs Time 그래프</div>
+            <p>x축: 시간 (0:00 ~ 16:00 h) / y축: log(농도, M) (-5.0 ~ -1.0)</p>
+            <p><strong>Cl\(^-\) 곡선 (밝은 파란색):</strong></p>
+            <p>&bull; BaCl\(_2\) 첨가 전: Cl\(^-\) = 0.000 19 M (매우 낮음)</p>
+            <p>&bull; 토양+BaCl\(_2\) 투입 후 Cl\(^-\) 급상승</p>
+            <p>&bull; End point에서 Cl\(^-\) = 0.009 6 M</p>
+            <p><strong>Ba\(^{2+}\) 곡선 (진한 파란색):</strong></p>
+            <p>&bull; 초기에 매우 낮게 유지 (\(\text{SO}_4^{2-}\)와 반응하여 소모됨)</p>
+            <p>&bull; End point 이후 급상승 (모든 \(\text{SO}_4^{2-}\)가 소모된 후 남은 Ba\(^{2+}\))</p>
           </div>
-          <p>\(\ce{BaCl2}\)가 해리되면 \(\ce{Ba^{2+}}\)와 \(\ce{Cl^-}\)가 생성된다. \(\ce{Ba^{2+}}\)는 토양의 \(\ce{SO4^{2-}}\)와 반응하여 \(\ce{BaSO4}\) 침전을 형성한다.</p>
+          <p><strong>End point(종말점)</strong>: Ba\(^{2+}\) 농도가 급격히 증가하는 시점. 이 지점에서 모든 \(\text{SO}_4^{2-}\)가 침전된 것입니다.</p>
         </div>
-        <div class="card">
-          <div class="card-label">종말점 판별 (End Point Detection)</div>
-          <p>시간에 따른 \(\ce{Cl^-}\)와 \(\ce{Ba^{2+}}\) 농도를 로그 스케일로 추적한다:</p>
-          <ul>
-            <li>\(\ce{BaCl2}\) 첨가 전: \(\ce{[Cl^-]} = 0.000\,19\) M</li>
-            <li>종말점에서: \(\ce{[Cl^-]} = 0.009\,6\) M</li>
-            <li>\(\ce{Ba^{2+}}\) 농도가 급격히 증가하는 지점 &asymp; 12시간 부근 &rarr; <strong>종말점(End point)</strong></li>
-          </ul>
-          <p>모든 \(\ce{SO4^{2-}}\)가 침전된 후, 여분의 \(\ce{Ba^{2+}}\)가 용액에 남기 시작하면서 농도가 급격히 증가한다.</p>
-        </div>
+        <div class="tip"><span>TIP</span><span>Cl\(^-\)를 모니터링하는 이유: BaCl\(_2\) 해리시 Ba\(^{2+}\)와 Cl\(^-\)이 나옵니다. SO\(_4^{2-}\)가 남아있는 동안 Ba\(^{2+}\)는 침전으로 소모되지만 Cl\(^-\)은 축적됩니다.</span></div>
       </section>
 
-      <!-- ==================== Page 4 ==================== -->
+      <!-- PAGE 4 -->
       <section class="page-section" id="p4">
         <span class="page-num">Page 04</span>
-        <h2>6.1 부피 분석의 원리 &mdash; 기본 정의</h2>
-        <div class="summary-box">
-          <strong>부피 분석(Volumetric Analysis)</strong>은 분석물질과 반응하는 데 필요한 시약의 부피를 측정하는 기법이다. <strong>적정(Titration)</strong>은 한 물질(적정시약)을 다른 물질(분석물질)에 반응이 완결될 때까지 주의 깊게 첨가하는 절차이다.
+        <h2>6.1 부피분석의 원리 &mdash; 기본 정의</h2>
+        <div class="summary-box"><strong>부피분석(Volumetric Analysis)</strong>과 <strong>적정(Titration)</strong>의 기본 개념, 그리고 적정 장치의 구조를 배웁니다.</div>
+        <div class="card"><div class="card-label">부피분석 (Volumetric Analysis)</div>
+          <p><strong>부피분석</strong>이란, 분석물질(analyte)과 반응하는 데 필요한 <strong>시약의 부피</strong>를 정확히 측정하여 분석물질의 양을 결정하는 기법입니다.</p>
+          <p>핵심 아이디어: "시약을 얼마나 넣어야 반응이 완결되는가?"를 부피로 측정하면, 분석물질의 양(몰 수)을 역산할 수 있습니다.</p>
         </div>
-        <div class="card">
-          <div class="card-label">부피 분석 (Volumetric Analysis)</div>
-          <p>분석물질(analyte)과 반응하는 데 필요한 시약(reagent)의 <strong>부피</strong>를 측정하는 기법이다.</p>
+        <div class="card"><div class="card-label">적정 (Titration)</div>
+          <p><strong>적정</strong>이란, 한 물질(<strong>적정시약, titrant</strong>)을 다른 물질(<strong>분석물질, analyte</strong>)에 <strong>조심스럽게 첨가</strong>하여 반응이 완결될 때까지 진행하는 절차입니다.</p>
+          <p>반응 완결에 필요한 <strong>적정시약의 양</strong>을 알면, <strong>분석물질이 얼마나 있었는지</strong> 알 수 있습니다.</p>
         </div>
-        <div class="card">
-          <div class="card-label">적정 (Titration)</div>
-          <p>한 물질(<strong>적정시약, titrant</strong>)을 다른 물질(<strong>분석물질, analyte</strong>)에 반응이 완결될 때까지 주의 깊게 첨가하는 절차이다.</p>
-          <ul>
-            <li><strong>적정시약 (Titrant, 적정시약)</strong>: 뷰렛에서 분석물질에 첨가되는 물질</li>
-            <li><strong>분석물질 (Analyte, 분석물질)</strong>: 플라스크 안에 들어있는, 분석하고자 하는 물질</li>
-            <li>완전 반응에 필요한 <strong>적정시약의 양</strong>이 분석물질의 양을 알려준다</li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="card-label">적정 장치 구성</div>
-          <div class="diagram-grid">
-            <div class="diagram-cell">
-              <div class="cell-title">뷰렛 (Buret)</div>
-              <div class="cell-desc">적정시약을 담고, 정밀하게 부피를 측정하며 천천히 적하하는 유리 기구. 뷰렛 클램프로 고정한다.</div>
-            </div>
-            <div class="diagram-cell">
-              <div class="cell-title">스톱콕 (Stopcock)</div>
-              <div class="cell-desc">적정시약의 유출 속도를 조절하는 밸브</div>
-            </div>
-            <div class="diagram-cell">
-              <div class="cell-title">플라스크 (Flask)</div>
-              <div class="cell-desc">분석물질 용액을 담는 용기 (에를렌마이어 플라스크)</div>
-            </div>
-            <div class="diagram-cell">
-              <div class="cell-title">자기 교반기 (Magnetic stirrer)</div>
-              <div class="cell-desc">자기 교반 막대를 회전시켜 용액을 균일하게 혼합</div>
-            </div>
+        <div class="card"><div class="card-label">적정 장치</div>
+          <div class="diagram-box"><div class="diagram-label">적정 장치 구성도</div>
+            <p><strong>Buret (뷰렛)</strong> &mdash; 위쪽의 긴 유리관. titrant가 담겨 있고, 눈금으로 첨가 부피를 정밀하게 읽음</p>
+            <p><strong>Buret clamp</strong> &mdash; 뷰렛 고정 클램프</p>
+            <p><strong>Stopcock (콕)</strong> &mdash; 뷰렛 하단의 밸브. 용액 흐름 조절</p>
+            <p><strong>Flask (플라스크)</strong> &mdash; 아래쪽 삼각 플라스크. analyte 용액이 담김</p>
+            <p><strong>Magnetic stirrer + stirring bar</strong> &mdash; 자기 교반기. 반응 용액을 균일하게 섞음</p>
           </div>
+        </div>
+        <div class="card"><div class="card-label">핵심 용어</div>
+          <table class="terms-table"><thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead><tbody>
+            <tr><td class="en">Titrant</td><td>적정시약</td><td>뷰렛에 담겨 분석물질에 첨가되는 물질</td></tr>
+            <tr><td class="en">Analyte</td><td>분석물질</td><td>분석 대상이 되는 물질 (플라스크에 담김)</td></tr>
+          </tbody></table>
         </div>
       </section>
 
-      <!-- ==================== Page 5 ==================== -->
+      <!-- PAGE 5 -->
       <section class="page-section" id="p5">
         <span class="page-num">Page 05</span>
-        <h2>6.1 핵심 용어 정리</h2>
-        <div class="summary-box">
-          적정의 핵심 용어인 <strong>적정시약(Titrant)</strong>, <strong>분석물질(Analyte)</strong>, <strong>당량점(Equivalence point)</strong>, <strong>종말점(End point)</strong>을 정확히 구분해야 한다.
+        <h2>6.1 부피분석의 원리 &mdash; 당량점, 종말점, 반응 예시</h2>
+        <div class="summary-box">적정에서 가장 중요한 두 개념인 <strong>당량점(Equivalence Point)</strong>과 <strong>종말점(End Point)</strong>을 구분합니다.</div>
+        <div class="card"><div class="card-label">핵심 용어 정리</div>
+          <table class="terms-table"><thead><tr><th>영어</th><th>한국어</th><th>설명</th></tr></thead><tbody>
+            <tr><td class="en">Equivalence point</td><td>당량점</td><td>적정시약이 분석물질과 <strong>화학양론적으로 정확히</strong> 반응하는 지점</td></tr>
+            <tr><td class="en">End point</td><td>종말점</td><td>지시약 색 변화, pH, 전도도 등 <strong>물리적 성질이 급변</strong>하는 것이 관찰되는 지점</td></tr>
+          </tbody></table>
         </div>
-        <div class="card">
-          <table class="terms-table">
-            <thead>
-              <tr><th>영어</th><th>한국어</th><th>정의</th></tr>
-            </thead>
-            <tbody>
-              <tr><td class="en">Titrant</td><td>적정시약</td><td>적정에서 분석물질에 첨가되는 물질</td></tr>
-              <tr><td class="en">Analyte</td><td>분석물질</td><td>분석 대상인 물질</td></tr>
-              <tr><td class="en">Equivalence Point</td><td>당량점 (當量點)</td><td>적정시약의 양이 분석물질과의 화학량론적 반응에 <strong>정확히 충분한</strong> 지점</td></tr>
-              <tr><td class="en">End Point</td><td>종말점 (終末點)</td><td>물리적 성질(지시약 색 변화, pH, 전도도, 흡광도 등)이 <strong>급격히 변하는</strong> 지점. 당량점의 근사값으로 사용됨</td></tr>
-            </tbody>
-          </table>
+        <div class="card"><div class="card-label">반응 예시: 옥살산 + 과망간산칼륨</div>
+          <div class="math-block">\[ 5\text{H}_2\text{C}_2\text{O}_4 + 2\text{MnO}_4^- + 6\text{H}^+ \rightarrow 10\text{CO}_2 + 2\text{Mn}^{2+} + 8\text{H}_2\text{O} \]</div>
+          <p><strong>Analyte:</strong> 옥살산(Oxalic acid, \(\text{H}_2\text{C}_2\text{O}_4\)) &mdash; 무색</p>
+          <p><strong>Titrant:</strong> 과망간산이온(\(\text{MnO}_4^-\), Permanganate) &mdash; <span style="color:#9B30FF;">보라색</span></p>
+          <p><strong>생성물:</strong> \(\text{CO}_2\)(무색) + \(\text{Mn}^{2+}\)(무색)</p>
+          <p>당량점 전까지 \(\text{MnO}_4^-\)는 즉시 반응하여 무색이 됩니다. 당량점을 지나면 남은 \(\text{MnO}_4^-\)가 용액을 <span style="color:#9B30FF;">보라색</span>으로 물들여 종말점을 알 수 있습니다.</p>
         </div>
-        <div class="card">
-          <div class="card-label">옥살산 + 과망간산 반응 (대표적 적정 예시)</div>
-          <div class="math-block">
-            \[ \ce{5H2C2O4 + 2MnO4^- + 6H^+ -> 10CO2 + 2Mn^{2+} + 8H2O} \]
-          </div>
-          <div class="diagram-grid">
-            <div class="diagram-cell">
-              <div class="cell-title">분석물질 (Analyte)</div>
-              <div class="cell-desc">옥살산 (Oxalic acid, \(\ce{H2C2O4}\))<br>무색 (colorless)</div>
-            </div>
-            <div class="diagram-cell">
-              <div class="cell-title">적정시약 (Titrant)</div>
-              <div class="cell-desc">과망간산이온 (\(\ce{MnO4^-}\))<br><span style="color:#8B008B;font-weight:700;">보라색 (purple)</span></div>
-            </div>
-          </div>
-          <p>생성물(\(\ce{CO2}\), \(\ce{Mn^{2+}}\))은 모두 무색이므로, 과잉의 \(\ce{MnO4^-}\)가 첨가되면 용액이 보라색으로 변하는 시점이 <strong>종말점</strong>이다.</p>
-        </div>
-        <div class="warning-box"><strong>종말점 &ne; 당량점:</strong> 인식 가능한 변화를 만들기 위해 항상 약간의 여분의 적정시약이 필요하므로, 종말점은 당량점을 약간 지나친 지점이다.</div>
+        <div class="tip"><span>TIP</span><span>이 반응에서는 별도의 지시약이 필요 없습니다. \(\text{MnO}_4^-\) 자체가 강한 보라색이므로 <strong>자기 지시(self-indicating)</strong> 역할을 합니다.</span></div>
       </section>
 
-      <!-- ==================== Page 6 ==================== -->
+      <!-- PAGE 6 -->
       <section class="page-section" id="p6">
         <span class="page-num">Page 06</span>
-        <h2>적정오차 &amp; 바탕적정</h2>
-        <div class="summary-box">
-          <strong>종말점 &ne; 당량점</strong>이므로 항상 적정오차가 존재한다. 바탕적정(Blank Titration)을 통해 이 오차를 보정할 수 있다.
+        <h2>6.1 부피분석의 원리 &mdash; 적정오차와 바탕적정</h2>
+        <div class="summary-box">종말점과 당량점의 차이가 <strong>적정오차</strong>를 만들며, <strong>바탕적정</strong>으로 이를 보정할 수 있습니다.</div>
+        <div class="warning-box"><strong>End point &ne; Equivalence point!</strong><br>종말점은 당량점과 같지 않습니다. 물리적 변화를 감지하려면 항상 당량점을 약간 <strong>넘어선 양</strong>의 적정시약이 필요합니다.</div>
+        <div class="card"><div class="card-label">적정오차 (Titration Error)</div>
+          <p>관찰된 종말점(end point)과 실제 당량점(equivalence point) 사이의 <strong>차이</strong>입니다.</p>
         </div>
-        <div class="card">
-          <div class="card-label">적정오차 (Titration Error, 적정오차)</div>
-          <p>관찰된 <strong>종말점(End point, 종말점)</strong>과 실제 <strong>당량점(Equivalence point, 당량점)</strong> 사이의 차이이다.</p>
-          <div class="math-block">
-            \[ \text{적정오차} = V_{\text{종말점}} - V_{\text{당량점}} \]
-          </div>
-          <p>여분의 적정시약이 인식 가능한 변화를 만들기 위해 항상 필요하므로, 종말점은 당량점을 약간 지나친다.</p>
+        <div class="card"><div class="card-label">바탕적정 (Blank Titration)</div>
+          <p>분석물질을 <strong>제외</strong>하고 나머지 모든 시약만 포함한 용액을 적정하는 것입니다. 바탕적정에 소비된 부피를 실제 적정 부피에서 빼줍니다.</p>
+          <div class="math-block">\[ V_{\text{corrected}} = V_{\text{measured}} - V_{\text{blank}} \]</div>
         </div>
-        <div class="card">
-          <div class="card-label">바탕적정 (Blank Titration, 바탕적정)</div>
-          <p>분석물질을 <strong>제외한</strong> 모든 시약이 포함된 용액을 적정하는 것이다.</p>
-          <ul>
-            <li>바탕적정에서 소비된 적정시약 부피를 미지 시료 적정 부피에서 <strong>빼준다</strong></li>
-            <li>시약의 불순물이나 지시약 자체의 반응에 의한 오차를 보정</li>
-          </ul>
-          <div class="math-block">
-            \[ V_{\text{보정}} = V_{\text{시료}} - V_{\text{바탕}} \]
-          </div>
-        </div>
-        <div class="tip">바탕적정은 시약에 포함된 불순물이나 지시약 자체가 소모하는 적정시약 양을 보정하는 데 필수적이다. 정확한 분석을 위해 항상 바탕적정을 수행해야 한다.</div>
+        <div class="tip"><span>TIP</span><span>시험에서 바탕적정 부피가 주어지면, 반드시 전체 적정 부피에서 빼주세요!</span></div>
       </section>
 
-      <!-- ==================== Page 7 ==================== -->
+      <!-- PAGE 7 -->
       <section class="page-section" id="p7">
         <span class="page-num">Page 07</span>
-        <h2>일차 표준물질 &amp; 표준화</h2>
-        <div class="summary-box">
-          <strong>일차 표준물질(Primary Standard)</strong>은 충분히 순수하고 안정하여 칭량 후 직접 사용할 수 있는 시약이다. 표준화(Standardization)는 일차 표준물질과의 반응을 통해 적정시약의 농도를 결정하는 과정이다.
+        <h2>6.1 부피분석의 원리 &mdash; 일차표준물질과 표준화</h2>
+        <div class="summary-box">적정시약의 정확한 농도를 알기 위해 <strong>일차표준물질(Primary Standard)</strong>과 <strong>표준화(Standardization)</strong>가 필요합니다.</div>
+        <div class="card"><div class="card-label">일차표준물질 (Primary Standard)</div>
+          <p><strong>충분히 순수하고 안정</strong>하여 칭량 후 바로 사용할 수 있는 시약입니다.</p>
+          <ul style="margin-top:8px;"><li><strong>예:</strong> Na\(_2\)CO\(_3\) &mdash; 순수하고 안정</li>
+            <li><strong>반례:</strong> NaOH &mdash; CO\(_2\)와 수분을 흡수하므로 <strong>부적합</strong></li></ul>
         </div>
-        <div class="card">
-          <div class="card-label">일차 표준물질 (Primary Standard, 일차 표준물질)</div>
-          <p>칭량 후 직접 사용할 수 있을 만큼 <strong>순수하고 안정한</strong> 시약. 칭량된 전체 질량이 순수 시약으로 간주된다.</p>
-          <ul>
-            <li><strong>예시:</strong> \(\ce{Na2CO3}\) &mdash; 순수하고 안정하여 일차 표준물질로 사용 가능</li>
-            <li><strong>비예시:</strong> \(\ce{NaOH}\) &mdash; 공기 중의 \(\ce{CO2}\)를 흡수하여 \(\ce{Na2CO3}\)를 형성하고, 수분도 흡수하므로 일차 표준물질로 부적합</li>
-          </ul>
+        <div class="card"><div class="card-label">표준화 (Standardization)</div>
+          <p>알려진 양의 일차표준물질과 반응시켜 <strong>적정시약의 정확한 농도를 결정</strong>하는 과정입니다.</p>
         </div>
-        <div class="card">
-          <div class="card-label">일차 표준물질의 조건</div>
-          <ul>
-            <li>순도가 99.9% 이상으로 높아야 한다</li>
-            <li>공기 중에서 안정해야 한다 (흡습성이 없고, \(\ce{CO2}\) 흡수 없음)</li>
-            <li>건조 후 조성이 변하지 않아야 한다</li>
-            <li>분자량이 커서 칭량 오차가 작아야 한다</li>
-            <li>알려진 화학량론으로 반응해야 한다</li>
-          </ul>
+        <div class="card"><div class="card-label">표준용액 (Standard Solution)</div>
+          <p>표준화 과정을 통해 정확한 농도가 결정된 용액을 <strong>표준용액</strong>이라 합니다.</p>
         </div>
-        <div class="card">
-          <table class="terms-table">
-            <thead>
-              <tr><th>영어</th><th>한국어</th><th>정의</th></tr>
-            </thead>
-            <tbody>
-              <tr><td class="en">Primary Standard</td><td>일차 표준물질</td><td>충분히 순수하고 안정하여 칭량 후 직접 사용할 수 있는 시약</td></tr>
-              <tr><td class="en">Standardization</td><td>표준화</td><td>일차 표준물질과의 반응으로 적정시약의 농도를 결정하는 과정</td></tr>
-              <tr><td class="en">Standard Solution</td><td>표준용액</td><td>표준화에 의해 만들어진 농도가 정확히 알려진 용액</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="key-point">\(\ce{Na2CO3}\)는 일차 표준물질의 대표적 예시이다. \(\ce{NaOH}\)는 \(\ce{Na2CO3}\)와 \(\ce{H2O}\)를 불순물로 포함하므로 일차 표준물질로 사용할 수 없다.</div>
+        <div class="key-point"><strong>요약:</strong> 일차표준물질 &rarr; 표준화 과정 &rarr; 표준용액 생성</div>
       </section>
 
-      <!-- ==================== Page 8 ==================== -->
+      <!-- PAGE 8 -->
       <section class="page-section" id="p8">
         <span class="page-num">Page 08</span>
-        <h2>직접적정 (Direct Titration)</h2>
-        <div class="summary-box">
-          <strong>직접적정</strong>은 분석물질을 적정시약으로 직접 처리하고, 반응 완결에 필요한 적정시약의 부피를 측정하는 방법이다.
+        <h2>6.1 부피분석의 원리 &mdash; 직접적정</h2>
+        <div class="summary-box"><strong>직접적정(Direct Titration)</strong>은 분석물질에 적정시약을 직접 첨가하여 반응을 완결시키는 가장 기본적인 방법입니다.</div>
+        <div class="card"><div class="card-label">직접적정 (Direct Titration)</div>
+          <div class="math-block">\[ \text{Analyte} + \text{Titrant} \rightarrow \text{Product} \]</div>
+          <p>분석물질에 적정시약을 직접 첨가하고, 소비된 부피를 측정합니다.</p>
         </div>
-        <div class="card">
-          <div class="card-label">직접적정 (Direct Titration, 직접적정)</div>
-          <p>분석물질을 적정시약으로 직접 처리하고, 반응 완결에 필요한 적정시약의 부피를 측정한다.</p>
-          <div class="math-block">
-            \[ \text{Analyte} + \text{Titrant} \rightarrow \text{Product} \]
-          </div>
+        <div class="card"><div class="card-label">예시: 옥살산 + 과망간산 적정</div>
+          <div class="math-block">\[ 5\text{H}_2\text{C}_2\text{O}_4 + 2\text{MnO}_4^- + 6\text{H}^+ \rightarrow 10\text{CO}_2 + 2\text{Mn}^{2+} + 8\text{H}_2\text{O} \]</div>
+          <p>뷰렛에서 보라색 \(\text{MnO}_4^-\)를 떨어뜨리면, 당량점 전까지는 즉시 탈색. 당량점 이후 보라색이 유지되어 종말점 확인.</p>
         </div>
-        <div class="card">
-          <div class="card-label">대표 예시: 옥살산 + 과망간산</div>
-          <div class="math-block">
-            \[ \ce{5H2C2O4 + 2MnO4^- + 6H^+ -> 10CO2 + 2Mn^{2+} + 8H2O} \]
-          </div>
-          <ul>
-            <li><strong>분석물질:</strong> 옥살산 (\(\ce{H2C2O4}\)) &mdash; 무색</li>
-            <li><strong>적정시약:</strong> 과망간산이온 (\(\ce{MnO4^-}\)) &mdash; <span style="color:#8B008B;font-weight:700;">보라색</span></li>
-            <li><strong>생성물:</strong> \(\ce{CO2}\) (무색), \(\ce{Mn^{2+}}\) (무색)</li>
-            <li>과망간산이온 자체가 지시약 역할을 한다 &mdash; 보라색이 사라지지 않으면 종말점</li>
-          </ul>
-        </div>
-        <div class="tip">옥살산과 과망간산의 반응은 지시약 없이도 종말점을 판별할 수 있는 대표적인 직접적정 반응이다. 적정 동영상: <a href="https://www.youtube.com/watch?v=HDUd4KqBKa8&t=3s" target="_blank">YouTube 링크</a></div>
+        <div class="tip"><span>참고 영상</span><span>옥살산-과망간산 적정: https://www.youtube.com/watch?v=HDUd4KqBKa8&t=3s</span></div>
       </section>
 
-      <!-- ==================== Page 9 ==================== -->
+      <!-- PAGE 9 -->
       <section class="page-section" id="p9">
         <span class="page-num">Page 09</span>
-        <h2>역적정 (Back Titration)</h2>
-        <div class="summary-box">
-          <strong>역적정</strong>은 과량의 표준시약 1을 분석물질에 첨가하여 반응시킨 후, 남은 시약 1(잔류분)을 표준시약 2로 적정하는 방법이다.
+        <h2>6.1 부피분석의 원리 &mdash; 역적정</h2>
+        <div class="summary-box"><strong>역적정(Back Titration)</strong>은 과량의 시약 1을 먼저 넣고, 남은 시약 1을 시약 2로 적정하는 간접적 방법입니다.</div>
+        <div class="card"><div class="card-label">역적정 원리</div>
+          <ol class="step-list">
+            <li><strong>과량의 표준시약 1</strong>을 분석물질에 첨가 &rarr; 반응 후 시약 1 남음</li>
+            <li>남은(잔류) 시약 1을 <strong>표준시약 2</strong>로 적정</li>
+          </ol>
+          <div class="math-block">\[ \text{Analyte} + \text{Reagent 1 (excess)} \rightarrow \text{Product 1} + \text{Reagent 1 (residual)} \]\[ \text{Reagent 1 (residual)} + \text{Reagent 2} \rightarrow \text{Product 2} \]</div>
         </div>
-        <div class="card">
-          <div class="card-label">역적정 (Back Titration, 역적정)</div>
-          <p>분석물질에 과량의 표준시약 1을 넣어 완전히 반응시키고, 남은 시약 1을 다른 표준시약 2로 적정한다.</p>
-          <div class="step-box">
-            <div class="step-num">1</div>
-            <p><strong>1단계:</strong> 분석물질 + 시약 1 (과량) &rarr; 생성물 1 + <span style="color:red;font-weight:500;">시약 1 (잔류분)</span></p>
-          </div>
-          <div class="step-box">
-            <div class="step-num">2</div>
-            <p><strong>2단계:</strong> <span style="color:red;font-weight:500;">시약 1 (잔류분)</span> + 시약 2 &rarr; 생성물 2</p>
-          </div>
+        <div class="card"><div class="card-label">분석물질 양 계산</div>
+          <div class="math-block">\[ n_{\text{reacted}} = n_{\text{Reagent1, total}} - n_{\text{Reagent1, residual}} \]</div>
         </div>
-        <div class="card">
-          <div class="card-label">역적정에서 분석물질의 양 계산</div>
-          <div class="math-block">
-            \[ n_{\text{분석물질}} = n_{\text{시약1 (최초)}} - n_{\text{시약1 (잔류)}} \]
-          </div>
-          <p>시약 1의 잔류량은 2단계 적정에서 소비된 시약 2의 양으로부터 계산한다.</p>
-        </div>
-        <div class="tip">역적정 동영상: <a href="https://youtu.be/R14WWilIJ0o" target="_blank">YouTube 링크</a></div>
+        <div class="tip"><span>참고 영상</span><span>역적정 개념: https://youtu.be/R14WWilIJ0o</span></div>
       </section>
 
-      <!-- ==================== Page 10 ==================== -->
+      <!-- PAGE 10 -->
       <section class="page-section" id="p10">
         <span class="page-num">Page 10</span>
-        <h2>왜 역적정을 사용하는가?</h2>
-        <div class="summary-box">
-          역적정은 (1) 종말점이 직접적정보다 뚜렷할 때, (2) 분석물질과의 완전한 반응에 과량의 시약이 필요할 때 사용한다.
-        </div>
-        <div class="card">
-          <div class="card-label">역적정을 사용하는 2가지 이유</div>
-          <ol>
-            <li><strong>종말점이 더 뚜렷할 때:</strong> 직접적정의 종말점보다 역적정의 종말점이 더 명확하게 관찰되는 경우</li>
-            <li><strong>과량의 시약이 필요할 때:</strong> 분석물질과의 완전한 반응을 위해 시약 1의 과량이 필요한 경우</li>
+        <h2>6.1 부피분석의 원리 &mdash; 역적정을 사용하는 이유</h2>
+        <div class="summary-box">직접적정이 부적합한 경우 역적정을 사용하는 <strong>두 가지 이유</strong>를 설명합니다.</div>
+        <div class="card"><div class="card-label">역적정을 쓰는 경우</div>
+          <ol style="padding-left:20px;">
+            <li style="margin-bottom:12px;"><strong>역적정의 종말점이 직접적정보다 더 명확할 때</strong></li>
+            <li><strong>분석물질과 완전히 반응시키기 위해 과량의 시약이 필요할 때</strong><br>반응이 느리거나 불완전할 수 있어 과량 시약으로 확실히 완결</li>
           </ol>
         </div>
-        <div class="card">
-          <div class="card-label">예시: 과이황산 (\(\ce{H2S2O8}\), Peroxydisulfate) 분석</div>
-          <h3>1단계: 과량의 옥살산과 반응</h3>
-          <div class="math-block">
-            \[ \ce{H2S2O8 + H2C2O4 ->[\ce{Ag^+}] 2H2SO4 + 2CO2(g) ^} + \textcolor{red}{\ce{H2C2O4}} \text{ (잔류)} \]
-          </div>
-          <ul>
-            <li>\(\ce{H2S2O8}\): 미지 시료 (Unknown)</li>
-            <li>\(\ce{H2C2O4}\): 과량의 표준시약 (Excess standard reagent)</li>
-            <li>\(\ce{Ag^+}\): 촉매</li>
-          </ul>
-          <h3>2단계: 잔류 옥살산을 과망간산으로 적정</h3>
-          <div class="math-block">
-            \[ \textcolor{red}{\ce{H2C2O4}} \text{ (잔류)} + \ce{2MnO4^- + 6H^+ -> 10CO2 + 2Mn^{2+} + 8H2O} \]
-          </div>
+        <div class="card"><div class="card-label">예시: Peroxydisulfate 정량</div>
+          <p>미지 시료 \(\text{H}_2\text{S}_2\text{O}_8\)를 과량의 \(\text{H}_2\text{C}_2\text{O}_4\)와 반응 (Ag\(^+\) 촉매):</p>
+          <div class="math-block">\[ \text{H}_2\text{S}_2\text{O}_8 + \text{H}_2\text{C}_2\text{O}_4 \xrightarrow{\text{Ag}^+} 2\text{H}_2\text{SO}_4 + 2\text{CO}_2(g)\uparrow + \text{H}_2\text{C}_2\text{O}_4\text{(residual)} \]</div>
+          <p>남은 옥살산을 \(\text{MnO}_4^-\)로 역적정:</p>
+          <div class="math-block">\[ 5\text{H}_2\text{C}_2\text{O}_4 + 2\text{MnO}_4^- + 6\text{H}^+ \rightarrow 10\text{CO}_2 + 2\text{Mn}^{2+} + 8\text{H}_2\text{O} \]</div>
         </div>
-        <div class="comparison-grid">
-          <div class="card">
-            <div class="card-label">직접적정 (Direct Titration)</div>
-            <ul>
-              <li>분석물질에 적정시약을 직접 첨가</li>
-              <li>종말점에서 적정시약 부피 측정</li>
-              <li>간단하지만 종말점이 불명확할 수 있음</li>
-            </ul>
-          </div>
-          <div class="card">
-            <div class="card-label">역적정 (Back Titration)</div>
-            <ul>
-              <li>과량의 시약 1 첨가 후, 잔류분을 시약 2로 적정</li>
-              <li>2번의 반응 &rarr; 계산이 복잡</li>
-              <li>종말점이 뚜렷하고, 느린 반응에 유리</li>
-            </ul>
-          </div>
+        <div class="diagram-box"><div class="diagram-label">Peroxydisulfate 구조</div>
+          <p>\(\text{S}_2\text{O}_8^{2-}\): 두 개의 SO\(_4\) 단위가 O-O 과산화 결합으로 연결</p>
         </div>
       </section>
 
-      <!-- ==================== Page 11 ==================== -->
+      <!-- PAGE 11 -->
       <section class="page-section" id="p11">
         <span class="page-num">Page 11</span>
-        <h2>6.2 적정 계산 (Titration Calculations)</h2>
-        <div class="summary-box">
-          직접적정 결과를 분석하는 <strong>2단계</strong>: (1) 소비된 부피로부터 적정시약의 몰수 계산, (2) 화학량론적 관계로부터 분석물질의 몰수 추론.
+        <h2>6.2 적정 계산 &mdash; 분석의 2단계</h2>
+        <div class="summary-box">직접적정 결과를 분석하는 핵심 <strong>2단계</strong>입니다.</div>
+        <div class="card"><div class="card-label">직접적정 결과 분석의 2단계</div>
+          <ol class="step-list">
+            <li><strong>소비된 부피로부터 적정시약의 몰 수를 계산</strong><br>\( n_{\text{titrant}} = M_{\text{titrant}} \times V_{\text{titrant}} \)</li>
+            <li><strong>화학양론 관계로부터 분석물질의 몰 수를 결정</strong><br>반응식의 계수비를 이용하여 변환</li>
+          </ol>
         </div>
-        <div class="card">
-          <div class="card-label">적정 계산의 2단계</div>
-          <div class="step-box">
-            <div class="step-num">1</div>
-            <p>소비된 <strong>부피</strong>로부터 <strong style="color:red;">적정시약의 몰수(moles of titrant)</strong>를 계산한다.</p>
-            <div class="math-block">
-              \[ n_{\text{titrant}} = C_{\text{titrant}} \times V_{\text{consumed}} \]
-            </div>
-          </div>
-          <div class="step-box">
-            <div class="step-num">2</div>
-            <p><strong>화학량론적 관계</strong>로부터 <strong style="color:red;">분석물질의 몰수(moles of analyte)</strong>를 추론한다.</p>
-            <div class="math-block">
-              \[ n_{\text{analyte}} = n_{\text{titrant}} \times \frac{\text{계수}_{\text{analyte}}}{\text{계수}_{\text{titrant}}} \]
-            </div>
-          </div>
-        </div>
+        <div class="key-point"><strong>핵심:</strong> \( n = M \times V \)에서 출발, 계수비로 분석물질 몰 수를 구합니다. 이 2단계가 적정 계산의 전부입니다.</div>
       </section>
 
-      <!-- ==================== Page 12 ==================== -->
+      <!-- PAGE 12 -->
       <section class="page-section" id="p12">
         <span class="page-num">Page 12</span>
-        <h2>1:1 화학량론 계산 (1:1 Stoichiometry)</h2>
-        <div class="summary-box">
-          1:1 화학량론 반응에서는 적정시약의 몰수 = 분석물질의 몰수이다. \(\ce{Ag^+ + Cl^- <=> AgCl(s)}\) 반응을 예시로 계산 과정을 학습한다.
+        <h2>6.2 적정 계산 &mdash; 1:1 화학양론</h2>
+        <div class="summary-box">반응 계수가 1:1인 가장 간단한 경우의 적정 계산 예제입니다.</div>
+        <div class="card"><div class="card-label">반응식</div>
+          <div class="math-block">\[ \text{Ag}^+ + \text{Cl}^- \rightleftharpoons \text{AgCl}(s) \quad K = 5.6 \times 10^9 \]</div>
         </div>
-        <div class="card">
-          <div class="card-label">반응식</div>
-          <div class="math-block">
-            \[ \ce{Ag^+ + Cl^- <=> AgCl(s)} \quad K = 5.6 \times 10^9 \]
-          </div>
-          <p>1:1 반응이므로: \(\text{mol } \ce{Ag^+} = \text{mol } \ce{Cl^-}\)</p>
+        <div class="card"><div class="card-label">예제: Cl&minus; 농도 결정</div>
+          <p><strong>문제:</strong> 미지 염화물 용액 10.00 mL에 0.052 74 M AgNO\(_3\) 22.97 mL 필요. Cl\(^-\) 농도는?</p>
+          <div class="math-block">\[ \text{mol Ag}^+ = (0.05274)(0.02297) = 0.001\,211_4 \text{ mol} \]\[ [\text{Cl}^-] = \frac{0.001\,211_4}{0.01000} = 0.121\,1_4 \text{ M} \]</div>
         </div>
-        <div class="card">
-          <div class="card-label">예제: Cl&minus; 농도 구하기</div>
-          <p><strong>조건:</strong> 미지 염화물 용액 10.00 mL가 0.052 74 M \(\ce{AgNO3}\) 용액 22.97 mL를 소비했다.</p>
-          <h3>Step 1: \(\ce{Ag^+}\)의 몰수 계산</h3>
-          <div class="math-block">
-            \[ \text{mol } \ce{Ag^+} = (0.052\,74 \text{ mol/L})(0.022\,97 \text{ L}) = 0.001\,211_4 \text{ mol} \]
-          </div>
-          <h3>Step 2: \(\ce{Cl^-}\) 농도 계산</h3>
-          <div class="math-block">
-            \[ [\ce{Cl^-}] = \frac{\text{mol } \ce{Cl^-}}{\text{L of unknown}} = \frac{0.001\,211_4 \text{ mol}}{0.010\,00 \text{ L}} = 0.121\,1_4 \text{ M} \]
-          </div>
+        <div class="card"><div class="card-label">추가: 질량 백분율</div>
+          <p>미지 고체 1.004 g을 100.0 mL에 녹인 것이라면:</p>
+          <div class="math-block">\[ 0.001\,211_4 \text{ mol (10 mL)} \rightarrow 0.01\,211_4 \text{ mol (100 mL)} \]\[ 0.01\,211_4 \times 35.453 = 0.429\,4_8 \text{ g} \]\[ \text{wt\%} = \frac{0.4294_8}{1.004} \times 100 = 42.78\% \]</div>
         </div>
-        <div class="card">
-          <div class="card-label">추가 문제: 무게 백분율 계산</div>
-          <p>적정한 용액은 미지 고체 1.004 g을 총 100.0 mL에 녹인 것이다. 고체에서 염화물의 무게 백분율은?</p>
-          <div class="math-block">
-            \[ 0.001\,211_4 \text{ mol (10 mL)} \rightarrow 0.01\,211_4 \text{ mol (100 mL)} \]
-            \[ 0.01\,211_4 \text{ mol} \times 35.453 \text{ g/mol} = 0.429\,4_8 \text{ g } \ce{Cl^-} \]
-          </div>
-          <div class="math-block">
-            \[ \text{wt\%} \; \ce{Cl^-} = \frac{0.429\,4_8 \text{ g}}{1.004 \text{ g}} \times 100 = 42.78 \text{ wt\%} \]
-          </div>
-        </div>
-        <div class="key-point">1:1 화학량론에서는 mol(titrant) = mol(analyte)로 직접 계산 가능. 부피 비례에 주의하여 전체 시료량으로 환산해야 한다.</div>
+        <div class="tip"><span>TIP</span><span>아래첨자 숫자(예: 0.001 211<sub>4</sub>)는 마지막 유효숫자 위치를 나타냅니다.</span></div>
       </section>
 
-      <!-- ==================== Page 13 ==================== -->
+      <!-- PAGE 13 -->
       <section class="page-section" id="p13">
         <span class="page-num">Page 13</span>
-        <h2>x:y 화학량론 계산 (x:y Stoichiometry)</h2>
-        <div class="summary-box">
-          화학량론 비율이 1:1이 아닌 경우, 반응식의 계수 비를 이용하여 변환해야 한다. 옥살산과 과망간산 반응(5:2 비율)을 예시로 학습한다.
+        <h2>6.2 적정 계산 &mdash; x:y 화학양론</h2>
+        <div class="summary-box">반응 계수가 1:1이 아닌 경우, 계수비를 반드시 곱해야 합니다.</div>
+        <div class="card"><div class="card-label">반응식 (옥살산-과망간산)</div>
+          <div class="math-block">\[ 5\text{H}_2\text{C}_2\text{O}_4 + 2\text{MnO}_4^- + 6\text{H}^+ \rightarrow 10\text{CO}_2 + 2\text{Mn}^{2+} + 8\text{H}_2\text{O} \]</div>
+          <p>옥살산 : \(\text{MnO}_4^-\) = <strong>5 : 2</strong></p>
         </div>
-        <div class="card">
-          <div class="card-label">반응식: 옥살산 + 과망간산 (5:2 비율)</div>
-          <div class="math-block">
-            \[ \ce{5H2C2O4 + 2MnO4^- + 6H^+ -> 10CO2 + 2Mn^{2+} + 8H2O} \]
-          </div>
-          <p>옥살산 : 과망간산 = <strong>5 : 2</strong></p>
+        <div class="card"><div class="card-label">예제</div>
+          <p>\(2.345 \times 10^{-4}\) mol의 \(\text{MnO}_4^-\)를 소비했을 때 \(\text{H}_2\text{C}_2\text{O}_4\) 몰 수:</p>
+          <div class="math-block">\[ \text{mol H}_2\text{C}_2\text{O}_4 = (2.345 \times 10^{-4}) \times \frac{5}{2} = 5.862 \times 10^{-4} \text{ mol} \]</div>
         </div>
-        <div class="card">
-          <div class="card-label">예제: \(\ce{H2C2O4}\)의 몰수 구하기</div>
-          <p><strong>조건:</strong> 미지량의 \(\ce{H2C2O4}\)가 \(2.345 \times 10^{-4}\) mol의 \(\ce{MnO4^-}\)를 소비했다.</p>
-          <div class="math-block">
-            \[ \text{mol } \ce{H2C2O4} = (\text{mol } \ce{MnO4^-}) \times \frac{5 \text{ mol } \ce{H2C2O4}}{2 \text{ mol } \ce{MnO4^-}} \]
-          </div>
-          <div class="math-block">
-            \[ = (2.345 \times 10^{-4} \text{ mol}) \times \frac{5}{2} = 5.862 \times 10^{-4} \text{ mol} \]
-          </div>
-        </div>
-        <div class="warning-box"><strong>주의:</strong> 화학량론 비를 사용할 때 분자/분모를 바꾸지 않도록 주의! 반드시 <strong>구하고자 하는 물질</strong>의 계수를 분자에, <strong>알고 있는 물질</strong>의 계수를 분모에 놓는다.</div>
+        <div class="warning-box"><strong>주의!</strong> x:y 화학양론에서는 반드시 <strong>계수비(5/2 등)</strong>를 곱해야 합니다.</div>
       </section>
 
-      <!-- ==================== Page 14 ==================== -->
+      <!-- PAGE 14 -->
       <section class="page-section" id="p14">
         <span class="page-num">Page 14</span>
-        <h2>Ex 6-B: 아스코르브산과 삼요오드화이온 적정</h2>
-        <div class="summary-box">
-          아스코르브산(비타민 C, \(\ce{C6H8O6}\), FM: 176.126)과 삼요오드화이온(\(\ce{I3^-}\))의 1:1 반응을 이용한 적정 문제이다. 전분(starch)을 지시약으로 사용하여 미반응 \(\ce{I3^-}\)에 의한 짙은 청색이 나타나면 종말점이다.
+        <h2>Ex 6-B: 비타민C 요오드 적정 &mdash; 문제</h2>
+        <div class="summary-box">비타민C(아스코르브산)를 \(\text{I}_3^-\)(triiodide)로 적정하는 예제입니다.</div>
+        <div class="card"><div class="card-label">반응식</div>
+          <div class="math-block">\[ \text{Ascorbic acid} + \text{I}_3^- + \text{H}_2\text{O} \rightarrow \text{Dehydroascorbic acid} + 3\text{I}^- + 2\text{H}^+ \]</div>
+          <p>Ascorbic acid : \(\text{I}_3^-\) = <strong>1 : 1</strong>, FM = 176.126 g/mol</p>
+          <p>전분(starch) 지시약: 종말점에서 미반응 \(\text{I}_3^-\)이 전분과 <strong>짙은 파란색</strong> 복합체 형성</p>
         </div>
-        <div class="card">
-          <div class="card-label">반응식</div>
-          <div class="math-block">
-            \[ \ce{C6H8O6 + I3^- + H2O -> C6H6O6 + 3I^- + 2H^+} \]
+        <div class="diagram-box"><div class="diagram-label">Triiodide 이온 구조</div>
+          <p>\(\text{I}_2 + \text{I}^- \rightarrow \text{I}_3^-\) &mdash; Three center, four electron bonding: [I&mdash;I&mdash;I]\(^-\)</p>
+        </div>
+        <div class="card"><div class="card-label">문제</div>
+          <p><strong>(a)</strong> 순수 아스코르브산 0.1970 g + \(\text{I}_3^-\) 29.41 mL &rarr; \(\text{I}_3^-\) 몰농도?</p>
+          <p><strong>(b)</strong> 비타민C 정제 분쇄물 0.4242 g + \(\text{I}_3^-\) 31.63 mL &rarr; 아스코르브산 몰 수?</p>
+          <p><strong>(c)</strong> 정제 속 아스코르브산 질량 백분율?</p>
+        </div>
+      </section>
+
+      <!-- PAGE 15 -->
+      <section class="page-section" id="p15">
+        <span class="page-num">Page 15</span>
+        <h2>Ex 6-B: 비타민C 요오드 적정 &mdash; 풀이</h2>
+        <div class="summary-box">Ex 6-B의 세 문항에 대한 풀이입니다.</div>
+        <div class="card"><div class="card-label">(a) I3- 몰농도</div>
+          <div class="math-block">\[ \text{mol ascorbic acid} = \frac{0.1970}{176.126} = 1.1184 \times 10^{-3} \text{ mol} \]\[ [\text{I}_3^-] = \frac{1.1184 \times 10^{-3}}{0.02941} = 0.03803 \text{ M} \]</div>
+        </div>
+        <div class="card"><div class="card-label">(b) 아스코르브산 몰 수</div>
+          <div class="math-block">\[ \text{mol} = (0.03803)(0.03163) = 1.2025 \times 10^{-3} \text{ mol} \]</div>
+        </div>
+        <div class="card"><div class="card-label">(c) 질량 백분율</div>
+          <div class="math-block">\[ \text{mass} = 1.2025 \times 10^{-3} \times 176.126 = 0.2118 \text{ g} \]\[ \text{wt\%} = \frac{0.2118}{0.4242} \times 100 = 49.9\% \]</div>
+        </div>
+        <div class="tip"><span>TIP</span><span>(a)의 몰농도를 (b)에서 사용하고, (b) 결과로 (c)를 푸는 <strong>연쇄 계산</strong> 구조입니다.</span></div>
+      </section>
+
+      <!-- PAGE 16 -->
+      <section class="page-section" id="p16">
+        <span class="page-num">Page 16</span>
+        <h2>6.3 수족관의 화학 &mdash; 질소 순환</h2>
+        <div class="summary-box">수족관(aquarium)에서 일어나는 <strong>질소 순환(Nitrogen Cycle)</strong>을 통해 적정의 실제 응용을 배웁니다.</div>
+        <div class="card"><div class="card-label">질소 순환 (Nitrogen Cycle)</div>
+          <div class="diagram-box"><div class="diagram-label">수족관 질소 순환도</div>
+            <p><strong>Higher plants</strong> &harr; <strong>Amino acids</strong> &harr; <strong>Higher animals</strong></p>
+            <p>&darr; (배설) &rarr; <strong>Urea (H\(_2\)N-CO-NH\(_2\))</strong></p>
+            <p>&darr; (분해) &rarr; <strong>NH\(_3\)</strong> (암모니아) &larr; <span style="color:red;">해양 생물에 유독!</span></p>
+            <p>&darr; <em>Nitrosomonas</em> &rarr; <strong>NO\(_2^-\)</strong> (Nitrite)</p>
+            <p>&darr; <em>Nitrobacter</em> &rarr; <strong>NO\(_3^-\)</strong> (Nitrate)</p>
+            <p>&rarr; 식물 흡수 / N\(_2\)-fixing bacteria</p>
           </div>
-          <div class="diagram-grid">
-            <div class="diagram-cell">
-              <div class="cell-title">아스코르브산 (Ascorbic acid)</div>
-              <div class="cell-desc">비타민 C, FM = 176.126 g/mol</div>
-            </div>
-            <div class="diagram-cell">
-              <div class="cell-title">디히드로아스코르브산 (Dehydroascorbic acid)</div>
-              <div class="cell-desc">산화된 생성물</div>
-            </div>
+        </div>
+        <div class="key-point"><strong>핵심:</strong> 수족관에서 NH\(_3\)가 박테리아에 의해 NO\(_2^-\), NO\(_3^-\)로 산화되는 과정이 <strong>질화(nitrification)</strong>입니다.</div>
+      </section>
+
+      <!-- PAGE 17 -->
+      <section class="page-section" id="p17">
+        <span class="page-num">Page 17</span>
+        <h2>6.3 수족관의 화학 &mdash; 질화과정 (Nitrification)</h2>
+        <div class="summary-box">NH\(_3\)가 박테리아에 의해 단계적으로 산화되는 <strong>질화과정</strong>의 화학반응입니다.</div>
+        <div class="card"><div class="card-label">반응 단계</div>
+          <p><strong>1단계:</strong> 유기물 &rarr; NH\(_3\)</p>
+          <div class="math-block">\[ \text{complex organic molecules} \xrightarrow{\text{heterotrophic bacteria}} \text{NH}_3 \]</div>
+          <p><strong>2단계:</strong> NH\(_3\) &rarr; NO\(_2^-\)</p>
+          <div class="math-block">\[ \text{NH}_3 + 2\text{O}_2 + \text{NADH} \xrightarrow{\textit{Nitrosomonas}} \text{NO}_2^- + 2\text{H}_2\text{O} + \text{NAD}^+ \]</div>
+          <p><strong>3단계:</strong> NO\(_2^-\) &rarr; NO\(_3^-\)</p>
+          <div class="math-block">\[ 2\text{NO}_2^- + \text{O}_2 \xrightarrow{\textit{Nitrobacter}} 2\text{NO}_3^- \]</div>
+        </div>
+        <div class="card"><div class="card-label">시간별 농도 그래프</div>
+          <div class="diagram-box"><div class="diagram-label">NH3, NO2-, NO3- 농도 vs Day</div>
+            <p><strong>NH\(_3\):</strong> 초기 급상승 &rarr; Day 15 최대 &rarr; 급감</p>
+            <p><strong>NO\(_2^-\):</strong> NH\(_3\) 감소 후 상승 &rarr; Day 20 최대 &rarr; 급감</p>
+            <p><strong>NO\(_3^-\):</strong> 점진적으로 계속 상승</p>
           </div>
-          <p><strong>화학량론:</strong> 아스코르브산 : \(\ce{I3^-}\) = <strong>1 : 1</strong></p>
         </div>
-        <div class="card">
-          <div class="card-label">삼요오드화이온 (Triiodide ion, \(\ce{I3^-}\))</div>
-          <p>\(\ce{I2 + I^- -> I3^-}\)</p>
-          <p>세 중심 네 전자 결합 (Three center, four electron bonding): \([\ce{I-I-I}]^-\)</p>
+      </section>
+
+      <!-- PAGE 18 -->
+      <section class="page-section" id="p18">
+        <span class="page-num">Page 18</span>
+        <h2>6.3 수족관의 화학 &mdash; NaNO\(_2\) 표준화 개요</h2>
+        <div class="summary-box">NaNO\(_2\)는 일차표준물질이 아니므로 <strong>2단계 표준화</strong>가 필요합니다.</div>
+        <div class="card"><div class="card-label">왜 2단계인가?</div>
+          <ul style="padding-left:20px;">
+            <li>NaNO\(_2\)는 일차표준물질이 아님</li>
+            <li>KMnO\(_4\)로 적정하여 NaNO\(_2\) 농도 결정 가능</li>
+            <li>그러나 KMnO\(_4\)도 일차표준물질이 아님!</li>
+          </ul>
+          <div class="math-block">\[ 5\text{NO}_2^- + 2\text{MnO}_4^- + 6\text{H}^+ \rightarrow 5\text{NO}_3^- + 2\text{Mn}^{2+} + 3\text{H}_2\text{O} \]</div>
         </div>
-        <div class="card">
-          <div class="card-label">문제</div>
-          <p>전분을 지시약으로 사용하며, 미반응 \(\ce{I3^-}\)와 전분의 짙은 청색 복합체가 나타나면 종말점이다.</p>
-          <ol>
-            <li><strong>(a)</strong> 순수 아스코르브산 0.197 0 g과 반응하는 데 \(\ce{I3^-}\) 용액 29.41 mL가 필요했다. \(\ce{I3^-}\) 용액의 몰농도는?</li>
-            <li><strong>(b)</strong> 아스코르브산과 불활성 결합제(binder)를 포함하는 비타민 C 정제를 분쇄하여 0.424 2 g을 31.63 mL의 \(\ce{I3^-}\)로 적정했다. 시료에 존재하는 아스코르브산의 몰수는?</li>
-            <li><strong>(c)</strong> 정제에서 아스코르브산의 무게 백분율을 구하라.</li>
+        <div class="card"><div class="card-label">2단계 전략</div>
+          <ol class="step-list">
+            <li><strong>KMnO\(_4\) 표준화:</strong> 일차표준물질 Na\(_2\)C\(_2\)O\(_4\) 사용</li>
+            <li><strong>NaNO\(_2\) 표준화:</strong> 표준화된 KMnO\(_4\) 사용</li>
           </ol>
         </div>
       </section>
 
-      <!-- ==================== Page 15 ==================== -->
-      <section class="page-section" id="p15">
-        <span class="page-num">Page 15</span>
-        <h2>Ex 6-B: 풀이</h2>
-        <div class="summary-box">
-          아스코르브산과 \(\ce{I3^-}\)의 1:1 화학량론을 이용하여 단계별로 풀이한다.
-        </div>
-        <div class="card">
-          <div class="card-label">(a) \(\ce{I3^-}\) 용액의 몰농도</div>
-          <div class="step-box">
-            <div class="step-num">1</div>
-            <p>아스코르브산의 몰수 계산:</p>
-            <div class="math-block">
-              \[ n_{\text{ascorbic}} = \frac{0.1970 \text{ g}}{176.126 \text{ g/mol}} = 1.118 \times 10^{-3} \text{ mol} \]
-            </div>
-          </div>
-          <div class="step-box">
-            <div class="step-num">2</div>
-            <p>1:1 화학량론이므로 \(n_{\ce{I3^-}} = n_{\text{ascorbic}}\):</p>
-            <div class="math-block">
-              \[ [\ce{I3^-}] = \frac{1.118 \times 10^{-3} \text{ mol}}{0.02941 \text{ L}} = 0.03803 \text{ M} \]
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-label">(b) 비타민 C 정제의 아스코르브산 몰수</div>
-          <div class="math-block">
-            \[ n_{\text{ascorbic}} = n_{\ce{I3^-}} = (0.03803 \text{ M})(0.03163 \text{ L}) = 1.203 \times 10^{-3} \text{ mol} \]
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-label">(c) 아스코르브산의 무게 백분율</div>
-          <div class="step-box">
-            <div class="step-num">1</div>
-            <p>아스코르브산의 질량:</p>
-            <div class="math-block">
-              \[ m = 1.203 \times 10^{-3} \text{ mol} \times 176.126 \text{ g/mol} = 0.2119 \text{ g} \]
-            </div>
-          </div>
-          <div class="step-box">
-            <div class="step-num">2</div>
-            <p>무게 백분율:</p>
-            <div class="math-block">
-              \[ \text{wt\%} = \frac{0.2119 \text{ g}}{0.4242 \text{ g}} \times 100 = 49.95 \text{ wt\%} \]
-            </div>
-          </div>
-        </div>
-        <div class="key-point">이 문제의 핵심: (a)에서 구한 \(\ce{I3^-}\)의 몰농도(표준화)를 (b)에서 미지 시료 분석에 사용한다. 이것이 바로 표준화 &rarr; 분석의 전형적인 흐름이다.</div>
-      </section>
-
-      <!-- ==================== Page 16 ==================== -->
-      <section class="page-section" id="p16">
-        <span class="page-num">Page 16</span>
-        <h2>6.3 수족관의 화학 &mdash; 질소 순환 (Nitrogen Cycle)</h2>
-        <div class="summary-box">
-          수족관에서의 <strong>질소 순환(Nitrogen Cycle)</strong>은 분석화학의 실제 응용 사례이다. 유기물 분해로 생성된 유독한 \(\ce{NH3}\)가 세균에 의해 \(\ce{NO2^-}\) (아질산이온), \(\ce{NO3^-}\) (질산이온)로 산화되는 과정이다.
-        </div>
-        <div class="card">
-          <div class="card-label">질소 순환 개요</div>
-          <div class="nitrogen-cycle">
-            <div class="cycle-node">고등 동물<br>(Higher animals)</div>
-            <div class="cycle-arrow">&rarr;</div>
-            <div class="cycle-node">아미노산<br>(Amino acids)</div>
-            <div class="cycle-arrow">&rarr;</div>
-            <div class="cycle-node" style="border-color:#c00;">요소 (Urea)<br>\(\ce{(H2N)2CO}\)</div>
-          </div>
-          <div class="nitrogen-cycle">
-            <div class="cycle-node" style="border-color:#c00;">\(\ce{NH3}\)<br>암모니아<br><span style="color:red;font-size:12px;">해양 생물에 유독</span></div>
-            <div class="cycle-arrow">&rarr;<br><span style="font-size:11px;">Nitrosomonas</span></div>
-            <div class="cycle-node">\(\ce{NO2^-}\)<br>아질산이온<br>(Nitrite)</div>
-            <div class="cycle-arrow">&rarr;<br><span style="font-size:11px;">Nitrobacter</span></div>
-            <div class="cycle-node" style="border-color:#228B22;">\(\ce{NO3^-}\)<br>질산이온<br>(Nitrate)</div>
-            <div class="cycle-arrow">&rarr;</div>
-            <div class="cycle-node">고등 식물<br>(Higher plants)</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-label">질소 순환의 주요 경로</div>
-          <ul>
-            <li>고등 동물 &rarr; 아미노산 &rarr; 요소(\(\ce{(H2N)2CO}\))</li>
-            <li>요소 &rarr; \(\ce{NH3}\) (암모니아) &mdash; <strong style="color:red;">해양 생물에 유독!</strong></li>
-            <li>\(\ce{NH3}\) &rarr; \(\ce{NO2^-}\) (질화세균 Nitrosomonas에 의해)</li>
-            <li>\(\ce{NO2^-}\) &rarr; \(\ce{NO3^-}\) (질화세균 Nitrobacter에 의해)</li>
-            <li>\(\ce{NO3^-}\) &rarr; 고등 식물에 흡수</li>
-            <li>질소 고정 세균 (Nitrogen-fixing bacteria)이 \(\ce{N2}\)를 고정</li>
-          </ul>
-        </div>
-        <div class="warning-box">\(\ce{NH3}\)(암모니아)는 수중 생물에 매우 유독하다. 수족관에서 질소 순환이 정상적으로 이루어지지 않으면 암모니아가 축적되어 물고기가 위험에 처할 수 있다.</div>
-      </section>
-
-      <!-- ==================== Page 17 ==================== -->
-      <section class="page-section" id="p17">
-        <span class="page-num">Page 17</span>
-        <h2>질산화 반응 (Nitrification)</h2>
-        <div class="summary-box">
-          <strong>질산화(Nitrification)</strong>는 \(\ce{NH3}\)가 \(\ce{NO2^-}\)와 \(\ce{NO3^-}\)로 산화되는 과정이다. 이종영양세균과 질화세균이 관여한다.
-        </div>
-        <div class="card">
-          <div class="card-label">질산화 3단계 반응</div>
-          <h3>1단계: 유기물 &rarr; 암모니아</h3>
-          <div class="math-block">
-            \[ \text{복잡한 유기 분자} \xrightarrow{\text{이종영양 세균}} \ce{NH3} \text{ (암모니아)} \]
-          </div>
-          <h3>2단계: 암모니아 &rarr; 아질산이온 (Nitrosomonas)</h3>
-          <div class="math-block">
-            \[ \ce{NH3 + 2O2 + NADH} \xrightarrow{\textit{Nitrosomonas}} \ce{NO2^- + 2H2O + NAD^+} \]
-          </div>
-          <p>NADH: 생화학적 환원제 (A biochemical reducing agent)</p>
-          <p>\(\ce{NAD^+}\): 산화된 생성물 (Oxidized product)</p>
-          <h3>3단계: 아질산이온 &rarr; 질산이온 (Nitrobacter)</h3>
-          <div class="math-block">
-            \[ \ce{2NO2^- + O2} \xrightarrow{\textit{Nitrobacter}} \ce{2NO3^-} \]
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-label">수족관 내 농도 변화 추이</div>
-          <p>새 수족관을 설정한 후 시간에 따른 질소 화합물 농도 변화:</p>
-          <ul>
-            <li><strong>0&ndash;10일:</strong> \(\ce{NH3}\) 농도가 급격히 증가 (Nitrosomonas가 아직 증식하지 않음)</li>
-            <li><strong>10&ndash;15일:</strong> \(\ce{NH3}\)가 감소하고 \(\ce{NO2^-}\)가 증가 (Nitrosomonas 활성화)</li>
-            <li><strong>15&ndash;25일:</strong> \(\ce{NO2^-}\)가 감소하고 \(\ce{NO3^-}\)가 증가 (Nitrobacter 활성화)</li>
-            <li><strong>25일 이후:</strong> 안정 상태 &mdash; \(\ce{NH3}\)와 \(\ce{NO2^-}\)는 낮은 수준, \(\ce{NO3^-}\)가 축적</li>
-          </ul>
-        </div>
-        <div class="tip">수족관에서 \(\ce{NO2^-}\)(아질산이온)의 농도를 모니터링하는 것은 수질 관리의 핵심이다. 이를 위해 정확한 \(\ce{NaNO2}\) 표준용액이 필요하며, 이것이 다음 절에서 다루는 표준화 과정으로 연결된다.</div>
-      </section>
-
-      <!-- ==================== Page 18 ==================== -->
-      <section class="page-section" id="p18">
-        <span class="page-num">Page 18</span>
-        <h2>\(\ce{NaNO2}\) 표준화 &mdash; 왜 3가지 용액이 필요한가?</h2>
-        <div class="summary-box">
-          수족관의 \(\ce{NO2^-}\) 농도를 분광광도법으로 측정하려면, 정확한 농도의 \(\ce{NaNO2}\) 표준용액이 필요하다. 그런데 \(\ce{NaNO2}\)도 \(\ce{KMnO4}\)도 일차 표준물질이 아니므로, 2단계 표준화 과정이 필요하다.
-        </div>
-        <div class="card">
-          <div class="card-label">문제 상황</div>
-          <ul>
-            <li>아질산이온(\(\ce{NO2^-}\))은 <strong>분광광도법</strong>(spectrophotometric procedure)으로 측정</li>
-            <li>분광광도법에 사용할 검정 곡선(calibration curve)을 만들려면 <strong>정확한 농도의 \(\ce{NaNO2}\) 용액</strong>이 필요</li>
-            <li>그러나 \(\ce{NaNO2}\)는 일차 표준물질로 사용할 수 <strong>없다</strong></li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="card-label">\(\ce{NaNO2}\)의 표준화 반응</div>
-          <div class="math-block">
-            \[ \ce{5NO2^- + 2MnO4^- + 6H^+ -> 5NO3^- + 2Mn^{2+} + 3H2O} \]
-          </div>
-          <p>그러나 \(\ce{KMnO4}\) 역시 일차 표준물질이 아니다!</p>
-        </div>
-        <div class="card">
-          <div class="card-label">따라서 2단계 표준화가 필요</div>
-          <div class="step-box">
-            <div class="step-num">1</div>
-            <p><strong>1단계:</strong> 일차 표준물질 \(\ce{Na2C2O4}\)를 사용하여 \(\ce{KMnO4}\)를 표준화</p>
-          </div>
-          <div class="step-box">
-            <div class="step-num">2</div>
-            <p><strong>2단계:</strong> 표준화된 \(\ce{KMnO4}\)를 사용하여 \(\ce{NaNO2}\)를 표준화</p>
-          </div>
-        </div>
-        <div class="key-point">
-          <strong>표준화의 연쇄(chain of standardization):</strong><br>
-          \(\ce{Na2C2O4}\) (일차 표준물질) &rarr; \(\ce{KMnO4}\) 표준화 &rarr; \(\ce{NaNO2}\) 표준화 &rarr; 검정 곡선 작성 &rarr; 미지 시료 분석
-        </div>
-      </section>
-
-      <!-- ==================== Page 19 ==================== -->
+      <!-- PAGE 19 -->
       <section class="page-section" id="p19">
         <span class="page-num">Page 19</span>
-        <h2>3가지 용액 준비</h2>
-        <div class="summary-box">
-          \(\ce{NaNO2}\) 표준화를 위해 3가지 용액을 준비해야 한다: (a) \(\ce{Na2C2O4}\), (b) \(\ce{KMnO4}\), (c) \(\ce{NaNO2}\).
+        <h2>6.3 수족관의 화학 &mdash; 용액 준비 (Step 0)</h2>
+        <div class="summary-box">2단계 표준화를 위한 <strong>세 가지 용액</strong> 준비입니다.</div>
+        <div class="card"><div class="card-label">준비할 용액</div>
+          <table class="terms-table"><thead><tr><th>용액</th><th>FW</th><th>준비량</th><th>~농도</th></tr></thead><tbody>
+            <tr><td class="en">Na2C2O4</td><td>134.00</td><td>~3.3 g/1L</td><td>~0.025 M</td></tr>
+            <tr><td class="en">KMnO4</td><td>158.03</td><td>~1.6 g/1L</td><td>~0.010 M</td></tr>
+            <tr><td class="en">NaNO2</td><td>68.995</td><td>~1.25 g/1L</td><td>~0.018 M</td></tr>
+          </tbody></table>
         </div>
-        <div class="card">
-          <table class="terms-table">
-            <thead>
-              <tr><th>용액</th><th>화학식</th><th>FW (g/mol)</th><th>준비</th><th>대략적 농도</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>a.</strong> 옥살산나트륨</td>
-                <td class="en">\(\ce{Na2C2O4}\)</td>
-                <td>134.00</td>
-                <td>~3.3 g in 1 L</td>
-                <td>&asymp; 0.025 M</td>
-              </tr>
-              <tr>
-                <td><strong>b.</strong> 과망간산칼륨</td>
-                <td class="en">\(\ce{KMnO4}\)</td>
-                <td>158.03</td>
-                <td>~1.6 g in 1 L</td>
-                <td>&asymp; 0.010 M</td>
-              </tr>
-              <tr>
-                <td><strong>c.</strong> 아질산나트륨</td>
-                <td class="en">\(\ce{NaNO2}\)</td>
-                <td>68.995</td>
-                <td>~1.25 g in 1 L</td>
-                <td>&asymp; 0.018 M</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="card"><div class="card-label">주의사항</div>
+          <p>Na\(_2\)C\(_2\)O\(_4\)는 일차표준물질: 정확한 칭량 질량을 기록하여 몰농도 계산 필요</p>
         </div>
-        <div class="card">
-          <div class="card-label">중요 사항</div>
-          <ul>
-            <li><strong>\(\ce{Na2C2O4}\):</strong> 정확히 3.3 g을 칭량할 필요는 없지만, <strong>정확한 질량</strong>을 기록하여 몰농도를 계산해야 한다 (일차 표준물질이므로)</li>
-            <li><strong>\(\ce{KMnO4}\):</strong> \(\ce{MnO4^-}\)는 유기물에 대해 반응성이 매우 높으므로 주의!</li>
-            <li><strong>\(\ce{NaNO2}\):</strong> 최종 표준화 대상</li>
-          </ul>
-        </div>
-        <div class="warning-box"><strong>주의:</strong> \(\ce{MnO4^-}\)는 유기물(organic materials)에 대해 매우 반응성이 높다. 피부, 옷, 실험대 등에 묻으면 갈색 얼룩이 생기므로 취급에 주의해야 한다.</div>
+        <div class="warning-box"><strong>주의:</strong> MnO\(_4^-\)는 유기물에 매우 반응성이 높으므로 유기물 오염 주의!</div>
       </section>
 
-      <!-- ==================== Page 20 ==================== -->
+      <!-- PAGE 20 -->
       <section class="page-section" id="p20">
         <span class="page-num">Page 20</span>
-        <h2>\(\ce{KMnO4}\) 표준화 계산</h2>
-        <div class="summary-box">
-          일차 표준물질인 \(\ce{Na2C2O4}\)를 사용하여 \(\ce{KMnO4}\)의 정확한 몰농도를 결정하는 표준화 계산을 수행한다.
+        <h2>6.3 수족관의 화학 &mdash; (1) KMnO\(_4\) 표준화</h2>
+        <div class="summary-box">Na\(_2\)C\(_2\)O\(_4\)를 이용하여 KMnO\(_4\) 몰농도를 결정합니다.</div>
+        <div class="card"><div class="card-label">실험 데이터</div>
+          <p>Na\(_2\)C\(_2\)O\(_4\) 3.299 g / 1.000 L &bull; 25.00 mL aliquot &bull; KMnO\(_4\) 28.36 mL &bull; 바탕 0.03 mL</p>
         </div>
-        <div class="card">
-          <div class="card-label">(1) \(\ce{KMnO4}\) 표준화: 실험 조건</div>
-          <ul>
-            <li>\(\ce{Na2C2O4}\) (FW: 134.00) 3.299 g을 1 M \(\ce{H2SO4}\) 1.000 L에 용해</li>
-            <li>25.00 mL 분취액(aliquot)을 \(\ce{KMnO4}\)로 적정 &rarr; 28.36 mL 소비</li>
-            <li>바탕적정: 1 M \(\ce{H2SO4}\) 25 mL &rarr; \(\ce{KMnO4}\) 0.03 mL 소비</li>
-          </ul>
+        <div class="card"><div class="card-label">풀이</div>
+          <div class="math-block">\[ \text{mol Na}_2\text{C}_2\text{O}_4 = \frac{3.299}{134.00} = 0.02461_9 \text{ mol} \]\[ \text{mol in 25 mL} = 0.02461_9 \times 0.02500 = 6.154_9 \times 10^{-4} \]\[ \text{mol MnO}_4^- = 6.154_9 \times 10^{-4} \times \frac{2}{5} = 2.461_9 \times 10^{-4} \]\[ [\text{MnO}_4^-] = \frac{2.461_9 \times 10^{-4}}{0.02836} = 8.681_0 \times 10^{-3} \text{ M} \]</div>
         </div>
-        <div class="card">
-          <div class="card-label">반응식</div>
-          <div class="math-block">
-            \[ \ce{5H2C2O4 + 2MnO4^- + 6H^+ -> 10CO2 + 2Mn^{2+} + 8H2O} \]
-          </div>
-          <p>옥살산 : 과망간산 = <strong>5 : 2</strong> (즉, \(\ce{C2O4^{2-}} : \ce{MnO4^-} = 5 : 2\))</p>
+        <div class="tip"><span>TIP</span><span>바탕적정 부피(0.03 mL)를 빼주는 것을 잊지 마세요!</span></div>
+      </section>
+
+      <!-- PAGE 21 -->
+      <section class="page-section" id="p21">
+        <span class="page-num">Page 21</span>
+        <h2>6.3 수족관의 화학 &mdash; (2) NaNO\(_2\) 표준화</h2>
+        <div class="summary-box">표준화된 KMnO\(_4\)로 NaNO\(_2\) 몰농도를 결정합니다.</div>
+        <div class="card"><div class="card-label">반응식 및 풀이</div>
+          <div class="math-block">\[ 5\text{NO}_2^- + 2\text{MnO}_4^- + 6\text{H}^+ \rightarrow 5\text{NO}_3^- + \text{Mn}^{2+} + 3\text{H}_2\text{O} \]</div>
+          <p>\(8.681_0 \times 10^{-3}\) M KMnO\(_4\) 25.00 mL가 NaNO\(_2\) 34.76 mL 소비:</p>
+          <div class="math-block">\[ \text{mol KMnO}_4 = (8.681_0 \times 10^{-3})(0.02500) = 2.170_3 \times 10^{-4} \]\[ \text{mol NaNO}_2 = 2.170_3 \times 10^{-4} \times \frac{5}{2} = 5.425_6 \times 10^{-4} \]\[ [\text{NaNO}_2] = \frac{5.425_6 \times 10^{-4}}{0.03476} = 0.01561 \text{ M} \]</div>
         </div>
-        <div class="card">
-          <div class="card-label">풀이 과정</div>
-          <h3>Step 1: \(\ce{Na2C2O4}\)의 몰수와 농도</h3>
-          <div class="math-block">
-            \[ \text{mol } \ce{Na2C2O4} = \frac{3.299 \text{ g}}{134.00 \text{ g/mol}} = 0.024\,61_9 \text{ mol} \]
-          </div>
-          <div class="math-block">
-            \[ [\ce{Na2C2O4}] = \frac{0.024\,61_9 \text{ mol}}{1.000 \text{ L}} = 0.024\,61_9 \text{ M} \]
-          </div>
-          <h3>Step 2: 25.00 mL 분취액 중 \(\ce{Na2C2O4}\)의 몰수</h3>
-          <div class="math-block">
-            \[ \text{mol } \ce{Na2C2O4} \text{ in 25 mL} = 0.024\,61_9 \text{ M} \times 0.025\,00 \text{ L} = 6.154_9 \times 10^{-4} \text{ mol} \]
-          </div>
-          <h3>Step 3: \(\ce{MnO4^-}\)의 몰수 (5:2 화학량론)</h3>
-          <div class="math-block">
-            \[ \text{mol } \ce{MnO4^-} = \text{mol } \ce{C2O4^{2-}} \times \frac{2}{5} = 6.154_9 \times 10^{-4} \times \frac{2}{5} = 2.461_9 \times 10^{-4} \text{ mol} \]
-          </div>
-          <h3>Step 4: \(\ce{MnO4^-}\) 농도 (바탕적정 보정)</h3>
-          <div class="math-block">
-            \[ V_{\text{보정}} = 28.36 - 0.03 = 28.33 \text{ mL} \]
-          </div>
-          <div class="math-block">
-            \[ [\ce{MnO4^-}] = \frac{2.461_9 \times 10^{-4} \text{ mol}}{0.028\,36 \text{ L}} = \textcolor{red}{8.681_0 \times 10^{-3} \text{ M}} \]
-          </div>
+        <div class="key-point"><strong>결론:</strong> Na\(_2\)C\(_2\)O\(_4\) &rarr; KMnO\(_4\) &rarr; NaNO\(_2\)의 2단계 체인 완성!</div>
+      </section>
+
+      <!-- PAGE 22 -->
+      <section class="page-section" id="p22">
+        <span class="page-num">Page 22</span>
+        <h2>Ex 6-C: 2단계 표준화 연습문제</h2>
+        <div class="summary-box">2단계 표준화를 직접 연습하는 문제입니다.</div>
+        <div class="card"><div class="card-label">문제</div>
+          <p><strong>(a)</strong> Na\(_2\)C\(_2\)O\(_4\) 3.514 g / 1.000 L. 25.00 mL에 KMnO\(_4\) 24.44 mL, 바탕 0.03 mL. KMnO\(_4\) 몰농도?</p>
+          <p><strong>(b)</strong> (a)의 KMnO\(_4\) 25.00 mL로 NaNO\(_2\) 38.11 mL 소비. NaNO\(_2\) 몰농도?</p>
         </div>
-        <div class="key-point">
-          이 표준화 결과(\([\ce{MnO4^-}] = 8.681 \times 10^{-3}\) M)를 사용하여 다음 단계인 \(\ce{NaNO2}\) 표준화를 수행할 수 있다. 바탕적정에 의한 보정(0.03 mL 차감)을 반드시 적용해야 한다.
+        <div class="card"><div class="card-label">풀이</div>
+          <details><summary>(a) KMnO4 몰농도</summary>
+            <div class="math-block">\[ \text{mol} = \frac{3.514}{134.00} = 0.02622 \text{ mol} \]\[ \text{in 25 mL} = 6.556 \times 10^{-4} \]\[ \text{mol MnO}_4^- = 6.556 \times 10^{-4} \times \frac{2}{5} = 2.622 \times 10^{-4} \]\[ [\text{MnO}_4^-] = \frac{2.622 \times 10^{-4}}{0.02441} = 1.074 \times 10^{-2} \text{ M} \]</div>
+          </details>
+          <details><summary>(b) NaNO2 몰농도</summary>
+            <div class="math-block">\[ \text{mol KMnO}_4 = 1.074 \times 10^{-2} \times 0.02500 = 2.686 \times 10^{-4} \]\[ \text{mol NaNO}_2 = 2.686 \times 10^{-4} \times \frac{5}{2} = 6.714 \times 10^{-4} \]\[ [\text{NaNO}_2] = \frac{6.714 \times 10^{-4}}{0.03811} = 0.01762 \text{ M} \]</div>
+          </details>
         </div>
       </section>
 
-      <!-- ==================== Glossary ==================== -->
-      <section class="page-section" id="glossary">
-        <span class="page-num">용어 총정리</span>
-        <h2>Chapter 6 핵심 용어 정리</h2>
-        <div class="card">
-          <table class="terms-table">
-            <thead>
-              <tr><th>영어</th><th>한국어</th><th>정의</th></tr>
-            </thead>
-            <tbody>
-              <tr><td class="en">Volumetric Analysis</td><td>부피 분석</td><td>시약의 부피를 측정하여 분석물질의 양을 결정하는 기법</td></tr>
-              <tr><td class="en">Titration</td><td>적정</td><td>적정시약을 분석물질에 반응 완결까지 첨가하는 절차</td></tr>
-              <tr><td class="en">Titrant</td><td>적정시약</td><td>뷰렛에서 분석물질에 첨가되는 물질</td></tr>
-              <tr><td class="en">Analyte</td><td>분석물질</td><td>분석 대상인 물질</td></tr>
-              <tr><td class="en">Equivalence Point</td><td>당량점</td><td>화학량론적 반응에 정확히 충분한 양의 적정시약이 첨가된 지점</td></tr>
-              <tr><td class="en">End Point</td><td>종말점</td><td>물리적 성질이 급격히 변하는 관찰 가능한 지점</td></tr>
-              <tr><td class="en">Titration Error</td><td>적정오차</td><td>종말점과 당량점 사이의 차이</td></tr>
-              <tr><td class="en">Blank Titration</td><td>바탕적정</td><td>분석물질 없이 모든 시약을 적정하여 보정값을 얻는 과정</td></tr>
-              <tr><td class="en">Primary Standard</td><td>일차 표준물질</td><td>충분히 순수하고 안정하여 칭량 후 직접 사용 가능한 시약</td></tr>
-              <tr><td class="en">Standardization</td><td>표준화</td><td>일차 표준물질과의 반응으로 적정시약 농도를 결정하는 과정</td></tr>
-              <tr><td class="en">Standard Solution</td><td>표준용액</td><td>표준화에 의해 정확한 농도가 알려진 용액</td></tr>
-              <tr><td class="en">Direct Titration</td><td>직접적정</td><td>분석물질을 적정시약으로 직접 적정하는 방법</td></tr>
-              <tr><td class="en">Back Titration</td><td>역적정</td><td>과량의 시약 1 첨가 후 잔류분을 시약 2로 적정하는 방법</td></tr>
-              <tr><td class="en">Stoichiometry</td><td>화학량론</td><td>화학 반응에서 반응물과 생성물의 양적 관계</td></tr>
-              <tr><td class="en">Nitrification</td><td>질산화</td><td>\(\ce{NH3}\)가 \(\ce{NO2^-}\), \(\ce{NO3^-}\)로 산화되는 과정</td></tr>
-              <tr><td class="en">Permanganate</td><td>과망간산이온</td><td>\(\ce{MnO4^-}\), 보라색의 강력한 산화제, 자체 지시약</td></tr>
-              <tr><td class="en">Oxalic Acid</td><td>옥살산</td><td>\(\ce{H2C2O4}\), 과망간산 표준화에 사용되는 환원제</td></tr>
-              <tr><td class="en">Ascorbic Acid</td><td>아스코르브산</td><td>비타민 C (\(\ce{C6H8O6}\)), \(\ce{I3^-}\)와 1:1 반응</td></tr>
-              <tr><td class="en">Triiodide</td><td>삼요오드화이온</td><td>\(\ce{I3^-}\), 아스코르브산 적정에 사용. 전분 지시약과 청색 반응</td></tr>
-              <tr><td class="en">Peroxydisulfate</td><td>과이황산</td><td>\(\ce{S2O8^{2-}}\), 역적정 예제의 분석물질</td></tr>
-            </tbody>
-          </table>
+      <!-- PAGE 23 -->
+      <section class="page-section" id="p23">
+        <span class="page-num">Page 23</span>
+        <h2>6.4 용해도곱 (Solubility Product, \(K_{sp}\))</h2>
+        <div class="summary-box">난용성 이온 화합물의 평형을 나타내는 <strong>\(K_{sp}\)</strong> 개념을 PbI\(_2\) 예제로 배웁니다.</div>
+        <div class="card"><div class="card-label">PbI2 용해 평형</div>
+          <div class="math-block">\[ \text{PbI}_2(s) \rightleftharpoons \text{Pb}^{2+} + 2\text{I}^- \quad K_{sp} = [\text{Pb}^{2+}][\text{I}^-]^2 = 7.9 \times 10^{-9} \]</div>
         </div>
+        <div class="card"><div class="card-label">용해도 계산 (ICE)</div>
+          <table class="terms-table"><thead><tr><th></th><th>PbI2(s)</th><th>Pb2+</th><th>2I-</th></tr></thead><tbody>
+            <tr><td>Initial</td><td>solid</td><td>0</td><td>0</td></tr>
+            <tr><td>Final</td><td>solid</td><td>\(x\)</td><td>\(2x\)</td></tr>
+          </tbody></table>
+          <div class="math-block">\[ 4x^3 = 7.9 \times 10^{-9} \quad \Rightarrow \quad x = 0.001\,2_5 \text{ M} \]</div>
+        </div>
+        <div class="card"><div class="card-label">핵심 포인트</div>
+          <ul style="padding-left:20px;">
+            <li>PbI\(_2\)(s)는 순수 고체 &rarr; 평형식에 포함하지 않음</li>
+            <li>\([\text{Pb}^{2+}][\text{I}^-]^2 > K_{sp}\)이면 <strong>침전 시작</strong></li>
+          </ul>
+        </div>
+        <div class="diagram-box"><div class="diagram-label">PbI2 침전</div><p>밝은 황금색 침전물이 비커 바닥에 가라앉은 모습</p></div>
+      </section>
 
-        <div class="tip">시험 대비 요약: (1) 직접적정 vs 역적정의 차이를 명확히 이해한다. (2) 화학량론 비를 정확히 적용한다 (1:1 vs x:y). (3) 바탕적정 보정을 잊지 않는다. (4) 표준화 연쇄(일차 표준물질 &rarr; 2차 표준용액 &rarr; 분석)의 흐름을 파악한다.</div>
+      <!-- PAGE 24 -->
+      <section class="page-section" id="p24">
+        <span class="page-num">Page 24</span>
+        <h2>6.4 용해도곱 &mdash; 공통이온 효과 (Common Ion Effect)</h2>
+        <div class="summary-box">공통 이온이 존재하면 난용성 염의 용해도가 <strong>감소</strong>합니다.</div>
+        <div class="card"><div class="card-label">문제 및 풀이</div>
+          <p>PbI\(_2\) 포화 용액에 0.030 M NaI 첨가 (NaI 완전 해리):</p>
+          <div class="math-block">\[ (x)(2x + 0.030)^2 = 7.9 \times 10^{-9} \]\[ 2x \ll 0.030 \text{ 가정:} \quad x(0.030)^2 = 7.9 \times 10^{-9} \]\[ x = 8.8 \times 10^{-6} \text{ M} \]</div>
+          <p>검증: \(2x = 1.76 \times 10^{-5} \ll 0.030\) &rarr; 가정 OK</p>
+        </div>
+        <div class="key-point"><strong>공통이온 효과:</strong> 순수 물에서 \(1.25 \times 10^{-3}\) M &rarr; 공통이온 추가 후 \(8.8 \times 10^{-6}\) M으로 약 <strong>140배 감소</strong>! (Le Ch&acirc;telier 원리)</div>
+      </section>
+
+      <!-- PAGE 25 -->
+      <section class="page-section" id="p25">
+        <span class="page-num">Page 25</span>
+        <h2>6.4 용해도곱 &mdash; 최대 I\(^-\) 농도</h2>
+        <div class="summary-box">[Pb\(^{2+}\)]가 고정된 상태에서 침전이 시작되지 않는 I\(^-\)의 최대 농도를 구합니다.</div>
+        <div class="card"><div class="card-label">풀이</div>
+          <p>[Pb\(^{2+}\)] = \(1.0 \times 10^{-4}\) M 고정:</p>
+          <div class="math-block">\[ (1.0 \times 10^{-4})x^2 = 7.9 \times 10^{-9} \quad \Rightarrow \quad x = 8.9 \times 10^{-3} \text{ M} \]</div>
+        </div>
+        <div class="key-point"><strong>결론:</strong> [I\(^-\)] &gt; \(8.9 \times 10^{-3}\) M이면 PbI\(_2\) 침전 시작</div>
+      </section>
+
+      <!-- PAGE 26 -->
+      <section class="page-section" id="p26">
+        <span class="page-num">Page 26</span>
+        <h2>Ex 6-D: PbBr\(_2\)의 용해도</h2>
+        <div class="summary-box">PbBr\(_2\)의 \(K_{sp} = 2.1 \times 10^{-6}\)를 이용한 문제입니다.</div>
+        <div class="card"><div class="card-label">문제</div>
+          <p><strong>(a)</strong> 순수한 물에서 [Pb\(^{2+}\)]? <strong>(b)</strong> [Br\(^-\)] = 0.10 M일 때 [Pb\(^{2+}\)]?</p>
+        </div>
+        <div class="card"><div class="card-label">풀이</div>
+          <details><summary>(a) 순수 물</summary>
+            <div class="math-block">\[ 4x^3 = 2.1 \times 10^{-6} \Rightarrow x = 8.1 \times 10^{-3} \text{ M} \]</div>
+          </details>
+          <details><summary>(b) 공통이온</summary>
+            <div class="math-block">\[ [\text{Pb}^{2+}](0.10)^2 = 2.1 \times 10^{-6} \Rightarrow [\text{Pb}^{2+}] = 2.1 \times 10^{-4} \text{ M} \]</div>
+            <p>약 <strong>40배 감소</strong>!</p>
+          </details>
+        </div>
+      </section>
+
+      <!-- PAGE 27 -->
+      <section class="page-section" id="p27">
+        <span class="page-num">Page 27</span>
+        <h2>6.5 혼합물의 적정 &mdash; 전위차 적정 장치</h2>
+        <div class="summary-box">I\(^-\)와 Cl\(^-\) 혼합물을 Ag\(^+\)로 적정: <strong>Ksp가 작은 AgI가 먼저 침전</strong>합니다.</div>
+        <div class="card"><div class="card-label">반응과 Ksp 비교</div>
+          <div class="math-block">\[ \text{Ag}^+ + \text{I}^- \rightarrow \text{AgI}(s) \quad K_{sp} = 8.3 \times 10^{-17} \]\[ \text{Ag}^+ + \text{Cl}^- \rightarrow \text{AgCl}(s) \quad K_{sp} = 1.8 \times 10^{-10} \]</div>
+          <p>AgI의 \(K_{sp}\)가 \(10^7\)배 작으므로 <strong>AgI가 먼저 침전</strong></p>
+        </div>
+        <div class="card"><div class="card-label">전위차 적정 장치 (Fig. 6-4)</div>
+          <div class="diagram-box"><div class="diagram-label">전위차 적정 장치</div>
+            <p><strong>Buret (AgNO3)</strong> / <strong>pH meter</strong> (전위 측정) / <strong>Beaker</strong> (I- + Cl- 혼합액)</p>
+            <p><strong>Glass electrode</strong> + <strong>Ag electrode</strong> (Ag+ 농도 모니터링)</p>
+            <p>[Ag+] 10배 변화 &rarr; 약 <strong>59 mV</strong> 전위 변화 (Nernst 식)</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE 28 -->
+      <section class="page-section" id="p28">
+        <span class="page-num">Page 28</span>
+        <h2>6.5 혼합물의 적정 &mdash; 적정 곡선</h2>
+        <div class="summary-box">혼합물 적정에서 <strong>두 개의 종말점</strong>이 나타납니다.</div>
+        <div class="card"><div class="card-label">원리</div>
+          <ul style="padding-left:20px;">
+            <li>Ksp가 작은 침전물이 먼저 형성</li>
+            <li>첫 번째 당량점에서 적정시약 농도 급증</li>
+            <li>이후 두 번째 염이 침전</li>
+          </ul>
+        </div>
+        <div class="card"><div class="card-label">적정 곡선 (Figure 6.5)</div>
+          <div class="diagram-box"><div class="diagram-label">전위(mV) vs V(Ag+) 그래프</div>
+            <p><strong>Iodide end point (23.85 mL):</strong> I- 모두 소모, 전위 급상승</p>
+            <p><strong>Chloride end point (47.41 mL):</strong> Cl- 모두 소모, 전위 다시 급상승</p>
+            <p>두 종말점 사이: Cl-에 의해 [Ag+] 제어</p>
+          </div>
+        </div>
+        <div class="key-point"><strong>핵심:</strong> 첫 종말점까지 Ag+ = I- 양, 두 종말점 차이의 Ag+ = Cl- 양</div>
+      </section>
+
+      <!-- PAGE 29 -->
+      <section class="page-section" id="p29">
+        <span class="page-num">Page 29</span>
+        <h2>Ex 6-E: Br\(^-\)와 Cl\(^-\) 혼합물 적정</h2>
+        <div class="summary-box">Br-와 Cl- 혼합물을 0.03333 M AgNO3로 적정하는 문제입니다.</div>
+        <div class="card"><div class="card-label">문제</div>
+          <p>25.00 mL 혼합 용액. AgCl \(K_{sp}\) = 1.8&times;10\(^{-10}\), AgBr \(K_{sp}\) = 5.0&times;10\(^{-13}\)</p>
+          <p><strong>(a)</strong> 어느 것이 먼저? <strong>(b)</strong> 1차 종말점 15.55 mL, 농도? <strong>(c)</strong> 2차 종말점 42.23 mL, 농도?</p>
+        </div>
+        <div class="card"><div class="card-label">풀이</div>
+          <details><summary>(a) AgBr이 먼저 (Ksp가 더 작음)</summary></details>
+          <details><summary>(b) [Br-]</summary>
+            <div class="math-block">\[ \text{mol Ag}^+ = 0.03333 \times 0.01555 = 5.183 \times 10^{-4} \]\[ [\text{Br}^-] = \frac{5.183 \times 10^{-4}}{0.02500} = 0.02073 \text{ M} \]</div>
+          </details>
+          <details><summary>(c) [Cl-]</summary>
+            <div class="math-block">\[ \text{mol for Cl}^- = 0.03333 \times (0.04223 - 0.01555) = 8.893 \times 10^{-4} \]\[ [\text{Cl}^-] = \frac{8.893 \times 10^{-4}}{0.02500} = 0.03557 \text{ M} \]</div>
+          </details>
+        </div>
+      </section>
+
+      <!-- PAGE 30 -->
+      <section class="page-section" id="p30">
+        <span class="page-num">Page 30</span>
+        <h2>6.6 은적정 &mdash; Volhard 적정</h2>
+        <div class="summary-box"><strong>Volhard 적정</strong>은 Ag+를 적정하는 역적정법입니다.</div>
+        <div class="card"><div class="card-label">Volhard 적정 원리</div>
+          <ol class="step-list">
+            <li>과량의 AgNO3로 Cl- 침전: \(\text{Ag}^+ + \text{Cl}^- \rightarrow \text{AgCl}(s)\)</li>
+            <li>Fe3+ 존재 하에 잔류 Ag+를 KSCN으로 적정: \(\text{Ag}^+ + \text{SCN}^- \rightarrow \text{AgSCN}(s)\)</li>
+            <li>Ag+ 소모 후 SCN-이 Fe3+와 반응: \(\text{Fe}^{3+} + \text{SCN}^- \rightarrow \text{FeSCN}^{2+}\) <span style="color:red;">(붉은색)</span></li>
+          </ol>
+        </div>
+        <div class="warning-box"><strong>시험 포인트:</strong> Cl- 측정 시 AgCl을 먼저 제거해야 합니다. AgCl(more soluble)이 AgSCN(less soluble)으로 전환되면 종말점이 부정확해집니다.</div>
+      </section>
+
+      <!-- PAGE 31 -->
+      <section class="page-section" id="p31">
+        <span class="page-num">Page 31</span>
+        <h2>6.6 은적정 &mdash; Fajans 적정 (흡착지시약)</h2>
+        <div class="summary-box"><strong>Fajans 적정</strong>은 <strong>흡착지시약(adsorption indicator)</strong>을 사용합니다.</div>
+        <div class="card"><div class="card-label">원리</div>
+          <p><strong>당량점 전:</strong> 과량 Cl- &rarr; AgCl 표면 음전하</p>
+          <p><strong>당량점 후:</strong> 과량 Ag+ &rarr; AgCl 표면 양전하 &rarr; 음전하 지시약(dichlorofluorescein\(^{2-}\)) 흡착 &rarr; <strong>색 변화!</strong></p>
+        </div>
+        <div class="card"><div class="card-label">AgCl 결정 표면</div>
+          <div class="diagram-box"><div class="diagram-label">표면 전하 변화</div>
+            <p><strong>(a) 당량점 전:</strong> Cl- 흡착 &rarr; 음전하 표면</p>
+            <p><strong>(b) 당량점 후:</strong> Ag+ 흡착 &rarr; 양전하 표면 &rarr; In\(^{2-}\) 흡착 &rarr; 색 변화</p>
+          </div>
+        </div>
+        <div class="card"><div class="card-label">Dichlorofluorescein</div>
+          <p>xanthene 골격에 Cl 2개, CO\(_2^-\), O\(^-\) 기. 용액에서 <strong>녹색</strong>, AgCl 표면 흡착 시 <strong>분홍색</strong></p>
+        </div>
+      </section>
+
+      <!-- PAGE 32 -->
+      <section class="page-section" id="p32">
+        <span class="page-num">Page 32</span>
+        <h2>6.6 은적정 &mdash; Fajans 적정 실제 사진</h2>
+        <div class="summary-box">Fajans 적정의 색 변화를 실제 사진으로 확인합니다.</div>
+        <div class="card"><div class="card-label">색 변화 과정</div>
+          <div class="diagram-box"><div class="diagram-label">Fajans 적정 3단계</div>
+            <p><strong>(a) Before titration:</strong> 노란-녹색 용액</p>
+            <p><strong>(b) Before end point:</strong> AgCl 침전 &rarr; 연한 크림색. 과량 Cl-이라 지시약 흡착 안 됨</p>
+            <p><strong>(c) After end point:</strong> Ag+ 과량 &rarr; AgCl 양전하 &rarr; dichlorofluorescein 흡착 &rarr; <strong>분홍색!</strong></p>
+          </div>
+        </div>
+        <div class="tip"><span>참고 영상</span><span>Fajans 적정 (End point ~8:20): https://youtu.be/lUmli1LDAnU</span></div>
+        <div class="key-point"><strong>핵심:</strong> 직접적정이므로 Volhard처럼 역적정할 필요가 없습니다.</div>
+      </section>
+
+      <!-- PAGE 33 -->
+      <section class="page-section" id="p33">
+        <span class="page-num">Page 33</span>
+        <h2>일반적인 침전적정 총정리 (Common Precipitation Titrations)</h2>
+        <div class="summary-box">다양한 이온에 대한 침전적정 방법 <strong>총정리표</strong>입니다.</div>
+        <div class="card"><div class="card-label">Volhard 법</div>
+          <table class="terms-table"><thead><tr><th>분석 대상</th><th>비고</th></tr></thead><tbody>
+            <tr><td class="en">Br-, I-, SCN-, CNO-, AsO43-</td><td>침전 제거 불필요</td></tr>
+            <tr><td class="en">Cl-, PO43-, CN-, C2O42-, CO32-, S2-, CrO42-</td><td>침전 제거 필요</td></tr>
+            <tr><td class="en">BH4-</td><td>Ag+ 역적정</td></tr>
+            <tr><td class="en">K+</td><td>(C6H5)4B- 침전 후 Ag+/SCN- 적정</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card"><div class="card-label">Fajans 법</div>
+          <table class="terms-table"><thead><tr><th>분석 대상</th><th>비고</th></tr></thead><tbody>
+            <tr><td class="en">Cl-, Br-, I-, SCN-, Fe(CN)64-</td><td>Ag+로 적정. 흡착지시약 사용</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card"><div class="card-label">기타 침전적정</div>
+          <table class="terms-table"><thead><tr><th>분석 대상</th><th>방법</th></tr></thead><tbody>
+            <tr><td class="en">F-</td><td>Th(NO3)4 적정, alizarin red S</td></tr>
+            <tr><td class="en">Zn2+</td><td>K4Fe(CN)6, diphenylamine</td></tr>
+            <tr><td class="en">SO42-</td><td>Ba(OH)2, alizarin red S</td></tr>
+            <tr><td class="en">Hg22+</td><td>NaCl &rarr; Hg2Cl2, bromophenol blue</td></tr>
+            <tr><td class="en">PO43-, C2O42-</td><td>Pb(CH3CO2)2, dibromofluorescein/fluorescein</td></tr>
+          </tbody></table>
+        </div>
+      </section>
+
+      <!-- PAGE 34 -->
+      <section class="page-section" id="p34">
+        <span class="page-num">Page 34</span>
+        <h2>Homework (숙제)</h2>
+        <div class="summary-box">Chapter 6 숙제 문제 번호와 제출일입니다.</div>
+        <div class="card"><div class="card-label">숙제 안내</div>
+          <p><strong>Chap 6 problems: 10, 12, 16, 19</strong></p>
+          <p><strong>Due: 4월 1일 (Wed)</strong></p>
+        </div>
+        <div class="tip"><span>TIP</span><span>각 문제에서 반응식을 먼저 쓰고, 화학양론 비를 확인한 뒤 계산을 시작하세요.</span></div>
+      </section>
+
+      <!-- PAGE 35 -->
+      <section class="page-section" id="p35">
+        <span class="page-num">Page 35</span>
+        <h2>연습문제 6-4: 암모니아와 하이포브롬산 반응</h2>
+        <div class="summary-box">x:y 화학양론 적정 계산 연습입니다.</div>
+        <div class="card"><div class="card-label">문제</div>
+          <div class="math-block">\[ 2\text{NH}_3 + 3\text{OBr}^- \rightarrow \text{N}_2 + 3\text{Br}^- + 3\text{H}_2\text{O} \]</div>
+          <p>1.00 mL OBr- 용액이 1.69 mg NH3 (FM 17.03)과 반응. [OBr-] = ?</p>
+        </div>
+        <div class="card"><div class="card-label">풀이</div>
+          <details><summary>풀이 보기</summary>
+            <div class="math-block">\[ \text{mol NH}_3 = \frac{1.69 \times 10^{-3}}{17.03} = 9.924 \times 10^{-5} \]\[ \text{mol OBr}^- = 9.924 \times 10^{-5} \times \frac{3}{2} = 1.489 \times 10^{-4} \]\[ [\text{OBr}^-] = \frac{1.489 \times 10^{-4}}{1.00 \times 10^{-3}} = 0.149 \text{ M} \]</div>
+          </details>
+        </div>
+      </section>
+
+      <!-- PAGE 36 -->
+      <section class="page-section" id="p36">
+        <span class="page-num">Page 36</span>
+        <h2>연습문제 6-6: Cl\(^-\) 적정 (생체시료) &mdash; 문제</h2>
+        <div class="summary-box">Hg\(^{2+}\)를 이용한 Cl- 적정. 혈청/뇌척수액/소변에서의 분석 응용입니다.</div>
+        <div class="card"><div class="card-label">문제</div>
+          <div class="math-block">\[ \text{Hg}^{2+} + 2\text{Cl}^- \rightarrow \text{HgCl}_2(aq) \]</div>
+          <p>과량 Hg\(^{2+}\)가 diphenylcarbazone과 반응 &rarr; 보라-파란색 종말점</p>
+          <p><strong>(a)</strong> NaCl 147.6 mg (FM 58.44) + Hg(NO3)2 28.06 mL. [Hg(NO3)2] = ?</p>
+          <p><strong>(b)</strong> 소변 2.000 mL + 22.83 mL. [Cl-] in mg/mL = ?</p>
+        </div>
+      </section>
+
+      <!-- PAGE 37 -->
+      <section class="page-section" id="p37">
+        <span class="page-num">Page 37</span>
+        <h2>연습문제 6-6: Cl\(^-\) 적정 &mdash; 풀이</h2>
+        <div class="summary-box">6-6 문제의 풀이입니다.</div>
+        <div class="card"><div class="card-label">풀이</div>
+          <details><summary>(a) Hg(NO3)2 몰농도</summary>
+            <div class="math-block">\[ \text{mol Cl}^- = \frac{0.1476}{58.44} = 2.525 \times 10^{-3} \]\[ \text{mol Hg}^{2+} = \frac{2.525 \times 10^{-3}}{2} = 1.262 \times 10^{-3} \]\[ [\text{Hg(NO}_3)_2] = \frac{1.262 \times 10^{-3}}{0.02806} = 0.04498 \text{ M} \]</div>
+          </details>
+          <details><summary>(b) 소변 속 [Cl-] (mg/mL)</summary>
+            <div class="math-block">\[ \text{mol Hg}^{2+} = 0.04498 \times 0.02283 = 1.027 \times 10^{-3} \]\[ \text{mol Cl}^- = 2 \times 1.027 \times 10^{-3} = 2.054 \times 10^{-3} \]\[ \text{mass} = 2.054 \times 10^{-3} \times 35.453 = 72.83 \text{ mg} \]\[ = \frac{72.83}{2.000} = 36.4 \text{ mg/mL} \]</div>
+          </details>
+        </div>
+      </section>
+
+      <!-- PAGE 38 -->
+      <section class="page-section" id="p38">
+        <span class="page-num">Page 38</span>
+        <h2>연습문제 6-7: Volhard 적정</h2>
+        <div class="summary-box">Volhard 역적정법으로 I- 질량을 구하는 문제입니다.</div>
+        <div class="card"><div class="card-label">문제</div>
+          <p>미지 I- 30.00 mL + 0.3650 M AgNO3 50.00 mL. AgI 필터 후 여액을 0.2870 M KSCN 37.60 mL로 적정. I-는 몇 mg?</p>
+        </div>
+        <div class="card"><div class="card-label">풀이</div>
+          <details><summary>풀이 보기</summary>
+            <div class="math-block">\[ \text{mol Ag}^+_{\text{total}} = 0.3650 \times 0.05000 = 1.825 \times 10^{-2} \]\[ \text{mol Ag}^+_{\text{residual}} = 0.2870 \times 0.03760 = 1.079 \times 10^{-2} \]\[ \text{mol I}^- = 1.825 \times 10^{-2} - 1.079 \times 10^{-2} = 7.46 \times 10^{-3} \]\[ \text{mass} = 7.46 \times 10^{-3} \times 126.90 = 947 \text{ mg} \]</div>
+          </details>
+        </div>
+        <div class="tip"><span>TIP</span><span>Volhard 핵심: <strong>총 Ag+ - 잔류 Ag+ = 분석물질과 반응한 Ag+</strong></span></div>
+      </section>
+
+      <!-- PAGE 39 -->
+      <section class="page-section" id="p39">
+        <span class="page-num">Page 39</span>
+        <h2>연습문제 6-9: As\(_2\)O\(_3\)와 KMnO\(_4\) 적정 &mdash; 문제</h2>
+        <div class="summary-box">As\(_2\)O\(_3\)를 일차표준물질로 KMnO\(_4\) 표준화하는 복합 문제입니다.</div>
+        <div class="card"><div class="card-label">반응</div>
+          <div class="math-block">\[ \text{As}_2\text{O}_3 + 4\text{OH}^- \rightleftharpoons 2\text{HAsO}_3^{2-} + \text{H}_2\text{O} \]\[ \text{HAsO}_3^{2-} + 2\text{H}^+ \rightleftharpoons \text{H}_3\text{AsO}_3 \]\[ 5\text{H}_3\text{AsO}_3 + 2\text{MnO}_4^- + 6\text{H}^+ \rightarrow 5\text{H}_3\text{AsO}_4 + 2\text{Mn}^{2+} + 3\text{H}_2\text{O} \]</div>
+        </div>
+        <div class="card"><div class="card-label">문제</div>
+          <p><strong>(a)</strong> KMnO4 3.214 g / 1.000 L. 이론적 몰농도?</p>
+          <p><strong>(b)</strong> As2O3 (FM 197.84) 몇 g이 (a)의 KMnO4 25.00 mL와 반응?</p>
+          <p><strong>(c)</strong> As2O3 0.1468 g + KMnO4 29.98 mL, 바탕 0.03 mL. 실제 [KMnO4]?</p>
+        </div>
+      </section>
+
+      <!-- PAGE 40 -->
+      <section class="page-section" id="p40">
+        <span class="page-num">Page 40</span>
+        <h2>연습문제 6-9: As\(_2\)O\(_3\)와 KMnO\(_4\) 적정 &mdash; 풀이</h2>
+        <div class="summary-box">6-9 문제의 (a), (b), (c) 풀이입니다.</div>
+        <div class="card"><div class="card-label">풀이</div>
+          <details><summary>(a) 이론적 몰농도</summary>
+            <div class="math-block">\[ [\text{KMnO}_4] = \frac{3.214}{158.03 \times 1.000} = 0.02034 \text{ M} \]</div>
+          </details>
+          <details><summary>(b) 필요한 As2O3 질량</summary>
+            <p>As\(_2\)O\(_3\) 1 mol &rarr; 2 H\(_3\)AsO\(_3\). 비율: As\(_2\)O\(_3\) : MnO\(_4^-\) = 5 : 4</p>
+            <div class="math-block">\[ \text{mol MnO}_4^- = 0.02034 \times 0.02500 = 5.085 \times 10^{-4} \]\[ \text{mol As}_2\text{O}_3 = 5.085 \times 10^{-4} \times \frac{5}{4} = 6.356 \times 10^{-4} \]\[ \text{mass} = 6.356 \times 10^{-4} \times 197.84 = 0.1258 \text{ g} \]</div>
+          </details>
+          <details><summary>(c) 실제 KMnO4 몰농도</summary>
+            <div class="math-block">\[ \text{mol As}_2\text{O}_3 = \frac{0.1468}{197.84} = 7.417 \times 10^{-4} \]\[ \text{mol H}_3\text{AsO}_3 = 2 \times 7.417 \times 10^{-4} = 1.483 \times 10^{-3} \]\[ \text{mol MnO}_4^- = 1.483 \times 10^{-3} \times \frac{2}{5} = 5.934 \times 10^{-4} \]\[ V_{\text{corr}} = 29.98 - 0.03 = 29.95 \text{ mL} \]\[ [\text{MnO}_4^-] = \frac{5.934 \times 10^{-4}}{0.02995} = 0.01981 \text{ M} \]</div>
+            <p>이론적 값(0.02034 M)보다 낮은 이유: 불순물과 반응으로 일부 소모. 이것이 KMnO4를 반드시 <strong>표준화</strong>해야 하는 이유!</p>
+          </details>
+        </div>
+        <div class="key-point"><strong>핵심:</strong> (a)는 이론값, (c)는 실측값. 차이가 나는 이유는 KMnO\(_4\)가 불순물과 반응하여 소모되었기 때문입니다.</div>
       </section>
 
     </main>
   </div>
-
   <script>
     function toggleTheme() {
       const body = document.body;
@@ -1266,12 +915,11 @@ window.MathJax = {
         btn.textContent = '라이트모드';
       }
     }
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
           document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
-          const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+          const link = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
           if (link) link.classList.add('active');
         }
       });
